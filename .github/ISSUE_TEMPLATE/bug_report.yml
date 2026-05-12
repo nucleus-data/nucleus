@@ -1,0 +1,125 @@
+name: Bug report
+description: Something in Nucleus is broken or behaves unexpectedly.
+title: "[bug] <short description>"
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. The clearer your report, the faster we can fix it.
+
+        Before filing, please:
+        - Search [open issues](https://github.com/nucleus-data/nucleus/issues) — your bug may already be reported.
+        - Verify you're on the **latest** version of Nucleus.
+        - If the bug is in a wrapped library (DuckDB / Polars / etc.), the bug likely belongs upstream — but file here first so we can decide together.
+
+  - type: input
+    id: version
+    attributes:
+      label: Nucleus version
+      description: Output of `nucleus --version`
+      placeholder: "e.g. 0.1.2"
+    validations:
+      required: true
+
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      description: Output of `python --version`
+      placeholder: "e.g. 3.11.8"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      multiple: true
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - WSL2
+        - Docker container
+        - Other (specify in steps)
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, including any error messages.
+      placeholder: |
+        Running `nucleus run marts.daily_revenue` failed with...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+      placeholder: |
+        I expected the materialization to succeed and produce ~1000 rows.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: |
+        Minimal Python / CLI steps that reproduce the issue. The smaller, the better — please trim away unrelated parts of your project.
+      placeholder: |
+        ```python
+        import nucleus as nx
+        ctx = nx.context()
+        ctx.sql("SELECT 1 AS x", target="raw.test")
+        ctx.run("raw.test")  # fails with ...
+        ```
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Full error output
+      description: Run with `--debug` for the full traceback. Wrap in triple backticks.
+      render: shell
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How much does this affect you?
+      options:
+        - Blocker (cannot work around)
+        - Major (working around but painful)
+        - Minor (working around easily)
+        - Cosmetic / nit
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Anything else that might help — connection strings (sanitized!), config files, screenshots.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submit checklist
+      options:
+        - label: I searched existing issues and didn't find a duplicate
+          required: true
+        - label: I tested on the latest version of Nucleus
+          required: true
+        - label: I removed all secrets / credentials from the reproduction
+          required: true

@@ -1,0 +1,12 @@
+# Hide the default "blank issue" link so contributors pick one of the
+# structured templates below. They can still open a blank one via
+# /issues/new (URL) if they really need to.
+blank_issues_enabled: false
+
+contact_links:
+  - name: Architecture question
+    url: https://github.com/nucleus-data/nucleus/discussions/categories/architecture
+    about: For "how does X work?" or "should we do Y?" — discussions, not issues.
+  - name: Read the docs first
+    url: https://github.com/nucleus-data/nucleus/blob/main/nucleus_architecture_v4.1.md
+    about: The architecture document answers most "is this in scope?" questions.

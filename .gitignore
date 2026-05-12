@@ -1,0 +1,179 @@
+# ============================================================================
+# Nucleus — Git ignore rules
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Python
+# ----------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.python-version
+.envrc
+
+# Package management
+pip-log.txt
+pip-delete-this-directory.txt
+poetry.lock
+uv.lock
+Pipfile.lock
+
+# ----------------------------------------------------------------------------
+# Testing & coverage
+# ----------------------------------------------------------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.tox/
+.nox/
+.cache
+nosetests.xml
+.benchmarks/
+
+# ----------------------------------------------------------------------------
+# Type checking & linting
+# ----------------------------------------------------------------------------
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# ----------------------------------------------------------------------------
+# Documentation
+# ----------------------------------------------------------------------------
+docs/_build/
+docs/.cache/
+site/
+.readthedocs.yaml
+
+# ----------------------------------------------------------------------------
+# IDE & editor
+# ----------------------------------------------------------------------------
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+!.vscode/settings.json.example
+!.vscode/extensions.json
+*.sublime-project
+*.sublime-workspace
+
+# Cursor — keep rules & specs in git, ignore workspace-local state
+.cursor/cache/
+.cursor/logs/
+.cursor/projects/
+# But KEEP rules:
+!.cursor/rules/
+!.cursor/rules/**
+
+# ----------------------------------------------------------------------------
+# OS-specific
+# ----------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ----------------------------------------------------------------------------
+# Nucleus-specific
+# ----------------------------------------------------------------------------
+
+# Local workspace data — created by `nucleus up`
+.nucleus/
+warehouse/
+catalog.db
+catalog.db-*
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+
+# Local engine artifacts
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp
+
+# Dagster local home (we hide it but tests/dev may surface it)
+.dagster_home/
+dagster.yaml.local
+
+# Iceberg local catalog snapshots
+metadata-snapshots/
+**/metadata/*.metadata.json.bak
+
+# Local user data / fixtures large files
+data/raw/
+data/large/
+*.parquet.local
+
+# Jupyter / Marimo
+.ipynb_checkpoints/
+*.ipynb.bak
+
+# Profiling
+*.prof
+*.lprof
+profile_results/
+
+# Generated lineage / plans
+.lineage_cache/
+.plan_cache/
+
+# Secrets / config (must NEVER be committed)
+.env
+.env.*
+!.env.example
+secrets.toml
+*.pem
+*.key
+credentials.json
+.aws/
+.databricks/
+.snowflake/
+
+# Build outputs
+*.whl
+*.tar.gz
+
+# Logs
+*.log
+logs/
+
+# Temp
+tmp/
+temp/
+.tmp/

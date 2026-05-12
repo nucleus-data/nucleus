@@ -1,0 +1,405 @@
+---
+description: Nucleus project discipline — design phase v4.1, wrap-not-build, composability constitution, beachhead focus
+alwaysApply: true
+---
+
+# Nucleus Project Rules (v4.1)
+
+**Status**: Design locked at v4.1, pre-implementation. PoC #1 (Dagster Error Translation) starts next. No production code yet.
+
+**Source of truth**: `nucleus_architecture_v4.1.md` (supersedes v4.0 and v3; both deprecated). Read `AGENTS.md` at repo root for full required reading order.
+
+## Project Identity (1 sentence)
+
+A modern, composable data engineering platform — built on open Apache foundations, AI-assisted by design, solving persistent pains. Grows with the team. Graduates cleanly to giants.
+
+## Default Decision: WRAP, not BUILD
+
+For every proposed component, ask: "Which production-grade OSS handles this already?"
+
+| Concern | Default (wrap) | Swap target (interface + smoke tests only) | When available |
+|---|---|---|---|
+| SQL engine | DuckDB | Apache DataFusion | v0.1 |
+| DataFrame engine | Polars | DataFusion DF | v0.1 |
+| Multimodal/AI engine | Daft (optional) | — | v0.5+ |
+| Vector storage | Lance / LanceDB | — | v0.5+ |
+| Scheduling / orchestration | Dagster (embedded, hidden) | `nucleus-mini-scheduler` (in-house fallback by v1.0) | v0.1 |
+| SQL transformations | **Native `ctx.sql` + Jinja** | dbt-duckdb (optional adapter v0.3) / SQLMesh | v0.1 |
+| Connectors | **`ctx.copy_from` (v0.1)** / dlt (v0.3+) | Sling / Singer | v0.1 / v0.3 |
+| Catalog | **Filesystem (v0.1)** / Lakekeeper (v0.3+) | Apache Polaris | v0.1 / v0.3 |
+| Notebooks | Marimo | Jupyter | v0.3+ |
+| Lineage | OpenLineage + sqlglot (asset-level v0.1; column-level v0.5+) | — | v0.1+ |
+| **Auth → OIDC delegation (never own identity)** | Authentik / Keycloak / Okta / Azure AD | — | v0.3+ |
+| Observability | OpenTelemetry + VictoriaMetrics + VictoriaLogs | — | v0.5+ |
+| Table format (structured) | Apache Iceberg | (Tier 0, immortal) | v0.1 |
+| Table format (multimodal) | Lance | (Tier 0, immortal) | v0.5+ |
+
+**Build** only the experience and intelligence layers: `ctx` SDK, `nucleus` CLI, Workbench (v0.2+), Asset Materialization Adapter (~500 LOC), Error Translation Layer, native `ctx.sql` Jinja resolver (~1000 LOC), AI Copilot, Cost Meter. Total proprietary code budget ≤ **30K LOC** by v1.0.
+
+## Eleven Hard Constraints (Non-Negotiable)
+
+### Architectural Constraints
+
+1. No JVM in core path
+2. No public plugin SDK in v1
+3. No custom scheduler (Dagster wrapped + mini-scheduler fallback by v1.0)
+4. No custom compute engine
+5. **No custom Iceberg commit service / transaction coordinator** (catalog handles atomic commits)
+6. **No custom auth system** (always delegate to OIDC)
+7. No ML platform / AI training / agent hosting platform
+8. ≤ 30K LOC proprietary code by v1.0
+9. Composability by Constitution: every Tier 1/2 dependency MUST have clean swap **interface** + smoke tests in CI; full adapter built on-demand only
+
+### Operating Constraints
+
+10. **Read official docs before integration.** Never rely on AI memory. Every wrapped component requires reading official docs before first integration AND before any version upgrade. See AGENTS.md §11.12.
+11. **Upgrade-safe stack design.** Exact version pins in `pyproject.toml`, one-component-per-PR upgrades, mandatory upgrade smoke tests in CI, major version upgrades require ADR. See AGENTS.md §11.13.
+
+## Composability by Constitution (Law #1) — v4.1 REVISED
+
+Every Tier 1/2 dependency MUST have:
+1. **Clean swap interface** (types compile, API surface matches) — ALWAYS maintained
+2. **Basic smoke tests** (5-10 tests, not full E2E) — ALWAYS run in CI
+3. **Full swap implementation** — built **on-demand** when trigger event fires (vendor death, license pivot, perf regression >2x, community demand)
+4. Migration path documented in `/docs/swap/{component}.md`
+
+Tier 0 (immortal) only: Apache Arrow, Iceberg, Parquet, Lance, S3 API, OpenLineage, OpenTelemetry.
+
+**Do NOT** maintain full second implementations of every alternative pre-emptively. That is "Composability Tax" — avoid it.
+
+## Beachhead (v0.1 through v1.0)
+
+**Designed exclusively for: Startup data team — 5-20 engineers, 100GB-5TB total data, greenfield project.**
+
+**v0.1 success metric:** 5-engineer team builds first BI-ready Iceberg table from `git clone` in **<30 minutes** via CLI.
+
+Any feature that doesn't serve this metric is deferred. Other personas (solo, enterprise) are v1.5+.
+
+## v0.1 Hello World Scope (Mo 0-4)
+
+CLI-only. No Workbench. No AI Copilot. No Marimo. No dlt. No Lakekeeper.
+
+In: ctx SDK core (read/write/sql/copy_from/log/params), DuckDB + Polars, Iceberg via pyiceberg + filesystem catalog, MinIO, Dagster wrapped + Error Translation Layer, native ctx.sql Jinja, ctx.copy_from helper, asset-level lineage, schema contracts, CLI (init/up/down/run/ingest).
+
+Out: Everything else (defer to v0.2/0.3/0.5).
+
+## Yield-to-Giants Strategy
+
+We do NOT compete with Databricks/Snowflake. We integrate via three modes:
+
+- **Mode 1**: Iceberg portability — user graduates with zero migration
+- **Mode 2**: Hybrid compute — dispatch heavy assets to Databricks/Snowflake via `compute=...`
+- **Mode 3**: Federation — Iceberg REST catalog federation for Data Mesh (v2.0+)
+
+## Five Pillars (Frame All Decisions)
+
+Every decision must serve ≥1 pillar without harming another:
+
+1. High performance on minimal resources
+2. Composable by constitution
+3. AI-assisted by design
+4. Familiar UX from proven giants
+5. Friendly to giants, hostile to no-one
+
+## 8-Question Gate for New Features
+
+Before proposing anything new, all eight must be "yes":
+
+1. Maps to one of the five architectural layers? (Physics / Engines / Coordination / Intelligence / Experience)
+2. Serves the **<30 minute** beachhead metric (5-engineer team, `git clone` → BI-ready Iceberg table)?
+3. Wrap possible instead of build?
+4. Preserves no-JVM constraint?
+5. Preserves local-identical-to-prod?
+6. Stays within 30K LOC budget?
+7. Triggered by empirical telemetry, not anxiety?
+8. Required for v0.1 Hello World (Mo 0-4), or can it defer to v0.2/0.3/0.5?
+
+A "no" or "unclear" anywhere → reject or defer.
+
+## Vocabulary (Strict)
+
+Use: **asset**, **materialization**, **snapshot**, **contract**, **check**, **source asset**, **wrap**, **engine**, **module**, **catalog**, **`ctx`**, **Copilot**, **agent runtime**, **yield to giants**, **graduate**.
+
+Avoid: "table" (as primitive), "job", "task", "pipeline output", "version" (for snapshots), "plugin", "metastore", "context", "AI helper", "scale out" (use yield-to-giants), "migrate" (use graduate in graduation context).
+
+## Forbidden Framings
+
+Never describe Nucleus as:
+
+- "Data OS"
+- "Spark killer"
+- "Databricks killer / replacement"
+- "Universal compute platform"
+- "AI-first" / "AI-native" platform (we are AI-**assisted**)
+- "Distributed-first" (we yield to giants for distributed)
+- "Plugin marketplace" (v1)
+- "Better Databricks"
+- "ML platform" / "Feature store" / "Model registry"
+
+Correct: **"a modern, composable data engineering platform that solves persistent pains, AI-assisted by design, and graduates cleanly to giants when users outgrow it."**
+
+## Citing Architecture
+
+When making recommendations, cite the doc + section explicitly:
+
+- ✅ "Per `nucleus_architecture_v4.1.md` §6.3, we hide Dagster behind `ctx`."
+- ✅ "Per v4.1 §6.4, Error Translation Layer is mandatory."
+- ✅ "Per v4.1 §9.3, swap is interface + smoke tests, full adapter on-demand."
+- ❌ "I think we should use Dagster."
+
+## When in Doubt
+
+1. Re-read `nucleus_architecture_v4.1.md`
+2. Check beachhead metric (§1.5): does this serve the 30-min target?
+3. Check roadmap (§18): is this v0.1 Hello World, or can it defer?
+4. Apply the 8-question gate above
+5. Check the Five Pillars test
+6. Check `nucleus_implementation_readiness.md` §4
+7. If still unclear → stop and ask the user
+
+---
+
+## Cursor-Specific AI Workflow Tactics
+
+These rules supplement `AGENTS.md §11` (universal workflow discipline) with Cursor-IDE-specific guidance.
+
+### Phase Gate (binding)
+
+**No production code under `/nucleus/` until PoC #1 (Dagster Error Translation Layer) passes.**
+
+If user asks for v0.1 module code now, response is:
+
+> Per AGENTS.md §11.1, we cannot write production code until PoC #1 passes. Current PoC status: [check `/poc/` folder]. Suggested next step: [PoC #1 work].
+
+PoC work goes in `/poc/` directory, NOT `/nucleus/`.
+
+### @-Reference Hygiene
+
+When asking AI for help, REQUIRED @-references for any v0.1 code task:
+
+```
+@AGENTS.md
+@.cursor/rules/nucleus.mdc (auto via alwaysApply)
+@nucleus_architecture_v4.1.md
+@<spec file>  (e.g., @nucleus_ctx_sdk_spec.md, @nucleus_asset_model_spec.md)
+@<test file>  (the test spec that defines what passes)
+```
+
+For PoC work, also include:
+
+```
+@nucleus_poc_plan.md
+```
+
+Missing the spec file = AI invents APIs that don't exist. Always reference the spec.
+
+### Single-File Discipline (v0.1)
+
+**Default mode:** Single-file edits. One file per AI turn.
+
+**When Composer multi-file edit is acceptable:**
+
+- Pure rename across files (mechanical refactor)
+- Adding new decorator to `ctx` SDK (`@nucleus.<new>`) — touches `__init__.py` + one new file only
+- Generating test fixtures across `tests/fixtures/`
+
+**When Composer is NOT acceptable in v0.1:**
+
+- Implementing a new feature across Service/Repository/Controller layers
+- Error handling logic spanning multiple files
+- Wrapping a new OSS dependency
+- Any change touching Layer 3 (Coordination) — too high-stakes for batch edits
+
+Reason: architectural review requires reading each file diff individually. A 12-file diff hides leaks.
+
+### Composer Prompt Template (when justified)
+
+```
+Read these files for context:
+@nucleus_architecture_v4.1.md §<section>
+@<spec_file>.md
+@<existing_file>.py (the pattern to follow)
+@<test_file>.py (the spec to satisfy)
+
+Implement ONLY what the test file requires. Constraints:
+- Total LOC ≤ <budget>
+- Use <wrapped OSS lib> for <responsibility>
+- All errors translate to NucleusError per v4.1 §6.4
+- No new dependencies without ADR
+
+Do NOT add features beyond what tests require.
+Do NOT modify files outside the target directory unless required.
+Do NOT invent APIs that don't exist in the wrapped library.
+```
+
+### AI Output Verification Checklist
+
+After every AI code generation, verify before accepting:
+
+```
+[ ] All imports actually exist (no hallucinated modules)
+[ ] All method calls actually exist in wrapped library docs
+[ ] No "dagster", "duckdb", "polars" classnames in user-facing strings
+[ ] Returns NucleusError, not raw external exceptions
+[ ] LOC count under per-feature ceiling (500)
+[ ] Matches vocabulary in AGENTS.md §7
+[ ] Cites architecture section in docstring
+[ ] No drift from spec file API surface
+```
+
+### Chat (Ctrl+L) Usage Pattern
+
+For architectural questions, use Chat (not Composer):
+
+```
+Question: "Should we add X for Y use case?"
+
+Required context:
+@nucleus_architecture_v4.1.md
+@AGENTS.md (§3, §4, §5)
+
+Required AI response structure:
+1. Cite specific architecture sections
+2. Apply 8-question gate from §5
+3. Check if X is in §20 Non-Goals
+4. Recommend WRAP, DEFER, or BUILD (with ADR if BUILD)
+```
+
+If AI gives an answer that doesn't cite architecture sections, the answer is unreliable. Push back.
+
+### Auto-fix Discipline (Cursor Tab Completion)
+
+Tab completion is generally safe for:
+
+- Type annotations
+- Import statements
+- Common patterns (decorators, dataclass fields)
+- Test boilerplate
+
+Tab completion is NOT safe for:
+
+- Error handling blocks (might skip translation)
+- Wrapped OSS calls (might hallucinate APIs)
+- Concurrency primitives (might miss atomicity)
+- SQL string construction (might bypass `{{ ref() }}`)
+
+When in doubt about tab completion, use Chat instead.
+
+### Drift Detection Prompt (run every 4 weeks)
+
+```
+Drift Detection Pass.
+
+Context:
+@nucleus_architecture_v4.1.md
+@AGENTS.md
+@CHANGELOG.md (last 4 weeks of commits)
+@/nucleus (current state of code)
+
+Task: Review the last 4 weeks of commits for drift. Flag:
+
+1. Wrap-not-build violations
+   - Any feature built that has viable OSS wrap target?
+2. Scope creep
+   - Any v0.3+ features that snuck into v0.1?
+3. Composability violations
+   - Any non-swappable Tier 1/2 dependency added?
+4. Error translation gaps
+   - Any external exception NOT translated to NucleusError?
+   - Any external classname in user-facing strings?
+5. Vocabulary drift
+   - Any forbidden term used (table/job/task/etc.)?
+6. LOC budget
+   - Total LOC vs phase ceiling?
+
+Be brutally honest. Cite file paths and line numbers. Suggest fixes.
+```
+
+Human reviews AI's review. Don't accept AI's all-clear without spot-checking.
+
+### File Creation Rule
+
+Do NOT create these files (they would cause drift):
+
+- ❌ `.cursorrules` (we use `.cursor/rules/nucleus.mdc` and `AGENTS.md`)
+- ❌ `CLAUDE.md` (we use `AGENTS.md`)
+- ❌ Duplicate architecture docs
+
+DO create:
+
+- ✅ `/docs/decisions/ADR-NNN-<title>.md` for build-vs-wrap decisions
+- ✅ `/docs/swap/<component>.md` for swap target documentation
+- ✅ `/docs/research/<component>.md` for official docs notes (per Constraint #10)
+- ✅ `/docs/research/ai_hallucinations.md` to log AI-fabricated APIs (per Constraint #10)
+- ✅ `/docs/compatibility.md` for version matrix (per Constraint #11)
+- ✅ `/poc/poc<N>_<name>/` for PoC stubs
+- ✅ `/scripts/<discipline>.py` for CI enforcement scripts
+
+### Official Documentation Verification (mandatory, per Constraint #10)
+
+**Before suggesting code that uses any external library:**
+
+1. **Cite official docs URL** in code or comment
+   - ✅ `# Docs: https://duckdb.org/docs/api/python/overview`
+   - ❌ "I recall DuckDB has this function..."
+
+2. **If uncertain a method/API exists, write explicit uncertainty:**
+   ```python
+   # NEEDS VERIFICATION: pyiceberg.commit_atomic() — not confirmed in docs
+   # Check: https://py.iceberg.apache.org/api/
+   result = catalog.commit_atomic(...)  # MAY FAIL — verify before merge
+   ```
+
+3. **Never fabricate APIs.** Common AI failure modes to watch:
+   - Inventing methods that "should exist" (e.g., `dataframe.to_iceberg()`)
+   - Mixing APIs from similar libraries (e.g., pandas methods on Polars)
+   - Hallucinating parameter names
+   - Inventing config options
+   - Combining v1 and v2 syntax
+
+4. **Required `@import` annotation pattern:**
+   ```python
+   from pyiceberg.catalog import load_catalog
+   # Docs: https://py.iceberg.apache.org/api/catalog/
+   # Pinned version: 0.8.1
+   ```
+
+5. **When user asks "does X library have Y feature?":**
+   - DO NOT answer from memory
+   - Respond: "Let me check the official docs at <URL>" + read it
+   - If you cannot access docs, say "I'm not certain; please verify at <URL>"
+
+6. **Log every caught hallucination** in `/docs/research/ai_hallucinations.md`:
+   ```markdown
+   ## YYYY-MM-DD: <library>.<method>
+   AI suggested: <fabricated API>
+   Reality: <actual API or non-existent>
+   Detection: <how it was caught>
+   ```
+
+### Version Awareness (per Constraint #11)
+
+**When suggesting `pyproject.toml` changes or adding a new dependency:**
+
+1. **Check current PyPI version** — do not assume "latest" from training data
+   - Cursor prompt: `Check the current version of <package> on PyPI before suggesting`
+2. **Use exact pin syntax**: `package==X.Y.Z`
+   - ❌ `polars>=1.0`
+   - ❌ `polars~=1.18`
+   - ✅ `polars==1.18.0`
+
+3. **Check Python compatibility**: confirm the version supports our Python pin (3.11 per `pyproject.toml`)
+
+4. **Flag major version implications**:
+   - If suggesting `X+1.0.0` upgrade from `X.y.z`, note "this is a major version upgrade; per Constraint #11 requires ADR"
+
+5. **Bulk upgrade requests**: REFUSE.
+   - User: "Upgrade all dependencies"
+   - AI: "Per Constraint #11, we upgrade one component per PR. Which would you like first? Suggested order based on staleness: [list from compatibility.md]"
+
+6. **Renovate/Dependabot PR handling**: When automated upgrade PRs arrive, AI assists with:
+   - Reading changelog summary
+   - Identifying behavioral changes
+   - Writing rollback command
+   - Running upgrade smoke tests
+   - Drafting PR description per template

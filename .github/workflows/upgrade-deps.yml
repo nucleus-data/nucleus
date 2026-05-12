@@ -1,0 +1,210 @@
+# ============================================================================
+# Nucleus — Weekly Dependency Audit
+# ============================================================================
+# Runs every Monday at 09:00 UTC. Checks for:
+#   1. Outdated dependencies (informational)
+#   2. Security vulnerabilities (CVE alerts)
+#   3. Docs URL liveness (Constraint #10)
+#
+# Outputs:
+#   - On finding issues, opens (or updates) an issue tagged `weekly-audit`
+#   - Solo-founder reviews the issue weekly during planning
+#
+# This workflow enforces Hard Constraint #11 (upgrade-safe stack design):
+# it catches drift early, before the version matrix in docs/compatibility.md
+# silently rots.
+#
+# Reading guide for a junior DE:
+#   - `cron:` is a 5-field time spec: minute hour day month weekday.
+#     "0 9 * * 1" = 09:00 UTC every Monday.
+#   - `workflow_dispatch:` lets you also trigger it manually from the UI.
+#   - `issues: write` permission lets the workflow open/update issues.
+# ============================================================================
+
+name: Weekly Dependency Audit
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write  # so we can open/update the weekly audit issue
+
+jobs:
+
+  audit:
+    name: Audit dependencies + docs URLs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install audit tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install pip-audit==2.7.3 \
+                      pip-tools==7.4.1 \
+                      requests==2.32.3
+
+      # ----------------------------------------------------------------------
+      # PART 1 — Outdated dependencies (informational)
+      # ----------------------------------------------------------------------
+      - name: Check for outdated direct dependencies
+        id: outdated
+        run: |
+          # Show direct deps and their latest PyPI versions.
+          if [ -f pyproject.toml ]; then
+            echo "## Outdated check" > audit_report.md
+            echo "" >> audit_report.md
+            echo "| Package | Pinned | Latest | Status |" >> audit_report.md
+            echo "|---------|--------|--------|--------|" >> audit_report.md
+
+            # Extract pinned versions from pyproject.toml (rough parse).
+            python <<'PY' >> audit_report.md
+          import re, sys, urllib.request, json
+          from pathlib import Path
+
+          content = Path("pyproject.toml").read_text()
+          # Match lines like:  "pkgname==1.2.3",  in the dependencies array
+          pattern = re.compile(r'"([a-zA-Z][a-zA-Z0-9_.\-]*)(?:\[[^\]]+\])?==([0-9][^"]*?)"')
+          for pkg, pinned in pattern.findall(content):
+              try:
+                  with urllib.request.urlopen(
+                      f"https://pypi.org/pypi/{pkg}/json", timeout=10
+                  ) as resp:
+                      latest = json.load(resp)["info"]["version"]
+                  status = "⚠️ outdated" if pinned != latest else "✅ current"
+              except Exception as e:
+                  latest = "?"
+                  status = f"❓ {type(e).__name__}"
+              print(f"| `{pkg}` | {pinned} | {latest} | {status} |")
+          PY
+
+            echo "" >> audit_report.md
+          fi
+
+      # ----------------------------------------------------------------------
+      # PART 2 — Security vulnerabilities
+      # ----------------------------------------------------------------------
+      - name: Run pip-audit
+        id: pip-audit
+        run: |
+          echo "## Security audit (pip-audit)" >> audit_report.md
+          echo "" >> audit_report.md
+          echo '```' >> audit_report.md
+          if [ -f pyproject.toml ]; then
+            # Compile to requirements.txt-style, then audit.
+            pip-compile --quiet --output-file=/tmp/requirements.txt pyproject.toml 2>/dev/null \
+              && pip-audit -r /tmp/requirements.txt --strict >> audit_report.md 2>&1 \
+              || echo "pip-audit found issues (or pyproject parse failed)" >> audit_report.md
+          else
+            echo "No pyproject.toml found" >> audit_report.md
+          fi
+          echo '```' >> audit_report.md
+          echo "" >> audit_report.md
+
+      # ----------------------------------------------------------------------
+      # PART 3 — Docs URL liveness check (Constraint #10)
+      # ----------------------------------------------------------------------
+      - name: Verify docs URLs in compatibility.md
+        run: |
+          echo "## Docs URL liveness (Constraint #10)" >> audit_report.md
+          echo "" >> audit_report.md
+
+          if [ -f docs/compatibility.md ]; then
+            python <<'PY' >> audit_report.md
+          import re, urllib.request
+          from pathlib import Path
+
+          content = Path("docs/compatibility.md").read_text()
+          # Extract URLs from "Docs URL" column.
+          urls = sorted(set(re.findall(r'https?://[^\s)|]+', content)))
+
+          ok, bad = [], []
+          for url in urls:
+              try:
+                  req = urllib.request.Request(url, method="HEAD",
+                                                headers={"User-Agent": "nucleus-audit/0.1"})
+                  with urllib.request.urlopen(req, timeout=10) as resp:
+                      if resp.status >= 400:
+                          bad.append((url, resp.status))
+                      else:
+                          ok.append(url)
+              except Exception as e:
+                  bad.append((url, type(e).__name__))
+
+          print(f"- Checked {len(urls)} URLs from `docs/compatibility.md`")
+          print(f"- ✅ Live: {len(ok)}")
+          print(f"- ⚠️  Broken: {len(bad)}")
+          if bad:
+              print("")
+              print("### Broken URLs")
+              for url, why in bad:
+                  print(f"- `{url}` → {why}")
+          PY
+          else
+            echo "_No docs/compatibility.md found_" >> audit_report.md
+          fi
+
+      # ----------------------------------------------------------------------
+      # PART 4 — Open or update GitHub issue
+      # ----------------------------------------------------------------------
+      - name: Read report
+        id: read-report
+        run: |
+          {
+            echo 'body<<EOF'
+            cat audit_report.md
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Find existing weekly-audit issue
+        id: find-issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: "weekly-audit",
+            });
+            return issues.length > 0 ? issues[0].number : 0;
+          result-encoding: string
+
+      - name: Open or update issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `${{ steps.read-report.outputs.body }}`;
+            const date = new Date().toISOString().slice(0, 10);
+            const title = `Weekly dependency audit — ${date}`;
+
+            const existing = parseInt('${{ steps.find-issue.outputs.result }}', 10);
+            if (existing > 0) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing,
+                title,
+                body,
+              });
+              console.log(`Updated issue #${existing}`);
+            } else {
+              const { data } = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ["weekly-audit", "maintenance"],
+              });
+              console.log(`Opened issue #${data.number}`);
+            }

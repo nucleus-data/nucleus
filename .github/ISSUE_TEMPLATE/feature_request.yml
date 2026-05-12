@@ -1,0 +1,106 @@
+name: Feature request
+description: Suggest a new feature or enhancement.
+title: "[feat] <short description>"
+labels: ["feature", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion!
+
+        **Before you file**: read [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §20 (Non-Goals) and `README.md` ("What is NOT in scope"). If your feature falls there, the answer will likely be "use a different tool"; check first.
+
+        For features that require **architectural changes**, file an *ADR proposal* instead (different template).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: |
+        Describe the pain point. Be specific. "It would be nice if..." isn't enough — what task are you trying to accomplish that's hard today?
+      placeholder: |
+        Today, ingesting a Postgres table requires me to... I'd like to instead...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: |
+        How should it work? Show an example API or CLI invocation if possible.
+      placeholder: |
+        ```python
+        ctx.copy_from_cdc(source="postgres://...", table="orders", target="raw.orders")
+        ```
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: What workarounds exist? Why aren't they good enough?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Which layer does this affect?
+      options:
+        - L0 Physics (Arrow / Iceberg / Parquet)
+        - L1 Engines (DuckDB / Polars / DataFusion)
+        - L2 Coordination (Asset materialization / Error translation / Lineage)
+        - L3 Intelligence (AI / Copilot / Semantic graph)
+        - L4 Experience (ctx SDK / nucleus CLI / Workbench)
+        - Cross-cutting (logging, observability, security)
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Suggested tier
+      description: Realistically, when should this land?
+      options:
+        - Tier 0 (Heartbeat — first 2 months)
+        - Tier 1 (v0.1 — Foundation)
+        - Tier 2 (v0.2 — Workbench)
+        - Tier 3 (v0.3 — Connectors)
+        - Tier 4 (v0.5 — Intelligence)
+        - Post-v1.0
+        - Don't know
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Hard Constraint check
+      description: |
+        Read AGENTS.md §3. Does this feature violate any of the 11 Hard Constraints? If so, please don't file — propose an architecture change via an ADR.
+      placeholder: |
+        I confirm this doesn't violate Constraints #1-11.
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Mockups, links to related issues, references to similar features in other tools.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submit checklist
+      options:
+        - label: I searched existing issues and didn't find a duplicate
+          required: true
+        - label: I read the "out-of-scope" section of the architecture doc
+          required: true
+        - label: This doesn't require architectural changes (those need an ADR proposal)
+          required: true

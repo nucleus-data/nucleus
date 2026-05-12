@@ -1,0 +1,320 @@
+# ============================================================================
+# Nucleus — Python project configuration
+# ============================================================================
+# Per AGENTS.md Hard Constraint #11: all runtime dependencies use EXACT pins.
+# Per AGENTS.md Hard Constraint #10: every wrapped library has docs reference.
+# Version updates: ONE component per PR; smoke tests required; rollback documented.
+# See docs/compatibility.md for current tested versions.
+# ============================================================================
+
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nucleus"
+version = "0.0.0"  # Pre-Heartbeat. Bumps to 0.0.1 when Tier 0 ships.
+description = "Modern composable data engineering platform — AI-assisted, built on open Apache foundations, graduates cleanly to giants"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Nucleus Team" }]
+keywords = ["data-engineering", "iceberg", "duckdb", "polars", "lakehouse", "data-mesh"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Database",
+  "Topic :: Scientific/Engineering",
+]
+
+# ----------------------------------------------------------------------------
+# Runtime dependencies — EXACT PINS REQUIRED (Constraint #11)
+# ----------------------------------------------------------------------------
+# Each line: pinned version + docs URL.
+# To upgrade: see docs/compatibility.md upgrade workflow.
+dependencies = [
+  # Tier 1 engines
+  "duckdb==1.1.3",                  # Docs: https://duckdb.org/docs/api/python/overview
+  "polars==1.18.0",                 # Docs: https://docs.pola.rs/api/python/stable/
+  "pyarrow==18.1.0",                # Docs: https://arrow.apache.org/docs/python/
+
+  # Tier 1 storage / table format
+  "pyiceberg[sql-sqlite,s3fs,duckdb]==0.8.1",  # Docs: https://py.iceberg.apache.org/
+
+  # Tier 2 orchestration substrate (hidden behind ctx)
+  "dagster==1.9.5",                 # Docs: https://docs.dagster.io/api
+
+  # Tier 2 ingestion helpers (for ctx.copy_from in v0.1)
+  "sqlalchemy==2.0.36",             # Docs: https://docs.sqlalchemy.org/en/20/
+  "psycopg[binary]==3.2.3",         # Docs: https://www.psycopg.org/psycopg3/docs/
+  "pymysql==1.1.1",                 # Docs: https://pymysql.readthedocs.io/
+
+  # SQL transformation (native ctx.sql + Jinja resolver, ≤2500 LOC)
+  "jinja2==3.1.5",                  # Docs: https://jinja.palletsprojects.com/
+  "sqlglot==26.0.0",                # Docs: https://sqlglot.com/sqlglot.html
+
+  # Core infrastructure
+  "click==8.1.7",                   # CLI framework. Docs: https://click.palletsprojects.com/
+  "structlog==24.4.0",              # Structured logging. Docs: https://www.structlog.org/
+  "msgspec==0.18.6",                # Fast structured types for NucleusError + configs. Docs: https://jcristharif.com/msgspec/
+  "typer==0.15.1",                  # CLI ergonomics on top of Click. Docs: https://typer.tiangolo.com/
+  "rich==13.9.4",                   # Terminal UI. Docs: https://rich.readthedocs.io/
+
+  # Observability (OpenTelemetry-compatible)
+  "opentelemetry-api==1.29.0",      # Docs: https://opentelemetry.io/docs/languages/python/
+  "opentelemetry-sdk==1.29.0",
+]
+
+# ----------------------------------------------------------------------------
+# Optional dependencies
+# ----------------------------------------------------------------------------
+[project.optional-dependencies]
+
+# Development environment
+dev = [
+  # Code quality
+  "ruff==0.8.4",                    # Docs: https://docs.astral.sh/ruff/
+  "mypy==1.13.0",                   # Docs: https://mypy.readthedocs.io/
+  "pre-commit==4.0.1",              # Docs: https://pre-commit.com/
+
+  # Testing
+  "pytest==8.3.4",                  # Docs: https://docs.pytest.org/
+  "pytest-cov==6.0.0",              # Docs: https://pytest-cov.readthedocs.io/
+  "pytest-xdist==3.6.1",            # Parallel test execution
+  "pytest-asyncio==0.25.0",         # For any async surface tests
+  "hypothesis==6.123.7",            # Property-based testing for type mappings
+
+  # Local infrastructure for tests
+  "testcontainers==4.9.0",          # Postgres/MinIO containers for integration tests
+
+  # Build / packaging
+  "hatchling==1.27.0",
+  "build==1.2.2.post1",
+]
+
+# Documentation
+docs = [
+  "mkdocs==1.6.1",
+  "mkdocs-material==9.5.49",
+  "mkdocstrings[python]==0.27.0",
+]
+
+# All extras (CI convenience)
+all = ["nucleus[dev,docs]"]
+
+# ----------------------------------------------------------------------------
+# Entry points
+# ----------------------------------------------------------------------------
+[project.scripts]
+nucleus = "nucleus.cli.main:app"
+
+# ----------------------------------------------------------------------------
+# URLs
+# ----------------------------------------------------------------------------
+[project.urls]
+Homepage = "https://github.com/nucleus-data/nucleus"  # Update when org created
+Documentation = "https://nucleus.dev"                  # Aspirational
+Repository = "https://github.com/nucleus-data/nucleus"
+Issues = "https://github.com/nucleus-data/nucleus/issues"
+Changelog = "https://github.com/nucleus-data/nucleus/blob/main/CHANGELOG.md"
+
+# ============================================================================
+# Tool configurations
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Hatch (build backend)
+# ----------------------------------------------------------------------------
+[tool.hatch.build.targets.wheel]
+packages = ["src/nucleus"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+  "/poc",
+  "/docs",
+  "/scripts",
+  "/AGENTS.md",
+  "/README.md",
+  "/LICENSE",
+  "/CHANGELOG.md",
+]
+exclude = [
+  "*.pyc",
+  "__pycache__",
+  ".pytest_cache",
+  ".mypy_cache",
+  ".ruff_cache",
+]
+
+# ----------------------------------------------------------------------------
+# Ruff (linter + formatter)
+# ----------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "poc", "scripts"]
+
+[tool.ruff.lint]
+select = [
+  "E",      # pycodestyle errors
+  "F",      # pyflakes
+  "W",      # pycodestyle warnings
+  "I",      # isort
+  "B",      # flake8-bugbear
+  "UP",     # pyupgrade
+  "N",      # pep8-naming
+  "SIM",    # flake8-simplify
+  "RUF",    # ruff-specific
+  "PL",     # pylint
+  "PTH",    # use pathlib
+  "RET",    # flake8-return
+  "ARG",    # unused arguments
+  "TID",    # tidy imports
+  "ERA",    # eradicate commented-out code
+  "PIE",    # flake8-pie
+  "PERF",   # perflint
+]
+ignore = [
+  "E501",   # line too long (handled by formatter)
+  "PLR0913", # too many arguments (we use kwargs heavily)
+  "PLR2004", # magic value comparison (too noisy for SQL/data code)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["PLR2004", "S101", "PLR0913"]  # tests can use magic values, assert, many args
+"poc/**/*.py" = ["PLR2004", "S101"]               # PoCs are exploratory
+
+[tool.ruff.lint.isort]
+known-first-party = ["nucleus"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+# ----------------------------------------------------------------------------
+# Mypy (static type checking — STRICT mode)
+# ----------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+no_implicit_reexport = true
+show_error_codes = true
+pretty = true
+files = ["src/nucleus", "tests", "poc", "scripts"]
+
+# Wrapped libraries — be explicit about missing stubs
+[[tool.mypy.overrides]]
+module = [
+  "dagster.*",
+  "pyiceberg.*",
+  "duckdb.*",
+  "sqlglot.*",
+  "testcontainers.*",
+]
+ignore_missing_imports = false
+follow_imports = "silent"
+
+# ----------------------------------------------------------------------------
+# Pytest
+# ----------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = [
+  "-v",
+  "--strict-markers",
+  "--strict-config",
+  "--cov=nucleus",
+  "--cov-branch",
+  "--cov-report=term-missing",
+  "--cov-report=xml",
+  "--cov-fail-under=70",  # increase as we mature
+]
+testpaths = ["tests", "poc"]
+markers = [
+  "slow: tests that take >5s",
+  "integration: tests requiring external services (Postgres, MinIO)",
+  "poc: PoC validation tests (poc/ directory)",
+  "smoke: minimal smoke tests for swap targets (Constraint #9)",
+  "upgrade: dependency upgrade smoke tests (Constraint #11)",
+]
+asyncio_mode = "auto"
+
+# ----------------------------------------------------------------------------
+# Coverage
+# ----------------------------------------------------------------------------
+[tool.coverage.run]
+source = ["src/nucleus"]
+branch = true
+parallel = true
+omit = [
+  "*/tests/*",
+  "*/poc/*",
+  "*/__main__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+  "@overload",
+]
+show_missing = true
+skip_covered = false
+fail_under = 70
+
+# ----------------------------------------------------------------------------
+# Custom Nucleus tool config (read by our scripts/)
+# ----------------------------------------------------------------------------
+[tool.nucleus]
+# LOC budget enforcement (Constraint #8)
+loc_budget_v01_ceiling = 8000      # Target end of v0.1 / Tier 1
+loc_budget_v05_ceiling = 18000     # Target end of v0.5 / Tier 4
+loc_budget_v10_ceiling = 30000     # Hard ceiling for v1.0 / GA
+
+# Files excluded from LOC count
+loc_exclude = [
+  "tests/",
+  "poc/",
+  "docs/",
+  "scripts/",
+  "*.pyi",
+  "**/__init__.py",  # often just exports
+]
+
+# Forbidden imports in user-facing code (v4.1 §6.4: Error Translation Discipline)
+# These leak Dagster mental model to users. ctx SDK boundary only.
+forbidden_user_imports = [
+  "dagster",
+  "dagster._",
+]
+
+# Vocabulary check (per AGENTS.md §7)
+forbidden_terms_in_docs = [
+  "metastore",      # use: catalog
+  "Spark killer",
+  "Databricks killer",
+  "Data OS",
+  "AI-native",      # we are AI-assisted
+  "AI-first",
+]

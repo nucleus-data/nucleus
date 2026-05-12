@@ -1,0 +1,115 @@
+name: Architecture Decision Proposal (ADR)
+description: Propose an architectural change. Required for any cross-module decision.
+title: "[adr-proposal] <short title — imperative voice>"
+labels: ["adr-proposal", "architecture", "needs-discussion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Architectural changes — new dependencies, new public APIs, new layer boundaries, breaking changes, anything cross-module — go through an **ADR** (Architecture Decision Record).
+
+        This issue is the **proposal** phase. Once accepted, the proposer (or maintainer) writes the actual ADR in `docs/decisions/ADR-XXX-<slug>.md` using `docs/decisions/_template.md`.
+
+        Read `docs/decisions/ADR-001-no-iceberg-commit-service.md` for a model of what's expected.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context — what situation are we in?
+      description: |
+        What forces are at play? What problem are we solving? Cite relevant Hard Constraints (AGENTS.md §3).
+    validations:
+      required: true
+
+  - type: textarea
+    id: decision
+    attributes:
+      label: Proposed decision
+      description: |
+        State the decision in imperative voice, one paragraph.
+      placeholder: |
+        We will replace X with Y, effective from version 0.N.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered (at least 2)
+      description: |
+        List the options you considered and why each was rejected. "Do nothing" counts as an option.
+      placeholder: |
+        ### Alternative A: ...
+        Pros / Cons / Why rejected
+
+        ### Alternative B: ...
+        ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: consequences
+    attributes:
+      label: Consequences
+      description: |
+        Positive / negative / neutral / risks introduced.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope of impact
+      multiple: true
+      options:
+        - Public API (`ctx` SDK) — breaking change requires major version bump
+        - Public API (`nucleus` CLI) — breaking change requires major version bump
+        - New dependency added
+        - Existing dependency removed/replaced
+        - New layer / module boundary
+        - Existing layer / module boundary changed
+        - Hard Constraint added or modified
+        - Security model change
+        - Storage / on-disk format change
+        - Other (specify in context)
+    validations:
+      required: true
+
+  - type: textarea
+    id: hard-constraints
+    attributes:
+      label: Which Hard Constraint(s) does this touch?
+      description: |
+        Quote the relevant ones from AGENTS.md §3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: docs-required
+    attributes:
+      label: Docs that need to change
+      description: |
+        Which files in `docs/` will need updates? E.g. `compatibility.md`, `engineering.md`, the architecture C4 diagrams, etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration
+    attributes:
+      label: Migration plan (if breaking)
+      description: |
+        For breaking changes: what's the migration path? Deprecation period? Tooling we'll provide?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submit checklist
+      options:
+        - label: I read `docs/decisions/ADR-001-no-iceberg-commit-service.md` to understand the ADR format
+          required: true
+        - label: This proposal lists at least 2 alternatives (incl. "do nothing" if applicable)
+          required: true
+        - label: This proposal cites relevant Hard Constraints
+          required: true

@@ -1,0 +1,320 @@
+# Sequence — Error Translation (Critical Path)
+
+> **Diagram type**: UML Sequence
+> **Scope**: How a Dagster failure becomes a NucleusError visible to the user
+> **Audience**: Anyone touching `coordination/error_translation.py`
+> **Status**: This flow is the subject of **PoC #1**. Must pass before any v0.1 code beyond it.
+> **Companion**: [`C4_container.md`](C4_container.md), [`AGENTS.md`](../../AGENTS.md) §6.4
+
+This is the **most important sequence in the whole platform**. If a Dagster error ever leaks past `ctx`, our entire abstraction has failed — we're "Dagster with extra steps". This document defines the contract.
+
+---
+
+## §1. Why this matters
+
+Per F3 senior review (incorporated as v4.1 Amendment 7), our central architectural risk is:
+
+> **The leaky abstraction**: Users will write Python with `ctx.asset`. When something fails, they see a `dagster.DagsterExecutionStepNotFound` traceback. They learn Dagster. We become "the layer that adds friction on top of Dagster" — a worst-of-both-worlds tax.
+
+**Counter-promise**: Users **never** see a Dagster exception type. **Never** see a Dagster file path in a stack trace they're meant to read. **Never** debug by reading Dagster docs.
+
+To deliver this promise, every Dagster exception type that can reach the user **must** have a translator registered in the Error Translation Layer (ETL). Unregistered types → `NucleusInternalError` with bug-report instructions.
+
+---
+
+## §2. The happy path (for context)
+
+Before showing failures, the happy path:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant CLI as nucleus CLI
+    participant CTX as ctx SDK
+    participant AMA as Asset Materialization<br/>Adapter
+    participant DAG as Dagster<br/>(hidden)
+    participant ENG as DuckDB Engine
+    participant ICE as PyIceberg
+
+    User->>CLI: nucleus run marts.daily_revenue
+    CLI->>CTX: ctx.run("marts.daily_revenue")
+    CTX->>AMA: materialize(MaterializationRequest)
+    AMA->>DAG: materialize_to_memory([asset])
+    DAG->>ENG: execute(plan)
+    ENG-->>DAG: Arrow RecordBatch stream
+    DAG-->>AMA: AssetMaterialization event
+    AMA->>ICE: table.append(arrow_table)
+    ICE-->>AMA: new_snapshot_id
+    AMA-->>CTX: RunResult(success, snapshot_id)
+    CTX-->>CLI: RunResult
+    CLI-->>User: ✓ marts.daily_revenue (1.2M rows, 3.4s)
+```
+
+Note: Dagster appears in the middle but its types never cross the AMA → CTX boundary.
+
+---
+
+## §3. The failure path — what Nucleus must do
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant CLI as nucleus CLI
+    participant CTX as ctx SDK
+    participant AMA as Asset Materialization<br/>Adapter
+    participant ETL as Error Translation<br/>Layer
+    participant DAG as Dagster<br/>(hidden)
+    participant ENG as DuckDB Engine
+
+    User->>CLI: nucleus run marts.daily_revenue
+    CLI->>CTX: ctx.run("marts.daily_revenue")
+    CTX->>AMA: materialize(MaterializationRequest)
+    AMA->>DAG: materialize_to_memory([asset])
+    DAG->>ENG: execute(plan)
+
+    Note over ENG: SQL references<br/>missing table
+
+    ENG--xDAG: DuckDB CatalogException("Table 'staging.foo' does not exist")
+    DAG--xAMA: DagsterExecutionStepExecutionError<br/>(wraps DuckDB exc)
+
+    Note over AMA: catch dagster.* exception<br/>BEFORE returning to ctx
+
+    AMA->>ETL: translate(DagsterExecutionStepExecutionError, ctx={asset, run_id})
+
+    Note over ETL: 1. Inspect chained cause (DuckDB exc)<br/>2. Look up DuckDB translator<br/>3. Build NucleusError
+
+    ETL-->>AMA: NucleusAssetNotFound(<br/>  user_message="Asset 'staging.foo' is referenced<br/>    but not defined or materialized",<br/>  fix_hint="Run `nucleus run staging.foo` first,<br/>    or add @nucleus.asset decorator to its definition",<br/>  docs_url="https://nucleus.dev/errors/asset-not-found",<br/>  asset="marts.daily_revenue",<br/>  cause=<DuckDB exc>)
+
+    AMA-->>CTX: RunResult(failure, error=<NucleusAssetNotFound>)
+    CTX-->>CLI: RunResult
+
+    Note over CLI: Render NucleusError<br/>via rich formatter
+
+    CLI-->>User: ✗ marts.daily_revenue failed<br/><br/>Asset 'staging.foo' is referenced but not defined<br/>or materialized.<br/><br/>How to fix:<br/>  Run `nucleus run staging.foo` first,<br/>  or add @nucleus.asset decorator to its definition.<br/><br/>Docs: https://nucleus.dev/errors/asset-not-found
+```
+
+---
+
+## §4. Translation table (initial — must grow with PoC #1)
+
+The `ErrorTranslator` registers handlers by type. Below is the **minimum viable table** for v0.1; PoC #1 validates each row.
+
+### §4.1 Dagster-originated errors
+
+| Dagster exception | Trigger | Nucleus translation | docs_url |
+|-------------------|---------|--------------------|----------|
+| `DagsterAssetNotFoundError` | Asset name doesn't exist in repo | `NucleusAssetNotFound` | `/errors/asset-not-found` |
+| `DagsterExecutionStepNotFoundError` | Step in plan doesn't exist | `NucleusAssetNotFound` (with hint about typo) | `/errors/asset-not-found` |
+| `DagsterExecutionStepExecutionError` | User code raised inside an asset | **Unwrap inner cause and re-translate** | (varies) |
+| `DagsterExecutionInterruptedError` | User Ctrl+C | `NucleusRunCancelled` (clean exit code 130) | `/errors/cancelled` |
+| `DagsterInvalidDefinitionError` | Bad `@nucleus.asset` decorator usage | `NucleusInvalidAssetDefinition` | `/errors/invalid-asset` |
+| `DagsterInvariantViolationError` | Dagster's internal invariant | `NucleusInternalError` (bug, file report) | `/errors/internal` |
+| `DagsterResourceFunctionError` | Resource init failed | `NucleusConfigError` | `/errors/config` |
+| `DagsterTypeCheckDidNotPass` | Output type mismatch | `NucleusSchemaError` | `/errors/schema` |
+| `DagsterUserCodeProcessError` | User code subprocess crashed | `NucleusInternalError` (we use in-process, shouldn't happen in v0.1) | `/errors/internal` |
+
+### §4.2 DuckDB-originated errors (when wrapping inner cause)
+
+| DuckDB exception | Trigger | Nucleus translation | docs_url |
+|------------------|---------|--------------------|----------|
+| `duckdb.CatalogException` ("does not exist") | Table reference unknown | `NucleusAssetNotFound` | `/errors/asset-not-found` |
+| `duckdb.BinderException` | SQL referencing unknown column | `NucleusSchemaError` | `/errors/schema` |
+| `duckdb.ParserException` | SQL syntax error | `NucleusSQLSyntaxError` (with error position) | `/errors/sql-syntax` |
+| `duckdb.IOException` | File read/write failed | `NucleusIOError` | `/errors/io` |
+| `duckdb.ConnectionException` | DuckDB DB file locked | `NucleusEngineError` | `/errors/engine` |
+| `duckdb.ConversionException` | Type coercion failed | `NucleusSchemaError` | `/errors/schema` |
+| `duckdb.OutOfMemoryException` | Query exceeded RAM | `NucleusResourceError` (with `--large` hint) | `/errors/resource` |
+| `duckdb.TransactionException` | Concurrent write conflict | `NucleusCommitConflictError` | `/errors/commit-conflict` |
+
+### §4.3 Polars-originated errors
+
+| Polars exception | Trigger | Nucleus translation | docs_url |
+|------------------|---------|--------------------|----------|
+| `polars.SchemaError` | Column not in frame | `NucleusSchemaError` | `/errors/schema` |
+| `polars.ColumnNotFoundError` | Same | `NucleusSchemaError` | `/errors/schema` |
+| `polars.ComputeError` | Arithmetic / type error in expr | `NucleusEngineError` | `/errors/engine` |
+| `polars.ShapeError` | Frame shape mismatch | `NucleusSchemaError` | `/errors/schema` |
+| `polars.NoDataError` | Empty source | `NucleusEmptyAssetError` | `/errors/empty-asset` |
+
+### §4.4 PyIceberg-originated errors
+
+| PyIceberg exception | Trigger | Nucleus translation | docs_url |
+|----------------------|---------|--------------------|----------|
+| `pyiceberg.exceptions.NoSuchTableError` | Asset not yet materialized | `NucleusAssetNotMaterialized` (different from "not defined") | `/errors/not-materialized` |
+| `pyiceberg.exceptions.CommitFailedException` | Concurrent commit conflict | `NucleusCommitConflictError` (retry suggested) | `/errors/commit-conflict` |
+| `pyiceberg.exceptions.CommitStateUnknownException` | Network failure mid-commit | `NucleusCommitUnknownError` (manual recovery) | `/errors/commit-unknown` |
+| `pyiceberg.exceptions.NoSuchNamespaceError` | Namespace not created | `NucleusCatalogError` (auto-create or instruct) | `/errors/catalog` |
+| `pyiceberg.exceptions.AuthorizationExpiredError` | Cloud credentials | `NucleusAuthError` | `/errors/auth` |
+| `pyiceberg.exceptions.ValidationError` | Schema evolution invalid | `NucleusSchemaEvolutionError` | `/errors/schema-evolution` |
+
+### §4.5 Source connector errors (psycopg, pymysql, …)
+
+| Exception | Trigger | Nucleus translation | docs_url |
+|-----------|---------|--------------------|----------|
+| `psycopg.OperationalError` (connection refused) | Postgres down / wrong host | `NucleusSourceConnectionError` | `/errors/source-connection` |
+| `psycopg.errors.UndefinedTable` | Source table missing | `NucleusSourceNotFound` | `/errors/source-not-found` |
+| `psycopg.errors.InsufficientPrivilege` | No SELECT grant | `NucleusSourceAuthError` | `/errors/source-auth` |
+| `pymysql.err.OperationalError` | Connection failed | `NucleusSourceConnectionError` | `/errors/source-connection` |
+| `sqlalchemy.exc.SQLAlchemyError` (catch-all) | Other SQLAlchemy failure | `NucleusSourceError` | `/errors/source` |
+
+### §4.6 Generic Python errors that may surface
+
+| Exception | Trigger | Nucleus translation |
+|-----------|---------|--------------------|
+| `FileNotFoundError` | Asset code references missing file | `NucleusFileNotFound` |
+| `PermissionError` | Filesystem permission | `NucleusPermissionError` |
+| `ConnectionError` | Network failure | `NucleusNetworkError` |
+| `TimeoutError` | Async timeout | `NucleusTimeoutError` |
+| `KeyError` (in user asset code) | User bug | Pass through (don't translate user logic errors) |
+| `ValueError` (in user asset code) | User bug | Pass through |
+| **Anything else uncaught** | Unknown | `NucleusInternalError` with bug-report URL |
+
+**Critical rule**: User-domain errors (KeyError in their pandas code) **pass through unchanged**. We translate only **platform-domain errors**. The user's debugging context is their code, not ours.
+
+---
+
+## §5. The translator implementation contract
+
+```python
+# src/nucleus/coordination/error_translation.py — outline (NOT yet implemented)
+
+from typing import Callable, TypeVar
+
+E = TypeVar("E", bound=Exception)
+
+class ErrorTranslator:
+    """Single registry of translators. Looked up by exception type, with MRO walking."""
+
+    def __init__(self) -> None:
+        self._registry: dict[type[Exception], Callable[[Exception, ErrorContext], NucleusError]] = {}
+
+    def register(self, exc_type: type[E], handler: Callable[[E, ErrorContext], NucleusError]) -> None:
+        """Register a translator for an exception type."""
+        ...
+
+    def translate(self, exc: Exception, ctx: ErrorContext) -> NucleusError:
+        """Translate, walking MRO. Unwrap Dagster wrappers to inner cause first.
+        Falls back to NucleusInternalError if no translator found."""
+        ...
+
+
+@dataclass(frozen=True)
+class ErrorContext:
+    """Metadata available to translators for richer error construction."""
+    asset: str | None = None
+    run_id: str | None = None
+    source: str | None = None  # e.g. "postgres://..."
+    sql_position: tuple[int, int] | None = None  # line, column for SQL errors
+```
+
+**Rules for handlers**:
+1. **Never re-raise** — return a NucleusError.
+2. **Always include** `user_message`, `fix_hint`, `docs_url`.
+3. **Set `cause=exc`** so debugging info is preserved (but not shown by default).
+4. **Sanitize** sensitive info (connection strings, file paths under `/home/user/...`) before putting in `user_message`.
+
+---
+
+## §6. CLI rendering contract
+
+When `ctx.run()` returns a `RunResult(failure, error=NucleusError)`, the CLI renders:
+
+```
+✗ marts.daily_revenue failed in 1.4s
+
+  Asset 'staging.foo' is referenced but not defined or materialized.
+
+  How to fix:
+    Run `nucleus run staging.foo` first,
+    or add @nucleus.asset decorator to its definition.
+
+  Docs: https://nucleus.dev/errors/asset-not-found
+  Run ID: 2026-05-12-abc123
+```
+
+**No Python traceback shown by default.** Add `--debug` to surface stack traces (for our own debugging or expert users).
+
+**Why**: Python tracebacks include our internal file paths (`/site-packages/nucleus/coordination/...`). Users get scared. Default = clean. `--debug` = full info for power users.
+
+---
+
+## §7. Tests required (PoC #1 acceptance criteria)
+
+For PoC #1 to pass:
+
+### §7.1 Each translator must have a test
+- Construct a real instance of the source exception (e.g., actually call DuckDB with a missing table to get a real `CatalogException`).
+- Assert translator returns the expected NucleusError type.
+- Assert `user_message`, `fix_hint`, `docs_url` all populated and non-empty.
+- Assert `cause` is set.
+
+### §7.2 Round-trip test
+- Run a real asset that fails with a known cause.
+- Assert the user sees a NucleusError message and **no Dagster file path** in the rendered output.
+- Use `pytest`'s `capsys` to verify CLI output.
+
+### §7.3 Unknown exception fallback
+- Raise a custom `class MyWeirdException` in user asset code.
+- Assert it surfaces as `NucleusInternalError` with the bug-report URL.
+- Assert `cause` is the original exception.
+
+### §7.4 The 50 known cases
+- Build a fixture set of **50 realistic failure scenarios** (sampled from real-world data engineering bugs).
+- For each: assert translation produces a NucleusError with no Dagster types in the message.
+- PoC #1 success bar: ≥45/50 produce good messages on first try.
+
+### §7.5 The leak detector
+- A script `scripts/dagster_leak_check.py` greps the CLI output of running the test suite for any string containing `dagster.` (case-sensitive). **Must return 0 matches.**
+- Run in CI on every PR.
+
+---
+
+## §8. What this layer doesn't do
+
+To prevent scope creep:
+
+- **No retry logic** — that's the Asset Materialization Adapter's job.
+- **No logging side effects** — the layer translates synchronously. Logging happens at the AMA boundary.
+- **No metrics emission** — same. AMA emits the `error.translated` event using the result.
+- **No partial recovery** — translators don't try to "fix" things. They map exception → message.
+- **No localization** — English only in v0.1-v1.0. i18n is post-v1.0.
+
+---
+
+## §9. Evolution & versioning
+
+- **Adding new translators**: PR, no ADR needed.
+- **Changing a NucleusError class** (rename, restructure): PR + ADR. NucleusError types are part of the public surface.
+- **Removing a translator**: ADR required (breaking — user might catch the specific type).
+- **Reorganizing the translation table**: PR + update this doc.
+
+---
+
+## §10. Open questions (for PoC #1)
+
+1. **Should we surface partial Dagster info on `--verbose`?** (Default: no. Power users may want it. TBD.)
+2. **Async error context** — does Dagster's async execution wrap exceptions differently? PoC must test.
+3. **Schema errors with line/column info** — can we pull SQL error positions from DuckDB consistently? PoC investigates.
+4. **Multi-error scenarios** — if 3 assets fail in parallel, do we show 3 errors or a summary? (Default: 3 individual errors, ordered by failure time. TBD.)
+5. **Localization stub** — do we wire i18n infrastructure now (even though English only) to avoid retrofit? (Default: skip; YAGNI.)
+
+PoC #1 outputs will resolve these. Update this doc with answers when PoC #1 completes.
+
+---
+
+## §11. Why a doc, not just code
+
+This sequence is the single most important architectural promise in Nucleus. It must be:
+
+- **Visible** to anyone touching the codebase.
+- **Reviewable** before code is written (this doc is the spec).
+- **Testable** to acceptance criteria (§7).
+- **Owned** — the solo founder authors any change here.
+
+If `coordination/error_translation.py` ever diverges from this doc, the doc wins. Update the code.
+
+---
+
+*Next: read [`../decisions/_template.md`](../decisions/_template.md) to see how we capture decisions, then [`../decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md) for the first real ADR.*
