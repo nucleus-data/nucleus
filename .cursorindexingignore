@@ -1,0 +1,55 @@
+# Nucleus — Cursor indexing ignore (companion to .cursorignore)
+#
+# Files matched here are not indexed (excluded from semantic search and
+# the chat's auto-context), but remain visible in the file picker and
+# can be read if explicitly @-referenced by the user.
+#
+# Use this for "noisy but occasionally needed" paths. Use .cursorignore
+# for "must never be sent to the AI" paths.
+#
+# Syntax: gitignore-compatible. Docs: https://docs.cursor.com/context/ignore-files
+
+# Wheels, source distributions, dist-info — large noise, never useful inline
+*.whl
+*.tar.gz
+*.dist-info/
+
+# Generated / cache artifacts that .gitignore already covers
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.benchmarks/
+
+# Virtual environment — big and never useful as agent context
+.venv/
+venv/
+
+# Local engine + warehouse data
+warehouse/
+catalog.db
+catalog.db-*
+.nucleus/
+.dagster_home/
+*.duckdb
+*.duckdb.wal
+*.duckdb.tmp
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+
+# Local large sample data
+data/raw/
+data/large/
+
+# Logs & profiling
+*.log
+logs/
+*.prof
+*.lprof
+profile_results/

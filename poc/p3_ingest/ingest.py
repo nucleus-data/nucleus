@@ -1,11 +1,14 @@
-"""Minimal SQLite → filesystem-Iceberg ingestor — PoC #3 (steps 2-3 of
+"""PROMOTED 2026-05-13 to ``src/nucleus/ctx/copy_from.py``. This directory
+remains as canonical PoC reference.
+
+Minimal SQLite → filesystem-Iceberg ingestor — PoC #3 (steps 2-3 of
 ``nucleus_poc_plan.md`` §3).
 
 Scope (deliberately minimal):
     - ONE source: SQLite via stdlib ``sqlite3``. No Postgres/MySQL/CSV/
       Parquet/JSON in v0.
     - ONE destination: filesystem-backed Iceberg via PyIceberg's SQL catalog
-      (SQLite metastore + ``file://`` warehouse).
+      (SQLite-backed catalog + ``file://`` warehouse).
     - 5-7 tests, not 50.
     - Will graduate to ``src/nucleus/ctx/copy_from.py`` (~200 LOC) only after
       PoC #3 acceptance criteria pass.
@@ -21,6 +24,7 @@ Pins/docs:
 
 from __future__ import annotations
 
+import contextlib
 import sqlite3
 from pathlib import Path
 from typing import Any
@@ -100,7 +104,7 @@ def _build_schemas(
 def _open_catalog(warehouse_dir: Path) -> Catalog:
     """Open the filesystem-backed SQL catalog for ``warehouse_dir``.
 
-    Uses PyIceberg's built-in ``SqlCatalog`` (SQLite metastore) with a ``file://``
+    Uses PyIceberg's built-in ``SqlCatalog`` (SQLite-backed catalog) with a ``file://``
     warehouse. v0.1 default per ``docs/research/pyiceberg.md`` §4.
 
     NEEDS VERIFICATION on first PoC run: confirm ``load_catalog`` accepts
@@ -109,13 +113,23 @@ def _open_catalog(warehouse_dir: Path) -> Catalog:
     """
     warehouse_dir.mkdir(parents=True, exist_ok=True)
     catalog_db = warehouse_dir / "catalog.db"
+    # Warehouse URI uses two slashes after ``file:``, not three. ``as_posix()``
+    # already includes the leading ``/`` on POSIX (yielding the RFC 8089 form
+    # ``file:///home/...``), and on Windows yields ``C:/...`` so the URI becomes
+    # ``file://C:/...`` — the non-standard but pyiceberg-parseable form. The
+    # canonical RFC form ``file:///C:/...`` is rejected by pyiceberg 0.8.1's
+    # ``PyArrowFileIO.parse_location`` which leaves ``/C:/...`` and explodes
+    # inside ``pyarrow.fs.LocalFileSystem`` with ``WinError 123``.
+    # Upstream: https://github.com/apache/iceberg-python/issues/1005
+    #           https://github.com/apache/iceberg-python/pull/996  (never merged)
+    #           https://github.com/apache/iceberg-python/issues/2477
+    # As of pyiceberg 0.11.x main branch (May 2026) the bug is unfixed, so this
+    # workaround stays even after ADR-003 upgrade. RFC 8089 §E.2 acknowledges
+    # the two-slash Windows form: https://datatracker.ietf.org/doc/html/rfc8089
+    # Docs: https://py.iceberg.apache.org/configuration/#fileio
     return load_catalog(
         "default",
-        **{
-            "type": "sql",
-            "uri": f"sqlite:///{catalog_db.resolve().as_posix()}",
-            "warehouse": f"file:///{warehouse_dir.resolve().as_posix()}",
-        },
+        type="sql", uri=f"sqlite:///{catalog_db.resolve().as_posix()}", warehouse=f"file://{warehouse_dir.resolve().as_posix()}",
     )
 
 
@@ -196,10 +210,8 @@ def ingest_sqlite_to_iceberg(
     # classname reaches the caller (mirrors PoC #1; v4.1 §6.4).
     try:
         catalog = _open_catalog(warehouse_dir)
-        try:
+        with contextlib.suppress(NamespaceAlreadyExistsError):
             catalog.create_namespace(dest_namespace)
-        except NamespaceAlreadyExistsError:
-            pass
         identifier = (dest_namespace, dest_table)
         try:
             iceberg_table = catalog.create_table(identifier, schema=iceberg_schema)

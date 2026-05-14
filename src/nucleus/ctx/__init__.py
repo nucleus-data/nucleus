@@ -6,30 +6,40 @@ internal and may change without notice.
 
 Typical use::
 
-    import nucleus.ctx as nx
+    import nucleus.ctx as ctx
 
-    ctx = nx.context()
-    ctx.copy_from(source="postgres://...", table="public.orders", target="raw.orders")
-    ctx.sql("SELECT * FROM {{ ref('raw.orders') }}", target="staging.orders")
-    ctx.run("staging.orders")
+    rows = ctx.copy_from(
+        "sqlite:///./data/orders.db",
+        table="orders",
+        target="bronze.orders",
+        warehouse_dir="./warehouse",
+    )
 
-Current status (v0.0.0, Pre-Heartbeat): the public surface is empty
-except for re-exporting :class:`NucleusError` so users can write
-``except nucleus.ctx.NucleusError as exc:``.
+    df = ctx.sql(
+        "SELECT * FROM {{ ref('bronze.orders') }}",
+        warehouse_dir="./warehouse",
+    ).collect()
 
-Planned content (lands progressively through Tier 0 → Tier 1):
-    - ``context()`` lifecycle constructor
-    - ``copy_from()`` ingestion helper
-    - ``sql()`` SQL transformation (Jinja-aware)
-    - ``read()`` lazy reader
-    - ``run()`` materialization
-    - ``lineage()`` / ``history()`` / ``schema()`` inspection
-    - ``@asset`` decorator
-    - ``NucleusError`` and all named subclasses
+    orders = ctx.read("bronze.orders", warehouse_dir="./warehouse").collect()
 
-See ``nucleus_ctx_sdk_spec.md`` for the full specification.
+Current status (v0.1 stabilization):
+    - ``copy_from()``    Beta    unified ingest dispatcher (sqlite/postgres/mysql)
+    - ``sql()``          Beta    Jinja-aware SQL execution against the warehouse
+    - ``read()``         Beta    lazy reader of materialized assets
+    - ``ingest_sqlite_to_iceberg()``     legacy direct-ingest helper
+    - ``ingest_postgres_to_iceberg()``   legacy direct-ingest helper
+    - ``ingest_mysql_to_iceberg()``      legacy direct-ingest helper
+    - ``NucleusError``   Stable  base exception for all SDK failures
 
-Dependency direction (``engineering.md`` §3.1):
+Deferred to v0.2+ (per ADR-013 + Phase D scope):
+    - ``ctx.write()``    use asset body return for now
+    - ``ctx.log()``      use stdlib ``logging`` module for now
+    - ``ctx.params()``   use CLI / config for now
+
+See ``nucleus_ctx_sdk_spec.md`` for the full specification and the
+Stability tier matrix (ADR-005).
+
+Dependency direction (``nucleus_architecture_v4.1.md`` §5.5):
     ctx may import from intelligence, coordination, engines, physics, _internal,
     and the top-level ``nucleus.errors``.
     ctx must NEVER be imported by lower layers (cycle-prevention).
@@ -37,8 +47,28 @@ Dependency direction (``engineering.md`` §3.1):
 
 from __future__ import annotations
 
+from nucleus.ctx._dispatch import copy_from
+from nucleus.ctx.copy_from import ingest_sqlite_to_iceberg
+from nucleus.ctx.copy_from_filesystem import ingest_filesystem_to_iceberg
+from nucleus.ctx.copy_from_gcs import ingest_gcs_to_iceberg
+from nucleus.ctx.copy_from_mysql import ingest_mysql_to_iceberg
+from nucleus.ctx.copy_from_postgres import ingest_postgres_to_iceberg
+from nucleus.ctx.copy_from_s3 import ingest_s3_to_iceberg
+from nucleus.ctx.copy_from_snowflake import ingest_snowflake_to_iceberg
+from nucleus.ctx.read import read
+from nucleus.ctx.sql import sql
 from nucleus.errors import NucleusError
 
 __all__ = [
     "NucleusError",
+    "copy_from",
+    "ingest_filesystem_to_iceberg",
+    "ingest_gcs_to_iceberg",
+    "ingest_mysql_to_iceberg",
+    "ingest_postgres_to_iceberg",
+    "ingest_s3_to_iceberg",
+    "ingest_snowflake_to_iceberg",
+    "ingest_sqlite_to_iceberg",
+    "read",
+    "sql",
 ]

@@ -1,22 +1,19 @@
-"""Intelligence layer — AI-assisted authoring & operations (L3).
+"""Nucleus Intelligence layer — AI Copilot (v0.2+).
 
-**This layer is empty in v0.1.** Per ``AGENTS.md`` and the staged release
-plan, AI features land in later tiers:
+Layer 5 per ``nucleus_architecture_v4.1.md`` §7 (AI Copilot staging:
+v0.2 = inline chat, CLI-only, single-turn; v0.5+ adds ``ctx.agent`` runtime).
 
-    - v0.2    Workbench Copilot (simple chat)
-    - v0.3    Workbench Copilot (schema-aware)
-    - v0.5    Lineage-aware Copilot + ``ctx.agent`` runtime
-    - v0.7+   Semantic Knowledge Graph + Cost-aware planner
-    - v0.8+   Replay / time-travel debugger
+Per ADR-015: the **only** public surface is :func:`chat` and
+:class:`CopilotReply`. Internal helpers (``gather_context``,
+``build_prompt``, ``translate_litellm_exception``) are private to this
+package and must NOT be imported externally.
 
-Per ``nucleus_architecture_v4.1.md`` §13.3, AI-related APIs may have
-breaking changes in minor versions (with ``NucleusAIBreakingChange``
-warnings) — they evolve faster than the core data APIs which follow
-strict semver.
+# Stability: Internal @ v0.2 → Beta @ v0.2 ship → Stable @ v0.5
 
-Dependency direction (``engineering.md`` §3.1):
-    intelligence may import from coordination, engines, physics, _internal.
-    intelligence must NEVER import from ctx or cli.
+Architecture ref: ``nucleus_architecture_v4.1.md`` §7.2 (v0.2 CLI chat MVP)
+Decision: ``docs/decisions/ADR-015-ai-chat-mvp.md``
 """
 
-from __future__ import annotations
+from nucleus.intelligence.copilot import CopilotReply, chat
+
+__all__ = ["CopilotReply", "chat"]

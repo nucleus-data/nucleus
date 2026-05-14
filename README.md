@@ -1,256 +1,204 @@
 # Nucleus
 
-> **Modern composable data engineering platform — AI-assisted, built on open Apache foundations, graduates cleanly when you outgrow it.**
+**Quickstart:** [`docs/onboarding/quickstart.md`](docs/onboarding/quickstart.md) · **Examples:** [`examples/01-ecommerce-elt/`](examples/01-ecommerce-elt/) · **Roadmap anchor:** [`nucleus_architecture_v4.1.md` section 18 — Roadmap](nucleus_architecture_v4.1.md#18-roadmap)
 
-[![Status: Pre-Heartbeat](https://img.shields.io/badge/status-pre--heartbeat-orange)]()
+[![Status: v0.1 beta](https://img.shields.io/badge/status-v0.1%20beta-yellow)]()
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)]()
+[![Python](https://img.shields.io/badge/python-3.11-blue)]()
+
+> # Ship data products from a laptop.
+>
+> **What:** A local-first Python SDK (`ctx`) and CLI (`nucleus`) for Iceberg-native pipelines and analytics stacks on open Apache foundations, **AI-ready by design** (Copilot and agents are optional layers — not the product headline).
+>
+> **Who:** Teams matching **[`nucleus_architecture_v4.1.md` section 1.5](nucleus_architecture_v4.1.md#15-the-beachhead-v01-through-v10)** — think **~5 engineers**, **~100GB–5TB** greenfield data, building net-new analytics on laptops before they graduate to a cloud warehouse.
+>
+> **Why:** One coherent surface over DuckDB, Polars, Iceberg, and embedded orchestration — **no JVM** in the default path, Apache-2.0 core, and Iceberg snapshots you can take to Databricks, Snowflake, or REST catalogs when you outgrow a single node.
 
 ---
 
-## What is Nucleus?
+## v0.1 beta — what works vs. what waits
 
-A lightweight, AI-assisted data platform for small-to-mid data teams that **complements** Databricks/Snowflake instead of competing with them. Built by wrapping the best of the modern data stack — **DuckDB, Polars, Apache Iceberg, PyArrow, Dagster** — behind a single clean SDK and a single CLI.
+| Works today (stabilization) | Still ahead |
+|-----------------------------|------------|
+| `nucleus init`, `up`, `down`, `run`, `ingest`, `query`, `version` | First-class PyPI packaging polish (install today via editable git checkout) |
+| `ctx.copy_from` (SQLite / Postgres / MySQL), `ctx.sql` + Jinja `ref`, `ctx.read` | Hosted Iceberg REST catalog co-defaults (Lakekeeper / Polaris) |
+| `@nucleus.asset`, `@nucleus.check`, `nucleus materialize` path via the AMA | Workbench web IDE, lineage-aware Copilot, broad connector marketplace |
+| Filesystem Iceberg catalog + local warehouse | Enterprise IAM — Nucleus delegates identity to OIDC when that layer ships |
 
-```python
-import nucleus as nx
+This is **beta** software: expect rough edges; pin versions and read [`docs/compatibility.md`](docs/compatibility.md) before upgrading anything.
 
-ctx = nx.context()
+---
 
-# One-liner ingestion — Postgres to Iceberg
-ctx.copy_from(
-    source="postgres://localhost/orders",
-    table="public.orders",
-    target="raw.orders",
-)
+## Install
 
-# SQL transformation with Jinja
-ctx.sql("""
-    SELECT customer_id, SUM(amount) AS total
-    FROM {{ ref('raw.orders') }}
-    GROUP BY 1
-""", target="marts.customer_totals")
+**Python 3.11** is the primary supported interpreter (3.12 may work; follow `pyproject.toml`).
 
-# Or Python with Polars
-@nucleus.asset
-def customer_segments(orders: pl.DataFrame) -> pl.DataFrame:
-    return orders.group_by("customer_id").agg(
-        pl.col("amount").sum().alias("ltv")
-    )
+```bash
+git clone https://github.com/nucleus-data/nucleus.git
+cd nucleus
+python3.11 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
 ```
 
-That's it. No clusters to manage. No JVM. No vendor lock-in. **Open table format from day one.**
+When publishing completes, **`pip install nucleus`** becomes the default path; until then the editable install above is the supported developer workflow.
+
+---
+
+## 30-second demo (condensed beachhead path)
+
+**A — Zero external data (uses the `nucleus init` greeting asset):**
+
+```bash
+nucleus init beachhead-demo && cd beachhead-demo
+nucleus up
+nucleus run example.greeting
+nucleus query "SELECT * FROM {{ ref('example.greeting') }} LIMIT 5"
+nucleus down
+```
+
+**B — Same flow with one SQLite ingest** (create `./data/orders.db` with an `orders` table first — see [`docs/recipes/sqlite_to_iceberg.md`](docs/recipes/sqlite_to_iceberg.md)):
+
+```bash
+nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders
+nucleus query "SELECT count(*) FROM {{ ref('raw.orders') }}"
+```
+
+The **under 30 minutes** onboarding target (postgres + object storage + BI-ready mart) is spelled out in **architecture section 1.5**; the guided walkthrough lives in [`docs/onboarding/quickstart.md`](docs/onboarding/quickstart.md), with **`examples/01-ecommerce-elt/`** as the next “real project” step.
+
+---
+
+## Comparison (startup team lens — honest)
+
+| Dimension | dbt-core | Dagster | Airflow | Databricks | Nucleus |
+|-----------|----------|---------|---------|--------------|---------|
+| **SQL-centric transforms** | Excellent | Good via libs | DIY | Excellent | Strong via `ctx.sql` + Jinja; **smaller macro ecosystem than dbt** |
+| **Asset graph + orchestration** | Needs a runner | Excellent | Excellent | Excellent | **v0.1 uses explicit `nucleus run`**; embedded orchestration stays hidden per architecture |
+| **Iceberg-first laptop story** | Adapter-dependent | DIY wiring | DIY | Cloud-first | **Filesystem catalog + Iceberg writes are the default path** |
+| **Operational maturity** | High | High | Very high | Very high | **Beta** — fewer integrations, less production mileage |
+| **Team you optimize for** | Analytics engineering | Platform-adjacent eng | Batch ops | Enterprise + SQL devs | **Small product teams shipping from git + laptop** |
+
+We are **not** claiming to beat Databricks on breadth or Airflow on install base — we **are** optimizing for **local Iceberg + small-team velocity**, with a clean **graduation path** when laptops stop being enough.
+
+---
+
+## What is Nucleus (slightly longer)
+
+A **local-first Python SDK + CLI** that wraps DuckDB, Polars, Apache Iceberg, PyArrow, and embedded orchestration behind **`ctx`** (programmatic) and **`nucleus`** (operator). A **data product** here means an Iceberg-backed **asset** with transforms, **contracts** (`@nucleus.check`), and lineage metadata — see **`nucleus_architecture_v4.1.md` section 12.1** for the precise definition. Vocabulary guidance for docs and UI: [`AGENTS.md`](AGENTS.md) section 7.
+
+```python
+import nucleus.ctx as ctx
+
+ctx.copy_from(
+    "postgres://localhost/ecommerce",
+    table="public.orders",
+    target="raw.orders",
+    warehouse_dir="./data/warehouse",
+)
+df = ctx.sql(
+    "SELECT customer_id, sum(amount) AS total FROM {{ ref('raw.orders') }} GROUP BY 1",
+    warehouse_dir="./data/warehouse",
+).collect()
+```
 
 ---
 
 ## Why Nucleus exists
 
-Existing data platforms force you to choose:
+| You want… | But you often get… |
+|-----------|-------------------|
+| Lightweight local development | Heavy cluster boot | 
+| Open formats | Vendor-only exports |
+| Composable engines | Opaque bundles |
+| Graduate without re-writing Iceberg | Lock-in by query dialect |
 
-| You want… | But you get… |
-|-----------|--------------|
-| Lightweight & local-dev friendly | Heavyweight cluster setup |
-| Open formats & no lock-in | Vendor-specific everything |
-| Modern composable engines | Monolithic black box |
-| AI-assisted authoring | Plain notebooks + IntelliSense |
-| Production-grade orchestration | DIY cron/Airflow |
-| Graduate cleanly when you scale | Forklift rewrite to Spark/Snowflake |
-
-Nucleus gives you **all of the above** by wrapping proven OSS components behind two abstractions: `ctx` (the SDK) and `nucleus` (the CLI).
-
-When your data outgrows a single laptop or node — your **Iceberg tables come with you**. Point Databricks/Snowflake/Trino at the same warehouse path. Zero rewrite.
+Nucleus optimizes the **on-ramp**; when you exceed single-node scale, **your Iceberg assets remain portable**.
 
 ---
 
 ## The Five Pillars
 
-Nucleus is designed around five non-negotiable principles, mirrored verbatim from [`nucleus_architecture_v4.1.md`](nucleus_architecture_v4.1.md) §2 and [`AGENTS.md`](AGENTS.md) §6.
+Mirrored from **`nucleus_architecture_v4.1.md` section 2** and [`AGENTS.md`](AGENTS.md) section 6:
 
-1. **High performance on minimal resources** — DuckDB + Polars + Arrow zero-copy. Laptop → 100GB. Single node → 5TB. No JVM, no cluster.
-2. **Composable by constitution** — Every Tier 1/2 dependency has a clean swap interface and CI smoke tests. Full adapter built on-demand, not pre-emptively.
-3. **AI-assisted by design** — Errors, lineage, schemas, and the `ctx` SDK are all engineered for LLM comprehension. We assist with AI; we are not an AI/ML platform.
-4. **Familiar UX from proven giants** — Borrow vocabulary and ergonomics from dbt / Dagster / Cursor. No new mental models we don't need.
-5. **Friendly to giants, hostile to no-one** — Iceberg portability means users graduate to Databricks/Snowflake without rewriting; we never compete head-on.
-
----
-
-## Status: Pre-Heartbeat
-
-**This repository is in the planning + scaffolding phase.** No runnable code yet.
-
-| Tier | What | Status | ETA |
-|------|------|--------|-----|
-| **Pre-code** | Architecture + specs + scaffolding | In progress | Month 0 (now) |
-| **Tier 0: Heartbeat** | First working slice (Postgres → Iceberg → SELECT) | Not started | Month 1-2 |
-| **Tier 1: Foundation** | v0.1 — beachhead-ready (5-20 person teams, <30 min onboarding) | Not started | Month 2-8 |
-| **Tier 2: Workbench** | v0.2 — web IDE + simple Copilot | Not started | Month 8-14 |
-| **Tier 3: Connectors** | v0.3 — Lakekeeper, more sources/sinks, dbt-duckdb adapter | Not started | Month 14-20 |
-| **Tier 4: Intelligence** | v0.5 — lineage-aware Copilot + `ctx.agent` runtime (Semantic Knowledge Graph lands v0.7+) | Not started | Month 20-28 |
-| **v1.0 GA** | Public stable release | Not started | Month 28-36 |
-
-**Reality check**: This is a solo-founder project, paced for one person + AI agents. See [`nucleus_poc_plan.md`](nucleus_poc_plan.md) for the 5 Proof-of-Concept validations that must pass before Heartbeat.
+1. **High performance on minimal resources** — DuckDB + Polars + Arrow; cold start budget **under ~10s** for `nucleus up`.
+2. **Composable by constitution** — Tier 1/2 dependencies expose swap interfaces + smoke tests; **full alternate implementations stay on-demand**, not preemptive.
+3. **AI-ready by design** — structured errors, schemas, and `ctx` ergonomics that LLMs can steer; **AI assists, it does not replace the data path**.
+4. **Familiar UX** — borrow patterns from dbt / Dagster-style assets / modern CLI tooling.
+5. **Friendly to giants** — Iceberg portability lets teams **graduate** to Databricks/Snowflake/REST catalogs without re-platforming the warehouse bytes.
 
 ---
 
-## Architecture (one-page)
+## Architecture (one page)
 
-Five layers, top-to-bottom:
+Five layers (bottom → top): **Physics** (Arrow, Iceberg, Parquet, S3 API) → **Engines** (DuckDB, Polars, …) → **Coordination** (materialization + lineage) → **Intelligence** (Copilot, agents — staged) → **Experience** (`ctx` + CLI + Workbench).
 
-```
-┌────────────────────────────────────────────────────────┐
-│  L4: EXPERIENCE     ctx SDK · nucleus CLI · Workbench  │
-├────────────────────────────────────────────────────────┤
-│  L3: INTELLIGENCE   Copilot · ctx.agent · Semantic KG  │
-├────────────────────────────────────────────────────────┤
-│  L2: COORDINATION   Asset Materialization (Dagster)    │
-├────────────────────────────────────────────────────────┤
-│  L1: ENGINES        DuckDB · Polars · DataFusion · Daft │
-├────────────────────────────────────────────────────────┤
-│  L0: PHYSICS        Arrow · Iceberg · Parquet · S3 API  │
-└────────────────────────────────────────────────────────┘
-```
-
-See:
-- [`nucleus_architecture_v4.1.md`](nucleus_architecture_v4.1.md) — the full source-of-truth (1678 lines)
-- [`docs/architecture/`](docs/architecture/) — C4 diagrams and sequence flows
-- [`docs/decisions/`](docs/decisions/) — Architecture Decision Records (ADRs)
+- [`nucleus_architecture_v4.1.md`](nucleus_architecture_v4.1.md) — source of truth (**section 18** = versioned roadmap).
+- [`docs/architecture/`](docs/architecture/) — diagrams and sequences.
 
 ---
 
-## Two abstractions, zero surprises
+## Operator & developer surfaces
 
-Everything users touch is one of two things:
-
-### 1. The `ctx` SDK — Python API for assets
+### `ctx` SDK
 
 ```python
-ctx.copy_from(source=..., target="raw.events")   # Ingest
-ctx.sql(query, target="marts.daily_revenue")     # Transform (SQL+Jinja)
-ctx.read("marts.daily_revenue").to_polars()      # Read
-ctx.run("marts.daily_revenue")                   # Materialize
-ctx.lineage("marts.daily_revenue")               # Inspect
+import nucleus.ctx as ctx
+from nucleus import materialize
+
+warehouse = "./data/warehouse"
+ctx.copy_from("sqlite:///./data/events.db", table="events", target="raw.events", warehouse_dir=warehouse)
+ctx.sql("SELECT * FROM {{ ref('raw.events') }}", warehouse_dir=warehouse)
+ctx.read("raw.events", warehouse_dir=warehouse)
+materialize("marts.daily_revenue")  # after `@nucleus.asset` registration + import
 ```
 
-### 2. The `nucleus` CLI — operator interface
+### `nucleus` CLI (v0.1)
 
 ```bash
-nucleus up                           # Boot local stack <10s
-nucleus init my-project              # Scaffold project
-nucleus run                          # Materialize all assets
-nucleus run marts.daily_revenue      # Materialize one
-nucleus lineage marts.daily_revenue  # Show DAG
-nucleus inspect raw.events           # Show schema/snapshots
-nucleus catalog list                 # List tables
-nucleus down                         # Tear down
+nucleus init my-project && cd my-project
+nucleus up
+nucleus ingest sqlite:///./db.sqlite --table t --as raw.events
+nucleus query "SELECT * FROM {{ ref('raw.events') }} LIMIT 10"
+nucleus run marts.daily_revenue
+nucleus down
+nucleus version
 ```
 
-**No third surface.** No `nucleus dagster ...`, no escape hatches except behind a clearly-labeled `ctx._advanced` namespace. The boundary is the product.
+Detailed flag and stability text: [`nucleus_cli_spec.md`](nucleus_cli_spec.md).
 
 ---
 
-## Five non-negotiables (Hard Constraints)
+## Yield-to-giants strategy
 
-From [`AGENTS.md`](AGENTS.md), there are **11 hard constraints** every contribution must satisfy. The top five for users to know:
-
-1. **No JVM.** Pure Python + native binaries. Cold start <10s.
-2. **No custom scheduler.** Dagster handles orchestration. We never reinvent it.
-3. **No custom commit service.** Iceberg catalog handles atomic commits. We never reinvent it.
-4. **Iceberg is the only table format we materialize to.** Open. Portable. Forever.
-5. **The `ctx` SDK is the only public surface.** No leaking Dagster/PyIceberg/DuckDB types past v1.0.
-
-The other six cover observability, composability, AI workflow discipline, LOC budget, documentation, and upgrade safety. See [`AGENTS.md`](AGENTS.md) §3.
+Nucleus **complements** Databricks/Snowflake — Iceberg bytes port first; hybrid dispatch and federation are **later roadmap items** (`nucleus_architecture_v4.1.md` section 8).
 
 ---
 
-## Yield-to-Giants strategy
-
-Nucleus does **not** compete with Databricks, Snowflake, or BigQuery. We complement them.
-
-| Mode | What | When |
-|------|------|------|
-| **1. Graduation** | Your Iceberg tables work directly with Databricks/Snowflake. Stop using Nucleus, keep your data. | When you exceed single-node scale (~5-10TB hot data, 100+ users) |
-| **2. Hybrid Dispatch** | `@nucleus.sql_asset(compute="databricks")` ships heavy queries to Databricks; local stays for dev/small jobs. | Per-asset (planned v0.5, per v4.1 §10.2) |
-| **3. Federation** | Nucleus orchestrates assets that live in Databricks/Snowflake. We're the control plane; they're the engines. | Data mesh setup (planned v1.0) |
-
-We are **the on-ramp**, not the destination. This is intentional and is the core of our acquisition thesis. See [`nucleus_architecture_v4.1.md`](nucleus_architecture_v4.1.md) §8.
-
----
-
-## Quickstart (when Tier 0 ships)
-
-> **Not runnable yet.** Tier 0 ETA: Month 1-2.
-
-```bash
-# Install
-pip install nucleus
-
-# Boot local stack
-nucleus up                          # <10s — Iceberg + DuckDB + Dagster wired up
-
-# Scaffold a project
-nucleus init my-project
-cd my-project
-
-# Ingest from Postgres
-nucleus ingest postgres://localhost/db --table=orders --target=raw.orders
-
-# Open Workbench (v0.2+) or use SDK
-nucleus workbench                   # http://localhost:3000
-```
-
-Target: **From `git clone` to a BI-ready Iceberg table in under 30 minutes** for a competent data engineer. This is the v0.1 success metric.
-
----
-
-## Repository structure
+## Repository structure (abridged)
 
 ```
 .
-├── AGENTS.md                       # Universal AI-agent instructions
-├── README.md                       # This file
-├── LICENSE                         # Apache 2.0
-├── pyproject.toml                  # Dependencies + tool config
-├── nucleus_architecture_v4.1.md    # Source-of-truth architecture (1678 lines)
-├── nucleus_poc_plan.md             # 5 PoCs before v0.1 implementation
-├── nucleus_architecture_v4.md      # DEPRECATED — see v4.1
-├── nucleus_architecture_v3.md      # DEPRECATED — see v4.1
-│
-├── .cursor/rules/                  # Cursor-specific agent rules
-│   └── nucleus.mdc
-│
-├── docs/
-│   ├── architecture/               # C4 diagrams, sequence flows
-│   ├── conventions/                # Engineering conventions
-│   ├── decisions/                  # ADRs (Architecture Decision Records)
-│   ├── patterns/                   # Big data patterns (type mapping, partitioning, …)
-│   ├── research/                   # Library research notes (Constraint #10)
-│   ├── security/                   # Threat model + security review
-│   └── compatibility.md            # Tested version matrix (Constraint #11)
-│
-├── src/nucleus/                    # Source code (does not exist yet)
-│   ├── ctx/                        # ctx SDK
-│   ├── cli/                        # nucleus CLI
-│   ├── engines/                    # Engine adapters
-│   ├── coordination/               # Dagster wrappers
-│   ├── intelligence/               # AI Layer (post v0.2)
-│   └── physics/                    # Iceberg, Arrow, format adapters
-│
-├── tests/                          # pytest suite
-├── poc/                            # PoC validations (5 of them, see poc_plan)
-└── scripts/                        # Maintenance scripts (LOC budget, leak check, …)
+├── AGENTS.md                      # Contributor + vocabulary rules
+├── README.md                      # This file
+├── nucleus_architecture_v4.1.md # Architecture + roadmap (section 18)
+├── examples/                      # Curated end-to-end samples (start at 01-ecommerce-elt)
+├── src/nucleus/                   # Implementation (ctx, CLI, coordination, …)
+├── docs/                          # Onboarding, recipes, patterns, decisions
+├── tests/
+├── poc/                           # Historical PoC snapshots
+└── scripts/                       # Governance (vocabulary, pins, LOC, leak check, …)
 ```
 
 ---
 
 ## Contributing
 
-**Not yet open to external contributions.** The project is in single-author phase until Tier 1 ships.
+**External contributions are limited** while Tier 1 stabilizes — open an issue before large changes.
 
-When external contributions open:
-1. Read [`AGENTS.md`](AGENTS.md) — every PR must satisfy the 11 hard constraints
-2. Read [`docs/conventions/engineering.md`](docs/conventions/engineering.md) — coding standards
-3. Open an issue before writing code for anything >50 LOC
-4. Every architectural change starts with an ADR in [`docs/decisions/`](docs/decisions/)
+When the project opens up:
+
+1. Read [`AGENTS.md`](AGENTS.md) — hard constraints are non-negotiable.
+2. Follow [`docs/conventions/engineering.md`](docs/conventions/engineering.md).
+3. Architectural forks start as recorded decisions under `docs/decisions/`.
 
 ---
 
@@ -262,19 +210,15 @@ Apache 2.0 — see [`LICENSE`](LICENSE).
 
 ## Acknowledgments
 
-Nucleus stands on the shoulders of giants. We **wrap** these projects, we don't build over them:
+Nucleus **wraps** — it does not replace — these projects:
 
-- [Apache Arrow](https://arrow.apache.org/) — columnar in-memory format
-- [Apache Iceberg](https://iceberg.apache.org/) / [PyIceberg](https://py.iceberg.apache.org/) — open table format
-- [Apache Parquet](https://parquet.apache.org/) — columnar storage
-- [DuckDB](https://duckdb.org/) — embedded analytical engine
-- [Polars](https://pola.rs/) — Rust-based DataFrame
-- [Dagster](https://dagster.io/) — asset-based orchestration
-- [DataFusion](https://datafusion.apache.org/) — distributed query engine (future)
-- [OpenLineage](https://openlineage.io/) / [OpenTelemetry](https://opentelemetry.io/) — observability standards
+- [Apache Arrow](https://arrow.apache.org/), [Apache Iceberg](https://iceberg.apache.org/) / [PyIceberg](https://py.iceberg.apache.org/), [Apache Parquet](https://parquet.apache.org/)
+- [DuckDB](https://duckdb.org/), [Polars](https://pola.rs/)
+- [Dagster](https://dagster.io/)
+- [OpenLineage](https://openlineage.io/), [OpenTelemetry](https://opentelemetry.io/)
 
-If we build value, it's because these projects exist. Donate to them.
+If we ship something useful, it is because these foundations exist. Support them.
 
 ---
 
-*Made for solo data engineers and small teams who want power without weight.*
+*For **small teams** who need **Iceberg-native** assets **today** without staffing a platform org — and who want a **documented path** when laptops stop being enough.*

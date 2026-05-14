@@ -26,7 +26,7 @@ flowchart TB
         ML["<b>ML Engineer</b><br/>Trains models<br/>Reads features"]:::user
     end
 
-    NUCLEUS["<b>Nucleus Platform</b><br/>━━━━━━━━━━━━━━━━━<br/>Modern composable data<br/>engineering platform.<br/>Local-first, AI-assisted,<br/>built on Apache OSS."]:::nucleus
+    NUCLEUS["<b>Nucleus Platform</b><br/>━━━━━━━━━━━━━━━━━<br/>Ship data products<br/>from a laptop.<br/>Local-first Python SDK + CLI<br/>for Iceberg-native pipelines."]:::nucleus
 
     subgraph sources["Data sources"]
         PG["<b>Operational DBs</b><br/>Postgres, MySQL,<br/>SQLite"]:::ext

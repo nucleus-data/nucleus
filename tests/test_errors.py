@@ -12,17 +12,17 @@ from __future__ import annotations
 
 import pytest
 
+import nucleus.errors as nucleus_errors
 from nucleus.errors import (
     NucleusAssetNotFound,
     NucleusAssetNotMaterialized,
-    NucleusCommitConflictError,
     NucleusError,
     NucleusInternalError,
     NucleusSchemaError,
     NucleusSourceConnectionError,
-    __all__ as ERRORS_ALL,
 )
 
+ERRORS_ALL = nucleus_errors.__all__
 
 # ============================================================================
 # Three-field contract
@@ -199,7 +199,7 @@ class TestPublicSurface:
             if name == "NucleusError":
                 continue
             cls = getattr(mod, name)
-            assert cls.DEFAULT_DOCS_URL != base_default, (
+            assert base_default != cls.DEFAULT_DOCS_URL, (
                 f"{name} should override DEFAULT_DOCS_URL with a specific slug"
             )
 

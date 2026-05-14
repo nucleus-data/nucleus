@@ -1,0 +1,18 @@
+# Example: e-commerce ELT (Postgres + SQLite → Iceberg)
+# See README.md in this directory.
+
+project:
+  name: ecommerce_demo
+  profile: default
+  generated_at: "2026-05-14"
+
+catalog:
+  type: filesystem
+  path: ./.nucleus/catalog.db
+
+storage:
+  warehouse: ./data/warehouse
+
+lineage:
+  transport: file
+  path: ./.nucleus/lineage/events.jsonl

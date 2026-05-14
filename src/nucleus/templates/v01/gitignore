@@ -1,0 +1,15 @@
+# Nucleus local state — created by `nucleus up` and `nucleus run`.
+.nucleus/
+data/
+catalog.db
+catalog.db-*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Secrets — NEVER commit
+.env
+.env.*
+!.env.example

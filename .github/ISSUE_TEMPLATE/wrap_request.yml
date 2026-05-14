@@ -1,0 +1,62 @@
+name: Wrap request (OSS vs build)
+description: Propose wrapping a source or engine instead of building it in-house.
+title: "[wrap] "
+labels: ["wrap-request"]
+body:
+  - type: input
+    id: component
+    attributes:
+      label: Source or engine name
+      description: What capability are you asking us to wrap (e.g. connector, catalog, scheduler)?
+      placeholder: e.g. DuckDB, dlt, Lakekeeper REST catalog
+    validations:
+      required: true
+
+  - type: input
+    id: docs_url
+    attributes:
+      label: Official documentation URL
+      description: Primary upstream docs URL (per AGENTS.md official-docs discipline).
+      placeholder: https://
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: wrap_checklist
+    attributes:
+      label: OSS wrap feasibility
+      description: Confirm you have checked the upstream surface.
+      options:
+        - label: A production-grade OSS component already exists for this concern
+          required: true
+        - label: License and maintenance posture look acceptable for our stack
+          required: true
+        - label: There is a documented API we can wrap without inventing primitives
+          required: true
+
+  - type: textarea
+    id: gate_8
+    attributes:
+      label: AGENTS.md 8-question gate (paste answers)
+      description: >
+        Answer each with yes / no / defer and one line of evidence. Criteria are in
+        AGENTS.md section 5 (8-question decision framework).
+      value: |
+        1. Maps to a v4.1 architectural layer?
+        2. Serves the beachhead metric (clone to first BI-ready Iceberg asset < 30 minutes)?
+        3. Wrap possible instead of build?
+        4. Preserves no-JVM constraint?
+        5. Preserves local-identical-to-prod?
+        6. Stays within proprietary LOC budget?
+        7. Triggered by empirical signal, not anxiety?
+        8. Required for v0.1 Hello World, or can it defer?
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes / links
+      description: RFCs, prior art, swap interface ideas, or risks.
+    validations:
+      required: false

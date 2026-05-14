@@ -1,0 +1,19 @@
+# Opt-in alternate per ADR-008. AGPLv3; upstream archived 2026-04-25.
+# Default: docker-compose.yml (SeaweedFS, Apache-2.0).
+# Docs: https://github.com/minio/minio (archived) · https://docs.min.io/
+# Status: STUB — ADR-008 implementation work fleshes out post-acceptance.
+version: "3.8"
+services:
+  storage:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z  # AGPLv3, actual terminal OSS release, sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e (verified by Worker B 2026-05-13)
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./.nucleus/storage:/data
+    restart: unless-stopped
+# NEEDS VERIFICATION: arm64 manifest availability for this exact tag (archived upstream — no future builds per docs/research/minio.md §3.2 + SETUP.md §M8 #2).

@@ -1,0 +1,15 @@
+project:
+  name: test-project
+  profile: default
+  generated_at: "2026-05-13"
+
+catalog:
+  type: filesystem
+  path: ./.nucleus/catalog.db
+
+storage:
+  warehouse: ./data/warehouse
+
+lineage:
+  transport: file
+  path: ./.nucleus/lineage/events.jsonl

@@ -77,6 +77,19 @@ Tick the box if the constraint is **NOT** violated by this PR. If a constraint i
 
 ---
 
+## Dependency & API Governance (per ADR-005 / ADR-006 / ADR-007)
+
+Tick each box that applies. If a box does NOT apply to this PR (e.g., no new deps), tick it anyway and note "n/a" below.
+
+- [ ] **License tier (ADR-007)** — if adding a new runtime dependency, classified GREEN / YELLOW / RED per `docs/decisions/ADR-007-dependency-license-tier-policy.md`; RED rejected; YELLOW requires a Cloud-impact note (see ADR-007 §Tier 2). `python scripts/check_licenses.py` is green after this PR.
+- [ ] **Error code (ADR-006)** — if adding a new `NucleusError` subclass, includes `error_code: ClassVar[str]` matching `^NE[1-5]\d{3}$` per `docs/decisions/ADR-006-nucleus-error-code-numbering.md`. `python scripts/check_error_codes.py` is green after this PR.
+- [ ] **API stability tag (ADR-005)** — if touching `src/nucleus/__init__.py` `__all__` (adding / removing / renaming a public symbol), every new public symbol carries a `# Stability: <Frozen|Stable|Beta|Internal>` tag in its docstring per `docs/decisions/ADR-005-ctx-sdk-api-freeze-policy.md`. `python scripts/check_api_stability.py` is green after this PR.
+
+**Governance notes** (only for items unchecked or `n/a`):
+<!-- -->
+
+---
+
 ## LOC budget
 
 Run `python scripts/loc_budget.py --report` and paste the cumulative line:

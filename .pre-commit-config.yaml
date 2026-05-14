@@ -1,80 +1,21 @@
-# ============================================================================
-# Nucleus — pre-commit configuration
-# ============================================================================
-# Runs locally before each `git commit`. Catches violations BEFORE you push.
-#
-# Install once:        pip install pre-commit && pre-commit install
-# Run on all files:    pre-commit run --all-files
-# Skip (emergency):    git commit --no-verify        # DO NOT use casually
-#
-# What this enforces (matches CI):
-#   - ruff check + ruff format       (engineering.md §1.3, §1.4)
-#   - mypy on staged Python          (engineering.md §1.2)
-#   - YAML / TOML / JSON syntax
-#   - Trailing whitespace + EOF newline
-#   - No large files committed
-#   - No private keys committed
-#   - LOC budget guard               (Constraint #8)
-#   - Layer direction guard          (engineering.md §3.1)
-#   - Dagster leak guard             (v4.1 §6.4)
-#   - Forbidden vocabulary guard     (engineering.md §15)
-#
-# Hooks are skipped automatically when their relevant files aren't touched.
-# ============================================================================
-
-# Use a specific pre-commit version compatible with our tooling.
+# Nucleus pre-commit hooks (minimal v0.2 community pack subset).
+# Install: python -m pip install pre-commit && pre-commit install
+# Docs: https://pre-commit.com/
 minimum_pre_commit_version: "4.0.0"
-
-# Stop running remaining hooks after the first failure.
-# (Set to false if you'd rather see all failures at once.)
-fail_fast: false
-
-# Default Python language version (informational; respects pyproject's range).
 default_language_version:
   python: python3.11
 
-# Files we never want to touch.
-exclude: |
-  (?x)^(
-    \.venv/.*|
-    \.git/.*|
-    \.mypy_cache/.*|
-    \.pytest_cache/.*|
-    \.ruff_cache/.*|
-    warehouse/.*|
-    catalog\.db.*|
-    .*\.parquet|
-    .*\.snap|
-    .*\.lock|
-    .*\.metadata\.json
-  )$
-
 repos:
-
-  # --------------------------------------------------------------------------
-  # 1. Generic file hygiene (built-in pre-commit hooks)
-  # --------------------------------------------------------------------------
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-toml
+      - id: end-of-file-fixer
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
-      - id: end-of-file-fixer
-      - id: check-yaml
-        args: [--unsafe]   # Dagster/CI YAMLs sometimes use custom tags
-      - id: check-toml
-      - id: check-json
-      - id: check-merge-conflict
-      - id: check-added-large-files
-        args: [--maxkb=500]   # 500 KB; data files belong outside the repo
-      - id: check-case-conflict
-      - id: detect-private-key
-      - id: mixed-line-ending
-        args: [--fix=lf]      # use Unix line endings everywhere
 
-  # --------------------------------------------------------------------------
-  # 2. Ruff — linter + formatter
-  # --------------------------------------------------------------------------
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.4
     hooks:
@@ -82,74 +23,15 @@ repos:
         args: [--fix, --show-fixes]
       - id: ruff-format
 
-  # --------------------------------------------------------------------------
-  # 3. mypy — strict type-checking on staged Python (when src/ exists)
-  # --------------------------------------------------------------------------
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
-    hooks:
-      - id: mypy
-        # Only run when there's something to check.
-        files: ^(src|tests|poc|scripts)/.*\.py$
-        # Use the project config and the same deps we pin.
-        # Pre-commit isolates env; we list runtime deps here so types resolve.
-        additional_dependencies:
-          - msgspec==0.18.6
-          - pydantic==2.10.4
-          - structlog==24.4.0
-          - click==8.1.7
-          - typer==0.15.1
-          - rich==13.9.4
-          - pyarrow==18.1.0
-        args: [--config-file=pyproject.toml]
-        # Skip when no source yet (Pre-Heartbeat).
-        # Note: skip is achieved by `files:` pattern matching no files.
-
-  # --------------------------------------------------------------------------
-  # 4. Project-specific guards (local scripts)
-  # --------------------------------------------------------------------------
-
   - repo: local
     hooks:
-
-      # 4a. Constraint #11 — Pinned dependency versions
-      - id: check-pinning
-        name: Check pinned versions (Constraint #11)
-        entry: python scripts/check_pinning.py
-        language: system
-        files: ^(pyproject\.toml|docs/compatibility\.md)$
-        pass_filenames: false
-
-      # 4b. engineering.md §3.1 — Layer direction (no upward imports)
-      - id: check-layering
-        name: Check layer direction (engineering.md §3.1)
-        entry: python scripts/check_layering.py
-        language: system
-        files: ^src/nucleus/.*\.py$
-        pass_filenames: false
-
-      # 4c. v4.1 §6.4 — No Dagster leak past coordination/
-      - id: dagster-leak-check
-        name: Check no Dagster leak (v4.1 §6.4)
-        entry: python scripts/dagster_leak_check.py
-        language: system
-        files: ^src/nucleus/.*\.py$
-        pass_filenames: false
-
-      # 4d. engineering.md §15 — Forbidden vocabulary in code & docs
       - id: check-vocabulary
-        name: Check forbidden vocabulary (engineering.md §15)
+        name: check_vocabulary
         entry: python scripts/check_vocabulary.py
         language: system
-        files: \.(py|md)$
         pass_filenames: false
-
-      # 4e. Constraint #8 — LOC budget warning
-      - id: loc-budget-warn
-        name: LOC budget report (Constraint #8 — warn only locally)
-        entry: python scripts/loc_budget.py --warn
+      - id: check-pinning
+        name: check_pinning
+        entry: python scripts/check_pinning.py
         language: system
-        files: ^src/nucleus/.*\.py$
         pass_filenames: false
-        # 'language: system' uses your local Python; assumes scripts run.
-        # Warning-only locally; CI is fail-on-exceed.

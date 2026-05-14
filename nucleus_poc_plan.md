@@ -29,6 +29,8 @@ The Nucleus architecture rests on non-obvious technical bets. Each one, if wrong
 
 ## 1. PoC #1 — Dagster Error Translation Layer (NEW IN v4.1, HIGHEST PRIORITY)
 
+> **Status**: PROMOTED 2026-05-13 — translator moved to `src/nucleus/coordination/error_translation.py` and tests moved to `tests/coordination/test_error_translation.py`.
+
 ### Hypothesis
 
 > Every Dagster error type can be intercepted at the `ctx` SDK boundary and re-emitted as a clean `NucleusError` with: plain-language explanation in user vocabulary, suggested fix, doc reference, and original cause preserved.
@@ -106,6 +108,8 @@ PR review by all founding engineers. Test suite passes. `/docs/swap/dagster.md` 
 
 ## 2. PoC #2 — Native `ctx.sql` Jinja Resolver (NEW IN v4.1)
 
+> **Status**: PROMOTED 2026-05-13 — resolver moved to `src/nucleus/coordination/sql_resolver.py` and tests moved to `tests/coordination/test_sql_resolver.py`. 16/16 tests pass at both locations; T9 circular-ref autopilot default applied (reuse `NucleusInvalidAssetDefinition`); difflib hint preserved verbatim. Re-export from `coordination/__init__.py` pending (founder one-liner when wiring `ctx.sql`).
+
 ### Hypothesis
 
 > ~1000 LOC of native code (Jinja templating + sqlglot for SQL parsing) can replace 80% of `dbt-duckdb` functionality for v0.1 needs.
@@ -135,6 +139,8 @@ If LOC blows past 2500 OR DAG resolution slow OR multi-CTE breaks: **fall back t
 ---
 
 ## 3. PoC #3 — `nucleus ingest` One-Liner (NEW IN v4.1)
+
+> **Status**: PROMOTED 2026-05-13 — module moved to `src/nucleus/ctx/copy_from.py` (canonical Option A destination per ctx SDK spec) and tests moved to `tests/ctx/test_copy_from.py`. 7/7 tests pass at both locations. Windows `file://` URI fix preserved verbatim at line 131 (two slashes, NOT three) — critical for pyiceberg 0.8.1 on Windows.
 
 ### Hypothesis
 
@@ -166,6 +172,8 @@ If a source family fails, reduce v0.1 supported sources to 3 (PostgreSQL + CSV +
 
 ## 4. PoC #4 — `nucleus up` <10s Boot
 
+> **Status**: VALIDATED 2026-05-12 — cold-boot target met (5.82s wall; 117.3 MB bundle) per `AGENTS.md` §1 current phase table and `poc/p4_boot_time/`.
+
 ### Hypothesis
 
 > MinIO + filesystem catalog (pyiceberg) + Dagster in-process boots in <10s on an M1 MacBook Pro 16GB.
@@ -188,6 +196,18 @@ If >10s but <15s: optimize startup order, lazy-init non-critical components. If 
 ---
 
 ## 5. PoC #5 — End-to-End 30-Minute Beachhead Validation
+
+> **Status**: `KIT_READY` (external recruitment kit finalized 2026-05-13)
+>
+> **Recruitment readiness**: `READY` — automated walker evidence captured in [`docs/poc/p5_beachhead/EVIDENCE.md`](docs/poc/p5_beachhead/EVIDENCE.md) (PASS on Windows `.venv`, 2026-05-13); human sessions still required per methodological rule below.
+>
+> **Outstanding gaps**: Minor — walker omits full Docker + Postgres + S3 quickstart path; align [`docs/poc/p5_beachhead/SCENARIO.md`](docs/poc/p5_beachhead/SCENARIO.md) + legacy **How to recruit** bullets below with [`docs/poc/p5_beachhead/RECRUITMENT.md`](docs/poc/p5_beachhead/RECRUITMENT.md) (experience band now ≥3 yr per kit).
+>
+> **Next action**: Founder ratification of compensation amount + Calendly setup + outreach channel pick (see recruitment kit).
+>
+> **Estimated time-to-recruit**: 1–2 weeks (signup window)
+>
+> **Estimated time-to-results**: 3–4 weeks from outreach launch
 
 ### Hypothesis
 

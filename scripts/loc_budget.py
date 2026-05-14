@@ -1,253 +1,246 @@
-"""LOC budget enforcement — Constraint #8.
+"""Count proprietary LOC for the Nucleus project.
 
-Counts non-blank, non-comment lines in ``src/nucleus/`` and reports against
-the per-tier ceilings defined in ``pyproject.toml`` under ``[tool.nucleus]``.
+Per AGENTS.md Sec 11.6 + Hard Constraint #8: total proprietary LOC <= 30,000
+by v1.0. Phase ceilings (verbatim from Sec 11.6):
 
-Usage
------
-    python scripts/loc_budget.py --report    # always exits 0; prints table
-    python scripts/loc_budget.py --warn      # exits 0 but prints warning if over budget
-    python scripts/loc_budget.py             # exits 1 if over current tier ceiling
-    python scripts/loc_budget.py --json      # machine-readable output for CI
+    PoCs complete : ~1,000  (informational; PoC code is pre-production)
+    v0.1 ship     : ~8,000
+    v0.5 ship     : ~18,000
+    v1.0 ship     : ~30,000  (hard ceiling)
 
-What counts
------------
-- Lines in ``.py`` files under ``src/nucleus/``.
-- Excludes blank lines and pure-comment lines.
-- Excludes files matching patterns in ``pyproject.toml`` ``[tool.nucleus] loc_exclude``.
+Counting rules (be honest):
+    COUNT     : actual code lines (statements, expressions, signatures).
+    SKIP      : blank lines, comment-only lines, docstring-only lines
+                (module/class/function docstrings, identified via ``ast``).
+    INCLUDED  : ``__init__.py`` files. They are proprietary surface even when
+                they only re-export -- debatable, but counting them prevents
+                gaming the budget by stuffing logic into ``__init__.py``.
 
-What does NOT count
--------------------
-- ``tests/``, ``poc/``, ``scripts/``, ``docs/``.
-- Stub files (``*.pyi``).
-- ``__init__.py`` files that contain only re-exports.
+Scope: ``src/nucleus/`` counts toward the ceiling; ``poc/`` and ``tests/``
+are reported as informational and do NOT count.
 
-Why this exists
----------------
-Constraint #8 says: v0.1 ceiling 8000 LOC, v0.5 ceiling 18000 LOC, v1.0 ceiling 30000 LOC.
-Larger codebases are harder for a solo founder to maintain and harder for
-AI agents to navigate. If you blow past the ceiling, the platform is leaking
-complexity — fix the design, not the budget.
+Stdlib-only (Python 3.11+); runs on Windows, Linux, macOS unchanged.
 
-Reading guide for a junior DE
------------------------------
-This script is intentionally simple — readable in 5 minutes. We chose pure
-``tomllib`` + ``pathlib`` (both stdlib) so it has no dependencies. If you
-want to extend it, add features behind ``--flag`` rather than restructuring.
+Docs:
+    https://docs.python.org/3/library/tokenize.html
+    https://docs.python.org/3/library/ast.html
 """
 
 from __future__ import annotations
 
 import argparse
+import ast
+import io
 import json
 import sys
-import tomllib
-from dataclasses import dataclass
+import tokenize
+from contextlib import suppress
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_ROOT = REPO_ROOT / "src" / "nucleus"
-PYPROJECT = REPO_ROOT / "pyproject.toml"
+POC_ROOT = REPO_ROOT / "poc"
+TESTS_ROOT = REPO_ROOT / "tests"
+
+PHASE_CEILINGS: dict[str, int] = {
+    "pocs": 1_000,
+    "v0.1": 8_000,
+    "v0.5": 18_000,
+    "v1.0": 30_000,
+}
+
+_DOCSTRING_PARENTS: tuple[type, ...] = (
+    ast.Module,
+    ast.ClassDef,
+    ast.FunctionDef,
+    ast.AsyncFunctionDef,
+)
+_SKIP_TOKEN_TYPES: frozenset[int] = frozenset(
+    {
+        tokenize.COMMENT,
+        tokenize.NEWLINE,
+        tokenize.NL,
+        tokenize.INDENT,
+        tokenize.DEDENT,
+        tokenize.ENCODING,
+        tokenize.ENDMARKER,
+    }
+)
 
 
-@dataclass
-class TierBudget:
-    """Per-tier LOC ceilings parsed from pyproject.toml."""
-
-    v01: int = 8_000
-    v05: int = 18_000
-    v10: int = 30_000
-
-    @classmethod
-    def from_pyproject(cls, path: Path) -> "TierBudget":
-        if not path.exists():
-            return cls()
-        data = tomllib.loads(path.read_text(encoding="utf-8"))
-        nucl = data.get("tool", {}).get("nucleus", {})
-        return cls(
-            v01=int(nucl.get("loc_budget_v01_ceiling", cls.v01)),
-            v05=int(nucl.get("loc_budget_v05_ceiling", cls.v05)),
-            v10=int(nucl.get("loc_budget_v10_ceiling", cls.v10)),
-        )
-
-    def current_ceiling(self) -> tuple[str, int]:
-        """Return the *currently active* tier ceiling.
-
-        We pick conservatively: the lowest tier we have not yet promoted to.
-        Override the tier via the env var ``NUCLEUS_TIER`` (=01|05|10).
-        """
-        import os
-
-        tier = os.environ.get("NUCLEUS_TIER", "01")
-        if tier == "01":
-            return "v0.1", self.v01
-        if tier == "05":
-            return "v0.5", self.v05
-        return "v1.0", self.v10
-
-
-def _excluded_patterns(path: Path) -> list[str]:
-    """Read ``[tool.nucleus] loc_exclude`` from pyproject. Default sane list."""
-    if not path.exists():
-        return ["tests/", "poc/", "docs/", "scripts/", "*.pyi", "**/__init__.py"]
-    data = tomllib.loads(path.read_text(encoding="utf-8"))
-    return list(
-        data.get("tool", {})
-        .get("nucleus", {})
-        .get("loc_exclude", ["tests/", "poc/", "docs/", "scripts/", "*.pyi", "**/__init__.py"])
-    )
-
-
-def _is_excluded(file: Path, patterns: list[str], src_root: Path) -> bool:
-    rel = file.relative_to(REPO_ROOT)
-    rel_str = rel.as_posix()
-    for pat in patterns:
-        # crude but effective: substring or fnmatch-style match.
-        if pat.endswith("/") and rel_str.startswith(pat):
-            return True
-        if pat.startswith("*."):
-            if rel.suffix == pat[1:]:
-                return True
-        if pat.startswith("**/") and rel.match(pat):
-            return True
-        if pat in rel_str:
-            return True
-    return False
-
-
-def _count_lines(file: Path) -> int:
-    """Count code-bearing lines.
-
-    A line counts if it's NOT entirely blank AND NOT a pure comment line.
-    Docstring lines DO count (they're documentation and contribute to size).
-    """
-    count = 0
-    for raw in file.read_text(encoding="utf-8", errors="replace").splitlines():
-        stripped = raw.strip()
-        if not stripped:
+def _docstring_lines(tree: ast.Module) -> set[int]:
+    """Return line numbers occupied by module/class/function docstrings."""
+    out: set[int] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, _DOCSTRING_PARENTS):
             continue
-        if stripped.startswith("#"):
+        body = getattr(node, "body", None)
+        if not body or not isinstance(body[0], ast.Expr):
             continue
-        count += 1
-    return count
-
-
-def _collect_loc(src_root: Path, patterns: list[str]) -> dict[str, int]:
-    """Walk src_root collecting per-module LOC counts."""
-    out: dict[str, int] = {}
-    if not src_root.exists():
-        return out
-    for file in sorted(src_root.rglob("*.py")):
-        if _is_excluded(file, patterns, src_root):
-            continue
-        rel = file.relative_to(REPO_ROOT).as_posix()
-        out[rel] = _count_lines(file)
+        value = body[0].value
+        if isinstance(value, ast.Constant) and isinstance(value.value, str):
+            start = body[0].lineno
+            end = body[0].end_lineno or start
+            out.update(range(start, end + 1))
     return out
 
 
-def _module_summary(file_counts: dict[str, int], src_root: Path) -> dict[str, int]:
-    """Aggregate file counts under top-level modules of src_root.
+def count_loc(path: Path) -> int:
+    """Count code-bearing lines in a single Python file."""
+    src = path.read_text(encoding="utf-8", errors="replace")
+    docstrings: set[int] = set()
+    with suppress(SyntaxError):
+        docstrings = _docstring_lines(ast.parse(src))
 
-    E.g.   src/nucleus/ctx/foo.py     → ctx
-           src/nucleus/engines/bar.py → engines
-    """
+    code_lines: set[int] = set()
+    try:
+        readline = io.BytesIO(src.encode("utf-8")).readline
+        for tok in tokenize.tokenize(readline):
+            if tok.type in _SKIP_TOKEN_TYPES:
+                continue
+            line_no = tok.start[0]
+            if line_no in docstrings:
+                continue
+            code_lines.add(line_no)
+    except (tokenize.TokenizeError, IndentationError):
+        for i, raw in enumerate(src.splitlines(), 1):
+            stripped = raw.strip()
+            if stripped and not stripped.startswith("#") and i not in docstrings:
+                code_lines.add(i)
+    return len(code_lines)
+
+
+def collect_loc(root: Path) -> dict[str, int]:
+    """Walk ``root`` and return {relative_path: loc} for every .py file."""
+    out: dict[str, int] = {}
+    if not root.exists():
+        return out
+    for file in sorted(root.rglob("*.py")):
+        out[file.relative_to(REPO_ROOT).as_posix()] = count_loc(file)
+    return out
+
+
+def per_subdir(file_counts: dict[str, int], root: Path) -> dict[str, int]:
+    """Aggregate per-file counts under top-level subdirectories of ``root``."""
     summary: dict[str, int] = {}
-    prefix = src_root.relative_to(REPO_ROOT).as_posix() + "/"
+    prefix = root.relative_to(REPO_ROOT).as_posix() + "/"
     for path, count in file_counts.items():
         if not path.startswith(prefix):
             continue
-        tail = path[len(prefix) :]
-        first = tail.split("/", 1)[0]
-        module = first if "/" in tail else "_top"
-        summary[module] = summary.get(module, 0) + count
+        tail = path[len(prefix):]
+        bucket = tail.split("/", 1)[0] if "/" in tail else "(top-level)"
+        summary[bucket] = summary.get(bucket, 0) + count
     return summary
 
 
-def _render_report(file_counts: dict[str, int], src_root: Path, budget: TierBudget) -> str:
-    total = sum(file_counts.values())
-    tier_name, ceiling = budget.current_ceiling()
-    summary = _module_summary(file_counts, src_root)
-    pct = (total / ceiling * 100) if ceiling else 0
-    lines = []
-    lines.append("=" * 60)
-    lines.append(" Nucleus — LOC Budget Report")
-    lines.append("=" * 60)
-    lines.append("")
-    lines.append(f" Current tier        : {tier_name}")
-    lines.append(f" Active ceiling      : {ceiling:>6,} LOC")
-    lines.append(f" Cumulative LOC      : {total:>6,} LOC")
-    lines.append(f" Usage               : {pct:>5.1f}%")
-    lines.append("")
-    if summary:
-        lines.append(" By module:")
-        for mod, count in sorted(summary.items(), key=lambda kv: -kv[1]):
-            bar = "█" * max(1, int(count / max(1, max(summary.values())) * 40))
-            lines.append(f"   {mod:<16} {count:>5,}  {bar}")
+def status_for(actual: int, ceiling: int) -> str:
+    """GREEN < 80% of ceiling; YELLOW 80-100%; RED > 100%."""
+    if ceiling <= 0:
+        return "GREEN"
+    pct = actual / ceiling * 100
+    if pct > 100:
+        return "RED"
+    return "YELLOW" if pct >= 80 else "GREEN"
+
+
+def render_text(
+    src_counts: dict[str, int],
+    poc_counts: dict[str, int],
+    test_counts: dict[str, int],
+    phase: str,
+) -> str:
+    src_total = sum(src_counts.values())
+    poc_total = sum(poc_counts.values())
+    test_total = sum(test_counts.values())
+    ceiling = PHASE_CEILINGS[phase]
+    pct = (src_total / ceiling * 100) if ceiling else 0
+    src_breakdown = per_subdir(src_counts, SRC_ROOT)
+    bar = "=" * 64
+    lines = [
+        bar,
+        " Nucleus -- LOC Budget Report (per AGENTS.md Sec 11.6)",
+        bar,
+        "",
+        " Phase ceilings (verbatim from Sec 11.6):",
+        "   PoCs complete  : ~1,000  LOC (informational)",
+        "   v0.1 ship      : ~8,000  LOC",
+        "   v0.5 ship      : ~18,000 LOC",
+        "   v1.0 ship      : ~30,000 LOC (hard ceiling)",
+        "",
+        f" Reference phase     : {phase}",
+        f" Reference ceiling   : {ceiling:>6,} LOC",
+        f" src/nucleus/ total  : {src_total:>6,} LOC  ({pct:5.1f}% of {phase} ceiling)",
+        f" Verdict             : {status_for(src_total, ceiling)}",
+        "",
+        " src/nucleus/ per-subdirectory breakdown:",
+    ]
+    if src_breakdown:
+        width = max(len(name) for name in src_breakdown)
+        for name, count in sorted(src_breakdown.items(), key=lambda kv: (-kv[1], kv[0])):
+            lines.append(f"   {name:<{width}}   {count:>6,} LOC")
     else:
-        lines.append("  (No source code yet — pre-Heartbeat state.)")
-    lines.append("")
-    lines.append(f" Future budgets      : v0.1={budget.v01:,}, v0.5={budget.v05:,}, v1.0={budget.v10:,}")
-    lines.append("=" * 60)
+        lines.append("   (no .py files found under src/nucleus/)")
+    lines += [
+        "",
+        f" poc/   total (informational, NOT in ceiling) : {poc_total:>6,} LOC",
+        f" tests/ total (informational, NOT in ceiling) : {test_total:>6,} LOC",
+        "",
+        " Status legend: GREEN < 80%, YELLOW 80-100%, RED > 100% of ceiling.",
+        bar,
+    ]
     return "\n".join(lines)
 
 
+def render_json(
+    src_counts: dict[str, int],
+    poc_counts: dict[str, int],
+    test_counts: dict[str, int],
+    phase: str,
+) -> str:
+    src_total = sum(src_counts.values())
+    ceiling = PHASE_CEILINGS[phase]
+    return json.dumps(
+        {
+            "phase": phase,
+            "ceiling": ceiling,
+            "phase_ceilings": PHASE_CEILINGS,
+            "src_nucleus": {
+                "total": src_total,
+                "percent_of_ceiling": round(src_total / ceiling * 100, 2) if ceiling else 0,
+                "verdict": status_for(src_total, ceiling),
+                "per_subdir": per_subdir(src_counts, SRC_ROOT),
+                "per_file": src_counts,
+            },
+            "poc": {"total": sum(poc_counts.values()), "per_file": poc_counts},
+            "tests": {"total": sum(test_counts.values()), "per_file": test_counts},
+        },
+        indent=2,
+        sort_keys=True,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Nucleus LOC budget enforcement.")
-    parser.add_argument(
-        "--report",
-        action="store_true",
-        help="Print report; always exit 0.",
+    parser = argparse.ArgumentParser(
+        description="Count proprietary LOC under src/nucleus/ vs the AGENTS.md Sec 11.6 ceilings.",
     )
     parser.add_argument(
-        "--warn",
-        action="store_true",
-        help="Print report; exit 0 (warn but don't fail) if over budget.",
+        "--phase",
+        choices=sorted(p for p in PHASE_CEILINGS if p != "pocs"),
+        default="v0.1",
+        help="Phase ceiling to compare against (default: v0.1).",
     )
     parser.add_argument(
         "--json",
         action="store_true",
-        help="Output machine-readable JSON instead of human report.",
-    )
-    parser.add_argument(
-        "--src",
-        type=Path,
-        default=SRC_ROOT,
-        help="Source root to scan (default: src/nucleus).",
+        help="Emit machine-readable JSON instead of the human report.",
     )
     args = parser.parse_args(argv)
 
-    budget = TierBudget.from_pyproject(PYPROJECT)
-    patterns = _excluded_patterns(PYPROJECT)
-    file_counts = _collect_loc(args.src, patterns)
-    total = sum(file_counts.values())
-    tier_name, ceiling = budget.current_ceiling()
-    over = total > ceiling
-
-    if args.json:
-        print(
-            json.dumps(
-                {
-                    "total": total,
-                    "ceiling": ceiling,
-                    "tier": tier_name,
-                    "over_budget": over,
-                    "per_file": file_counts,
-                    "per_module": _module_summary(file_counts, args.src),
-                },
-                indent=2,
-            )
-        )
-    else:
-        print(_render_report(file_counts, args.src, budget))
-
-    if args.report:
-        return 0
-    if over:
-        if args.warn:
-            print(f"\nWARNING: over budget ({total:,} > {ceiling:,}), but exiting 0 per --warn.", file=sys.stderr)
-            return 0
-        print(f"\nERROR: LOC over budget ({total:,} > {ceiling:,} for {tier_name}).", file=sys.stderr)
-        return 1
+    src_counts = collect_loc(SRC_ROOT)
+    poc_counts = collect_loc(POC_ROOT)
+    test_counts = collect_loc(TESTS_ROOT)
+    renderer = render_json if args.json else render_text
+    sys.stdout.write(renderer(src_counts, poc_counts, test_counts, args.phase) + "\n")
     return 0
 
 

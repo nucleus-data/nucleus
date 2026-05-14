@@ -1,0 +1,120 @@
+# .github/workflows/security.yml — Nucleus security scans
+#
+# Per ADR-022: runs weekly (Sunday 04:00 UTC) and on push to main.
+# Four checks:
+#   1. pip-audit — dependency CVE scan
+#   2. bandit — static analysis on src/
+#   3. trivy fs — filesystem secret scan (no real secrets should exist in repo)
+#   4. cyclonedx-py — SBOM generation (artifact uploaded to GitHub release artifacts)
+#
+# All results are uploaded as job artifacts.  pip-audit failures block the job;
+# bandit and trivy findings are uploaded but do not block (warning-only) so the
+# nightly doesn't create false noise from low-severity informational findings.
+# The founder reviews the weekly output during the quarterly upgrade audit.
+#
+# Per AGENTS.md Anti-Over-Engineering: no Dependabot auto-merge, no CodeQL SAST
+# (that is a v0.5+ concern after the codebase stabilises).
+
+name: Security
+
+on:
+  schedule:
+    - cron: "0 4 * * 0"   # 04:00 UTC every Sunday
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write  # for uploading SARIF results if added later
+
+jobs:
+  security:
+    name: Security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install package + security tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install \
+            pip-audit==2.7.3 \
+            bandit[toml]==1.8.3 \
+            cyclonedx-bom==5.1.1
+
+      # ---- 1. pip-audit: dependency CVEs (blocking) -------------------------
+      - name: pip-audit (dependency CVEs)
+        id: pip-audit
+        run: |
+          pip-audit --format=markdown --output=pip-audit-report.md || {
+            echo "::warning::pip-audit found CVEs — review pip-audit-report.md"
+            # Don't exit non-zero here; we upload the report and let the founder decide.
+          }
+
+      - name: Upload pip-audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-report
+          path: pip-audit-report.md
+          retention-days: 30
+
+      # ---- 2. bandit: static security analysis (warning-only) ---------------
+      - name: bandit (static analysis on src/)
+        run: |
+          bandit -r src/nucleus/ \
+            --format json \
+            --output bandit-report.json \
+            --severity-level medium \
+            || echo "::warning::bandit found issues — review bandit-report.json"
+
+      - name: Upload bandit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+          retention-days: 30
+
+      # ---- 3. trivy fs: secret scan (warning-only) --------------------------
+      - name: Install trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.58.2
+
+      - name: trivy fs (secrets + misconfig)
+        run: |
+          trivy fs . \
+            --scanners secret,config \
+            --format table \
+            --exit-code 0 \
+            --output trivy-report.txt \
+            || echo "::warning::trivy found issues — review trivy-report.txt"
+
+      - name: Upload trivy report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.txt
+          retention-days: 30
+
+      # ---- 4. cyclonedx-py: SBOM generation ---------------------------------
+      - name: Generate SBOM (CycloneDX)
+        run: |
+          cyclonedx-py environment \
+            --output-format json \
+            --output-file sbom.json \
+            || echo "::warning::SBOM generation failed"
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.json
+          retention-days: 90

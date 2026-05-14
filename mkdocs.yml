@@ -1,0 +1,259 @@
+site_name: Nucleus
+site_description: Ship data products from a laptop — a local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks, AI-ready by design.
+site_url: https://nucleus.dev
+repo_url: https://github.com/nucleus-data/nucleus
+repo_name: nucleus-data/nucleus
+edit_uri: edit/main/docs/site/
+docs_dir: docs/site
+site_dir: site
+not_in_nav: |
+  includes/abbreviations.md
+
+# Docs: https://squidfunk.github.io/mkdocs-material/setup/changing-the-colors/
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
+  custom_dir: docs/site/overrides
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: deep-purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: deep-purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+    - announce.dismiss
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+# Docs: https://facelessuser.github.io/pymdown-extensions/
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+      title: On this page
+  - tables
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - docs/site/includes/abbreviations.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - glightbox:
+      touchNavigation: true
+      loop: false
+      effect: zoom
+      slide_effect: slide
+      width: 100%
+      height: auto
+      zoomable: true
+      draggable: true
+  - include-markdown
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+            show_root_toc_entry: true
+            show_category_heading: true
+            show_if_no_docstring: false
+            show_bases: true
+            show_signature_annotations: true
+            separate_signature: true
+            merge_init_into_class: true
+            docstring_style: google
+            docstring_section_style: table
+            members_order: source
+            filters:
+              - "!^_"
+              - "^__init__"
+  - tags
+
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/nucleus-data/nucleus
+      name: GitHub
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/nucleus/
+      name: PyPI
+  analytics:
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/thumb-up-outline
+          name: This page was helpful
+          data: 1
+          note: Thanks for your feedback!
+        - icon: material/thumb-down-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback! Help us improve this page by
+            <a href="https://github.com/nucleus-data/nucleus/issues/new/?title=[Docs]+{title}" target="_blank" rel="noopener">filing an issue</a>.
+
+nav:
+  - Home: index.md
+  - Why Nucleus: why-nucleus.md
+  - Getting Started:
+      - getting-started/index.md
+      - Installation: getting-started/installation.md
+      - Quickstart (30 min): getting-started/quickstart.md
+      - Your First Asset: getting-started/your-first-asset.md
+      - First BI-Ready Table: getting-started/first-bi-table.md
+  - Concepts:
+      - concepts/index.md
+      - Asset: concepts/asset.md
+      - Materialization: concepts/materialization.md
+      - Snapshot: concepts/snapshot.md
+      - Contract: concepts/contract.md
+      - Check: concepts/check.md
+      - Catalog: concepts/catalog.md
+      - Lineage: concepts/lineage.md
+      - Schedule: concepts/schedule.md
+  - Guides:
+      - guides/index.md
+      - Ingest from Postgres: guides/ingest-from-postgres.md
+      - Ingest from MySQL: guides/ingest-from-mysql.md
+      - Ingest from Snowflake: guides/ingest-from-snowflake.md
+      - Ingest from S3: guides/ingest-from-s3.md
+      - Ingest from GCS: guides/ingest-from-gcs.md
+      - Ingest from Filesystem: guides/ingest-from-filesystem.md
+      - Write SQL Transformations: guides/write-sql-transformations.md
+      - Schedule an Asset: guides/schedule-asset.md
+      - Query Results: guides/query-results.md
+      - Use AI Copilot: guides/use-ai-copilot.md
+      - Graduate to Databricks: guides/graduate-to-databricks.md
+  - Cookbook:
+      - cookbook/index.md
+      - CDC from Postgres: cookbook/cdc-from-postgres.md
+      - Slowly Changing Dimensions: cookbook/slowly-changing-dimensions.md
+      - Timeseries Rollup: cookbook/timeseries-rollup.md
+      - Deduplication: cookbook/deduplication.md
+      - Daily Batch with Lateness: cookbook/daily-batch-with-lateness.md
+      - Error Recovery: cookbook/error-recovery.md
+      - Multi-Tenant Projects: cookbook/multi-tenant-projects.md
+      - Schema Evolution: cookbook/schema-evolution.md
+      - Iceberg Time Travel: cookbook/iceberg-time-travel.md
+      - AI Copilot Prompts: cookbook/ai-copilot-prompts.md
+  - CLI Reference:
+      - cli-reference/index.md
+      - nucleus init: cli-reference/init.md
+      - nucleus up: cli-reference/up.md
+      - nucleus down: cli-reference/down.md
+      - nucleus run: cli-reference/run.md
+      - nucleus ingest: cli-reference/ingest.md
+      - nucleus query: cli-reference/query.md
+      - nucleus schedule: cli-reference/schedule.md
+      - nucleus chat: cli-reference/chat.md
+      - nucleus workbench: cli-reference/workbench.md
+      - nucleus version: cli-reference/version.md
+  - API Reference:
+      - api-reference/index.md
+      - ctx SDK: api-reference/ctx.md
+      - SDK Decorators: api-reference/sdk.md
+      - Errors: api-reference/errors.md
+  - Errors:
+      - errors/index.md
+      - NE1xxx Physics: errors/ne1xxx.md
+      - NE2xxx Engines: errors/ne2xxx.md
+      - NE3xxx Coordination: errors/ne3xxx.md
+      - NE4xxx Intelligence: errors/ne4xxx.md
+      - NE5xxx Experience: errors/ne5xxx.md
+  - Governance:
+      - governance/index.md
+      - Composability: governance/composability.md
+      - Upgrade Policy: governance/upgrade-policy.md
+      - Architecture Decisions: governance/architecture-decisions.md
+      - Error Translation: governance/error-translation-discipline.md
+  - Philosophy:
+      - philosophy/index.md
+      - Five Pillars: philosophy/five-pillars.md
+      - Wrap, Not Build: philosophy/wrap-not-build.md
+      - Yield to Giants: philosophy/yield-to-giants.md
+      - Eight-Question Gate: philosophy/eight-question-gate.md
+  - Troubleshooting:
+      - troubleshooting/index.md
+      - Install Issues: troubleshooting/install-issues.md
+      - Common Errors: troubleshooting/common-errors.md
+      - Corporate Proxy: troubleshooting/proxy-corporate-network.md
+  - Community:
+      - community/index.md
+      - Contributing: community/contributing.md
+      - Code of Conduct: community/code-of-conduct.md
+      - Security: community/security.md
+      - Support: community/support.md
+      - Roadmap: community/roadmap.md
+  - Changelog: changelog.md
+  - About:
+      - about/index.md
+      - License: about/license.md
+      - Citations: about/citations.md
+      - Contributors: about/contributors.md

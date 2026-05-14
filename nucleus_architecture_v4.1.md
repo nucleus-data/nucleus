@@ -2,7 +2,9 @@
 
 **Single Source of Truth · Locked Scope · Supersedes v4.0**
 
-> A modern, composable data engineering platform — built on open Apache foundations, AI-assisted by design, solving persistent pains. Grows with your team. Graduates cleanly when you outgrow it.
+> **Ship data products from a laptop.** A local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks, built on open Apache foundations, AI-ready by design. Grows with your team. Graduates cleanly to any Iceberg catalog (Polaris, Lakekeeper, Unity, R2) — or to Databricks/Snowflake — when you outgrow your laptop.
+>
+> *(Positioning amendment 2026-05-12, per ADR-002 §8: "AI-assisted by design" demoted from marketing headline to engineering pillar; new outcome-first tagline hierarchy adopted; "Iceberg" moves from L1 headline to L2 sub-headline.)*
 
 ---
 
@@ -22,6 +24,29 @@ Any future architectural change MUST explicitly amend a section in this document
 ---
 
 ## Changelog
+
+### v4.1.3 patches (post-positioning-review, May 2026)
+
+Four patches applied after the founder approved ADR-002 (Mid-2026 Strategic Refresh). Two independent reviewer passes converged on ACCEPT with refinements. **No architectural change — positioning, sequencing, and catalog co-default only.**
+
+| # | Patch | Section | Source |
+|---|---|---|---|
+| P1 | **Thesis epigraph rewritten** to outcome-first tagline hierarchy (L1: "Ship data products from a laptop"; L2: "Python SDK + CLI for Iceberg-native pipelines"). "AI-assisted by design" demoted from marketing headline to engineering pillar (still §2 pillar #3). | Document epigraph | ADR-002 §8.1 |
+| P2 | **Apache Polaris elevated to co-default with Lakekeeper at v0.3+**, justified by ASF Top-Level Project graduation Feb 18, 2026. Lakekeeper retained for Rust-fit deployments. | §5.7 | ADR-002 §4.2 |
+| P3 | **Mo 24 explicit decision gate** with 4-condition trigger checklist (auto-fires if any of: 0 paying after 3 mo beta, <10 active teams after 6 mo OSS, founder velocity <3 features/month for 60 days, or funded competitor ships equivalent). Mo 28-36 v1.0 GA is best-case-only, contingent on Mo 24 decision. | §17.2 | ADR-002 §8.3 |
+| P4 | **`nucleus-mcp-server` (~500 LOC) added to v0.5 roadmap** as agent-substrate hedge. Exposes assets / contracts / lineage to MCP-compatible agents via `ctx`. Does not pivot Nucleus into the agent-substrate category — purely additive thin adapter. | §18.4 | ADR-002 §4.2 |
+
+Plus: **"data product" defined explicitly** in `README.md` and `AGENTS.md §0` as *Iceberg-backed asset with transformations + contracts + lineage, consumable by BI / applications / AI agents via `ctx` or MCP*. Wraps `§12.1` *asset* definition for external-facing copy.
+
+Tagline locking deferred to PoC #5 external-tester field test per ADR-002 §8.4.
+
+**Evening-pass follow-up (2026-05-12).** Worker B's drift sweep (`docs/audits/positioning_drift_2026-05-12.md`) surfaced 2 items the initial v4.1.3 apply log missed: (a) `docs/architecture/C4_context.md:29` Mermaid label still carried the pre-v4.1.3 thesis — fixed; the initial ADR-002 §8.6 apply log didn't include C4 diagrams. (b) `§1.2` trend table row 6 contained `"AI-native data contracts"` (banned vocab per `scripts/check_vocabulary.py`) — renamed to `"AI-assisted contract authoring"`; this was a pre-existing drift, not caused by v4.1.3, but fixed opportunistically since v4.1 was being touched. ADR-002 §8.6.1 carries the extended apply log. <!-- banned-term: AI-native -->
+
+**Alignment sweep #1 follow-up (2026-05-13).** Worker R's research (`docs/research/lance.md` §9 item 7 + §10 risk #4) flagged that §4 Tier 0 row 4 claimed Lance is *"Linux Foundation aligned"* — no public LF announcement enumerates Lance as of 2026-05-13. Phrasing downgraded to *"ASF-inspired governance, open spec"* (the verifiable claim per Lance's three-tier PMC/Maintainers/Contributors model + the `lance-format/lance` repo separation from LanceDB Inc.'s commercial brand). Tier 0 case stands on Lance's other 6 qualifications (`docs/research/lance.md` §9 items 1-6); only the marketing phrasing changed.
+
+**Alignment sweep #2 — storage substrate update (2026-05-13).** Per [`docs/decisions/ADR-008-storage-substrate-v01.md`](docs/decisions/ADR-008-storage-substrate-v01.md) (PROPOSED), §5.8 Object Store amended to document a dual-track docker-compose: SeaweedFS (Apache-2.0, actively maintained) becomes the documented default; the archived MinIO `RELEASE.2025-10-15T17-29-55Z` (AGPLv3) is preserved as opt-in alternate via `docker-compose.minio.yml`. Trigger: `github.com/minio/minio` archived 2026-04-25 + ADR-007 AGPLv3 Tier 2 YELLOW + AGENTS.md §9 Stop Condition. Nucleus's S3-API-agnostic hot path (s3fs + pyiceberg + DuckDB httpfs) is unchanged — propagation is documentation + compose YAML only. Cross-refs updated in `README.md` (quickstart), `SETUP.md` (§M3 Docker), `docs/research/minio.md` (status header → ALTERNATE), `docker-compose.yml` + `docker-compose.minio.yml` (NEW stubs at repo root pending ADR-008 acceptance — `NEEDS VERIFICATION` markers on SeaweedFS exact tag pin + S3 API parity edge cases, both retired by PoC #4).
+
+**Alignment sweep #2 — catalog wording refinement (2026-05-13).** Per [`docs/decisions/ADR-004-catalog-migration-v01-to-v03.md`](docs/decisions/ADR-004-catalog-migration-v01-to-v03.md) (PROPOSED), §5.7 catalog wording refined from v4.1.3 P2's "Polaris co-default" (deferred at ADR-002 §4.2) to ADR-004's resolved split: **Lakekeeper documented default** (Rust, ~100-300 MB idle, ~1-2 s cold-start, OIDC-validation-only — never issues tokens) + **Polaris alternate** via `nucleus enable polaris` (JVM, ~500 MB-1.5 GB idle, ASF TLP governance signal, native federation to Snowflake / Databricks / Glue). Both run identically through `pyiceberg.RestCatalog`; v0.1 `pyiceberg.SqlCatalog` (filesystem) remains supported indefinitely (no one is stranded). Mo 24 founder gate (ADR-002 §8.3) preserves the option to flip the documented default with no code change. No architectural change — wording sharpened on top of v4.1.3 P2 to converge on the operationally-superior default for the beachhead while honouring procurement-sensitive ASF governance for Mo 20+ customer-pilot scenarios.
 
 ### v4.1.2 patches (post-drift-detection audit)
 
@@ -150,7 +175,7 @@ These 15 pains have existed for 10-20 years. Big players have **no incentive** t
 | 3 | Vector + relational convergence | Unified query plane |
 | 4 | Real-time + batch convergence | One asset model for both |
 | 5 | Natural language as primary interface | Workbench Copilot from v0.2 |
-| 6 | AI-native data contracts | LLM-generated, human-reviewed (v0.5+) |
+| 6 | AI-assisted contract authoring | LLM-drafted, human-reviewed (v0.5+) |
 | 7 | Synthetic data + privacy | Differential privacy primitives v1.5+ |
 | 8 | "Vibe coding" data pipelines | `ctx.agent` runtime v0.5+ |
 
@@ -211,7 +236,7 @@ If `nucleus ingest` requires Python code, README reading, or external tools, the
 - ❌ An orchestrator (Dagster is our substrate, hidden)
 - ❌ A Spark replacement
 - ❌ A Databricks competitor
-- ❌ A "Data OS"
+- ❌ A "Data OS" <!-- banned-term: Data OS -->
 - ❌ A universal compute platform
 - ❌ An AI/ML training platform
 - ❌ A vector database (we use Lance/LanceDB)
@@ -342,7 +367,7 @@ The **immortal** layer. Open standards backed by multi-vendor consortiums. Zero 
 |---|---|---|
 | Apache Arrow | In-memory columnar format | Snowflake, Databricks, Meta, Google back it |
 | Apache Iceberg | Structured table format (ACID, time travel) | Apache; Netflix, Apple, AWS, Snowflake, Databricks committers |
-| Lance | Multimodal + vector tables (v0.5+) | Open spec, Linux Foundation aligned |
+| Lance | Multimodal + vector tables (v0.5+) | ASF-inspired governance, open spec |
 | Apache Parquet | Column file format | De facto standard 10+ years |
 | S3 API | Object storage protocol | Universal: MinIO, SeaweedFS, R2, GCS, Azure |
 | OpenLineage | Lineage protocol | Linux Foundation, multi-vendor |
@@ -479,27 +504,29 @@ def fct_orders(ctx):
 
 **Why native:** ~1000 LOC of code we own outright beats community-maintained adapter with release lag. dbt-duckdb becomes **optional integration** in v0.3 for teams migrating from dbt.
 
-### 5.7 Catalog (Amendment 4)
+### 5.7 Catalog (Amendment 4 — revised by v4.1.3 P2; refined by ADR-004)
 
 | Stage | Catalog |
 |---|---|
-| **v0.1** | **Filesystem catalog via pyiceberg** (zero external service) |
-| v0.3+ | Lakekeeper REST catalog (when multi-engine concurrent access becomes needed) |
-| v1.0+ | Apache Polaris as swap interface (basic smoke tests only) |
+| **v0.1** | **Filesystem catalog via pyiceberg (`pyiceberg.SqlCatalog`)** — zero external service. Supported indefinitely per ADR-004 (no one is stranded). |
+| **v0.3+ (per [ADR-004](docs/decisions/ADR-004-catalog-migration-v01-to-v03.md))** | **Lakekeeper documented default** (Rust, ~100-300 MB idle, ~1-2 s cold-start, OIDC-validation-only) + **Polaris alternate** via `nucleus enable polaris` (JVM, ~500 MB-1.5 GB idle, ASF TLP). Both run identically through `pyiceberg.RestCatalog`; swap is a `nucleus_config.toml` `[catalog]` flip — no `coordination/` code changes per §9.3. v0.1 `SqlCatalog` remains supported. |
+| v0.5+ | Unity Catalog OSS, Cloudflare R2 Data Catalog (swap interfaces with smoke tests only — on-demand full adapter per §9.3) |
 
-This removes one operational domain from `nucleus up` in v0.1. Boot time and onboarding both benefit.
+This removes one operational domain from `nucleus up` in v0.1. Boot time and onboarding both benefit. ADR-004 (2026-05-13) resolved the v4.1.3 P2 "co-default" deferral on operational + governance grounds (Worker F + Worker H research, 2026-05-13): idle memory + cold-start dominate the beachhead, ASF governance + built-in Snowflake/Databricks/Glue federation surface at customer-pilot time (Mo 20+) not first-touch onboarding. Mo 24 founder gate (ADR-002 §8.3) can flip the documented default with no code change. Both catalogs are wrapped behind the same pyiceberg `Catalog` interface; `nucleus catalog migrate --from filesystem --to {lakekeeper|polaris}` (per `nucleus_cli_spec.md` §4.2) is metadata-only — Iceberg data files in S3 / SeaweedFS / MinIO stay put.
 
 ### 5.8 Object Store
 
 | Environment | Object store |
 |---|---|
-| Local dev | MinIO (single binary, ~50MB) |
+| Local dev | **SeaweedFS (default, per [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md))** or MinIO (archived-upstream alternate) |
 | AWS production | S3 |
 | GCP production | GCS (S3-compatible) |
 | Azure production | Azure Blob (S3-compatible via R2 / proxy) |
-| Self-hosted | MinIO or SeaweedFS |
+| Self-hosted | SeaweedFS (default) or MinIO (opt-in alternate) |
 
 Code is identical across environments. Only `connections/storage.yml` changes.
+
+**Storage substrate (v0.1, per [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md)):** dual-track docker-compose. SeaweedFS (Apache-2.0, actively maintained — release 2026-05-04 per Worker BB) is the documented default in `docker-compose.yml`; the archived MinIO `RELEASE.2025-10-15T17-29-55Z` (AGPLv3, `github.com/minio/minio` archived 2026-04-25) is preserved as alternate in `docker-compose.minio.yml` for teams with existing MinIO tooling. Nucleus's S3-API-agnostic code (`s3fs` + `pyiceberg` + DuckDB `httpfs`) works identically against either backend — no application-layer change. S3 API itself is Tier 0 immortal per §4.1 (*"Universal: MinIO, SeaweedFS, R2, GCS, Azure"*); the dual-track is purely documentation + compose YAML. PoC #4 + PoC #3 verify SeaweedFS parity (signature v4, path-style addressing, multipart thresholds) pre-ADR-008 acceptance.
 
 ### 5.9 Engine Selection Matrix by Workload
 
@@ -586,7 +613,7 @@ class NucleusError(Exception):
     cause: BaseException | None  # Original error preserved (also exposed via __cause__)
 ```
 
-> **Note (v4.1.2):** Stable NUC-XXX error codes are **explicitly deferred** until after v0.5. v0.1 uses class names + URL slugs (e.g. `NucleusCommitConflictError`, docs slug `/errors/commit-conflict`) as the stable identifier. A numbered scheme will be introduced once the translator catalog stabilizes.
+> **Note (v4.1.2 — superseded 2026-05-13 by ADR-006):** Stable **NE-prefixed** error codes ship in v0.1, **not** deferred to v0.5. Numbering scheme per [ADR-006](docs/decisions/ADR-006-nucleus-error-code-numbering.md): `NE1xxx` (Layer 0 Physics) · `NE2xxx` (Layer 1 Engines) · `NE3xxx` (Layer 2 Coordination) · `NE5xxx` (Layer 4 Experience). Layer 3 (Intelligence) reserved for v0.5+. Codes are paired with class names + URL slugs (e.g. `NucleusCommitConflictError = NE1002`, docs slug `/errors/commit-conflict`). 24 codes assigned in `src/nucleus/errors.py` as of 2026-05-13.
 
 **Example translation:**
 
@@ -1055,6 +1082,7 @@ def fct_orders(ctx):
 | `ctx.write(df, contract=...)` | ✅ | ✅ | ✅ | ✅ |
 | `ctx.sql(query)` | ✅ | ✅ | ✅ | ✅ |
 | `ctx.copy_from(source, table=...)` | ✅ | ✅ | ✅ | ✅ |
+| `ctx.materialize(asset, *, partition, upstream, timeout_seconds)` | ✅ | ✅ | ✅ | ✅ |
 | `ctx.log` | ✅ | ✅ | ✅ | ✅ |
 | `ctx.params` | ✅ | ✅ | ✅ | ✅ |
 | `ctx.metrics` | ❌ | ✅ | ✅ | ✅ |
@@ -1265,17 +1293,41 @@ We do **not** claim certifications until audited.
 > "Heartbeat" (Mo 0-2) precedes v0.1. Supersedes v4.1's original 14-18 mo
 > v1.0 estimate. See §18 for tier-by-tier scope.
 
+> **Note (v4.1.3 patch):** Mo 28-36 v1.0 GA below is **best-case-only**,
+> explicitly contingent on the Mo 24 decision gate (see "Mo 24 decision
+> gate" subsection below). No solo project shipped a serious data
+> engineering platform alone past v1.0 in 2022-2026; the gate forces an
+> honest founder choice **while there is still runway**, not at exhaustion.
+
 | Phase | Timeline | Users | ARR | Milestone |
 |---|---|---|---|---|
 | Tier 0 Heartbeat | Month 0-2 | founder only | $0 | First runnable slice (`ctx.read` + `ctx.write` locally) |
 | v0.1 Hello World | Month 2-8 | 0-10 testers | $0 | CLI E2E validates `git clone → first table <30 min` |
 | v0.2 DX | Month 8-14 | 10-100 testers | $0 | Workbench validates `5-engineer team productive` |
-| v0.3 Connectors | Month 14-20 | 100-300 trial | $0-25K | Lakekeeper + dlt; beta program opens |
-| v0.5 Intelligence | Month 20-28 | 300-1,000 trial | $25-100K | Lineage-aware Copilot + `ctx.agent` |
-| v1.0 GA | Month 28-36 | 500-2,000 | $100K-500K | First paying customers; SDK stable per semver |
+| v0.3 Connectors | Month 14-20 | 100-300 trial | $0-25K | Lakekeeper / Polaris co-default + dlt; beta opens |
+| v0.5 Intelligence | Month 20-28 | 300-1,000 trial | $25-100K | Lineage-aware Copilot + `ctx.agent` + `nucleus-mcp-server` |
+| **Mo 24 GATE** | — | — | — | **Founder commits to (a) raise, (b) hand off, or (c) indie — see below** |
+| v1.0 GA *(best-case)* | Month 28-36 | 500-2,000 | $100K-500K | First paying customers; SDK stable per semver |
 | v1.5 | Year 3-5 | 5,000-15,000 | $500K-2M | Sustainable indie business |
 | v2.0 | Year 5-6 | 15,000-50,000 | $2-10M | Acquisition-eligible |
 | v3.0 | Year 7+ | 50,000+ | $10-30M | Strategic acquisition target |
+
+**Mo 24 decision gate (per ADR-002 §8.3).** By Month 24 (mid-v0.5), the founder MUST commit to exactly one of:
+
+- **(a) Raise seed / pre-seed** → build a team to ship v1.0 GA
+- **(b) Hand off** → downstream consumer / acqui-hire (Bosch internal data-platform team is the documented off-ramp)
+- **(c) Accept indie outcome** → cap scope, charge from v1.0 OSS-friendly tier, retire fundraise ambitions
+
+The gate **fires automatically from weakness** if any of these hold:
+
+1. v0.5 released + **0 paying customers** after 3 months beta
+2. v0.5 released + **<10 active teams** after 6 months OSS
+3. **Founder velocity sustained <3 features/month for 60 consecutive days** (measured against PoCs and v0.x deliverables)
+4. **Funded competitor ships an equivalent local-first Iceberg stack** with comparable DX (current watch list: Tower.dev, Bauplan, Tobiko, dbt-Fusion-with-DuckDB-GA)
+
+The gate **also fires from strength** if **>50 active teams + ≥2 design partners paying** — still pick (a)/(b)/(c), but raise/hand-off from leverage, not desperation. Rationale: strong traction without team conversion creates the most dangerous founder trap (sales-cycle defeat by funded competitor at Mo 30-36); the gate forces conversion *before* the trap closes.
+
+**No "default extension" is permitted.** Reaching Mo 24 without an explicit choice = automatic option (c).
 
 ### 17.3 What We Don't Do
 
@@ -1361,6 +1413,7 @@ the architectural version labels. The mapping is:
 
 - `ctx.agent` runtime (sandboxed AI code generation)
 - Lineage-aware refactoring + AI test generation
+- **`nucleus-mcp-server` (~500 LOC)** — expose assets / contracts / lineage to MCP-compatible agents via `ctx` (per ADR-002 §4.2 hedge against agent-substrate scenario; not a category pivot, purely additive thin adapter)
 - Lance + multimodal optional
 - Daft optional engine
 - Cost meter v1

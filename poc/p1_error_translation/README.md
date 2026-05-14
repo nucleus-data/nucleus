@@ -1,5 +1,6 @@
 # PoC #1 — Dagster Error Translation Layer
 
+> **PROMOTED 2026-05-13** to `src/nucleus/coordination/error_translation.py`. This directory remains as the canonical PoC reference per `PROMOTION_PR_DRAFT.md` rollback plan.
 > **Status**: Spec only — not yet implemented.
 > **Priority**: **HIGHEST** — release blocker for all subsequent v0.1 work.
 > **Trigger**: Begin after dev environment setup (`SETUP.md`) + `M2.1 Dagster` from `docs/onboarding/learning_path.md` are complete.

@@ -11,7 +11,7 @@ alwaysApply: true
 
 ## Project Identity (1 sentence)
 
-A modern, composable data engineering platform — built on open Apache foundations, AI-assisted by design, solving persistent pains. Grows with the team. Graduates cleanly to giants.
+**Nucleus ships data products from a laptop** — a local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks, built on open Apache foundations, AI-ready by design. Grows with the team. Graduates cleanly to giants. *(Full positioning hierarchy + amendments: `docs/decisions/ADR-002-positioning-decision-2026-05.md`.)*
 
 ## Default Decision: WRAP, not BUILD
 
@@ -120,23 +120,26 @@ A "no" or "unclear" anywhere → reject or defer.
 
 Use: **asset**, **materialization**, **snapshot**, **contract**, **check**, **source asset**, **wrap**, **engine**, **module**, **catalog**, **`ctx`**, **Copilot**, **agent runtime**, **yield to giants**, **graduate**.
 
-Avoid: "table" (as primitive), "job", "task", "pipeline output", "version" (for snapshots), "plugin", "metastore", "context", "AI helper", "scale out" (use yield-to-giants), "migrate" (use graduate in graduation context).
+Avoid: "table" (as primitive), "job", "task", "pipeline output", "version" (for snapshots), "plugin", "metastore", "context", "AI helper", "scale out" (use yield-to-giants), "migrate" (use graduate in graduation context). <!-- banned-term: metastore -->
 
 ## Forbidden Framings
 
 Never describe Nucleus as:
 
-- "Data OS"
-- "Spark killer"
-- "Databricks killer / replacement"
+- "Data OS" <!-- banned-term: Data OS -->
+- "Spark killer" <!-- banned-term: Spark killer -->
+- "Databricks killer / replacement" <!-- banned-term: Databricks killer -->
 - "Universal compute platform"
-- "AI-first" / "AI-native" platform (we are AI-**assisted**)
+- "AI-first" / "AI-native" platform (we are AI-**ready**, not AI-native) <!-- banned-term: multiple -->
+- "AI-native data CLI" (Angle C — retired per ADR-002) <!-- banned-term: AI-native -->
+- "Agent data substrate" / "Workbench for agents" (Angle D — retired per ADR-002)
+- "Iceberg company" (Iceberg is our substrate, not our category — per ADR-002 §8.1)
 - "Distributed-first" (we yield to giants for distributed)
 - "Plugin marketplace" (v1)
 - "Better Databricks"
 - "ML platform" / "Feature store" / "Model registry"
 
-Correct: **"a modern, composable data engineering platform that solves persistent pains, AI-assisted by design, and graduates cleanly to giants when users outgrow it."**
+Correct: **"Ship data products from a laptop — a local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks, AI-ready by design, graduating cleanly to any Iceberg catalog when users outgrow their laptop."** *(Working default per ADR-002 §8.1; final tagline locks after PoC #5 external-tester field test.)*
 
 ## Citing Architecture
 
@@ -159,7 +162,110 @@ When making recommendations, cite the doc + section explicitly:
 
 ---
 
-## Cursor-Specific AI Workflow Tactics
+## Anti-Over-Engineering Discipline (founder directive, 2026-05-13)
+
+> "Focus on simplicity and real core values. Over-engineering causes black-box experiences and bad future health of the platform."
+
+This rule supersedes any AI preference for "clean abstractions" or "future-proofing." Match every PR against it before merging.
+
+1. **Default to less.** When the question is "should we add X?", the answer is "no" unless X clears the 8-question gate AND has a concrete v0.1 user-visible payoff. "Future-proofing" alone is not a payoff.
+
+2. **No premature abstractions.** Inline first. Wrap into a dataclass / interface / helper only when a *second real caller* appears. One caller = inline.
+
+3. **No black-box surfaces.** Hide *external implementation* (e.g., Dagster classnames in errors per v4.1 §6.4). NEVER hide *user intent* — what an asset does, where it lives, why it failed, which engine ran. When unsure, surface more.
+
+4. **No speculative code.** If there is no v0.1 caller today, the code is not added today. "v0.5 might need X" is not a justification; it is anxiety.
+
+5. **Code is a liability, not an asset.** Every LOC is future maintenance, future review burden, future drift risk. The 30K LOC ceiling is a wall, not a target.
+
+6. **Every layer must earn its keep.** Three layers between user input and the underlying engine = two too many. The `ctx` SDK is the only contracted abstraction; everything else must justify its existence to the founder before it lands.
+
+Refactor trigger: if a reviewer reads a new file and cannot tell within 30 seconds *what concrete v0.1 user pain it removes*, the file should not exist yet. Revert and document the imagined need in `docs/FOUNDER_ACTION_QUEUE.md` for later reconsideration.
+
+---
+
+## Velocity Discipline (founder directive, 2026-05-13)
+
+> "Work faster while maintaining good working quality."
+
+Velocity comes from cutting ceremony, NOT cutting quality gates. The two paired directives (Anti-Over-Engineering above + this) reinforce each other: less code = less to verify = faster.
+
+1. **Parallel verifier, not sequential.** Launch the verifier alongside the next wave, not before it. If verifier returns FAIL, revert the dependent wave. Sequential waits are wasted time.
+
+2. **Skip verifier on low-risk paths** when ALL four hold: (a) verbatim or near-verbatim move, (b) 4/4 governance scripts EXIT 0, (c) all tests pass at new + old locations, (d) LOC delta < 200. Otherwise verifier runs.
+
+3. **Batch tracking-doc updates** once per day (end-of-day), not after every wave. Founder reads `FOUNDER_ACTION_QUEUE.md` / `budget_history.md` / `poc_plan.md` at her own cadence; aggregating after every wave is busywork.
+
+4. **Mechanical multi-file edits**: when 3+ files need the same rename / vocabulary swap / stale-string fix, do one foreground pass. The single-file discipline above applies only to *logic* changes.
+
+5. **Trust recent reads.** Don't re-read a file unless its state may have changed since last read this session.
+
+6. **Default sibling parallelism = 3-4 workers** when scopes are file-disjoint. Anti-collision rules from `AGENTS.md §11.14` still apply. Synthesize once after all return — never partial-synth mid-flight.
+
+Quality gates that MUST stay (these enforce simplicity, not bloat):
+- All 4 primary governance scripts EXIT 0 before merge (vocabulary / pinning / LOC budget / dagster leak)
+- All tests pass at new + old locations
+- LOC budget GREEN (< 80% of phase ceiling)
+- Error translation at every external boundary
+- 30-min beachhead E2E unbroken
+
+If a velocity shortcut breaks any quality gate, the gate wins. No exceptions.
+
+---
+
+## Loop Mode (founder directive, 2026-05-13)
+
+> "Go into loop mode, automatically execute task after each done instead of waiting for my command."
+
+Default operating mode. The architect does NOT pause for founder confirmation between routine waves. Founder is on `STOP-condition` notification only — every other transition is autonomous.
+
+### Loop step
+
+When a background worker completes:
+
+1. **Cleanup pass (≤ 5 min foreground)**: address worker-flagged caveats that match an Anti-Over-Engineering default (stale doc lines, wording polish, mechanical mirrors of prior decisions, 1-line pin / packaging fixes). Skip caveats that need real architectural judgment — those queue for batch.
+2. **Auto-launch the next coherent task** from the queue. Brief 1-2 line acknowledgment of the worker that just finished; lengthy synthesis only when multiple workers must be merged together.
+3. **Rebuild the auto-queue** at end-of-day batch (or when it drops below 2 items). Sources, in priority order:
+   - (a) v0.1 critical-path remaining (CLI wiring, AMA, beachhead E2E)
+   - (b) Verifier caveats not yet cleared
+   - (c) ADR-flagged stubs (e.g., `docs/errors/`, `docs/swap/*`)
+   - (d) End-of-day tracking-doc batch sweep
+   - (e) PoC #5 readiness work
+4. **Anti-collision check** before every launch: confirm the new worker's file ownership is disjoint from in-flight workers. If unavoidable collision, queue sequentially.
+
+### STOP conditions — pause loop and notify founder
+
+The loop halts ONLY when one of these surfaces:
+
+1. **Unresolvable blocker**: a worker reports an architectural conflict, hostile-license dep, dead upstream, or unrecoverable test failure.
+2. **Real spec drift requiring founder judgment** (e.g., `nucleus.toml` vs `nucleus_project.yaml`). Pick the Anti-Over-Engineering default when one exists; pause only if the trade-off is genuine.
+3. **30K LOC ceiling, vocabulary drift, or composability violation** is on track to fire within the next wave.
+4. **v0.1 ship gate reached** — present the completion checklist and wait for the go signal to start v0.2 / PoC #5 / Cloud-preview work.
+5. **Founder explicit "stop" / "pause" / "wait" command**.
+
+### NEVER stop the loop for
+
+- Routine worker completion, including verifier PASS-WITH-CAVEATS where caveats are minor.
+- Tracking-doc updates (batched at end-of-day).
+- Wording or naming choices where Anti-Over-Engineering provides a default.
+- "Nice-to-have" features that fail the 8-question gate (those are silently deferred, not surfaced).
+
+### Pause format
+
+When a STOP condition fires, the architect presents:
+
+```
+PAUSE — <one-line reason>
+
+Options:
+  A) <recommended default>
+  B) <alternative>
+  C) <defer>
+
+Recommended: <A | B | C> because <one-line justification>.
+```
+
+Then wait for founder input. No more work until resolved.
 
 These rules supplement `AGENTS.md §11` (universal workflow discipline) with Cursor-IDE-specific guidance.
 
@@ -192,6 +298,54 @@ For PoC work, also include:
 ```
 
 Missing the spec file = AI invents APIs that don't exist. Always reference the spec.
+
+### Subagent Model Orchestration (Cursor, cost-unconstrained mode)
+
+Apply this section when the workflow includes:
+- Multi-agent execution
+- Many spawned subagents
+- Long-running autonomous loops
+- Large refactors across the codebase
+- Architecture and implementation running in parallel
+
+Core principle:
+
+> There is no single "best model."
+> There is only the best orchestration of models.
+
+#### Role-based model stack (Nucleus platform engineering)
+
+| Layer | Primary role | Preferred model |
+|---|---|---|
+| Architect | Design authority, ADR owner, final reviewer, invariant keeper | Claude Opus 4.7 |
+| Builder | Autonomous implementation, terminal loops, build/test/fix iteration | GPT-5.5 |
+| Swarm | Parallel file-level implementation, tests, docs, API wiring | Claude Sonnet 4.6 (or 4.5 fallback) |
+| Research | Large-context repo/docs ingestion, RFC/spec analysis, ecosystem comparisons | Gemini 3.1 Pro |
+
+Tier-B specialist:
+- Codex 5.3 is useful for terminal-heavy code editing and CLI-centric loops.
+
+Not recommended as core in unlimited-budget mode:
+- GPT-5.4 / GPT-5.2 (superseded by GPT-5.5)
+- GPT mini/nano classes (use only for cheap background micro-tasks)
+- Haiku (not strong enough for architecture-scale platform engineering)
+
+#### Spawn pattern
+
+1. Spawn one Architect agent (Opus 4.7) as design authority.
+2. Spawn one Builder agent (GPT-5.5) for implementation loops.
+3. Spawn 3-10 Swarm agents (Sonnet 4.6) for bounded parallel tasks.
+4. Spawn one Research agent (Gemini 3.1 Pro) for upstream/spec tracking.
+5. Route all integration and merge review back through the Architect agent.
+
+Do not use the strongest model for everything. Heterogeneous orchestration wins.
+
+#### Availability fallback policy
+
+If a preferred model is unavailable in the current Cursor tool/runtime:
+1. Select the closest available model for that role.
+2. Record the fallback choice explicitly in the subagent prompt.
+3. Continue execution unless the user explicitly requires waiting.
 
 ### Single-File Discipline (v0.1)
 

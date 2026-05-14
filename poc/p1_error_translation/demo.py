@@ -26,8 +26,12 @@ def ok_upstream() -> int:
 
 
 @dg.asset
-def failing_downstream(ok_upstream: int) -> int:
-    """Simulates a source-connection failure during materialization."""
+def failing_downstream(ok_upstream: int) -> int:  # noqa: ARG001
+    """Simulates a source-connection failure during materialization.
+
+    ``ok_upstream`` is unused in the body but required so Dagster wires the
+    dependency from :func:`ok_upstream` by parameter name.
+    """
     raise ConnectionError("could not reach postgres at localhost:5432")
 
 

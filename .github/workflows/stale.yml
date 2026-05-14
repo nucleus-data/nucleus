@@ -1,0 +1,58 @@
+# .github/workflows/stale.yml — Nucleus stale issue + PR bot
+#
+# Per ADR-022: pings stale issues/PRs at 45 days of inactivity,
+# closes them at 60 days.  Exempts issues with labels that indicate
+# active tracking (governance-alert, weekly-audit, pinned, etc.).
+#
+# Per AGENTS.md Anti-Over-Engineering: no auto-close for PRs that are
+# approved; no bot comments on issues labelled `need-founder-decision`.
+
+name: Stale
+
+on:
+  schedule:
+    - cron: "0 8 * * *"   # 08:00 UTC daily
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: Mark and close stale items
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/stale@v9
+        with:
+          # Issues
+          days-before-issue-stale: 45
+          days-before-issue-close: 60
+          stale-issue-label: "stale"
+          stale-issue-message: |
+            This issue has been idle for 45 days with no activity.
+
+            If this is still relevant, please leave a comment to keep it open.
+            It will be closed automatically in 15 days if there is no activity.
+
+            If this is a deliberate backlog item, add the `backlog` label to exempt it from stale closing.
+          close-issue-message: |
+            Closed due to 60 days of inactivity.
+            If this is still relevant, please re-open with a comment explaining the current state.
+          exempt-issue-labels: "pinned,governance-alert,weekly-audit,backlog,need-founder-decision,security"
+
+          # Pull Requests
+          days-before-pr-stale: 45
+          days-before-pr-close: 60
+          stale-pr-label: "stale"
+          stale-pr-message: |
+            This pull request has been idle for 45 days.
+
+            If you're still working on it, please push an update or leave a comment.
+            It will be closed automatically in 15 days if there is no activity.
+          close-pr-message: |
+            Closed due to 60 days of inactivity.
+            Feel free to re-open if you'd like to continue this work.
+          exempt-pr-labels: "pinned,do-not-close,dependency-upgrade"

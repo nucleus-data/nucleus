@@ -1,0 +1,23 @@
+# Nucleus project config for {project_name}
+# Generated: {today}
+# Spec: nucleus_cli_spec.md §7
+
+project:
+  name: {project_name}
+  profile: default
+  generated_at: "{today}"
+
+# Local catalog (filesystem-backed Iceberg via pyiceberg.SqlCatalog).
+# Per nucleus_cli_spec.md §10 NV #5: surfaced as `filesystem` to users.
+catalog:
+  type: filesystem
+  path: ./.nucleus/catalog.db
+
+# Local warehouse — Parquet files land under ./data/warehouse/<namespace>/<asset>.
+storage:
+  warehouse: ./data/warehouse
+
+# Lineage transport. v0.1 default: file. v0.3+ flips to http (Marquez) per spec §7.
+lineage:
+  transport: file
+  path: ./.nucleus/lineage/events.jsonl

@@ -1,0 +1,43 @@
+# Local demo wiring: MinIO + Nucleus CLI image (built from docker/Dockerfile.nucleus).
+#
+# Usage (Docker Compose V2): `docker compose -f docker-compose.demo.yml up --build`
+#
+
+services:
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: nucleus
+      MINIO_ROOT_PASSWORD: nucleus-demo-secret
+    volumes:
+      - minio-demo-data:/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null || exit 1",
+        ]
+      interval: 5s
+      timeout: 4s
+      retries: 6
+      start_period: 15s
+
+  nucleus:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nucleus
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: nucleus
+      AWS_SECRET_ACCESS_KEY: nucleus-demo-secret
+      AWS_EC2_METADATA_DISABLED: "true"
+
+volumes:
+  minio-demo-data: {}

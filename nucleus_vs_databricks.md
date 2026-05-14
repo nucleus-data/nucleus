@@ -344,7 +344,7 @@
 8. **Marketplace / data listings** — defer to v3.0 ecosystem
 9. **Real-time co-editing in notebooks** — engineering tool, not collaboration tool
 
-These are not gaps. They are **focus**. Per architecture §14, claiming otherwise drags us into "Data OS" territory and we die.
+These are not gaps. They are **focus**. Per architecture §14, claiming otherwise drags us into "Data OS" territory and we die. <!-- banned-term: Data OS -->
 
 ## ❓ Real Gaps to Acknowledge & Plan Funding For
 

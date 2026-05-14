@@ -1,606 +1,267 @@
-# Nucleus CLI — Specification
+# Nucleus CLI Specification
 
-> The complete command surface for the `nucleus` CLI. Git-like, kubectl-like ergonomics. Every command, every flag, every output format.
->
-> Companion to `nucleus_architecture_v3.md` §10 and `nucleus_ctx_sdk_spec.md`. Locked for v1.0.
-
----
-
-## 0. Principles
-
-1. **One verb per concept.** No `nucleus do-the-thing-with-flags`.
-2. **Composable output.** Every command supports `--output {human,json,yaml}`. `human` is default.
-3. **Predictable exit codes.** 0 success, 1 user error, 2 system error, 3 contract/check failure.
-4. **Idempotent where possible.** Re-running a deploy doesn't break it.
-5. **`--help` is the source of truth.** Every command, every flag, documented.
-6. **Quiet by default in CI.** `--quiet` removes progress bars. `--verbose` adds debug logs.
+> **Status**: SPEC v0.1 — locks the command surface for `git clone` → BI-ready Iceberg in <30 min.
+> **Date**: 2026-05-13 · **Owner**: Solo founder · **Supersedes**: nothing (first CLI spec; resolves ADR-005 NV #2).
+> **Related**: `nucleus_architecture_v4.1.md` (§8 L4, §5.5, §6.4, §11, §18.1) · `nucleus_ctx_sdk_spec.md` (every CLI command delegates to one `ctx.*` call) · `docs/architecture/C4_container.md` §3.1 · ADR-005 §4 (CLI carve-out — this doc is that governance) · ADR-006 (NE-codes in §5.4 + §8) · ADR-007 (`nucleus enable` gating).
 
 ---
 
-## 1. Command Tree
+## 1. Why this exists
 
-```
-nucleus
-├── init <name>                Scaffold new project
-├── up                         Boot local stack
-├── down                       Stop local stack
-├── status                     Show platform health
-├── version                    Print version info
-│
-├── run <asset>                Materialize a single asset
-├── build [<selector>]         Materialize multiple assets (default: all)
-├── backfill <asset>           Re-materialize over a range
-├── test [<selector>]          Run tests + checks + contracts
-├── sql <query>                Ad-hoc SQL query
-│
-├── list                       List all assets (filterable)
-├── describe <asset>           Show full asset details
-├── lineage <asset>            Show upstream/downstream graph
-├── runs                       Recent run history
-├── logs <run_id>              Stream logs of a run
-│
-├── snapshot
-│   ├── list <asset>           Iceberg snapshots
-│   ├── show <asset> <version> Show snapshot details
-│   ├── revert <asset> <ver>   Roll back to snapshot
-│   └── expire <asset>         Garbage-collect old snapshots
-│
-├── connect <connector>        Add new data source
-├── connections list           List configured connections
-│
-├── enable <module>            Turn on optional module
-├── disable <module>           Turn off optional module
-├── modules list               Show available modules + status
-│
-├── deploy --target <target>   Ship to environment (k3s, k8s, docker)
-├── upgrade                    Upgrade Nucleus binary + migrate metadata
-│
-├── secrets
-│   ├── set <key>              Set a secret (prompts for value)
-│   ├── list                   List secret names (not values)
-│   └── unset <key>            Remove secret
-│
-└── doctor                     Diagnose environment problems
-```
+The CLI is the first artefact a Nucleus user touches. Per v4.1 §1.5, a 5-engineer team must `git clone`, `nucleus up`, ingest, transform, and query in **<30 minutes**. If `nucleus init` is friction, the project is dead. If `nucleus run` leaks a Dagster stack trace, the wrap-not-build thesis (v4.1 §6.5) collapses. Per `AGENTS.md` §0 the CLI is one third of "the unified developer-first experience" Nucleus owns forever; every §3 command is a thin operator wrapper over one `ctx.*` call. ADR-005 §4 carves the CLI out of the SDK freeze schedule because operator ergonomics need a different cadence than the Python API contract — **this spec is that separate governance**.
+
+Scope: defines the command surface, flag conventions, output contract (text + NDJSON), error contract (NucleusError → exit code per ADR-006), and stability tier of each command. Does **not** define implementation (lives in `src/nucleus/cli/`), output copy (iterates with PoC #5), or marketing strings (lock at v0.1 GA per ADR-002 §8.4).
 
 ---
 
-## 2. Global Flags
+## 2. Stability tiers (ADR-005 CLI carve-out)
 
-Available on **every** command:
+ADR-005 §1 defines four SDK tiers (Frozen / Stable / Beta / Internal); §4 carves the CLI out and points here. CLI command **names** freeze at v1.0; **flag taxonomy** + **output wording** stay Beta through v1.5 to absorb PoC #5 + telemetry without ADR-005 §3 breaking-change overhead.
 
-| Flag | Default | Purpose |
-|---|---|---|
-| `--env <name>` | `dev` | Environment (matches `environments/<name>.yaml`) |
-| `--project <path>` | `.` | Path to project root |
-| `--output {human,json,yaml}` | `human` | Output format |
-| `--quiet` | false | Suppress progress UI |
-| `--verbose` | false | Debug logging |
-| `--config <key=val>` | — | Override `nucleus.yaml` field |
-| `--help` | — | Show command help |
+| Command | v0.1 | v0.5 | v1.0 | v2.0 |
+|---|---|---|---|---|
+| `nucleus init` / `up` / `down` / `run` / `ingest` / `query` / `version` | Beta | Stable | **Frozen** | Frozen |
+| `nucleus chat` | (v0.2, **Beta**) | Stable | **Frozen** | Frozen |
+| `nucleus schedule list / preview` | (v0.1.1, **Beta** — ADR-017) | Stable | **Frozen** | Frozen |
+| `nucleus schedule on / off / trigger` | (v0.2, deferred stubs in v0.1.1 — NE5008) | Beta | Stable | **Frozen** |
+| `nucleus snapshot list / restore` | (v0.3+) | Beta | Stable | **Frozen** at v1.5 |
+| `nucleus catalog migrate` | (v0.3+) | Beta | Stable | **Frozen** at v1.5 |
+| `nucleus enable <feature>` | Beta | Stable | **Frozen** | Frozen |
+| `nucleus doctor` | (v0.3+) | Beta | Stable | **Frozen** at v1.5 |
+| `nucleus agent` (AI runtime) | n/a | Beta | Beta | **Frozen** at v1.5 — AI carve-out per ADR-005 §4 + v4.1 §13.3 |
+
+Flag-level stability is uniformly **Beta until v1.0** even where the parent command is Stable, mirroring SDK §13. Flag rename in Beta = `CHANGELOG.md` entry; flag rename in Frozen = ADR + deprecation per ADR-005 §3.
 
 ---
 
-## 3. Core Commands
+## 3. v0.1 command surface (Mo 2-8 Hello World)
 
-### 3.1 `nucleus init <name>`
+Each entry gives: **Synopsis** · **Purpose** · **Wraps** (`ctx.*` API) · **Outputs** · **Error exits** (NucleusError → exit code + ADR-006 NE-code) · **Cite arch §**. Asset keys use v4.1 §12.1 form `<namespace>.<name>` (2-level for v0.1 single-catalog scope; 3-level lights up at v0.3 — §10 NV #6).
 
-Scaffold a new project.
+### 3.1 `nucleus init [PROJECT_NAME]`
 
-```bash
-nucleus init my-project
-nucleus init my-project --template=medallion
-nucleus init my-project --template=dbt-migrate --from=./my-dbt-project
-```
+`nucleus init [--template <default>] [--no-git] [PROJECT_NAME]` — scaffolds a new project (`nucleus_project.yaml`, `assets/`, `data/`, example asset, optional `git init` suggestion). **v0.1 ships only `--template default`**; `minimal | postgres | csv` preset variants defer to v0.3+ per Anti-Over-Engineering (no real v0.1 user-visible payoff). Omitting `PROJECT_NAME` is not supported in v0.1 (raises `NucleusInvalidAssetDefinition` for ambiguity reasons). **Wraps**: stdlib only (template copy via `importlib.resources`; `git init` is a printed suggestion, NOT a subprocess shell-out, since cross-platform git invocation is fragile). **Outputs**: `Created Nucleus project at <path> (6 files). Next steps: cd <name> && nucleus up`; JSON variant pending `--format json` v0.3+. **Error exits**: dir non-empty → 1 `NucleusIOError` (NE1005); invalid name / unknown template → 1 `NucleusInvalidAssetDefinition` (NE3004) — see §10 NV #4 for the L4 NE5xxx allocation that may supersede in v0.3+. **Cite**: v4.1 §8.2 (project anatomy), §18.1.
 
-| Flag | Description |
-|---|---|
-| `--template <name>` | One of `basic`, `medallion`, `dbt-migrate`, `enterprise`. Default: `basic`. |
-| `--from <path>` | Source project for migration templates. |
-| `--no-git` | Skip git init. |
+### 3.2 `nucleus up [--rebuild]`
 
-**Output (human)**:
-```
-Creating my-project/...
-  ✓ nucleus.yaml
-  ✓ pyproject.toml
-  ✓ assets/raw/example.py
-  ✓ assets/staging/example.py
-  ✓ .gitignore
-  ✓ README.md
-Initialized git repository.
-
-Next steps:
-  cd my-project
-  uv sync
-  nucleus up
-```
-
-### 3.2 `nucleus up`
-
-Boot the local stack: MinIO + Lakekeeper + DuckDB Arrow Flight + Dagster (hidden) + Portal.
-
-```bash
-nucleus up
-nucleus up --port 8080            # custom Portal port
-nucleus up --detach               # background
-```
-
-**Output**:
-```
-Starting Nucleus (env=dev)...
-  ✓ Storage (MinIO embedded)            :9000
-  ✓ Catalog (Lakekeeper)                :8181
-  ✓ Query engine (DuckDB Flight)        :9090
-  ✓ Orchestrator (internal)              ready
-  ✓ Portal                              http://localhost:3000
-
-Ready in 18.3s.
-Open Portal: http://localhost:3000
-```
+`nucleus up [--rebuild] [--catalog filesystem] [--profile <name>]` — starts the local runtime (MinIO via docker-compose, filesystem-backed Iceberg catalog via `pyiceberg.SqlCatalog`, Dagster `Definitions` in-process). **Wraps**: `docker compose up -d minio`; `pyiceberg.catalog.load_catalog(type="sql", ...)`; `dagster.Definitions(assets=...)` per `C4_container.md` §4.1. **Target boot**: **<10s cold, <3s warm** per v4.1 §11.2 / §16.1 and `poc/p4_boot_time/DESIGN.md`. **Outputs**: per-component checkmarks (`✓ MinIO ready` / `✓ Catalog ready` / `✓ Definitions loaded (N assets)`) + final `Nucleus up in <duration>s.` **Error exits**: Docker unreachable → 3 `NucleusDockerUnavailable` (`NE5002`); port 9000 bound → 3 `NucleusPortBound` (`NE5003`); catalog locked → 1. **Cite**: v4.1 §6.1, §5.7, §5.8, §11.1.
 
 ### 3.3 `nucleus down`
 
-Stop everything started by `up`. Preserves data in `.nucleus/`.
+`nucleus down [--volumes]` — stops the local runtime; **preserves** MinIO docker volumes by default (`warehouse/` data on disk always preserved). Pass `--volumes` (no `-v` short flag — reserved by Typer for global verbosity) to also remove docker volumes, matching `docker compose down --volumes` semantics. **Wraps**: `docker compose down [--volumes]`; no SDK call. **Outputs**: `Nucleus down. Volumes: preserved | removed.` **Error exits**: 0 (idempotent — already-down is success). **Cite**: v4.1 §6.1, §11.1. **Promoted from stub 2026-05-14**: `--keep-volumes`/`--no-keep-volumes` spec variant rejected in favour of `--volumes` (opt-in destroy, default preserve) per the §"Recommendations" entry #5 RESOLVED note.
 
-### 3.4 `nucleus status`
+### 3.4 `nucleus run [ASSET_KEY...]`
 
-```
-Project:     acme-data-platform
-Environment: dev
-Version:     1.0.3
+`nucleus run [--all] [--changed-only] [--dry-run] [--param KEY=VAL...] [ASSET_KEY...]` — materializes one or more assets (full graph with `--all`); equivalent to one or more `ctx.materialize(...)` calls from a script. **Wraps**: iterates `ctx.materialize(asset_key)` once per `ASSET_KEY` (per [ADR-013](./docs/decisions/ADR-013-ctx-materialize-api.md) NV #1 — there is no list-variant; the CLI is the multi-asset surface) → `dagster.materialize(...)` against in-process `Definitions`. AMA handles the 5 steps per v4.1 §6.2 (validate → partition → atomic commit → OL event → registry update). **Outputs**: per-asset status table (key, status, duration, rows) + summary; OL events emit to `FileTransport` per `C4_container.md` §3.6. **Error exits**: any asset fails → 1 with the first error (most likely `NucleusInternalError` `NE3001` for Python body failures; `NucleusSchemaError` `NE2001` for contract mismatch; `NucleusCommitConflictError` `NE1002` for concurrent writes per ADR-006 §Initial). **Cite**: v4.1 §6.2 (AMA), §6.4 (Error Translation — release blocker), ADR-013 (`ctx.materialize` API).
 
-Components:
-  ✓ Storage          healthy   :9000
-  ✓ Catalog          healthy   :8181  (12 tables)
-  ✓ Query engine     healthy   :9090
-  ✓ Orchestrator     healthy
-  ⚠ obs module       disabled
-  ⚠ auth module      disabled
+### 3.5 `nucleus ingest <SOURCE_URI> --table <SRC> --as <DEST>`
 
-Recent activity:
-  Last run:    fact.orders (2 min ago, succeeded)
-  Failed runs: 0 in last 24h
-  Assets:      27 total, 25 succeeded, 0 failed, 2 never run
-```
+`nucleus ingest <SOURCE_URI> --table <SRC_TABLE> --as <DEST_KEY> [--mode overwrite|append|merge] [--merge-on <COL>...]` — the **30-min beachhead one-liner** (v4.1 §1.5 mandate). Auto-infers schema, auto-creates the Iceberg destination, pulls rows, commits atomically, prints a 10-row preview. **Wraps**: `ctx.copy_from(source=<URI>, table=<SRC>, target=<DEST>, mode=...)` per SDK §5.3 + v4.1 §5.5.1; impl: SQLAlchemy → pyarrow → pyiceberg `Table.append`/`overwrite`; total path **≤500 LOC** per PoC #3 budget. **Sources (v0.1)**: `postgresql://`, `mysql://`, `sqlite://`, local CSV / Parquet / JSON (six families). **Outputs**: Rich progress bar (`--no-progress` for CI) + final count + 10-row preview; JSON mode: NDJSON status events + summary. **Error exits**: source unreachable → 1 `NucleusSourceConnectionError` (`NE1001` per ADR-006 H1+H17); schema mismatch → 1 `NucleusSchemaError` (`NE2001`); catalog conflict → 1 `NucleusCommitConflictError` (`NE1002`). **Examples**: `nucleus ingest postgres://u:p@host/db --table public.users --as raw.users --mode overwrite` · `nucleus ingest ./orders.csv --as raw.orders --mode append` · `nucleus ingest mysql://... --table orders --as raw.orders --mode merge --merge-on order_id`. **Cite**: v4.1 §5.5.1, §1.5.
 
-### 3.5 `nucleus version`
+### 3.6 `nucleus query <SQL> | --file <PATH> | --asset <KEY>`
 
-```
-nucleus 1.0.3 (build abc123, 2026-05-11)
-  duckdb       1.1.2
-  polars       1.18.0
-  iceberg-rust 0.4.0
-  lakekeeper   0.5.1
-  dagster      1.8.7 (embedded)
-  dlt          1.4.0
-```
+`nucleus query [--file <PATH>] [--asset <KEY>] [--limit N] [--format text|json|csv] [SQL]` — one-off SQL against the warehouse via DuckDB. Three input modes: positional SQL, `--file`, or `--asset` (`SELECT * FROM <key>` with `--limit` default 100). **Wraps**: `ctx.sql(query)` per SDK §6 — Jinja `{{ ref() }}` / `{{ source() }}` resolution, DuckDB `iceberg_scan(...)`; collected to `pyarrow.Table` for rendering (§10 NV #2). **Outputs**: Rich table for TTY; NDJSON for `--format json`; CSV for `--format csv`; auto-pages through `less -R` for >50 rows on TTY (`--no-page` overrides — §10 NV #1). **Error exits**: SQL parse → 1 `NucleusSQLSyntaxError` (`NE2002` per ADR-006 H8); missing `ref()` target → 1 `NucleusAssetNotFound` (`NE3002`); OOM → 1 `NucleusResourceError` (`NE2003`). **Cite**: v4.1 §5.6 (native `ctx.sql` + Jinja, ≤2500 LOC ceiling), §6.4. v4.1 §18.1 must-ship list does **not** include `query` — §10 NV #3.
+
+### 3.7 `nucleus version`
+
+`nucleus version [--check-updates]` — reports installed Nucleus version + all pinned wrapped-OSS versions per `pyproject.toml` (Constraint #11 traceability); `--check-updates` queries PyPI, never auto-installs. **Wraps**: `nucleus.__version__` + `importlib.metadata.version()` per runtime dep; no network unless `--check-updates`. **Outputs**: two-column table — at minimum `nucleus` / `duckdb` / `polars` / `pyarrow` / `pyiceberg` / `dagster` (same set §11 enumerates). **Error exits**: 0 (informational; `--check-updates` network failure → warning, not error). **Cite**: `AGENTS.md` §3 Constraint #11; `docs/compatibility.md`.
+
+### 3.8 `nucleus chat "<question>"` ← v0.2, **Beta**
+
+`nucleus chat "<question>" [--provider anthropic|openai|ollama] [--model <id>] [--json]` — single-turn AI Copilot chat against the current project context. Auto-injects asset graph summary + recent errors. Enforces opt-in privacy gate (ADR-015 §4 — mirrors ADR-011 §1) and a pre-flight cost ceiling before any bytes leave the laptop. **Stability**: Beta (ADR-005 §2 — promoted to Stable at v0.5). **Wraps**: `litellm==1.83.14` via `nucleus.intelligence.chat(...)`. **Providers (v0.2)**: Anthropic (default, `ANTHROPIC_API_KEY`), OpenAI (`OPENAI_API_KEY`), Ollama (local, `OLLAMA_HOST`). **Outputs**: Markdown-rendered text via Rich (default); JSON payload with `--json`. **Error exits**: opt-in declined → 1 `NucleusConfigError`; cost > ceiling → 1 `NucleusBudgetExceededError` (`NE4005`); auth failure → 1 `NucleusCopilotAuthError` (`NE4001`); rate limit → 1 `NucleusCopilotRateLimitError` (`NE4002`); provider 5xx → 1 `NucleusCopilotProviderError` (`NE4003`); content filter → 1 `NucleusCopilotContentFilterError` (`NE4004`); timeout → 1 `NucleusTimeoutError` (`NE3005`). **Cite**: ADR-015 + `nucleus_architecture_v4.1.md` §7.2 (v0.2 Copilot staging); `docs/errors/copilot.md`; `docs/swap/litellm.md`. **Out-of-scope for v0.2**: multi-turn, streaming, tool-calls, lineage-aware context, Workbench integration (all v0.3+/v0.5+).
+
+### 3.9 `nucleus schedule` ← v0.1.1, **Beta** (ADR-017)
+
+`nucleus schedule list [--format text|json]` — lists every asset whose `@nucleus.asset` decorator carries a `schedule=` expression; shows asset key, cron expression, and next run time (UTC).
+
+`nucleus schedule preview <key> [--count N] [--format text|json]` — shows the next N (default 3, max 20) scheduled run times for one asset. Calculated from the cron expression via `croniter==3.0.4`; no Dagster daemon required.
+
+`nucleus schedule on <key>` / `off <key>` / `trigger <key>` — **deferred to v0.2**; in v0.1.1 these three sub-commands raise `NucleusFeatureDeferredError` (NE5008) with a clear "active scheduling ships in v0.2" message and `nucleus run <key>` as the manual workaround.
+
+**Stability**: Beta (ADR-005 §2). **Wraps**: `nucleus.coordination.schedules.{list_schedules, preview_schedule}` → croniter (validation + preview) + Dagster `ScheduleDefinition` (v0.2 active-scheduling path; hidden behind coordination layer). **Error exits**: unknown / unscheduled asset → 1 `NucleusScheduleNotFoundError` (NE5006); invalid format → 1 `NucleusInvalidAssetDefinition` (NE3004); deferred sub-commands → 1 `NucleusFeatureDeferredError` (NE5008). **Cite**: ADR-017; `nucleus_ctx_sdk_spec.md` §5 (`schedule=` kwarg); `docs/compatibility.md` (`croniter==3.0.4`). **Out-of-scope for v0.1.1**: daemon wiring, timezone support, partition-aware scheduling (all v0.2+).
 
 ---
 
-## 4. Execution Commands
+## 4. v0.3+ commands (deferred)
 
-### 4.1 `nucleus run <asset>`
+Each lists earliest milestone per v4.1 §18.
 
-Materialize one asset (and its missing upstream, optionally).
+- **4.1 `nucleus snapshot list / restore`** *(v0.5, Mo 20-28)* — Time-travel queries on Iceberg snapshots. Wraps `ctx.snapshot(<key>).versions()` / `.at_version(N).read()` / `.revert_to(version=N)` per SDK §10. `restore` appends a reverting snapshot (Iceberg never deletes). Cites `docs/patterns/time_travel.md`.
+- **4.2 `nucleus catalog migrate`** *(v0.3, Mo 14-20)* — Migrates metadata from v0.1 filesystem `SqlCatalog` to **Lakekeeper** (Rust REST) or **Apache Polaris** (ASF TLP, co-default per v4.1 §5.7 P2 + ADR-002 §4.2). Warehouse Parquet untouched. Will be governed by ADR-004 (not yet authored).
+- **4.3 `nucleus agent <subcommand>`** *(v0.5+, Mo 20-28)* — AI agent surface. Per ADR-005 §4 carve-out, stays **Beta through v1.0** and freezes at v1.5 — subcommands and flags may change minor-to-minor with 6-month deprecation per v4.1 §13.3. Provisional subcommands: `chat` / `explain` / `fix` (sandboxed per v4.1 §7.3). Exact surface NV per ADR-005 NV #3.
+- **4.5 `nucleus doctor`** *(v0.3, Mo 14-20)* — Fixed-checklist diagnostic: Python `>=3.11,<3.13`, Docker reachable, ports 9000/9001 free, MinIO health, catalog valid, OL transport reachable, disk free >5 GB. Coloured pass/fail table; exit 0 all green, 1 any red. PoC #5 testers run this as "step 0" per `poc/p5_beachhead/RECRUITMENT.md`.
 
-```bash
-nucleus run fact.orders
-nucleus run fact.orders --partition 2024-01-15
-nucleus run fact.orders --upstream         # also run all missing upstream
-nucleus run fact.orders --param start_date=2024-06-01
-nucleus run fact.orders --dry-run          # show plan, don't execute
-```
+### 4.4 `nucleus enable <feature>` (v0.3 onward, Mo 14-20)
 
-| Flag | Description |
-|---|---|
-| `--partition <key>` | Single partition value |
-| `--partitions <range>` | Range, e.g. `2024-01-01..2024-01-15` |
-| `--upstream` | Materialize missing upstream first |
-| `--force` | Re-materialize even if up-to-date |
-| `--param key=value` | Pipeline parameter |
-| `--dry-run` | Show execution plan, no side effects |
-
-### 4.2 `nucleus build [<selector>]`
-
-Materialize multiple assets via selector syntax (dbt-compatible).
-
-```bash
-nucleus build                              # all assets
-nucleus build fact.*                       # all under fact namespace
-nucleus build "+fact.orders"               # fact.orders + all upstream
-nucleus build "fact.orders+"               # fact.orders + all downstream
-nucleus build "+fact.orders+"              # full neighborhood
-nucleus build "tag:finance"                # by tag
-nucleus build "owner:data-team@acme.com"   # by owner
-nucleus build --modified                   # only assets whose code changed since last run
-```
-
-### 4.3 `nucleus backfill <asset>`
-
-Re-materialize over a partition range.
-
-```bash
-nucleus backfill events.clicks --range 2024-01-01..2024-01-31
-nucleus backfill events.clicks --range 2024-01-01..2024-01-31 --parallelism 4
-```
-
-### 4.4 `nucleus test [<selector>]`
-
-Run tests + checks + contracts.
-
-```bash
-nucleus test                               # all
-nucleus test fact.orders                   # one asset
-nucleus test --contracts-only
-nucleus test --checks-only
-nucleus test --pytest                      # also run pytest in tests/
-```
-
-Exit code 3 if any contract/check fails.
-
-### 4.5 `nucleus sql <query>`
-
-Ad-hoc SQL via DuckDB.
-
-```bash
-nucleus sql "SELECT COUNT(*) FROM fact.orders"
-nucleus sql -f my_query.sql
-nucleus sql -f my_query.sql --output json
-echo "SELECT 1" | nucleus sql -
-```
+Opt-in to optional integrations. Adds a runtime dep via `pip install nucleus[<feature>]` and writes the toggle to `nucleus_project.yaml`. License-tier compliance per ADR-007 enforced at enable time: RED-tier features refuse to enable in Cloud and warn loudly in OSS. Initial features (all GREEN-tier per ADR-007 unless noted): `marquez` (OL HttpTransport → Marquez, v0.3), `dbt` (dbt-duckdb adapter, v0.3), `polaris` (Apache Polaris catalog, v0.3), `lakekeeper` (Lakekeeper catalog, v0.3), `mcp-server` (`nucleus-mcp-server` ~500 LOC, v0.5), `soda` (Soda Core v3.x, v0.5 — **GREEN only with `soda-core==3.x`**; v4+ is RED per ADR-007).
 
 ---
 
-## 5. Discovery Commands
+## 5. Output format contract
 
-### 5.1 `nucleus list`
+**5.1 Default (`--format text`, TTY default)** — Tabular via `rich==13.9.4` (pinned), trunc-to-width. Plain key-value for single values. Color when `sys.stdout.isatty()` and `NO_COLOR` unset. Rich `Progress` bars for ops >2s; `--no-progress` for CI.
 
-```bash
-nucleus list                          # all assets
-nucleus list --tag pii
-nucleus list --owner data-team@acme.com
-nucleus list --kind sql_asset
-nucleus list --schedule daily
-nucleus list --stale                  # not materialized in freshness SLA
+**5.2 JSON (`--format json`)** — **NDJSON**: one self-contained JSON object per record, `\n`-terminated. Pipe-friendly for `jq`, AI agent / MCP consumption per ADR-002 §8.2. Schema versioned via top-level `_schema_version` (`1` at v0.1; bumps per ADR-005 §3). Field naming: **`snake_case`** (§13 q4 resolved here). Progress bars + color suppressed automatically.
+
+**5.3 Quiet (`--quiet` / `-q`)** — Suppresses non-error output. Exit code is the sole signal; errors still print to stderr.
+
+**5.4 Error format** — Errors print to **stderr** per the PoC #1 `NucleusError` three-field contract (v4.1 §6.4):
+
+```
+Error: <user_message>            ← NucleusError.user_message
+Fix:   <fix_hint>                ← (block omitted if empty)
+Docs:  <docs_url>
+       [NE<L><CCC>]              ← error_code per ADR-006
 ```
 
-**Output (human)**:
-```
-NAME                       KIND      SCHEDULE   LAST RUN          STATUS
-raw.orders                 source    @hourly    2 min ago         ✓
-raw.stripe_charges         source    @hourly    1 min ago         ✓
-staging.orders             asset     @daily     20 min ago        ✓
-dim.customers              asset     @daily     20 min ago        ✓
-fact.orders                asset     @daily     5 min ago         ✓
-analytics.daily_revenue    sql       @daily     never             —
-analytics.country_revenue  sql       @daily     1 day ago         ⚠ stale
-```
+In `--format json`, errors print to stderr as one NDJSON line: `{"_schema_version": 1, "level": "error", "error_code": "NE1002", "error_class": "NucleusCommitConflictError", "user_message": "...", "fix_hint": "...", "docs_url": "...", "asset": "raw.orders"}`.
 
-### 5.2 `nucleus describe <asset>`
-
-```bash
-nucleus describe fact.orders
-nucleus describe fact.orders --output yaml
-```
-
-Full metadata: name, kind, owner, tags, schedule, partitions, code location, last run, contract, lineage summary.
-
-### 5.3 `nucleus lineage <asset>`
-
-```bash
-nucleus lineage fact.orders                   # ASCII upstream + downstream
-nucleus lineage fact.orders --upstream-only
-nucleus lineage fact.orders --depth 2
-nucleus lineage fact.orders --column total    # column-level lineage
-nucleus lineage fact.orders --output json     # for tooling
-```
-
-**Output (human)**:
-```
-fact.orders
-├── upstream
-│   ├── raw.orders (source)
-│   └── dim.customers
-│       └── raw.customers (source)
-└── downstream
-    ├── analytics.daily_revenue
-    └── analytics.country_revenue
-```
-
-### 5.4 `nucleus runs`
-
-```bash
-nucleus runs                                  # recent across all assets
-nucleus runs --asset fact.orders
-nucleus runs --status failed --since 24h
-nucleus runs --limit 100
-```
-
-### 5.5 `nucleus logs <run_id>`
-
-```bash
-nucleus logs run_01HZ...                      # full log
-nucleus logs run_01HZ... --follow             # stream
-nucleus logs run_01HZ... --since 5m
-```
+**Forbidden in any error output**: `dagster.`, `duckdb.`, `polars.`, `pyiceberg.`, `OpExecutionContext`, `DagsterInstance`, `DuckDBPyConnection`. Enforced by `scripts/dagster_leak_check.py` per `AGENTS.md` §11.7 + ADR-006 §Verification row 4.
 
 ---
 
-## 6. Snapshot Commands
+## 6. Flag conventions
 
-### 6.1 `nucleus snapshot list <asset>`
+Uniform across every command (Frozen at v1.0). Short flags `-p`, `-f`, `-q`, `-v` are **reserved globally**; no per-command alias may shadow them.
 
-```
-VERSION   TIMESTAMP             SIZE     ROWS       OPERATION
-42        2024-05-10 02:00:01   142 MB   1,204,883  append
-41        2024-05-09 02:00:01   139 MB   1,189,201  append
-40        2024-05-08 02:00:01   137 MB   1,176,442  overwrite
-```
-
-### 6.2 `nucleus snapshot show <asset> <version>`
-
-Full snapshot metadata: schema, partition spec, file count, properties, parent snapshot.
-
-### 6.3 `nucleus snapshot revert <asset> <version>`
-
-```bash
-nucleus snapshot revert fact.orders 41        # rollback (creates new snapshot pointing at v41 data)
-nucleus snapshot revert fact.orders 41 --dry-run
-```
-
-Requires `--confirm` flag if production env.
-
-### 6.4 `nucleus snapshot expire <asset>`
-
-```bash
-nucleus snapshot expire fact.orders --keep-last 10
-nucleus snapshot expire fact.orders --older-than 30d
-```
+| Long form | Short | Env var | Default |
+|---|---|---|---|
+| `--profile <name>` | `-p` | `NUCLEUS_PROFILE` | `default` |
+| `--format <text\|json\|csv>` | `-f` | `NUCLEUS_FORMAT` | `text` if TTY else `json` (CSV only in `nucleus query`) |
+| `--quiet` | `-q` | `NUCLEUS_QUIET=1` | false (mutex with `--verbose`) |
+| `--verbose` | `-v` | `NUCLEUS_VERBOSE=1` | false (prints `NucleusError.cause` class + stack on failure) |
+| `--no-color` | — | `NO_COLOR=1` | TTY-detected (no `NUCLEUS_*` alias by design) |
+| `--config <path>` | — | `NUCLEUS_CONFIG` | `./nucleus_project.yaml` |
+| `--catalog <type>` | — | `NUCLEUS_CATALOG` | `filesystem` (v0.1 only; `lakekeeper` / `polaris` land in v0.3 per §4.2) |
 
 ---
 
-## 7. Connection & Source Commands
+## 7. Configuration file (`nucleus_project.yaml`)
 
-### 7.1 `nucleus connect <connector>`
+**v0.1 file format: YAML** (revised 2026-05-13 per Anti-Over-Engineering reconciliation). Rationale: PyYAML is already transitively pinned via `dagster==1.9.5`, so no new runtime dep is added; YAML aligns with the dbt / Marquez / Lakekeeper ecosystem most users will graduate into; and the shipped `src/nucleus/templates/v01/nucleus_project.yaml` is the live source of truth. TOML remains a viable alternative for v0.3+ if the `nucleus enable` toggle table outgrows YAML expressiveness — track via separate ADR.
 
-Interactive: prompts for connection details.
+```yaml
+project:
+  name: "my-data-stack"
+  version: "0.1.0"
 
-```bash
-nucleus connect postgres
-nucleus connect stripe
-nucleus connect kafka --non-interactive --config=conn.yaml
+catalog:
+  type: "filesystem"                         # v0.1 only value; "lakekeeper" / "polaris" land v0.3
+  path: "./.nucleus/catalog.db"              # SQLite-backed pyiceberg.SqlCatalog (§10 NV #5)
+
+storage:
+  endpoint: "http://localhost:9000"
+  bucket: "nucleus-warehouse"
+  credentials:
+    from: "env:MINIO_ACCESS_KEY,env:MINIO_SECRET_KEY"
+
+lineage:
+  transport: "file"                          # v0.1 default; v0.3+: transport: "http" (Marquez)
+  path: ".nucleus/lineage/events.jsonl"
+
+telemetry:
+  opt_in: false                              # OTEL emit defaults OFF in v0.1 (privacy)
 ```
 
-Creates `connections/<name>.yaml` and optionally a starter source asset.
-
-### 7.2 `nucleus connections list`
-
-```
-NAME           TYPE      LAST USED         STATUS
-prod-db        postgres  5 min ago         ✓
-stripe-prod    stripe    1 hour ago        ✓
-warehouse-s3   s3        ongoing           ✓
-old-mysql      mysql     never             ⚠ unused
-```
+`nucleus init` writes a minimal valid `nucleus_project.yaml`. `nucleus up` re-reads on every invocation (no daemon to invalidate). Per-environment overrides via `profiles.<name>` blocks selected by `--profile` / `NUCLEUS_PROFILE`.
 
 ---
 
-## 8. Module Commands
+## 8. Exit-code contract
 
-### 8.1 `nucleus enable <module>`
+| Code | Meaning | Source |
+|---|---|---|
+| **0** | Success | All commands |
+| **1** | A `NucleusError` was raised — three-block error per §5.4, with `NE<L><CCC>` per ADR-006 | Any command body |
+| **2** | CLI usage error (Typer-driven) — bad arg, missing required, unknown subcommand | Typer/Click layer |
+| **3** | Docker / local runtime not reachable | `nucleus up`, `nucleus doctor` |
+| **4** | Network error (S3, OL HttpTransport, PyPI for `--check-updates`) | Any network-touching command |
+| **5** | Schema / contract violation on a write path | `nucleus run`, `nucleus ingest` |
+| **130** | User interrupt (SIGINT / Ctrl-C) | Any command |
 
-```bash
-nucleus enable obs           # installs OTel + VictoriaMetrics + Grafana
-nucleus enable auth          # installs Authentik + Casbin
-nucleus enable streaming     # installs Bento
-nucleus enable vector        # installs LanceDB
-nucleus enable scale         # installs Daft + Ray
-nucleus enable bi-metabase   # installs Metabase OSS
-```
-
-Idempotent. Re-running shows current state.
-
-### 8.2 `nucleus disable <module>`
-
-Stops module containers. Preserves data unless `--purge` passed.
-
-### 8.3 `nucleus modules list`
-
-```
-MODULE         STATUS      VERSION       NOTES
-obs            enabled     0.5.2         OTel + VictoriaMetrics + Grafana
-auth           disabled    —             Required for multi-user
-streaming      disabled    —             Activate for CDC
-vector         disabled    —             LanceDB retrieval
-scale          disabled    —             Distributed (Daft + Ray)
-bi-metabase    enabled     v0.50.0       Metabase bundled
-governance     disabled    —             PII scanner, column lineage UI
-```
+CI treats any non-zero exit as a check failure; `scripts/beachhead_e2e.py` and `.github/workflows/ci.yml` already follow this.
 
 ---
 
-## 9. Deployment
+## 9. Environment variables (exhaustive)
 
-### 9.1 `nucleus deploy --target <target>`
+Every `NUCLEUS_*` var below either backs a CLI flag (§6) or configures a sub-component. AI agents and CI configurators rely on this list — additions require a CHANGELOG entry and (post-v1.0) an ADR.
 
-```bash
-nucleus deploy --target docker-compose --env prod
-nucleus deploy --target k3s --env prod
-nucleus deploy --target k8s --env prod --context my-cluster
-nucleus deploy --target k8s --env prod --dry-run
-```
+| Variable | Backs | Default |
+|---|---|---|
+| `NUCLEUS_PROFILE` | `--profile` | `default` |
+| `NUCLEUS_FORMAT` | `--format` | TTY-detect (`text` / `json` / `csv`) |
+| `NUCLEUS_QUIET` | `--quiet` | `0` |
+| `NUCLEUS_VERBOSE` | `--verbose` | `0` |
+| `NUCLEUS_CONFIG` | `--config` | `./nucleus_project.yaml` |
+| `NUCLEUS_CATALOG` | `--catalog` | `filesystem` (v0.1 only value) |
+| `NUCLEUS_HOME` | runtime dir | `./.nucleus` (holds `catalog.db`, `lineage/`, `runs/`) |
+| `NUCLEUS_LOG_LEVEL` | logging level | `info` (`debug` / `info` / `warning` / `error`) |
+| `NUCLEUS_NO_TELEMETRY` | telemetry opt-out | `1` (off in v0.1; flag exists for forward-compat) |
+| `NO_COLOR` | color suppression | unset (industry convention; precedes flag absence) |
+| `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` | MinIO auth | `minioadmin` (dev only — §10 NV #7) |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` | S3 prod | unset (used when `[storage].endpoint` points at AWS) |
 
-Generates manifests + applies. Idempotent.
-
-| Flag | Description |
-|---|---|
-| `--target` | `docker-compose`, `k3s`, `k8s` |
-| `--context` | k8s context |
-| `--namespace` | k8s namespace |
-| `--dry-run` | Print manifests, don't apply |
-| `--force-recreate` | Recreate pods even if unchanged |
-
-### 9.2 `nucleus upgrade`
-
-Upgrade Nucleus binary + run metadata migrations.
-
-```bash
-nucleus upgrade                  # latest stable
-nucleus upgrade --version 1.2.0
-nucleus upgrade --dry-run        # show migration plan
-```
-
-Always backs up metadata DB to `.nucleus/backups/` before migrating.
+v0.5+ deferred: `NUCLEUS_AGENT_LLM_PROVIDER`, `NUCLEUS_AGENT_MODEL`, `NUCLEUS_MCP_SERVER_URL` — out of scope (ADR-005 §4 AI carve-out).
 
 ---
 
-## 10. Secrets
+## 10. NEEDS VERIFICATION
 
-```bash
-nucleus secrets set STRIPE_API_KEY            # prompts (hidden input)
-nucleus secrets set STRIPE_API_KEY --from-file=key.txt
-nucleus secrets list                          # names only, never values
-nucleus secrets unset OLD_KEY
-```
+Per `AGENTS.md` §10 + §11.12. Resolved or downgraded before v0.1 spec lock at Mo 6.
 
-Backend: OS keychain → `secrets` module (Infisical) if enabled.
-
----
-
-## 11. `nucleus doctor`
-
-Diagnose common problems.
-
-```
-Running Nucleus doctor...
-
-System:
-  ✓ Python 3.11.7
-  ✓ uv installed
-  ✓ Docker running
-  ✓ Disk space (47 GB free)
-
-Project:
-  ✓ nucleus.yaml valid
-  ✓ pyproject.toml valid
-  ✓ Dependencies resolved (47 packages)
-  ⚠ assets/dim/customers.py: missing docstring
-  ✗ assets/fact/orders.py:42: imports `iceberg` directly (anti-pattern)
-  
-Connections:
-  ✓ prod-db: reachable, credentials valid
-  ✗ stripe-prod: connection refused (check STRIPE_API_KEY secret)
-
-Catalog:
-  ✓ Lakekeeper reachable
-  ✓ Warehouse writable
-  ⚠ 3 tables have no contract defined
-
-Suggestions:
-  - Add contracts: nucleus describe fact.orders --suggest-contract
-  - Fix import: see assets/fact/orders.py:42
-
-Exit code: 2 (1 error, 3 warnings)
-```
+1. **`nucleus query` pagination** — auto-page >50 rows through `less -R` on TTY vs always print? Telemetry post-PoC #5; `--no-page` preserves both.
+2. **`nucleus query` return shape** — SDK §6.1 returns `DuckDBPyRelation`; §4.1 default is `pl.LazyFrame`. CLI must collect to something concrete. Provisionally `pyarrow.Table` (engine-neutral, NDJSON-friendly). Confirm at PoC #2 promotion.
+3. **`nucleus query` in v0.1 scope** — v4.1 §18.1 must-ship enumerates only `init / up / down / run / ingest` (5 commands); `query` is in `C4_container.md` §3.1 + this spec but not §18.1. Defaulted to v0.1 (30-min metric implies user verifies the table). Confirm in next v4.1 patch.
+4. **Layer-4 error codes** — ADR-006 §Initial allocates L1/L2/L3 only. `NE5001-5003` proposed here are **first L4 allocations**; need acceptance via PoC #1 promotion PR per ADR-006 §Trigger row 3.
+5. **`filesystem` vs `sqlite` catalog naming** — v4.1 §5.7 says "filesystem"; `C4_container.md` §3.4 implements as `pyiceberg.SqlCatalog` over SQLite. Spec uses `filesystem` user-facing; reconcile with PoC #4 `catalog_type` (Worker C).
+6. **Asset key cardinality** — v0.1 uses 2-level `<namespace>.<name>`; v4.1 §12.1 canonical is 3-level. 2-level is provisional for v0.1 single-catalog scope; 3-level lights up v0.3 with Lakekeeper / Polaris.
+7. **MinIO dev credentials** — defaults `minioadmin` unconfirmed against the docker-compose image. `docs/research/minio.md` (Worker BB) not yet landed. Confirm at PoC #4 promotion.
+8. **`nucleus ingest` syntax drift** — three variants in repo: this spec's `<URI> --table <SRC> --as <DEST>` (v4.1 §5.5.1 canonical); `README.md` `--table=orders --target=raw.orders`; founder brief's `--from / --to`. Canonical wins per `AGENTS.md` §2; README + brief drift to be patched in a same-PR sweep.
+9. **`--mode merge` engine floor** — `MERGE INTO` requires DuckDB ≥ 1.4.0 per Worker S; current pin `1.1.3`. Recommendation: implement via pyiceberg row-level delete + append for v0.1.
+10. **macOS init paths** — PoC #5 testers may run macOS; current `SETUP.md` is Windows-focused. `nucleus init` must scaffold identically cross-platform — confirm `.nucleus/` path-separator on macOS per `poc/p5_beachhead/RECRUITMENT.md`.
 
 ---
 
-## 12. Output Format
+## 11. Docs URLs
 
-### 12.1 `--output human` (default)
+Pins confirmed against `pyproject.toml` 2026-05-13. Upgrade per Constraint #11 (one-component-per-PR, ADR for major bumps, smoke tests).
 
-Tables, colors, progress bars, emoji for terminal use.
-
-### 12.2 `--output json`
-
-Machine-readable. Stable schema (versioned).
-
-```json
-{
-  "command": "list",
-  "version": 1,
-  "data": [
-    {
-      "name": "fact.orders",
-      "kind": "asset",
-      "schedule": "@daily",
-      "last_run": {"id": "run_01HZ...", "status": "succeeded", "finished_at": "..."}
-    }
-  ]
-}
-```
-
-### 12.3 `--output yaml`
-
-Same data as JSON, YAML format. Useful for diffing configs.
+| Library | Docs | Pin |
+|---|---|---|
+| Typer | <https://typer.tiangolo.com/> | `typer==0.15.1` |
+| Click | <https://click.palletsprojects.com/> | `click==8.1.8` |
+| Rich | <https://rich.readthedocs.io/> | `rich==13.9.4` |
+| pyiceberg | <https://py.iceberg.apache.org/api/catalog/> | `pyiceberg==0.8.1` |
+| DuckDB | <https://duckdb.org/docs/api/python/overview> | `duckdb==1.1.3` |
+| Polars | <https://docs.pola.rs/api/python/stable/> | `polars==1.18.0` |
+| Dagster | <https://docs.dagster.io/api> | `dagster==1.9.5` |
+| OpenLineage | <https://openlineage.io/docs/client/python> | `openlineage-python==1.47.1` |
+| NDJSON · `NO_COLOR` | <https://github.com/ndjson/ndjson-spec> · <https://no-color.org> | — |
 
 ---
 
-## 13. Exit Codes
+## 12. Forbidden CLI patterns
 
-| Code | Meaning |
-|---|---|
-| 0 | Success |
-| 1 | User error (bad command, missing file, invalid config) |
-| 2 | System error (network, disk, dependency failure) |
-| 3 | Contract or check failure (data quality, not platform) |
-| 124 | Timeout |
-| 130 | User-interrupted (Ctrl-C) |
+Per `AGENTS.md` §3 + §4 + §7. Any of these in a PR is a release blocker.
 
-Consistent with standard Unix conventions.
+- **No `nucleus dagster ...`** — violates v4.1 §6 (wrapped + hidden) and §6.5 Replaceability Mandate; substrate must be invisible.
+- **No `nucleus install <plugin>`** — no public plugin SDK in v1 per Constraint #2. `nucleus enable <feature>` per §4.4 is the bounded opt-in mechanism, not a marketplace.
+- **No `nucleus auth <subcommand>`** — no custom auth per Constraint #6; always delegate to OIDC (v4.1 §15.1). CLI never owns credentials beyond reading `MINIO_*` / `AWS_*` env.
+- **No `nucleus train ...` / `nucleus serve <model>`** — no ML platform per Constraint #7. We use models; we never host them.
+- **No `nucleus migrate-from-<vendor>`** — yield-to-giants is Iceberg portability + dispatch (v4.1 §10), not migration tooling. The Iceberg lake IS the migration tool.
+- **No `nucleus pipeline run` / `nucleus job submit` / `nucleus task ...`** — vocabulary violations per `AGENTS.md` §7. Everything is an *asset*; the verb is *materialize* (CLI surfaces as `run` for familiarity, internal vocab stays *asset*).
 
 ---
 
-## 14. Configuration Precedence
+## 13. Open governance questions (founder review)
 
-Highest to lowest priority:
-
-1. CLI flags (`--config key=val`)
-2. Env vars (`NUCLEUS_CATALOG_ENDPOINT=...`)
-3. `environments/<env>.yaml`
-4. `nucleus.yaml`
-5. Built-in defaults
+1. **`nucleus query` paging** — auto-page for >50 rows (current §3.6 + NV #1), or always table + user pipes manually? Feeds PoC #5 protocol.
+2. **`nucleus run --retry <N>`** — CLI operator-level flag, or always declared at asset via `nucleus.retries(...)` per SDK §2.1? Recommendation: SDK-only; CLI exposes `--no-retry` for explicit override.
+3. **`nucleus ingest --ssh-tunnel`** — support in v0.1 or defer to v0.3 when dlt (native tunnel) arrives? Recommendation: defer to v0.3.
+4. **JSON output key casing** — `snake_case` (resolved §5.2) vs `camelCase` (MCP-tooling-familiar)? Revisit if MCP v0.5+ consumers push back.
+5. **`nucleus down` volume default** — preserve (safer, opt-in destroy) vs destroy (cleaner CI)? **RESOLVED 2026-05-14**: preserve by default; opt-in destroy via `--volumes` flag (NOT `--keep-volumes`/`--no-keep-volumes` per AGENTS.md §7 vocabulary cleanliness + Typer reserved-short-flag avoidance). CI that wants a clean slate passes `--volumes` explicitly.
 
 ---
 
-## 15. Environment Variables
-
-Standard env vars Nucleus respects:
-
-| Var | Effect |
-|---|---|
-| `NUCLEUS_ENV` | Equivalent to `--env` |
-| `NUCLEUS_PROJECT` | Equivalent to `--project` |
-| `NUCLEUS_CONFIG_<KEY>` | Override `nucleus.yaml` field |
-| `NUCLEUS_LOG_LEVEL` | `debug`, `info`, `warn`, `error` |
-| `NO_COLOR` | Disable terminal colors |
-| `NUCLEUS_CACHE_DIR` | Custom cache location |
-
----
-
-## 16. Shell Completions
-
-```bash
-nucleus completions bash > /etc/bash_completion.d/nucleus
-nucleus completions zsh > ~/.zsh/completions/_nucleus
-nucleus completions fish > ~/.config/fish/completions/nucleus.fish
-```
-
-Tab completion for: commands, asset names (queried from catalog), tag names, environment names.
-
----
-
-## 17. The CLI Promise
-
-The CLI is the user's *primary surface* for production operations. The Portal is for exploration; the CLI is for automation. Therefore:
-
-1. **Every Portal action has a CLI equivalent** (except interactive query/notebook).
-2. **CLI output is scriptable** (`--output json` is stable).
-3. **No interactive prompts in non-TTY mode** (CI safety).
-4. **Idempotency where it matters** — `enable`, `deploy`, `upgrade` all safe to re-run.
-5. **Errors are actionable** — every error message includes "try X" suggestions when possible.
-
----
-
-*The CLI is how power users hold the platform. Make it a tool they trust.*
+*Governs the CLI surface that `AGENTS.md` §2 Required Reading #6 calls out and ADR-005 §4 carves out from the SDK freeze schedule. Implementation lives in `src/nucleus/cli/`. CI enforcement via `scripts/check_vocabulary.py` (§12 patterns + §7 vocab), `scripts/dagster_leak_check.py` (output strings per §5.4), `tests/cli/test_exit_codes.py` (NucleusError → exit code + NE-code matrix), `tests/cli/test_help_snapshot.py` (--help diff = red without Beta CHANGELOG or post-v1.0 ADR), and `scripts/beachhead_e2e.py` (Worker G — full §3 sequence timed against the 30-min metric). Updates require: (a) ADR for any Frozen-tier change post-v1.0, (b) CHANGELOG for any Beta-tier change, (c) co-landing PR to `tests/cli/test_help_snapshot.py`.*

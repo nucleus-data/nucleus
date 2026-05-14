@@ -442,11 +442,11 @@ Engineering conventions exist to make 1,000 small decisions once so we never re-
 
 ### §15.1 Forbidden terms in code & docs
 - **Decision**: These words are banned (Constraint #5 + AGENTS.md §7):
-  - "metastore" → use **catalog**
-  - "data lake" → use **warehouse** or **lakehouse**
-  - "Spark killer" / "Databricks killer" → use **graduation path**
-  - "Data OS" → never; we're a platform, not an OS
-  - "AI-native" / "AI-first" → use **AI-assisted**
+  - "metastore" → use **catalog** <!-- banned-term: metastore -->
+  - "data lake" → use **warehouse** or **lakehouse** <!-- banned-term: data lake -->
+  - "Spark killer" / "Databricks killer" → use **graduation path** <!-- banned-term: multiple -->
+  - "Data OS" → never; we're a platform, not an OS <!-- banned-term: Data OS -->
+  - "AI-native" / "AI-first" → use **AI-assisted** <!-- banned-term: multiple -->
 - **Enforcement**: `scripts/check_vocabulary.py`.
 
 ### §15.2 Domain term mapping

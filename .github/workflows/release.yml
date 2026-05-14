@@ -1,0 +1,202 @@
+# .github/workflows/release.yml — Nucleus semver release automation
+#
+# Per ADR-022: triggered by a signed git tag matching `v[0-9]+.[0-9]+.[0-9]+*`.
+# Flow:
+#   1. Validate tag == pyproject.toml version
+#   2. Run governance + pytest as a safety net
+#   3. Build wheel + sdist with `python -m build`
+#   4. Publish to PyPI via OIDC trusted publishing (no token stored in secrets)
+#   5. Create a GitHub Release with the CHANGELOG section extracted
+#   6. Upload wheel + sdist as release assets
+#
+# Prerequisites (founder action required before first release):
+#   - Enable OIDC trusted publishing on PyPI:
+#     https://pypi.org/manage/account/publishing/
+#     Publisher: GitHub Actions
+#     Owner:  nucleus-data
+#     Repo:   nucleus
+#     Workflow: release.yml
+#     Environment: pypi
+#   - Create a `pypi` GitHub environment
+#     (Settings → Environments → New → pypi → protection rule: tag)
+#
+# Per AGENTS.md Anti-Over-Engineering: the release script does NOT push the git
+# tag — that remains a founder-gated manual step (`git tag v0.1.1 && git push --tags`).
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+permissions:
+  contents: write   # for creating GitHub Releases and uploading assets
+  id-token: write   # for OIDC trusted publishing to PyPI
+
+jobs:
+
+  # ---------------------------------------------------------------------------
+  # Job 1 — Validate + build
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build + validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.extract-version.outputs.version }}
+      changelog_body: ${{ steps.extract-changelog.outputs.body }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history for CHANGELOG extraction
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install build tooling + dev extras
+        run: |
+          python -m pip install --upgrade pip
+          pip install build==1.2.2.post1 hatchling==1.27.0
+          pip install -e ".[dev]"
+
+      # ---- Version consistency check ----------------------------------------
+      - name: Extract version from tag
+        id: extract-version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Tag: ${TAG}  →  Version: ${VERSION}"
+
+      - name: Verify tag matches pyproject.toml
+        run: |
+          TOML_VERSION=$(python -c "
+          import re
+          content = open('pyproject.toml').read()
+          m = re.search(r'^version\s*=\s*\"([^\"]+)\"', content, re.MULTILINE)
+          print(m.group(1))
+          ")
+          TAG_VERSION="${{ steps.extract-version.outputs.version }}"
+          if [ "${TOML_VERSION}" != "${TAG_VERSION}" ]; then
+            echo "❌ Version mismatch: tag=${TAG_VERSION} pyproject=${TOML_VERSION}"
+            exit 1
+          fi
+          echo "✅ Version consistent: ${TAG_VERSION}"
+
+      # ---- Governance + tests safety net ------------------------------------
+      - name: Run governance scripts
+        run: |
+          python scripts/check_vocabulary.py
+          python scripts/check_pinning.py
+          python scripts/loc_budget.py
+          python scripts/dagster_leak_check.py
+          python scripts/check_error_codes.py
+          python scripts/check_api_stability.py
+          python scripts/check_layering.py
+          python scripts/check_licenses.py
+
+      - name: Run test suite
+        run: pytest tests/ poc/ -m "not integration and not slow" --no-cov -q
+
+      # ---- Build distribution -----------------------------------------------
+      - name: Build wheel + sdist
+        run: python -m build
+
+      - name: Verify distribution
+        run: |
+          pip install twine==6.0.1
+          twine check dist/*
+
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+      # ---- Extract CHANGELOG section ----------------------------------------
+      - name: Extract CHANGELOG section for this release
+        id: extract-changelog
+        run: |
+          VERSION="${{ steps.extract-version.outputs.version }}"
+          python <<'PY'
+          import re, os, sys
+
+          version = os.environ.get("VERSION") or sys.argv[1] if len(sys.argv) > 1 else None
+          content = open("CHANGELOG.md").read()
+
+          # Match the section header: ## [X.Y.Z] — YYYY-MM-DD
+          pattern = rf"## \[{re.escape(version)}\][^\n]*\n(.*?)(?=\n## \[|\Z)"
+          m = re.search(pattern, content, re.DOTALL)
+          body = m.group(1).strip() if m else f"See CHANGELOG.md for v{version} notes."
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("body<<EOF\n")
+              f.write(body)
+              f.write("\nEOF\n")
+          PY
+        env:
+          VERSION: ${{ steps.extract-version.outputs.version }}
+
+  # ---------------------------------------------------------------------------
+  # Job 2 — Publish to PyPI (OIDC trusted publishing)
+  # ---------------------------------------------------------------------------
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: pypi   # requires founder to create this environment in repo settings
+
+    steps:
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # Uses OIDC trusted publishing — no API token needed.
+        # https://docs.pypi.org/trusted-publishers/
+
+  # ---------------------------------------------------------------------------
+  # Job 3 — Create GitHub Release
+  # ---------------------------------------------------------------------------
+  create-release:
+    name: Create GitHub Release
+    needs: [build, publish-pypi]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Nucleus v${{ needs.build.outputs.version }}"
+          body: |
+            ${{ needs.build.outputs.changelog_body }}
+
+            ---
+
+            **Install:**
+            ```bash
+            pip install nucleus==${{ needs.build.outputs.version }}
+            ```
+
+            **Full changelog:** https://github.com/nucleus-data/nucleus/blob/main/CHANGELOG.md
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+          draft: false
+          prerelease: ${{ contains(needs.build.outputs.version, 'a') || contains(needs.build.outputs.version, 'b') || contains(needs.build.outputs.version, 'rc') }}

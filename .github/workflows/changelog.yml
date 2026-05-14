@@ -1,0 +1,86 @@
+# .github/workflows/changelog.yml — Nucleus PR changelog + compatibility check
+#
+# Per ADR-022: runs on every PR to main.
+# Two status checks:
+#   1. Every PR (except chore: / docs: / skip-changelog-labelled PRs) must
+#      update CHANGELOG.md [Unreleased] section.
+#   2. Any PR that touches pyproject.toml (dep change) must also update
+#      docs/compatibility.md.
+#
+# These are STATUS CHECKS, not auto-fixes.  They appear on the PR checks panel.
+# A PR with [skip-changelog] label passes both checks unconditionally.
+
+name: Changelog check
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  changelog-check:
+    name: CHANGELOG.md updated
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need the base branch to compute diff
+          fetch-depth: 0
+
+      - name: Check for [skip-changelog] label
+        id: skip
+        run: |
+          LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          if [[ "$LABELS" == *"skip-changelog"* ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.skip.outputs.skip == 'false'
+        with:
+          python-version: "3.11"
+
+      - name: Run check_changelog.py
+        if: steps.skip.outputs.skip == 'false'
+        run: |
+          python scripts/check_changelog.py \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.event.pull_request.head.sha }}" \
+            --title "${{ github.event.pull_request.title }}"
+
+  compatibility-check:
+    name: docs/compatibility.md updated with dep changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if pyproject.toml changed
+        id: toml-changed
+        run: |
+          git diff --name-only "origin/${{ github.event.pull_request.base.ref }}" HEAD \
+            | grep -q "^pyproject\.toml$" \
+            && echo "changed=true" >> "$GITHUB_OUTPUT" \
+            || echo "changed=false" >> "$GITHUB_OUTPUT"
+
+      - name: Check if compatibility.md was also updated
+        if: steps.toml-changed.outputs.changed == 'true'
+        run: |
+          git diff --name-only "origin/${{ github.event.pull_request.base.ref }}" HEAD \
+            | grep -q "^docs/compatibility\.md$" \
+            || {
+              echo "::error::pyproject.toml changed but docs/compatibility.md was NOT updated."
+              echo "Per AGENTS.md §11.13: every dep change requires updating docs/compatibility.md."
+              exit 1
+            }
+          echo "✅ docs/compatibility.md updated alongside pyproject.toml"

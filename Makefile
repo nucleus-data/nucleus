@@ -150,3 +150,78 @@ clean:  ## Remove caches and build artifacts
 .PHONY: clean-all
 clean-all: clean  ## Also remove the virtual environment
 	rm -rf $(VENV_DIR)
+
+# ----------------------------------------------------------------------------
+# Documentation (MkDocs Material — ADR-021)
+# ----------------------------------------------------------------------------
+# Docs: https://squidfunk.github.io/mkdocs-material/
+# Install: pip install -e ".[docs]"
+# Windows PowerShell equivalent: .\.venv\Scripts\python.exe -m mkdocs serve
+
+.PHONY: docs-install
+docs-install:  ## Install docs extras (mkdocs-material + plugins)
+	$(PYTHON) -m pip install -e ".[docs]"
+	@echo "Docs deps installed. Try: make docs-serve"
+
+.PHONY: docs-serve
+docs-serve:  ## Serve docs locally at http://localhost:8000
+	$(PYTHON) -m mkdocs serve
+
+.PHONY: docs-build
+docs-build:  ## Build docs (strict — zero warnings required)
+	$(PYTHON) -m mkdocs build --strict --site-dir _site_test
+	@echo "Docs built to _site_test/. Run 'make docs-clean' to remove."
+
+.PHONY: docs-clean
+docs-clean:  ## Remove the docs build artifacts
+	rm -rf _site_test site
+	@echo "Docs build artifacts removed."
+
+# ----------------------------------------------------------------------------
+# verify-all — comprehensive gate (mass-audit 2026-05-15)
+# Runs all 11 governance scripts + full pytest + LOC budget check.
+# Usage: make verify-all
+# ----------------------------------------------------------------------------
+
+.PHONY: verify-all
+verify-all:  ## Run all 11 governance scripts + pytest + LOC budget
+	@echo "=== Nucleus verify-all gate ==="
+	python scripts/check_vocabulary.py
+	python scripts/check_pinning.py
+	python scripts/dagster_leak_check.py
+	python scripts/check_error_codes.py
+	python scripts/check_api_stability.py
+	python scripts/check_layering.py
+	python scripts/check_licenses.py
+	python scripts/loc_budget.py
+	python scripts/check_secrets.py
+	python scripts/check_circular_imports.py
+	python scripts/check_docstrings.py
+	python -m pytest tests/ -q --tb=short --no-cov
+	@echo ""
+	@echo "verify-all PASSED."
+
+# ----------------------------------------------------------------------------
+# v0.2 CI / community shortcuts (ADR-022)
+# ----------------------------------------------------------------------------
+
+.PHONY: release-check
+release-check:  ## semver + changelog + governance (pytest skipped; see scripts/release.py)
+	$(PYTHON) scripts/release.py --dry-run --no-pytest
+
+.PHONY: pre-commit-install
+pre-commit-install:  ## Install git hooks from `.pre-commit-config.yaml`
+	$(PYTHON) -m pre_commit install
+
+.PHONY: docker-build
+docker-build:  ## Build `nucleus:local` image from docker/Dockerfile.nucleus
+	docker build -f docker/Dockerfile.nucleus -t nucleus:local .
+
+.PHONY: docker-demo
+docker-demo:  ## Start MinIO + nucleus demo stack (docker-compose.demo.yml)
+	docker compose -f docker-compose.demo.yml up --build
+
+.PHONY: governance-all
+governance-all:  ## Run vocabulary + pinning scripts (narrow governance slice)
+	$(PYTHON) scripts/check_vocabulary.py
+	$(PYTHON) scripts/check_pinning.py

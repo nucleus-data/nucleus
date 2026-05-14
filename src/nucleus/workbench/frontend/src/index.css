@@ -1,0 +1,254 @@
+/*
+ * Nucleus Workbench — global styles (Editorial Hero v0.2)
+ *
+ * Design system: Editorial Light theme only (dark mode descoped per founder directive).
+ * Hero gradient uses deep blue → navy palette matching the reference image.
+ *
+ * Per ADR-016 §3 (Fork B) + nucleus_architecture_v4.1.md §8.1.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Inter + JetBrains Mono ───────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ── CSS token variables ──────────────────────────────────────── */
+:root {
+  /* Body / card surface */
+  --bg:           #FFFFFF;
+  --surface:      #FAFAFA;
+  --border:       #EEF0F4;
+  --card-shadow:  0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  --card-shadow-hover: 0 2px 6px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.10);
+
+  /* Hero gradient */
+  --hero-from:    #2A5BFA;
+  --hero-to:      #0F1E6E;
+
+  /* Typography */
+  --text:         #0A0E1A;
+  --muted:        #5A6273;
+  --subtle:       #9BA3AF;
+
+  /* Brand / accent */
+  --primary:      #2A5BFA;
+  --primary-hover:#1A45D8;
+  --accent:       #7C3AED;    /* purple — selected node, highlights */
+
+  /* Status */
+  --success:      #10B981;
+  --warning:      #F59E0B;
+  --error:        #EF4444;
+  --skip:         #94A3B8;
+
+  /* Glassmorphism chips (on hero) */
+  --chip-bg:      rgba(255,255,255,0.12);
+  --chip-border:  rgba(255,255,255,0.20);
+  --chip-text:    rgba(255,255,255,0.95);
+
+  color-scheme: light;
+}
+
+/* Keep dark tokens for legacy ref (descoped, but harmless) */
+[data-theme="dark"] {
+  --bg:       #020617;
+  --surface:  #0F172A;
+  --border:   #334155;
+  --primary:  #22D3EE;
+  --success:  #34D399;
+  --warning:  #FBBF24;
+  --error:    #F87171;
+  --text:     #F1F5F9;
+  --muted:    #94A3B8;
+  color-scheme: dark;
+}
+
+/* ── Base reset ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Monospace ────────────────────────────────────────────────── */
+code, kbd, pre, .font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--subtle); }
+
+/* ── Hero gradient ────────────────────────────────────────────── */
+.hero-gradient {
+  background: linear-gradient(160deg, #3A6FF8 0%, #2A5BFA 25%, #1A38BE 60%, #0F1E6E 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grain/noise texture overlay on hero */
+.hero-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-gradient > * { position: relative; z-index: 1; }
+
+/* ── Card ─────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.2s ease;
+}
+.card:hover { box-shadow: var(--card-shadow-hover); }
+
+/* ── Glassmorphism chip (on hero) ─────────────────────────────── */
+.glass-chip {
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 9999px;
+  color: var(--chip-text);
+}
+
+/* ── Skeleton shimmer ─────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--border) 25%, #f0f0f0 50%, var(--border) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 6px;
+}
+
+/* ── Spin animation ───────────────────────────────────────────── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; }
+
+/* ── Fade-in page transitions ─────────────────────────────────── */
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: fadeInPage 0.25s ease forwards; }
+
+/* ── Blob avatar orb ──────────────────────────────────────────── */
+@keyframes blobPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: blur(0px); }
+  33%  { transform: scale(1.04) rotate(3deg); }
+  66%  { transform: scale(0.97) rotate(-2deg); }
+}
+.blob-orb {
+  animation: blobPulse 4s ease-in-out infinite;
+}
+
+/* ── Smooth button presses ────────────────────────────────────── */
+button:active { transform: scale(0.97); }
+
+/* ── Run status dot ───────────────────────────────────────────── */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Selected node (DAG) ──────────────────────────────────────── */
+.glow-selected {
+  box-shadow: 0 0 0 2px #7C3AED, 0 0 16px rgba(124,58,237,0.3);
+}
+
+/* ── TopNav transparent ───────────────────────────────────────── */
+.topnav-hero {
+  background: transparent;
+  border-bottom: none;
+}
+.topnav-solid {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Suggestion chip hover ────────────────────────────────────── */
+.suggestion-chip {
+  background: rgba(42, 91, 250, 0.06);
+  border: 1px solid rgba(42, 91, 250, 0.15);
+  border-radius: 6px;
+  color: var(--primary);
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+.suggestion-chip:hover {
+  background: rgba(42, 91, 250, 0.12);
+  border-color: rgba(42, 91, 250, 0.3);
+}
+
+/* ── Recent run row hover ─────────────────────────────────────── */
+.run-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.12s;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.run-row:last-child { border-bottom: none; }
+.run-row:hover { background: rgba(0,0,0,0.025); }
+
+/* ── Badge ────────────────────────────────────────────────────── */
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+}
+.badge-success { background: rgba(16,185,129,0.12); color: #059669; }
+.badge-warning  { background: rgba(245,158,11,0.12); color: #D97706; }
+.badge-error    { background: rgba(239,68,68,0.12);  color: #DC2626; }
+.badge-muted    { background: rgba(90,98,115,0.10);  color: var(--muted); }
+.badge-purple   { background: rgba(124,58,237,0.10); color: var(--accent); }
+
+/* ── Pipeline legend ──────────────────────────────────────────── */
+.dag-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.dag-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

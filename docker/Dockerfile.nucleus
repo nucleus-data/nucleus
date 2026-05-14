@@ -1,0 +1,38 @@
+# syntax=docker/dockerfile:1
+# Multi-stage image: build wheel in builder → install into slim runtime with ``nucleus`` entrypoint.
+
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
+COPY pyproject.toml README.md LICENSE CHANGELOG.md ./
+
+COPY src ./src
+
+RUN python -m pip install --upgrade pip wheel \
+    && pip wheel . -w /wheels
+
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+LABEL org.opencontainers.image.title="Nucleus CLI" \
+      org.opencontainers.image.description="Local-first Iceberg-native data stack CLI" \
+      org.opencontainers.image.licenses="Apache-2.0"
+
+COPY --from=builder /wheels /wheels
+
+RUN pip install --no-cache-dir /wheels/*.whl \
+    && rm -rf /wheels \
+    && adduser --system --disabled-password --home /home/nucleus nucleus \
+    && chown -R nucleus:nucleus /app
+
+USER nucleus
+
+ENTRYPOINT ["nucleus"]
+
+CMD ["version"]

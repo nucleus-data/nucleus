@@ -54,6 +54,10 @@ def orders(ctx) -> pl.DataFrame:
 
 **Return type contract**: must return `pl.DataFrame` | `pl.LazyFrame` | `pyarrow.Table` | `duckdb.DuckDBPyRelation` | `None` (if writing via `ctx.write` explicitly).
 
+**v0.1.1 `schedule=` kwarg (ADR-017)**: `schedule=` is now wired in `src/nucleus/sdk/decorators.py`. Accepts a 5-field cron string (`"0 2 * * *"`) or a shorthand alias (`"@daily"`, `"@hourly"`, `"@weekly"`, `"@monthly"`, `"@yearly"`). Aliases are normalised to canonical 5-field form at decoration time. Validation uses `croniter==3.0.4` (`is_valid()`) — errors raise `NucleusScheduleParseError` (NE5005) immediately on import. `schedule=None` (default) means no declared schedule.
+
+Active scheduling (automatic execution) is deferred to v0.2 — declaring `schedule=` stores the expression and exposes it via `nucleus schedule list` and `nucleus schedule preview`. Stability: **Beta** per ADR-005 §2, same ladder as the rest of `@nucleus.asset`.
+
 ### 2.2 `@nucleus.sql_asset`
 
 For pure SQL transformations. Equivalent to dbt models.
@@ -245,6 +249,62 @@ def orders(ctx):
 
 All writes are **atomic** via Iceberg commits. Failed writes do not leave partial state.
 
+### 5.4 Materialize API
+
+Per [ADR-013](./docs/decisions/ADR-013-ctx-materialize-api.md) (ACCEPTED 2026-05-13). Stability: Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0 per ADR-005 §2. Wraps `dagster.materialize` under `coordination/asset_materialization.py` per `nucleus_architecture_v4.1.md` §6.2; users never see Dagster types.
+
+```python
+# Stability: Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0  (per ADR-005 §2)
+# Docs: nucleus.dev/api/ctx.materialize
+def materialize(
+    asset: str | nucleus.AssetRef,
+    *,
+    partition: str | None = None,
+    upstream: Literal["skip", "materialize", "validate"] = "skip",
+    timeout_seconds: int | None = None,
+) -> MaterializationResult:
+    """Materialize a Nucleus asset to its declared destination.
+
+    Per `nucleus_architecture_v4.1.md` §6.2 (Asset Materialization Adapter).
+    """
+```
+
+Argument semantics:
+
+- `asset` — 2-level v0.1 key (e.g. `"marts.orders_clean"`) or `AssetRef`. Unknown → `NucleusAssetNotFound` / `NE3002`.
+- `partition` — single-string (`"2026-05-13"`); `None` = all eligible partitions; tuple form deferred to v0.3+.
+- `upstream` — `"skip"` (default; fail loud via `NE3003` when an upstream asset is unmaterialized), `"materialize"`, `"validate"`.
+- `timeout_seconds` — wall-clock; `None` = no timeout; exceeded → `NucleusTimeoutError` / `NE3005`.
+
+Return type `MaterializationResult` (placed in `nucleus.sdk.types`, re-exported from `nucleus`):
+
+```python
+# Stability: Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0
+@dataclass(frozen=True)
+class MaterializationResult:
+    asset_key: str            # e.g. "marts.orders_clean"
+    snapshot_id: str          # Iceberg snapshot ID (v0.1); Lance version (v0.5+)
+    partition: str | None
+    row_count: int
+    duration_ms: int
+    lineage_event_id: str     # OpenLineage RunEvent UUID per v4.1 §6.2 step 4
+    materialized_at: datetime # UTC
+```
+
+Errors raised (per ADR-006 §Decision + ADR-013 §4):
+
+| Raised when | Subclass | NE-code |
+|---|---|---|
+| `asset` unresolvable | `NucleusAssetNotFound` | `NE3002` |
+| `upstream="skip"` + unmaterialized | `NucleusAssetNotMaterialized` | `NE3003` |
+| Pre-write contract violation | `NucleusSchemaError` | `NE2001` |
+| Step-3 commit conflict | `NucleusCommitConflictError` | `NE1002` |
+| Top-level exception in `@nucleus.asset` body | `NucleusInternalError` | `NE3001` |
+| `timeout_seconds` exceeded | `NucleusTimeoutError` | `NE3005` |
+| AMA cannot route via §6.4 — outer fallback | `NucleusMaterializationError` | `NE3004` |
+
+`MaterializationResult` is `frozen=True`; fields are additive-only after Stable per ADR-005 §3. The CLI iterates `ctx.materialize(key)` once per `ASSET_KEY` argument — there is no list-variant in v0.1.
+
 ---
 
 ## 6. SQL API
@@ -435,7 +495,10 @@ ctx.asset              ctx.run_id              ctx.partition
 ctx.params             ctx.log                 ctx.metrics
 ctx.secrets            ctx.env                 ctx.connector
 ctx.read               ctx.write               ctx.sql
-ctx.snapshot           ctx.trigger
+ctx.copy_from          ctx.materialize         ctx.snapshot
+ctx.trigger
+
+nucleus.MaterializationResult
 ```
 
 ---

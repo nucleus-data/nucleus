@@ -3,8 +3,8 @@
 > **Diagram type**: UML Sequence
 > **Scope**: How a Dagster failure becomes a NucleusError visible to the user
 > **Audience**: Anyone touching `coordination/error_translation.py`
-> **Status**: This flow is the subject of **PoC #1**. Must pass before any v0.1 code beyond it.
-> **Companion**: [`C4_container.md`](C4_container.md), [`AGENTS.md`](../../AGENTS.md) §6.4
+> **Status (2026-05-13)**: PoC #1 translator landed in [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py) — 17 typed handlers, two-pass match in `translate()`, and a `_iter_causes` walker that traverses both `__cause__` and `__context__`. Promotion to `src/nucleus/coordination/error_translation.py` pending founder review — see [`../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md`](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md). Tests: 21/22 green.
+> **Companion**: [`C4_container.md`](C4_container.md), [`sequence_asset_materialization.md`](sequence_asset_materialization.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.4 (canonical spec), [`../../AGENTS.md`](../../AGENTS.md) §11.7 (enforcement discipline).
 
 This is the **most important sequence in the whole platform**. If a Dagster error ever leaks past `ctx`, our entire abstraction has failed — we're "Dagster with extra steps". This document defines the contract.
 
@@ -83,7 +83,7 @@ sequenceDiagram
 
     AMA->>ETL: translate(DagsterExecutionStepExecutionError, ctx={asset, run_id})
 
-    Note over ETL: 1. Inspect chained cause (DuckDB exc)<br/>2. Look up DuckDB translator<br/>3. Build NucleusError
+    Note over ETL: 1. _iter_causes(exc) — walk __cause__ then __context__<br/>   (bounded depth 8; cycle-safe; honors __suppress_context__)<br/>2. Pass 1 — specific lib handler wins (skip Dagster wrapper)<br/>3. Pass 2 — Dagster-wrapper fallback iff nothing else matched<br/>4. Build NucleusError(user_message, fix_hint, docs_url, cause=exc)<br/>(see §3.1 for the full algorithm)
 
     ETL-->>AMA: NucleusAssetNotFound(<br/>  user_message="Asset 'staging.foo' is referenced<br/>    but not defined or materialized",<br/>  fix_hint="Run `nucleus run staging.foo` first,<br/>    or add @nucleus.asset decorator to its definition",<br/>  docs_url="https://nucleus.dev/errors/asset-not-found",<br/>  asset="marts.daily_revenue",<br/>  cause=<DuckDB exc>)
 
@@ -94,6 +94,43 @@ sequenceDiagram
 
     CLI-->>User: ✗ marts.daily_revenue failed<br/><br/>Asset 'staging.foo' is referenced but not defined<br/>or materialized.<br/><br/>How to fix:<br/>  Run `nucleus run staging.foo` first,<br/>  or add @nucleus.asset decorator to its definition.<br/><br/>Docs: https://nucleus.dev/errors/asset-not-found
 ```
+
+---
+
+## §3.1. Translator internals (PoC #1 — landed 2026-05-13)
+
+Three implementation details cement the architectural promise of §1 and §3 against real-world Dagster `materialize()` re-raise semantics. All three landed in [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py) today; see [`PROMOTION_PR_DRAFT.md` §Architectural changes](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md) for founder-ratification context.
+
+### §3.1.1 The cause walker — `_iter_causes`
+
+`translator.py:43-61` defines a generator that yields `exc` then walks the chain outer→inner:
+
+1. Prefer `__cause__` (explicit `raise X from Y`).
+2. Fall through to `__context__` (implicit chaining via an `except` block) when `__cause__ is None`.
+3. Skip the implicit chain when `__suppress_context__` is set (`raise X from None`).
+4. Bounded at `_MAX_CAUSE_DEPTH = 8` and cycle-safe via an `id()` seen-set so a malformed `__context__ ↔ __cause__` back-edge can't loop.
+
+Dual-traversal is required because some wrapped libraries (Polars, pyiceberg) chain via `__cause__` while others (DuckDB inside an `except` block, naturally-raised stdlib errors) chain via `__context__`. A `__cause__`-only walker would miss the latter; a `__context__`-only walker would surface accidental context for `raise X from None` patterns.
+
+### §3.1.2 Two-pass match — specific handler wins over generic Dagster fallback
+
+`translator.py:351-402` implements `translate()` as **two passes** over `list(_iter_causes(exc))`:
+
+- **Pass 1**: for each candidate, try every registered handler **except** `DagsterExecutionStepExecutionError`'s. First `isinstance` match wins; the matched candidate (not the outer exception) is passed to the handler so the user sees the original library message. The outer chain is preserved on the returned `NucleusError` via `__cause__`.
+- **Pass 2**: if no specific match, look for `DagsterExecutionStepExecutionError` in the candidates. Hits route to the generic `_dagster_step_handler` → `NucleusInternalError`.
+- **Final fallback**: nothing matched → `NucleusInternalError` with a bug-report `fix_hint`.
+
+This restructure replaced the original v0 design ("`_unwrap_cause` once, look up the innermost"). In Dagster 1.9.5, `materialize()` re-raises the user's original library exception (e.g. `duckdb.BinderException`) wrapped in a synthetic two-node chain: the wrapper's `__context__` points at the original cause, and a back-edge `__cause__` points from the original cause to the wrapper. A naïve "unwrap then look up" walked into that cycle and returned the wrapper — hiding the specific library cause behind `NucleusInternalError`. Two passes break the cycle without sacrificing the precise message.
+
+**NEEDS VERIFICATION**: The exact class name `dagster.DagsterExecutionStepExecutionError` and its import path are pinned against `dagster==1.9.5`. If a future minor or major Dagster bump renames the wrapper, the translator imports must be updated and a row added to [`../research/ai_hallucinations.md`](../research/ai_hallucinations.md). Cite of intent: AGENTS.md §11.12 + §11.13.
+
+### §3.1.3 Known limitation — Dagster `do_raise` rewrites `__context__`
+
+CPython's `do_raise` (invoked when Dagster's `execute_plan` re-raises) **overwrites** `wrapper.__context__` with the currently-handled exception. If a test (or real failure) sets the inner cause manually on `wrapper.__context__` **before** raising the wrapper, that pre-set context is irrecoverably lost by the time `translate()` sees the exception.
+
+This is Python language semantics, not a translator bug. Real-world failures are unaffected because they raise naturally via `try / except / raise` inside the asset — the implicit `__context__` chain survives the Dagster boundary because Dagster's wrapping happens around the *naturally raised* wrapper, not a hand-constructed one. Documented in [`PROMOTION_PR_DRAFT.md` §Known issues](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md); the lone failing test in the 21/22 suite (`test_context_only_chain_falls_through_to_inner_handler`) exercises this limitation deliberately and is queued for either rewrite (natural-chain shape) or `@pytest.mark.skip` per founder decision.
+
+**NEEDS VERIFICATION**: The `do_raise` interaction may differ in Dagster 1.10+ if Dagster changes its internal re-raise pattern. AGENTS.md §11.13's upgrade SOP requires re-running the translator suite (especially `test_dagster_wrapper_falls_through_to_inner_library`) after any Dagster minor-version bump.
 
 ---
 
@@ -163,19 +200,23 @@ The `ErrorTranslator` registers handlers by type. Below is the **minimum viable 
 
 | Exception | Trigger | Nucleus translation |
 |-----------|---------|--------------------|
-| `FileNotFoundError` | Asset code references missing file | `NucleusFileNotFound` |
-| `PermissionError` | Filesystem permission | `NucleusPermissionError` |
-| `ConnectionError` | Network failure | `NucleusNetworkError` |
-| `TimeoutError` | Async timeout | `NucleusTimeoutError` |
-| `KeyError` (in user asset code) | User bug | Pass through (don't translate user logic errors) |
-| `ValueError` (in user asset code) | User bug | Pass through |
+| `FileNotFoundError` | Asset code references missing file | `NucleusIOError` |
+| `PermissionError` | Filesystem / storage operation denied | `NucleusPermissionError` |
+| `ConnectionError` | Source IO connect failed (Postgres/MySQL/dlt) | `NucleusSourceConnectionError` *(`translator.py:97-104`)* |
+| `TimeoutError` | Source connect / read timeout | `NucleusSourceConnectionError` *(revisit vs. `NucleusTimeoutError` post-telemetry — `translator.py:264-272`)* |
+| `ValueError` (anywhere in stack) | User bug — schema-flavored vs. generic | `NucleusSchemaError` if `"schema" in msg.lower()`; else `NucleusInternalError` *(`translator.py:107-126`)* |
+| `KeyError` (in user asset code) | User bug | Pass through (no handler registered) |
 | **Anything else uncaught** | Unknown | `NucleusInternalError` with bug-report URL |
 
-**Critical rule**: User-domain errors (KeyError in their pandas code) **pass through unchanged**. We translate only **platform-domain errors**. The user's debugging context is their code, not ours.
+**PoC #1 note (2026-05-13)**: `ConnectionError` and `ValueError` are now **first-class registry entries** in `_registry()` (`translator.py:339-340`); previously they were inner-cause branches of `_dagster_step_handler`. The extraction means a `ValueError` raised inside an asset gets a typed schema/internal error even when no Dagster wrapper is involved (e.g. in unit tests). The class-name choice `NucleusIOError` for `FileNotFoundError` matches `src/nucleus/errors.py` — there is no `NucleusFileNotFound` class.
+
+**Critical rule**: User-domain errors (KeyError in their pandas code) **pass through unchanged** unless we have a registered handler. We translate only **platform-domain errors**. The user's debugging context is their code, not ours. `ValueError` is the deliberate exception because schema-flavored messages are the highest-signal failure mode for the v0.1 beachhead (`AGENTS.md` §11.7 + v4.1 §1.5).
 
 ---
 
 ## §5. The translator implementation contract
+
+> **PoC #1 status (2026-05-13)**: The class-based `ErrorTranslator` + `ErrorContext` shape below is the **v0.5 target**. PoC #1 ships a **simplified module-level surface** — a single `translate(exc: BaseException) -> NucleusError` function plus a lazy `_registry()` built on first call (`translator.py:282-342`, `:351-402`). `ErrorContext` (asset / run_id / source / sql_position) is deferred to v0.5 — it requires plumbing the AMA's per-asset metadata into the call site, which the PoC #1 LOC budget did not afford. The architectural promise (typed result, walk MRO, preserve cause) is identical; v0.5 graduation only **adds** the metadata-carrying context object.
 
 ```python
 # src/nucleus/coordination/error_translation.py — outline (NOT yet implemented)
@@ -219,7 +260,7 @@ class ErrorContext:
 
 ## §6. CLI rendering contract
 
-When `ctx.run()` returns a `RunResult(failure, error=NucleusError)`, the CLI renders:
+When `ctx.run()` returns a `RunResult(failure, error=NucleusError)`, the CLI renders the **three-field contract** every `NucleusError` carries — `user_message` + `fix_hint` + `docs_url` — via `NucleusError.rendered()` (see [`../../src/nucleus/errors.py`](../../src/nucleus/errors.py) `rendered()`, lines 106-146). The category header (e.g. `AssetNotFound`, derived from the class name stripped of the `Nucleus` prefix) and the optional `asset=` slot complete the five-field shape per v4.1 §6.4:
 
 ```
 ✗ marts.daily_revenue failed in 1.4s
@@ -241,6 +282,8 @@ When `ctx.run()` returns a `RunResult(failure, error=NucleusError)`, the CLI ren
 ---
 
 ## §7. Tests required (PoC #1 acceptance criteria)
+
+> **Status (2026-05-13)**: PoC #1 ships **17 typed handlers** spanning Dagster + Polars + DuckDB + pyiceberg + stdlib. `pytest poc/p1_error_translation/ -v` is **21/22 green**; the lone failure (`test_context_only_chain_falls_through_to_inner_handler`) is documented in §3.1.3 as a Python `__context__` overwrite limitation, not a translator bug. The §7.4 "50 known cases" fixture is still pending — PoC #1 acceptance bar is "no specific handler matched ⇒ deterministic fallback to `NucleusInternalError` with bug-report URL"; the 50-case bar moves to v0.1 production graduation. See [`../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md`](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md) for the full pre-merge gate.
 
 For PoC #1 to pass:
 

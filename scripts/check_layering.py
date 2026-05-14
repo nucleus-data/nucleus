@@ -40,7 +40,6 @@ from __future__ import annotations
 import argparse
 import ast
 import json
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -57,6 +56,7 @@ LAYERS: list[str] = [
     "intelligence",  # L3
     "ctx",           # L4 (SDK)
     "cli",           # L4 (operator surface)
+    "workbench",     # L4 (GUI surface; ADR-016)
 ]
 
 
@@ -113,6 +113,83 @@ def _resolve_relative_import(node: ast.ImportFrom, current_file: Path) -> str | 
     return ".".join(parts) or None
 
 
+def _imported_modules_for_node(node: ast.AST, file: Path) -> list[str]:
+    if isinstance(node, ast.Import):
+        return [a.name for a in node.names]
+    if isinstance(node, ast.ImportFrom):
+        mod = _resolve_relative_import(node, file) or node.module or ""
+        return [mod] if mod else []
+    return []
+
+
+def _violations_for_imported_module(
+    *,
+    rel_str: str,
+    node: ast.AST,
+    mod: str,
+    importer_layer: str,
+    importer_idx: int,
+    file: Path,
+) -> list[Violation]:
+    imported_layer = _module_layer(mod)
+    if imported_layer is None:
+        return []
+
+    # Rule 1: _internal is below all real layers; it cannot import from any layer.
+    if importer_layer == "_internal" and imported_layer != "_internal":
+        return [
+            Violation(
+                file=rel_str,
+                line=node.lineno,
+                importer_layer=importer_layer,
+                imported_module=mod,
+                imported_layer=imported_layer,
+                reason="_internal/ may not import from any layer",
+            )
+        ]
+
+    out: list[Violation] = []
+
+    # Rule 2: no upward imports.
+    imported_idx = LAYERS.index(imported_layer)
+    if imported_idx > importer_idx:
+        out.append(
+            Violation(
+                file=rel_str,
+                line=node.lineno,
+                importer_layer=importer_layer,
+                imported_module=mod,
+                imported_layer=imported_layer,
+                reason=f"upward import: {importer_layer} -> {imported_layer}",
+            )
+        )
+
+    # Rule 3: cross-engine imports forbidden.
+    if importer_layer == "engines" and imported_layer == "engines" and mod != "nucleus.engines":
+        # Same-layer is fine, but engine adapters shouldn't reach into each other.
+        # If the module looks like a sibling engine adapter, flag it.
+        parts = mod.split(".")
+        if len(parts) >= 3:
+            importer_engine_dir = (
+                file.relative_to(SRC_ROOT).parts[1]
+                if len(file.relative_to(SRC_ROOT).parts) > 1
+                else ""
+            )
+            imported_engine_dir = parts[2]
+            if importer_engine_dir and imported_engine_dir and importer_engine_dir != imported_engine_dir:
+                out.append(
+                    Violation(
+                        file=rel_str,
+                        line=node.lineno,
+                        importer_layer=importer_layer,
+                        imported_module=mod,
+                        imported_layer=imported_layer,
+                        reason="cross-engine import forbidden (engineering.md §3.2)",
+                    )
+                )
+    return out
+
+
 def _scan_file(file: Path) -> list[Violation]:
     importer_layer = _file_layer(file)
     if importer_layer is None:
@@ -127,67 +204,17 @@ def _scan_file(file: Path) -> list[Violation]:
     out: list[Violation] = []
 
     for node in ast.walk(tree):
-        # Collect module name(s) for this import statement.
-        modules: list[str] = []
-        if isinstance(node, ast.Import):
-            modules = [a.name for a in node.names]
-        elif isinstance(node, ast.ImportFrom):
-            mod = _resolve_relative_import(node, file) or node.module or ""
-            if mod:
-                modules = [mod]
-
-        for mod in modules:
-            imported_layer = _module_layer(mod)
-            if imported_layer is None:
-                continue
-
-            # Rule 1: _internal is below all real layers; it cannot import from any layer.
-            if importer_layer == "_internal" and imported_layer != "_internal":
-                out.append(
-                    Violation(
-                        file=rel_str,
-                        line=node.lineno,
-                        importer_layer=importer_layer,
-                        imported_module=mod,
-                        imported_layer=imported_layer,
-                        reason="_internal/ may not import from any layer",
-                    )
+        for mod in _imported_modules_for_node(node, file):
+            out.extend(
+                _violations_for_imported_module(
+                    rel_str=rel_str,
+                    node=node,
+                    mod=mod,
+                    importer_layer=importer_layer,
+                    importer_idx=importer_idx,
+                    file=file,
                 )
-                continue
-
-            # Rule 2: no upward imports.
-            imported_idx = LAYERS.index(imported_layer)
-            if imported_idx > importer_idx:
-                out.append(
-                    Violation(
-                        file=rel_str,
-                        line=node.lineno,
-                        importer_layer=importer_layer,
-                        imported_module=mod,
-                        imported_layer=imported_layer,
-                        reason=f"upward import: {importer_layer} -> {imported_layer}",
-                    )
-                )
-
-            # Rule 3: cross-engine imports forbidden.
-            if importer_layer == "engines" and imported_layer == "engines" and mod != f"nucleus.engines":
-                # Same-layer is fine, but engine adapters shouldn't reach into each other.
-                # If the module looks like a sibling engine adapter, flag it.
-                parts = mod.split(".")
-                if len(parts) >= 3:
-                    importer_engine_dir = file.relative_to(SRC_ROOT).parts[1] if len(file.relative_to(SRC_ROOT).parts) > 1 else ""
-                    imported_engine_dir = parts[2]
-                    if importer_engine_dir and imported_engine_dir and importer_engine_dir != imported_engine_dir:
-                        out.append(
-                            Violation(
-                                file=rel_str,
-                                line=node.lineno,
-                                importer_layer=importer_layer,
-                                imported_module=mod,
-                                imported_layer=imported_layer,
-                                reason="cross-engine import forbidden (engineering.md §3.2)",
-                            )
-                        )
+            )
     return out
 
 

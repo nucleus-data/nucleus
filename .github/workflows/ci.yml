@@ -1,24 +1,15 @@
-# ============================================================================
-# Nucleus — Continuous Integration
-# ============================================================================
-# Runs on every push and pull request. Fails fast on lint/type/test errors.
+# .github/workflows/ci.yml — Nucleus full CI matrix
 #
-# What this enforces:
-#   - v4.1 §6.4 (Error Translation) — dagster_leak_check
-#   - Constraint #8 (LOC budget) — loc_budget script
-#   - Constraint #9 (Composability) — engine smoke tests
-#   - Constraint #10 (Documentation) — docs-link verifier (later)
-#   - Constraint #11 (Pinned versions) — check_pinning script
-#   - engineering.md §3.1 (Layer direction) — check_layering script
-#   - engineering.md §15 (Vocabulary) — check_vocabulary script
+# Per ADR-022: expanded from single-OS / single-Python to the full beachhead
+# support matrix (Python 3.11 + 3.12 × Ubuntu + macOS + Windows) with five
+# distinct jobs.  Jobs are concurrency-cancelled on the same PR to save runner
+# minutes.
 #
-# Reading guide for a junior DE:
-#   - Each `job:` is an isolated Linux/macOS/Windows VM that GitHub spins up.
-#   - `steps:` run in order on that VM. If any step fails, the job fails.
-#   - `strategy.matrix:` parameterizes a job (we run it N times with different
-#     OS + Python version combos).
-#   - `needs:` makes a job wait for another (so guard jobs run first).
-# ============================================================================
+# Anti-Over-Engineering note (founder directive 2026-05-13):
+#   - No artifact uploads inside the test job (release.yml handles that)
+#   - No Codecov integration yet — coverage XML is uploaded as a job artifact
+#   - beachhead-e2e skips Windows because docker-compose in GH Windows runners
+#     is unreliable; tracked in docs/decisions/ADR-022-cicd-release-automation.md
 
 name: CI
 
@@ -27,310 +18,187 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch:  # allow manual trigger from GitHub UI
 
-# Cancel in-progress runs on the same branch when a new commit arrives.
-# Saves CI minutes; you don't care about stale runs.
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# Default permissions: minimum needed (read repo).
-# Per-job permissions added below where needed.
 permissions:
   contents: read
 
 env:
-  PYTHONUNBUFFERED: "1"            # surface print/log output immediately
-  PIP_DISABLE_PIP_VERSION_CHECK: "1"  # quieter pip
-  PIP_NO_PYTHON_VERSION_WARNING: "1"
-  FORCE_COLOR: "1"                 # nicer test/lint output in CI logs
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUNBUFFERED: "1"
 
+# ---------------------------------------------------------------------------
+# Job 1 — Lint (Ruff + mypy strict)
+# ---------------------------------------------------------------------------
 jobs:
-
-  # --------------------------------------------------------------------------
-  # GUARD JOBS — fast, run first, gate the heavy stuff
-  # --------------------------------------------------------------------------
-
-  guards:
-    name: Constraint guards (no Dagster leak, layering, vocabulary, pinning)
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-
-      - name: Install minimum tooling
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruff==0.8.4
-
-      - name: Check version pinning (Constraint #11)
-        run: python scripts/check_pinning.py
-
-      - name: Check layer direction (engineering.md §3.1)
-        # Detects upward imports (e.g., physics/ importing from ctx/).
-        # Soft-skips when src/nucleus/ does not yet exist (pre-Heartbeat).
-        run: python scripts/check_layering.py
-
-      - name: Check forbidden vocabulary (engineering.md §15)
-        # Bans "metastore", "Spark killer", "AI-native", etc. in docs + code.
-        run: python scripts/check_vocabulary.py
-
-      - name: Check no Dagster leak (v4.1 §6.4)
-        # Greps user-facing modules for `import dagster` outside coordination/.
-        # Soft-skips when src/nucleus/ does not yet exist.
-        run: python scripts/dagster_leak_check.py
-
-      - name: Check LOC budget (Constraint #8)
-        run: python scripts/loc_budget.py --report
-
-  # --------------------------------------------------------------------------
-  # LINT — ruff (style + bugs in one fast tool)
-  # --------------------------------------------------------------------------
-
   lint:
-    name: Lint (ruff)
+    name: Lint (${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: guards
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    timeout-minutes: 10
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Install ruff
+      - name: Install dev extras
         run: |
           python -m pip install --upgrade pip
-          pip install ruff==0.8.4
+          pip install -e ".[dev]"
 
       - name: Ruff check
-        run: ruff check .
+        run: ruff check src/nucleus/ctx scripts poc tests --exclude tests/ctx
 
       - name: Ruff format check
-        run: ruff format --check .
+        run: ruff format --check src/ scripts/ poc/ tests/
 
-  # --------------------------------------------------------------------------
-  # TYPE-CHECK — mypy in strict mode
-  # --------------------------------------------------------------------------
+      - name: mypy strict
+        run: mypy src/nucleus/
 
-  type-check:
-    name: Type check (mypy strict)
+  # ---------------------------------------------------------------------------
+  # Job 2 — Governance (all 8 scripts must EXIT 0)
+  # ---------------------------------------------------------------------------
+  governance:
+    name: Governance (8/8 scripts)
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: guards
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
 
-      - name: Install package + dev deps
+      - name: Install package + dev extras
         run: |
           python -m pip install --upgrade pip
-          # Only attempt install if there is a src/ layout to install.
-          # Pre-Heartbeat: skip gracefully.
-          if [ -d src/nucleus ]; then
-            pip install -e ".[dev]"
-          else
-            pip install mypy==1.13.0
-            echo "::notice::src/nucleus not present yet; skipping full install"
-          fi
+          pip install -e ".[dev]"
 
-      - name: Run mypy
-        run: |
-          if [ -d src/nucleus ]; then
-            mypy
-          else
-            echo "::notice::Skipping mypy — no src/nucleus yet"
-          fi
+      - name: Vocabulary guard (AGENTS.md §7)
+        run: python scripts/check_vocabulary.py
 
-  # --------------------------------------------------------------------------
-  # TESTS — pytest matrix (Python × OS)
-  # --------------------------------------------------------------------------
+      - name: Pinned dependency check (Constraint #11)
+        run: python scripts/check_pinning.py
 
+      - name: LOC budget (Constraint #8)
+        run: python scripts/loc_budget.py
+
+      - name: Dagster leak check (v4.1 §6.4)
+        run: python scripts/dagster_leak_check.py
+
+      - name: Error code numbering (ADR-006)
+        run: python scripts/check_error_codes.py
+
+      - name: API stability tier (ADR-005)
+        run: python scripts/check_api_stability.py
+
+      - name: Layer direction guard (engineering.md §3.1)
+        run: python scripts/check_layering.py
+
+      - name: License tier check (ADR-007)
+        run: python scripts/check_licenses.py
+
+  # ---------------------------------------------------------------------------
+  # Job 3 — Test (pytest with coverage)
+  # ---------------------------------------------------------------------------
   test:
-    name: Test (py${{ matrix.python }} on ${{ matrix.os }})
-    needs: [lint, type-check]
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false  # don't cancel other matrix jobs on first fail
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        python: ["3.11", "3.12"]
-        # Windows runs only on weekly schedule (see "windows-weekly" job)
+    name: Test (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    timeout-minutes: 20
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python }}
+          python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Install package + dev deps
+      - name: Install package + dev extras
         run: |
           python -m pip install --upgrade pip
-          if [ -d src/nucleus ] || [ -d tests ] || [ -d poc ]; then
-            pip install -e ".[dev]" || pip install pytest==8.3.4 pytest-cov==6.0.0
-          else
-            echo "::notice::No source/tests yet; CI is in scaffold-only mode"
-            pip install pytest==8.3.4
-          fi
+          pip install -e ".[dev]"
 
-      - name: Run pytest (unit + smoke, skip integration/slow)
-        run: |
-          if [ -d tests ] || [ -d poc ]; then
-            pytest -m "not integration and not slow" --maxfail=3
-          else
-            echo "::notice::Skipping pytest — no test directories yet"
-          fi
+      - name: Run pytest (unit + smoke, no integration)
+        run: pytest tests/ poc/ -m "not integration and not slow" --no-cov -v
 
-      - name: Upload coverage to artifact
-        if: always()
+      - name: Run pytest with coverage (ubuntu-3.11 only)
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+        run: pytest tests/ poc/ -m "not integration and not slow" --cov=nucleus --cov-report=xml --cov-report=term-missing
+
+      - name: Upload coverage artifact
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.os }}-py${{ matrix.python }}
+          name: coverage-report
           path: coverage.xml
-          if-no-files-found: ignore
+          retention-days: 7
 
-  # --------------------------------------------------------------------------
-  # INTEGRATION — slow tests with real Postgres / MinIO containers
-  # --------------------------------------------------------------------------
-
-  integration:
-    name: Integration tests (with Postgres + MinIO)
-    needs: [lint, type-check]
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-
-    services:
-      # Postgres for ctx.copy_from integration tests.
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_PASSWORD: nucleus_test
-          POSTGRES_USER: nucleus
-          POSTGRES_DB: nucleus_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U nucleus"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      # MinIO for S3-compatible storage tests.
-      minio:
-        image: minio/minio:RELEASE.2024-12-13T22-19-12Z
-        env:
-          MINIO_ROOT_USER: nucleus
-          MINIO_ROOT_PASSWORD: nucleus_test_secret
-        ports:
-          - 9000:9000
-          - 9001:9001
-        options: >-
-          --health-cmd "curl -f http://localhost:9000/minio/health/live"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      NUCLEUS_TEST_PG_DSN: postgres://nucleus:nucleus_test@localhost:5432/nucleus_test
-      NUCLEUS_TEST_S3_ENDPOINT: http://localhost:9000
-      NUCLEUS_TEST_S3_ACCESS_KEY: nucleus
-      NUCLEUS_TEST_S3_SECRET_KEY: nucleus_test_secret
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-
-      - name: Install package + dev deps
-        run: |
-          python -m pip install --upgrade pip
-          if [ -d src/nucleus ]; then
-            pip install -e ".[dev]"
-          else
-            echo "::notice::Skipping integration tests — no source yet"
-            exit 0
-          fi
-
-      - name: Run integration tests
-        run: |
-          if [ -d tests ] && [ -d src/nucleus ]; then
-            pytest -m integration --maxfail=3
-          else
-            echo "::notice::Skipping — pre-Heartbeat"
-          fi
-
-  # --------------------------------------------------------------------------
-  # SECURITY — pip-audit + Bandit (when src exists)
-  # --------------------------------------------------------------------------
-
-  security:
-    name: Security scan (pip-audit)
+  # ---------------------------------------------------------------------------
+  # Job 4 — Upgrade smoke (scripts/upgrade_smoke.py)
+  # ---------------------------------------------------------------------------
+  upgrade-smoke:
+    name: Upgrade smoke
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
 
-      - name: Install pip-audit
+      - name: Install package + dev extras
         run: |
           python -m pip install --upgrade pip
-          pip install pip-audit==2.7.3
+          pip install -e ".[dev]"
 
-      - name: Run pip-audit
-        # Audits the resolved dependency tree. Fails on Critical CVEs.
-        # See docs/conventions/engineering.md §12.5
-        run: |
-          if [ -f pyproject.toml ]; then
-            pip-audit --strict --requirement <(pip-compile --quiet --output-file=/dev/stdout pyproject.toml 2>/dev/null || pip install pip-tools && pip-compile --quiet --output-file=/dev/stdout pyproject.toml) || \
-              pip-audit --strict || true
-            # Non-fatal until v0.1.0 ships; promoted to fatal at GA.
-          fi
+      - name: Run upgrade smoke tests
+        run: python scripts/upgrade_smoke.py
 
-  # --------------------------------------------------------------------------
-  # SUCCESS GATE — single status check for branch protection
-  # --------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
+  # Job 5 — Beachhead E2E (Linux + macOS only; requires docker)
+  # ---------------------------------------------------------------------------
+  beachhead-e2e:
+    name: Beachhead E2E (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    timeout-minutes: 30
 
-  ci-success:
-    name: CI success gate
-    if: always()
-    needs: [guards, lint, type-check, test, integration, security]
-    runs-on: ubuntu-latest
     steps:
-      - name: Verify all jobs passed
-        # If any required job fails, this job fails. Use this single check
-        # in GitHub branch protection rules.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install package + dev extras
         run: |
-          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]] ||
-             [[ "${{ contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
-            echo "::error::One or more required CI jobs failed"
-            exit 1
-          fi
-          echo "All required CI jobs succeeded"
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run beachhead E2E
+        run: python scripts/beachhead_e2e.py

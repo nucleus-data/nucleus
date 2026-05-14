@@ -5,6 +5,8 @@
 > **Time**: Budget ~6-10 hrs/week of focused learning alongside coding.
 > **Companion**: [`AGENTS.md`](../../AGENTS.md), [`docs/conventions/engineering.md`](../conventions/engineering.md), [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)
 
+> **Using Nucleus in your own project?** Start with [`quickstart.md`](./quickstart.md) and [`examples/`](../examples/) — this document is for **contributors** working inside the Nucleus git tree.
+
 This is **your** doc. It's not in the public roadmap. It exists because building a data engineering platform requires deeper knowledge than using one, and you're going to grow into that knowledge as we go.
 
 **Two principles**:

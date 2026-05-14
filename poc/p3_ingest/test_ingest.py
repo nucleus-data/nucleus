@@ -20,10 +20,14 @@ import pytest
 pytest.importorskip("pyiceberg")
 pytest.importorskip("pyarrow")
 
-from pyiceberg.types import BinaryType, DoubleType, LongType, StringType
+from pyiceberg.types import BinaryType, DoubleType, LongType, StringType  # noqa: E402
 
-from nucleus.errors import NucleusError, NucleusSourceNotFound, NucleusUnsupportedTypeError
-from poc.p3_ingest.ingest import _open_catalog, ingest_sqlite_to_iceberg
+from nucleus.errors import (  # noqa: E402
+    NucleusError,
+    NucleusSourceNotFound,
+    NucleusUnsupportedTypeError,
+)
+from poc.p3_ingest.ingest import _open_catalog, ingest_sqlite_to_iceberg  # noqa: E402
 
 
 def _exec(sqlite_path: Path, *statements: str) -> None:

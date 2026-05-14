@@ -1,0 +1,10 @@
+# Nucleus — default code owners (GitHub CODEOWNERS)
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Replace @founder with the maintainer GitHub handle before making the repo public.
+* @founder
+
+# Future area ownership (uncomment + assign handles when the team grows):
+# /src/nucleus/coordination/   @coordination-owner
+# /src/nucleus/ctx/            @ctx-owner
+# /.github/workflows/          @infra-owner

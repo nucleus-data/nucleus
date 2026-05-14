@@ -1,451 +1,200 @@
 # C4 Level 2 — Container Diagram
 
 > **Diagram type**: C4 Container (Level 2)
-> **Scope**: What runs inside the Nucleus system box from L1
-> **Audience**: Contributors writing code in this repo
+> **Scope**: Runtime containers (deployable processes / on-disk substrates) inside the Nucleus boundary, at v0.1 Hello World scope.
+> **Audience**: New contributors, founder onboarding, anyone planning v0.3+ container migrations.
 > **Last updated**: Month 0 (Pre-Heartbeat)
-> **Companion docs**: [`C4_context.md`](C4_context.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)
+> **Companion docs**: [`C4_context.md`](C4_context.md) (L1), [`C4_component.md`](C4_component.md) (L3), [`sequence_asset_materialization.md`](sequence_asset_materialization.md), [`sequence_ingestion.md`](sequence_ingestion.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)
 
-This drills inside the **Nucleus Platform** box from the [Context diagram](C4_context.md). A "container" here = a deployable/runnable unit (a process, library, or workbench app). Different sizes are accepted.
+The C4 model has four levels (Context → Container → Component → Code). This is **Level 2**: the runtime processes that compose Nucleus on a single machine. Below is L1 (the system in its environment, [`C4_context.md`](C4_context.md)); above is L3 (inside the `ctx` SDK container, [`C4_component.md`](C4_component.md)). Per `v4.1` §3.1 layers are numbered **bottom-up, L0 = Physics, L4 = Experience** — the same numbering [`C4_component.md`](C4_component.md) and `src/nucleus/` use. The diagram in §2 overlays those layers onto the actual containers a v0.1 user runs.
+
+For the v0.1 "Hello World" release (`AGENTS.md` §1, `v4.1` §18.1) every container below runs on the founder's laptop, started by a single `nucleus up` invocation (`v4.1` §11.1 promise). There is **no daemon**, **no JVM**, and **no remote service** in the core path (`AGENTS.md` §3 Constraint #1) — MinIO is the only out-of-process binary, and it ships in a single docker container.
 
 ---
 
-## §1. The five layers, as containers
+## §1. Container inventory (v0.1)
+
+Six v0.1-active containers, layered per `v4.1` §3.1 (Five Layers): **L4 Experience** — `nucleus` CLI (`v4.1` §8.1) and `ctx` SDK (`v4.1` §13); **L2 Coordination** — Dagster Definitions (`v4.1` §6.1, in-process, no Dagit web server) and OpenLineage sink (`v4.1` §6.2 step 4, JSONL `FileTransport`); **L1 Engines** — Iceberg filesystem catalog (`v4.1` §5.7, SQLite via pyiceberg `SqlCatalog`) and MinIO server (`v4.1` §5.8, Go binary in docker). The CLI hosts the SDK + Dagster + AMA + OL emitter as one in-process Python invocation; MinIO is the only out-of-process binary. Deferred v0.2/0.3/0.5+ containers are covered in §3.2.
+
+L1 engines that stay **in-process** (DuckDB, Polars, pyiceberg, jinja2) are not separate containers — they live inside the CLI process and appear in [`C4_component.md`](C4_component.md) §1.
+
+---
+
+## §2. The diagram
 
 ```mermaid
 %%{init: {"theme":"neutral", "themeVariables":{"fontSize":"12px"}}}%%
 flowchart TB
-    classDef l0 fill:#5d3f8d,stroke:#3f2a61,color:#fff
-    classDef l1 fill:#1f6e3d,stroke:#16532b,color:#fff
-    classDef l2 fill:#a85d00,stroke:#7e4500,color:#fff
-    classDef l3 fill:#0b6fa1,stroke:#085178,color:#fff
+    classDef user fill:#08427b,stroke:#073b6f,color:#fff
     classDef l4 fill:#1168bd,stroke:#0b4884,color:#fff
+    classDef l2 fill:#a85d00,stroke:#7e4500,color:#fff
+    classDef l1 fill:#1f6e3d,stroke:#16532b,color:#fff
+    classDef physics fill:#0b6fa1,stroke:#085178,color:#fff
+    classDef deferred fill:#5d3f8d,stroke:#3f2a61,color:#fff,stroke-dasharray:4 3
+    classDef giant fill:#7a3e9d,stroke:#5e2f7a,color:#fff
     classDef ext fill:#666,stroke:#444,color:#fff
 
-    USER[("<b>Developer</b>")]:::ext
+    DEV[("<b>Founder</b><br/>laptop shell")]:::user
 
-    subgraph L4["L4 — Experience"]
-        CLI["<b>nucleus CLI</b><br/>Typer + Click<br/>~1500 LOC v0.1"]:::l4
-        CTX["<b>ctx SDK</b><br/>Public Python API<br/>~3000 LOC v0.1"]:::l4
-        WB["<b>Workbench</b><br/>Web IDE (v0.2+)<br/>Marimo (v0.3+)"]:::l4
+    subgraph NUCLEUS["<b>Nucleus boundary</b> (v0.1, single laptop)"]
+        subgraph PROC["<b>Single Python process</b> per nucleus invocation"]
+            CLI["<b>nucleus CLI</b><br/>Python 3.11 + Typer"]:::l4
+            CTX["<b>ctx SDK</b><br/>library — see C4_component.md"]:::l4
+            DAG["<b>Dagster Defs</b><br/>wrapped, hidden"]:::l2
+            AMA["<b>AMA</b> ~500 LOC<br/>+ Error Translation"]:::l2
+        end
+
+        CAT[("<b>Iceberg catalog</b><br/>SQLite via pyiceberg<br/>.nucleus/catalog.db")]:::l1
+        OL[("<b>OL sink</b><br/>JSONL FileTransport<br/>.nucleus/lineage/events")]:::l2
+
+        subgraph DOCKER["docker daemon"]
+            MINIO["<b>MinIO</b><br/>Go binary ~50MB<br/>S3 API :9000"]:::l1
+        end
+
+        PHYS[("<b>L0 Physics</b><br/>Parquet + Iceberg<br/>metadata.json + manifests")]:::physics
     end
 
-    subgraph L3["L3 — Intelligence (post v0.2)"]
-        COPILOT["<b>Workbench Copilot</b><br/>v0.2: simple chat<br/>v0.5: lineage-aware"]:::l3
-        SKG["<b>Semantic Knowledge<br/>Graph</b><br/>v0.7+"]:::l3
-        AGENT["<b>ctx.agent runtime</b><br/>v0.5+"]:::l3
+    subgraph FUTURE["<b>Deferred</b> v0.2 → v0.5+"]
+        WB["Workbench v0.2"]:::deferred
+        MAR["Marimo v0.3"]:::deferred
+        LAK["Lakekeeper / Polaris v0.3"]:::deferred
+        MCP["nucleus-mcp-server v0.5+"]:::deferred
+        COP["Cloud Copilot v0.2+"]:::deferred
     end
 
-    subgraph L2["L2 — Coordination"]
-        AMA["<b>Asset Materialization<br/>Adapter</b><br/>~500 LOC<br/>(thin Dagster wrapper)"]:::l2
-        ETL["<b>Error Translation Layer</b><br/>~300 LOC<br/>(Dagster err → Nucleus err)<br/><i>PoC #1 validates this</i>"]:::l2
-        LIN["<b>Asset Lineage</b><br/>Asset-level v0.1<br/>Column-level v0.5+"]:::l2
-        CONTRACT["<b>Schema Contracts</b><br/>Pre-/post-materialize<br/>validation"]:::l2
-        DAG[("<b>Dagster</b><br/>(wrapped, hidden)<br/>v1.9.x")]:::l2
+    subgraph EXT["External (per C4_context.md §3)"]
+        S3PROD["Production S3 / R2 / GCS"]:::ext
+        DBR["Databricks / Snowflake"]:::giant
+        LLM["LLM provider"]:::ext
     end
 
-    subgraph L1["L1 — Engines"]
-        ENG_DUCK[("<b>DuckDB Engine</b><br/>v1.1.x<br/>SQL execution")]:::l1
-        ENG_POLARS[("<b>Polars Engine</b><br/>v1.18.x<br/>DataFrame execution")]:::l1
-        ENG_DF[("<b>DataFusion</b><br/>v0.5+<br/>(planned, swap target)")]:::l1
-        ENG_DAFT[("<b>Daft</b><br/>v0.5+<br/>(multimodal)")]:::l1
-    end
-
-    subgraph L0["L0 — Physics"]
-        ARROW[("<b>Apache Arrow</b><br/>v18.x<br/>columnar in-memory")]:::l0
-        ICE[("<b>PyIceberg</b><br/>v0.8.x<br/>table format")]:::l0
-        PARQ[("<b>Parquet</b><br/>(via Arrow)")]:::l0
-        FS[("<b>FileIO</b><br/>local / S3 / GCS / Azure")]:::l0
-    end
-
-    USER ==> CLI
-    USER ==> CTX
-    USER -.-> WB
-
-    CLI --> CTX
-    WB -.-> CTX
-    WB -.-> COPILOT
-
+    DEV ==> CLI ==> CTX
+    CTX --> DAG
     CTX --> AMA
-    CTX --> CONTRACT
-    CTX --> LIN
-    COPILOT -.-> SKG
-    SKG -.-> LIN
-    AGENT -.-> CTX
+    AMA -.wraps.-> DAG
+    AMA --> CAT
+    AMA --> OL
+    CAT -- "Parquet via FileIO" --> MINIO
+    MINIO --> PHYS
+    CAT --> PHYS
 
-    AMA --> ETL
-    AMA --> DAG
-    ETL --> DAG
-
-    AMA --> ENG_DUCK
-    AMA --> ENG_POLARS
-    AMA -.-> ENG_DF
-    AMA -.-> ENG_DAFT
-
-    ENG_DUCK --> ARROW
-    ENG_POLARS --> ARROW
-    ENG_DF --> ARROW
-    ENG_DAFT --> ARROW
-
-    AMA --> ICE
-    ICE --> PARQ
-    ICE --> FS
-    PARQ --> FS
+    MINIO -. "3-line config swap" .-> S3PROD
+    AMA -. "compute=databricks v0.5+" .-> DBR
+    COP -. "direct, no proxy" .-> LLM
+    LAK -. "v0.3 behind pyiceberg.Catalog" .-> CAT
+    WB -. "imports ctx" .-> CTX
+    MAR -. "imports ctx" .-> CTX
+    MCP -. "wraps ctx as MCP tools" .-> CTX
 
     linkStyle default stroke:#666,stroke-width:1.5px
 ```
 
-**Legend**: solid = present in v0.1; dashed = planned later.
+**Legend.** Solid border = v0.1 active; dashed = deferred; `==>` = founder call site; `-->` = in-process call or atomic write; `-.->` = cross-cutting / future / graduation. Layer colors: L4 blue, L2 amber, L1 green, L0 deep-blue, deferred purple, external grey, giants violet.
 
 ---
 
-## §2. Layer-by-layer breakdown
+## §3. Per-container deep-dive
 
-### §2.0 L0 — Physics (Immutable open standards)
+### §3.1 v0.1 active
 
-**Purpose**: The data formats we never reinvent. These are *not* our code; they're the substrate.
+| # | Container | Lifetime | Purpose / pin / swap target |
+|---|---|---|---|
+| 1 | `nucleus` CLI | per command | User entry — `init / up / down / run / ingest / query`. Cold boot <10 s (`v4.1` §11.2, [`poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md)). Typer assumed (§7 row 1). **Swap target**: none — frozen v1.0 (`v4.1` §13.3). |
+| 2 | `ctx` SDK | per CLI / script | The product. Surface enumerated in `v4.1` §13.2; lives in `src/nucleus/ctx/` per [`C4_component.md`](C4_component.md) §1; ~3000 LOC of ≤30K LOC ceiling (`AGENTS.md` §3 #8). Per `v4.1` §6.5 the SDK boundary is the only place Dagster types are wrapped — they MUST NOT cross it. **Swap target**: none; per-component swaps in [`C4_component.md`](C4_component.md) §3. |
+| 3 | Dagster Definitions | per CLI command | Orchestration, wrapped + hidden. v0.1 runs `1.9.5` in-process via `dagster.materialize([asset], instance=DagsterInstance.ephemeral())` ([`sequence_asset_materialization.md`](sequence_asset_materialization.md) §2) — no Dagit web server, no JVM (Constraint #1). Inception post-PoC #1 (`AGENTS.md` §11.1). **Swap target**: `nucleus-mini-scheduler` (~3-5K LOC) per `v4.1` §6.7 + [`docs/swap/dagster.md`](../swap/dagster.md); on-demand per `v4.1` §9.3. |
+| 4 | Iceberg catalog (filesystem) | persistent | SQLite file (`.nucleus/catalog.db`) + `warehouse/` dir via `pyiceberg.SqlCatalog` ([`docs/research/pyiceberg.md`](../research/pyiceberg.md), pin `0.8.1`). **Owns atomic commits** via metadata-pointer swap ([`ADR-001`](../decisions/ADR-001-no-iceberg-commit-service.md)) — Constraint #5 forbids us from building one. **Swap target**: Lakekeeper (Rust) or Apache Polaris (JVM, ASF TLP 2026-02-18 per [`ADR-002`](../decisions/ADR-002-positioning-decision-2026-05.md) §2.4) at v0.3 co-default behind the same `pyiceberg.Catalog` interface. Polaris JVM lives in its own docker container, not in the always-on core path. |
+| 5 | MinIO server | persistent docker volume | Only out-of-process binary in v0.1. Go binary (~50 MB) on `localhost:9000` (S3 API); owns Parquet + Iceberg metadata under `warehouse/`. Started by `nucleus up` (`v4.1` §11.1). **Swap target**: AWS S3 / GCS / Azure Blob / R2 / SeaweedFS (`v4.1` §5.8). Graduation = 3-line `connections/storage.yml` change (`v4.1` §11.3). |
+| 6 | OpenLineage sink (FileTransport) | per materialization | In-process emitter → JSONL at `.nucleus/lineage/events` via `openlineage-python` ([`docs/research/openlineage.md`](../research/openlineage.md) §3 row 1, §5 v0.1 row). Called from AMA post-write hook ([`sequence_asset_materialization.md`](sequence_asset_materialization.md) §1 step 17); never blocks — failure degrades gracefully (`docs/research/openlineage.md` §6). v0.3+ swaps transport (not emitter) to `HttpTransport` → Marquez. **Swap target**: none — OL is Tier 0 immortal (`v4.1` §9.2); only transport varies. |
 
-| Container | Role | Version pin | Status |
-|-----------|------|-------------|--------|
-| **Apache Arrow** | Zero-copy columnar in-memory format | `pyarrow==18.1.0` | v0.1 ✓ |
-| **PyIceberg** | Iceberg table operations (read/write/commit) | `pyiceberg==0.8.1` | v0.1 ✓ |
-| **Parquet** | File storage format | via pyarrow | v0.1 ✓ |
-| **FileIO** | Storage abstraction (FS / S3 / GCS / Azure) | via pyiceberg | v0.1 ✓ |
+### §3.2 Deferred containers
 
-**Key principle**: We **delegate** to these projects. We never fork. Constraint #3 (No custom commit service): atomic commits are PyIceberg's job, not ours.
-
-### §2.1 L1 — Engines (Composable compute)
-
-**Purpose**: The query / DataFrame engines that do the actual work.
-
-| Container | Role | Version pin | Status |
-|-----------|------|-------------|--------|
-| **DuckDB Engine adapter** | Wraps DuckDB for SQL execution + Iceberg reads | `duckdb==1.1.3` | v0.1 ✓ |
-| **Polars Engine adapter** | Wraps Polars for DataFrame transformations | `polars==1.18.0` | v0.1 ✓ |
-| **DataFusion Engine** | Alternative SQL engine (smoke test only v0.1; real impl v0.5+) | TBD | smoke only |
-| **Daft Engine** | Multimodal / distributed (post v0.5) | TBD | future |
-
-**Adapter pattern**: Each engine implements the `Engine` Protocol (per `engineering.md` §7.2). Swap = 1-line config change. Constraint #9 (Composability by Constitution).
-
-### §2.2 L2 — Coordination
-
-**Purpose**: Orchestration + lineage + contracts. **This is where most of the cleverness lives.**
-
-| Container | Role | LOC budget | Status |
-|-----------|------|------------|--------|
-| **Asset Materialization Adapter** (`coordination/asset_materialization.py`) | Translates `ctx.asset` decorator into Dagster `@asset`. **Thin** wrapper (per F3 review). | ~500 LOC | v0.1 ✓ |
-| **Error Translation Layer** (`coordination/error_translation.py`) | Maps Dagster exception types to NucleusError types. **Release blocker per v4.1 §6.4.** | ~300 LOC | v0.1 ✓ (PoC #1) |
-| **Asset Lineage Capture** (`coordination/lineage.py`) | Asset-level inputs/outputs from Dagster's asset graph. | ~400 LOC | v0.1 ✓ (asset-level) |
-| **Schema Contracts** (`coordination/contracts.py`) | Pre-materialize schema validation, post-materialize assertions. | ~600 LOC | v0.1 ✓ |
-| **Dagster** | The hidden orchestrator | `dagster==1.9.5` | v0.1 ✓ |
-
-**Critical: Error translation isn't optional.** If a Dagster error leaks to the user, our abstraction has failed. PoC #1 builds & validates this layer before anything else. See [`sequence_error_translation.md`](sequence_error_translation.md).
-
-### §2.3 L3 — Intelligence (AI-assisted, post v0.2)
-
-**Purpose**: AI features. Not present in v0.1 (per F1 review — staged release).
-
-| Container | Role | Lands in |
-|-----------|------|----------|
-| **Workbench Copilot (chat)** | Simple "answer questions about my assets" | v0.2 |
-| **Workbench Copilot (schema-aware)** | Knows table schemas; better suggestions | v0.3 |
-| **Semantic Knowledge Graph (SKG)** | Asset metadata graph for AI reasoning | v0.7+ |
-| **Workbench Copilot (lineage-aware)** | Suggests refactors across the asset graph | v0.5 |
-| **`ctx.agent` runtime** | User-authored agents that call ctx APIs | v0.5+ |
-| **Cost Meter (telemetry)** | Per-asset cost attribution & emission | v0.5+ |
-| **Cost-Aware Planner** | Estimates query cost before execution; backfill impact preview | v0.7+ |
-| **Replay / Time-Travel Debugger** | Re-run past materializations from Iceberg snapshots | v0.8+ |
-
-**v0.1 NOOP**: This layer has zero code in v0.1. The architecture leaves space for it but we don't pretend to ship AI in the first release.
-
-### §2.4 L4 — Experience
-
-**Purpose**: What users actually touch.
-
-| Container | Role | LOC budget | Status |
-|-----------|------|------------|--------|
-| **`ctx` SDK** (`src/nucleus/ctx/`) | Python API. The product. | ~3000 LOC v0.1 | v0.1 ✓ |
-| **`nucleus` CLI** (`src/nucleus/cli/`) | Operator interface. Typer-based. | ~1500 LOC v0.1 | v0.1 ✓ |
-| **Workbench** (separate frontend repo, v0.2+) | Web IDE | (separate repo) | v0.2 ✓ |
-| **Marimo notebooks** | Native notebook integration | (Marimo plugin) | v0.3 ✓ |
-| **Portal / Hub** (post v1.0) | SaaS landing experience | — | future |
-
-**v4.1 §13.1**: `ctx` and `nucleus` (CLI) are the only public surfaces. Workbench uses `ctx` internally. **No backdoor APIs.**
+| Container | Layer | Inception | Notes |
+|---|---|---|---|
+| Workbench | L4 | v0.2 (Mo 8-14) | Web app; imports `ctx` SDK (`v4.1` §8.1). |
+| Inline AI chat (Copilot stage 1) | L3 | v0.2 (Mo 8-14) | Direct user→LLM HTTPS; Nucleus never proxies; never sends rows/PII ([`C4_context.md`](C4_context.md) §3.6 + §5.2). `v4.1` §7.2. |
+| Lakekeeper / Polaris | L1 | v0.3 (Mo 14-20) co-default | Behind same `pyiceberg.Catalog` interface (`v4.1` §5.7, [`docs/swap/lakekeeper.md`](../swap/lakekeeper.md)). |
+| dlt connectors | L1 | v0.3 (Mo 14-20) | Wrapped via `@nucleus.source(engine="dlt")` (`v4.1` §5.5.2, [`docs/swap/dlt.md`](../swap/dlt.md)); `ctx.copy_from` stays default for v0.1's six sources ([`sequence_ingestion.md`](sequence_ingestion.md) §4). |
+| Marquez | L2 | v0.3+ optional | OL HTTP backend via docker-compose ([`docs/research/openlineage.md`](../research/openlineage.md) §5). |
+| Marimo | L4 | v0.3 (Mo 14-20) | Reactive notebook server (`v4.1` §8.1, [`docs/research/marimo.md`](../research/marimo.md)). |
+| `nucleus-mcp-server` | L3 | v0.5+ (Mo 20-28) | MCP substrate hedge per [`ADR-002`](../decisions/ADR-002-positioning-decision-2026-05.md) §3; wraps `ctx` as MCP tools. |
 
 ---
 
-## §3. The two interfaces, in detail
+## §4. Container interaction patterns
 
-### §3.1 The `ctx` SDK
+### §4.1 Boot sequence (`nucleus up`, cold)
 
-```python
-# src/nucleus/ctx/__init__.py — the entire public surface
+Per `v4.1` §11.1 and [`poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md), the cold-boot budget is **<10 s** total: (1) CLI + lazy-imports of `dagster`/`pyiceberg`/`polars`/`duckdb` (<3 s) → (2) `docker compose up -d minio` + healthcheck (<4.5 s) → (3) `pyiceberg.load_catalog(type='sql', ...)` (<0.5 s) → (4) `Definitions(assets=[...])` constructed in-process (<1.5 s) → (5) AMA registers OL sink (no I/O until first materialization). Warm boot <3 s; idle RAM <500 MB (`v4.1` §11.2).
 
-# Lifecycle
-def context(config: NucleusConfig | None = None) -> Context: ...
+### §4.2 Materialization & failure across containers
 
-# Asset definition
-class Asset(Protocol): ...
-def asset(name: str, *, deps: list[str] = ..., schema: Schema = ...) -> Decorator: ...
+Full step-by-step in [`sequence_asset_materialization.md`](sequence_asset_materialization.md) §1 (happy) / §3 (failure); ingestion in [`sequence_ingestion.md`](sequence_ingestion.md) §2. Container ownership of each step group:
 
-# Ingestion
-def copy_from(source: str, *, table: str, target: str, mode: str = "replace") -> Asset: ...
-def read_csv(path: str, *, target: str) -> Asset: ...
+| Step group | Containers |
+|---|---|
+| `nucleus run X` → `ctx.materialize` | CLI → ctx SDK |
+| `materialize([asset])` invocation | ctx SDK → Dagster Definitions (in-process) |
+| `ctx.read` / `ctx.sql` execution | ctx SDK → catalog / MinIO / DuckDB (in-process) |
+| Contract check + `Table.append(arrow)` | AMA → catalog (atomic commit) |
+| `OL RunEvent(COMPLETE)` | AMA → FileTransport JSONL sink |
 
-# Transformation
-def sql(query: str, *, target: str, refs: dict[str, str] = ...) -> Asset: ...
-
-# Reading
-def read(asset: str) -> Reader: ...   # returns lazy reader, with .to_polars(), .to_arrow(), .to_duckdb_relation()
-
-# Execution
-def run(asset: str | list[str], *, dry_run: bool = False) -> RunResult: ...
-
-# Inspection
-def lineage(asset: str) -> Lineage: ...
-def history(asset: str) -> list[Snapshot]: ...
-def schema(asset: str) -> Schema: ...
-
-# Errors (the only public exception type)
-class NucleusError(Exception): ...
-```
-
-**Stability promise**: v4.1 §13.1 — this surface is **stable** from v1.0 forward (semver). AI-related APIs (`ctx.agent`, `ctx.copilot`) can flex faster (per v4.1 §13.3).
-
-### §3.2 The `nucleus` CLI
-
-```bash
-# Lifecycle
-nucleus up                                  # boot local stack <10s (Constraint: PoC #4)
-nucleus down                                # tear down
-nucleus init <project>                      # scaffold new project
-nucleus status                              # health check
-
-# Assets
-nucleus run [<asset>...]                    # materialize assets
-nucleus inspect <asset>                     # schema, snapshots, row count
-nucleus lineage <asset>                     # asset DAG
-nucleus catalog list [--prefix=raw]         # list assets
-
-# Ingestion shortcuts
-nucleus ingest <conn> --table=t --target=t  # copy_from wrapper
-
-# Debugging
-nucleus logs                                # structured log view
-nucleus history <asset>                     # snapshot history
-nucleus doctor                              # diagnose environment
-
-# Workbench (v0.2+)
-nucleus workbench                           # open web IDE
-
-# Migrations
-nucleus upgrade                             # safe component upgrade workflow (Constraint #11)
-```
+**Failure isolation** — per `v4.1` §6.4 + PoC #1 release blocker (`AGENTS.md` §11.7) every failure surfaces as a `NucleusError` subclass; no Dagster / DuckDB / pyiceberg classnames in user output. MinIO down → `NucleusStorageUnavailable`. Catalog corrupt → `NucleusCatalogError` ([`sequence_ingestion.md`](sequence_ingestion.md) §3). Dagster internal → translated per PoC #1 (8 scenarios in `v4.1` §6.4). OL FileTransport write fails → asset succeeds, lineage dropped, warning logged ([`docs/research/openlineage.md`](../research/openlineage.md) §6).
 
 ---
 
-## §4. Process model (what actually runs)
+## §5. Hardware footprint (v0.1 laptop scope)
 
-**v0.1 (Tier 1) — single Python process:**
+Source: `v4.1` §11.2 + §16.3; per-container estimates verified by [`poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md). **Targets, not measurements** — re-verify when the boot harness lands.
 
-```
-┌───────────────────────────────────────────────────────────┐
-│  User shell                                                │
-│     │                                                      │
-│     │  nucleus CLI / Python REPL / script                  │
-│     ▼                                                      │
-│  ┌────────────────────────────────────────────────────┐   │
-│  │ Single Python process                              │   │
-│  │   - ctx SDK                                         │   │
-│  │   - Asset Materialization Adapter                   │   │
-│  │   - Embedded Dagster (DagsterInstance.ephemeral)    │   │
-│  │   - In-process DuckDB                               │   │
-│  │   - In-process Polars                               │   │
-│  │   - PyIceberg (filesystem catalog)                  │   │
-│  └─────────────┬──────────────────────────────────────┘   │
-│                │                                            │
-│                ▼                                            │
-│         Local filesystem (./warehouse/, ./catalog.db)       │
-└───────────────────────────────────────────────────────────┘
-```
+| Container | Idle RAM | Active RAM | Disk |
+|---|---|---|---|
+| `nucleus` CLI | n/a (process-per-command) | ~50-100 MB | n/a |
+| `ctx` SDK | inherits CLI | inherits CLI | n/a |
+| Dagster Definitions | inherits CLI | ~100-200 MB | n/a |
+| Iceberg catalog (SQLite) | n/a | n/a | tens of MB |
+| MinIO container | ~150 MB | ~200 MB | scales with data |
+| OL FileTransport | inherits caller | inherits caller | 1-10 MB / day |
+| **Total v0.1 idle** | **~150 MB** (MinIO only; CLI ephemeral) | — | — |
+| **Total v0.1 active run** | — | **~500-700 MB** | scales |
 
-No daemons. No background workers. No long-running services. Every `nucleus` invocation = one Python process. **Perfect for local-first.**
-
-**v0.2 (Workbench) — adds a server:**
-
-```
-┌────────────────────────────┐      ┌──────────────────────────┐
-│  Browser                   │      │  CLI / Python             │
-│   - Workbench web app      │      │   - same as v0.1          │
-└───────────┬────────────────┘      └──────────────────────────┘
-            │ HTTP / WS                       │
-            ▼                                  ▼
-┌──────────────────────────────────────────────────────────────┐
-│  Nucleus Workbench Server (FastAPI, optional)                │
-│    - serves UI                                                │
-│    - delegates to ctx in-process                              │
-│    - LLM proxy (no row data; user's API key)                  │
-└────────────────────────────┬─────────────────────────────────┘
-                             │
-                             ▼
-                  Same warehouse + catalog as v0.1
-```
-
-**v0.3+ (Hosted Cloud) — adds Nucleus Cloud:**
-
-(Not v0.1 scope. Documented for completeness in `nucleus_architecture_v4.1.md` §10.)
+Both numbers fit inside `v4.1` §11.2 targets (idle <500 MB, active <2 GB).
 
 ---
 
-## §5. Storage layout on disk
+## §6. Constraints check (per `AGENTS.md` §3)
 
-When you run `nucleus up` in a project, you get:
-
-```
-my-project/
-├── nucleus.toml                  # project config
-├── assets/                       # user-authored asset code
-│   ├── raw/orders.py
-│   ├── staging/customers.py
-│   └── marts/daily_revenue.py
-├── tests/                        # user-authored asset tests
-├── .nucleus/                     # nucleus-managed (gitignored)
-│   ├── runs/                     # run history
-│   └── logs/                     # structured logs
-├── warehouse/                    # Iceberg data (gitignored)
-│   ├── raw/orders/
-│   │   ├── metadata/
-│   │   │   ├── v1.metadata.json
-│   │   │   ├── snap-*.avro
-│   │   │   └── ...
-│   │   └── data/
-│   │       └── *.parquet
-│   ├── staging/customers/
-│   └── marts/daily_revenue/
-└── catalog.db                    # SQLite-backed Iceberg catalog (v0.1)
-```
-
-This layout is intentional:
-- **`assets/` is the user's code.** They version-control it.
-- **`warehouse/` is the data.** Gitignored. Reproducible from `assets/`.
-- **`catalog.db` is metadata.** Per PyIceberg's SQL catalog implementation. Gitignored.
-- **`.nucleus/` is run state.** Gitignored.
-
-**Production deployment**: replace `warehouse/` with S3 path, replace `catalog.db` with Lakekeeper (v0.3) or Glue (v1.0). One config flip.
+- **#1 No JVM in core path** — v0.1 zero JVM containers. v0.3 Polaris co-default runs in its own docker container behind `pyiceberg.Catalog`, not always-on in core path; Lakekeeper (Rust) is the zero-JVM alternate.
+- **#3 No custom scheduler** — Dagster wrapped (§3.1 row 3); mini-scheduler on-demand per [`docs/swap/dagster.md`](../swap/dagster.md).
+- **#5 No custom Iceberg commit service** — catalog (§3.1 row 4) owns atomic commits per [`ADR-001`](../decisions/ADR-001-no-iceberg-commit-service.md).
+- **#6 No custom auth** — v0.1 no auth (single laptop); v0.3+ delegates to OIDC per [`docs/research/oidc_providers.md`](../research/oidc_providers.md).
+- **#7 No ML/AI hosting** — Cloud Copilot (§3.2) is direct user→LLM; we never proxy ([`C4_context.md`](C4_context.md) §3.6).
+- **#9 Composability by Constitution** — every Tier 1/2 container has a `docs/swap/` target (Dagster, DuckDB, Polars, pyiceberg, Lakekeeper, dlt all present).
 
 ---
 
-## §6. Inter-container interfaces (the contracts)
+## §7. NEEDS VERIFICATION
 
-The contracts between layers:
+Per `AGENTS.md` §11.12, treat each as a **draft contract** until flipped:
 
-### §6.1 `ctx` SDK → Asset Materialization Adapter
-**Interface**: `MaterializationRequest` (msgspec struct):
-```python
-class MaterializationRequest(msgspec.Struct, frozen=True):
-    asset_name: str
-    deps: tuple[str, ...]
-    compute_fn: Callable[..., Arrow | pl.DataFrame | None]
-    schema: Schema | None
-    target_engine: str  # "duckdb", "polars", or "auto"
-    contracts: tuple[Contract, ...]
-```
-
-### §6.2 Asset Materialization Adapter → Dagster
-**Interface**: Dagster's native `@asset` decorator, programmatically constructed. **Internal**. Users never see Dagster types.
-
-### §6.3 Asset Materialization Adapter → Engines
-**Interface**: `Engine` Protocol:
-```python
-class Engine(Protocol):
-    name: ClassVar[str]
-    def execute(self, plan: Plan, ctx: ExecContext) -> Iterator[RecordBatch]: ...
-    def capabilities(self) -> EngineCapabilities: ...
-```
-
-### §6.4 Engines → Physics (Arrow / Iceberg)
-**Interface**: `pyarrow.RecordBatch` streams in/out. Iceberg writes via PyIceberg's `Table.append(df)` / `Table.overwrite(df)`.
-
-### §6.5 Error Translation Layer (cross-cutting)
-**Interface**: A registered mapping `dict[type[Exception], Callable[[Exception], NucleusError]]`. Every Dagster error type that may surface has a translator. **Unrecognized errors raise `NucleusInternalError` with sanitized info.**
+1. **CLI framework** — Typer assumed; `docs/research/typer.md` not yet written. Lock at PoC #1 promotion.
+2. **MinIO research** — `docs/research/minio.md` not yet written; §5 RAM/disk numbers are from `v4.1` §5.8 headline only.
+3. **Catalog atomicity on Windows** — filesystem catalog relies on `os.replace`; cross-platform stress test queued per [`sequence_ingestion.md`](sequence_ingestion.md) §7 row 5 and [`ADR-001`](../decisions/ADR-001-no-iceberg-commit-service.md).
+4. **OL transport** — FileTransport in-process + sync in v0.1; `AsyncHttpTransport` marked experimental ([`docs/research/openlineage.md`](../research/openlineage.md) §10) so v0.3+ Marquez stays sync until GA.
+5. **`DagsterInstance.ephemeral()` persistence** — confirm it persists vs drops materializations ([`sequence_asset_materialization.md`](sequence_asset_materialization.md) §5 row 4).
+6. **`ctx` SDK as container vs library** — drawn as a sub-box of "Single Python process" because v0.1 has no daemon. Redraw if `nucleus up`-spawned daemon is added in v0.3.
 
 ---
 
-## §7. Failure modes & resilience
+## §8. Cross-references
 
-### §7.1 Materialization fails mid-write
-- **Promise**: Iceberg atomic commits = no half-written tables. Either the new snapshot exists, or it doesn't.
-- **Implementation**: PyIceberg's `Transaction` API. The Asset Materialization Adapter wraps `compute_fn` in a try/except; on exception, it does NOT call `commit()`. Partial Parquet files become orphans (cleaned by retention later).
-
-### §7.2 Asset Materialization Adapter crashes
-- **Promise**: User sees a NucleusError, not a stack trace from Dagster.
-- **Implementation**: Error Translation Layer wraps the entire materialization. Any uncaught `dagster.*` exception → `NucleusInternalError` with `cause=` for debugging.
-
-### §7.3 Engine crashes (DuckDB / Polars)
-- **Promise**: Materialization fails cleanly. No corrupt files. Process exits or surfaces error.
-- **Implementation**: DuckDB / Polars errors → translated by `ETL` (engine-specific table). Examples:
-  - `duckdb.IOException` → `NucleusIOError`
-  - `polars.SchemaError` → `NucleusSchemaError`
-
-### §7.4 Catalog crashes (filesystem corruption)
-- **Promise**: Iceberg metadata files are atomic per-file. Worst case: latest snapshot lost, previous still queryable.
-- **Implementation**: PyIceberg's filesystem catalog uses atomic file rename. SQLite catalog uses transactions.
-
-### §7.5 User SIGINT / SIGKILL
-- **Promise**: Worst case: incomplete materialization, but no corrupt table. `Ctrl+C` mid-run is safe.
-- **Implementation**: Same as §7.1 — no commit = no visible change.
+- [`C4_context.md`](C4_context.md) (L1) — same boundary seen from outside.
+- [`C4_component.md`](C4_component.md) (L3) — inside the `ctx` SDK container (§3.1 row 2).
+- [`sequence_asset_materialization.md`](sequence_asset_materialization.md) / [`sequence_ingestion.md`](sequence_ingestion.md) — runtime flow across §3.1 containers.
+- [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §3 (layers), §5 (engines/catalog/object store), §6 (coordination), §11 (local-first), §16 (footprint), §18 (roadmap).
+- [`../../poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md) — boot budget for §4.1.
+- [`../decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md) / [`../decisions/ADR-002-positioning-decision-2026-05.md`](../decisions/ADR-002-positioning-decision-2026-05.md) §3.
+- C4 model spec: <https://c4model.com> (`# NEEDS VERIFICATION` per the no-web-fetch constraint).
 
 ---
 
-## §8. Observability seams
-
-Where we emit telemetry:
-
-| Event | Emitted by | Schema |
-|-------|-----------|--------|
-| `asset.materialization.started` | AMA | `{asset, run_id, deps, engine}` |
-| `asset.materialization.completed` | AMA | `{asset, run_id, rows, bytes, duration_ms, snapshot_id}` |
-| `asset.materialization.failed` | AMA | `{asset, run_id, error_type, error_message, duration_ms}` |
-| `error.translated` | ETL | `{original_type, translated_type, asset}` |
-| `commit.attempted` | physics | `{table, snapshot_id, manifest_count}` |
-| `commit.succeeded` | physics | `{table, snapshot_id, duration_ms}` |
-| `commit.failed` | physics | `{table, error_type, error_message}` |
-| `query.executed` | engine | `{engine, query_hash, rows, bytes, duration_ms}` |
-
-All emitted as structured logs (structlog) AND OpenTelemetry spans (Constraint #7).
-
-**Privacy**: query_hash is a hash of the SQL text after stripping literals. No row data, no PII, ever.
-
----
-
-## §9. v0.1 LOC budget summary
-
-Estimated lines of owned (Nucleus-authored) code at end of Tier 1:
-
-| Layer | Module | LOC | Cumulative |
-|-------|--------|-----|------------|
-| L0 (Physics) | adapters/{iceberg, arrow, parquet}/* | ~400 | 400 |
-| L1 (Engines) | engines/{duckdb,polars}_engine.py | ~600 | 1000 |
-| L2 (Coordination) | coordination/asset_materialization.py | ~500 | 1500 |
-| L2 | coordination/error_translation.py | ~300 | 1800 |
-| L2 | coordination/lineage.py | ~400 | 2200 |
-| L2 | coordination/contracts.py | ~600 | 2800 |
-| L4 (Experience) | ctx/* (public SDK) | ~3000 | 5800 |
-| L4 | cli/* | ~1500 | 7300 |
-| Internal | _internal/{config,logging,errors}/* | ~700 | 8000 |
-| **v0.1 Total** | | | **~8000 LOC** |
-
-**Constraint #8**: Hard ceiling at end of v0.1 = 8000 LOC. Scripts in `scripts/loc_budget.py` enforce. (See `engineering.md` §2.2.)
-
----
-
-## §10. Where to go next
-
-- **[`sequence_error_translation.md`](sequence_error_translation.md)** — The critical flow that proves error translation works (PoC #1).
-- **[`../decisions/`](../decisions/)** — ADRs for each architecturally significant choice.
-- **[`../patterns/type_mapping.md`](../patterns/type_mapping.md)** — How types flow Postgres → Iceberg → Polars → DuckDB.
-- **[`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)** — The full architecture doc.
-
----
-
-*If you change any cross-container interface (§6), update this doc AND raise an ADR.*
+*L2 source-of-truth. If you add or rename a container, update §1, §2, §3, and §5 in the same PR. If a constraint in §6 is at risk, escalate per `AGENTS.md` §9.*

@@ -1,5 +1,7 @@
 # Nucleus Project Anatomy — Specification
 
+> **STATUS — 2026-05-14**: SUPERSEDED by `nucleus_architecture_v4.1.md §3.1` and `nucleus_cli_spec.md §3.1` for the v0.1 layout that `nucleus init` actually emits. The shipped template lives at `src/nucleus/templates/v01/` and produces `nucleus_project.yaml` (not `nucleus.yaml`) plus a flat `assets/`, `data/`, `.gitignore`, `README.md` layout. This doc is retained as historical v3-era reference per `AGENTS.md §2`; do not treat its `nucleus.yaml` + `.nucleus/warehouse/` references as authoritative. The v1.0 rewrite is queued.
+>
 > What a Nucleus project looks like on disk. The single canonical layout that `nucleus init` produces and every project follows.
 >
 > Companion to `nucleus_architecture_v3.md` and `nucleus_ctx_sdk_spec.md`. Locked for v1.0.

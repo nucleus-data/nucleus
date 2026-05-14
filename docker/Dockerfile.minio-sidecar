@@ -1,0 +1,9 @@
+# MinIO sidecar customization — recipe sketch only (no standalone build).
+#
+# For production-compatible object storage beside Nucleus, prefer the upstream
+# image directly:
+#   docker pull minio/minio:latest
+#   # Docs: https://min.io/docs/minio/container/index.html
+#
+# This stub exists to document naming and extension points (extra env, certs,
+# `mc` bootstrap, IAM-style policies) without forking upstream.

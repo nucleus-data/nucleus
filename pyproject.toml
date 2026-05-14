@@ -13,8 +13,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nucleus"
-version = "0.0.0"  # Pre-Heartbeat. Bumps to 0.0.1 when Tier 0 ships.
-description = "Modern composable data engineering platform — AI-assisted, built on open Apache foundations, graduates cleanly to giants"
+version = "0.2.0"  # Tier 2 "Public Launch" — Wave 1 bundle (11 builders, 2026-05-15).
+description = "Ship data products from a laptop — a local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks; graduates cleanly to any Iceberg catalog"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = { text = "Apache-2.0" }
@@ -44,7 +44,8 @@ dependencies = [
   "pyarrow==18.1.0",                # Docs: https://arrow.apache.org/docs/python/
 
   # Tier 1 storage / table format
-  "pyiceberg[sql-sqlite,s3fs,duckdb]==0.8.1",  # Docs: https://py.iceberg.apache.org/
+  "pyiceberg[sql-sqlite,s3fs,duckdb]==0.11.1",  # Docs: https://py.iceberg.apache.org/
+  "s3fs==2026.4.0",                 # Explicit top-level pin per ADR-012 NV (b) cleared 2026-05-13. BSD-3-Clause. Docs: https://s3fs.readthedocs.io/
 
   # Tier 2 orchestration substrate (hidden behind ctx)
   "dagster==1.9.5",                 # Docs: https://docs.dagster.io/api
@@ -53,27 +54,123 @@ dependencies = [
   "sqlalchemy==2.0.36",             # Docs: https://docs.sqlalchemy.org/en/20/
   "psycopg[binary]==3.2.3",         # Docs: https://www.psycopg.org/psycopg3/docs/
   "pymysql==1.1.1",                 # Docs: https://pymysql.readthedocs.io/
+  # dlt Stage 1 Postgres source (ADR-014, 2026-05-13). Exact pin per AGENTS.md §11.13.
+  # One-component-per-PR per §11.13; 24 h cool-down after merge.
+  # Rollback: pip install dlt==1.26.0 (or git revert the PR; see ADR-014 §Rollback).
+  # Docs: https://dlthub.com/docs/general-usage/pipeline
+  # Upgrade smoke: tests/upgrade_smoke/test_dlt_upgrade.py
+  "dlt[sql_database,pyiceberg]==1.26.0",  # Apache-2.0 · JVM-free (pyiceberg-core = Rust)
 
-  # SQL transformation (native ctx.sql + Jinja resolver, ≤2500 LOC)
-  "jinja2==3.1.5",                  # Docs: https://jinja.palletsprojects.com/
-  "sqlglot==26.0.0",                # Docs: https://sqlglot.com/sqlglot.html
+  # Schedule cron parsing + preview (ADR-017 schedule exposure).
+  # One-component-per-PR per AGENTS.md §11.13 Constraint #11.
+  # Version constraint: dagster==1.9.5 requires croniter<4,>=0.3.34; pin to latest
+  # <4 release (3.0.4, released 2024-10-25). croniter is already a transitive dep
+  # via dagster — this line makes it a direct dep for explicit version governance.
+  # Rollback: pip install croniter==3.0.3 (or remove line + rely on dagster transitive).
+  # Docs: https://pypi.org/project/croniter/ (croniter==3.0.4, MIT, Python >=2.6)
+  # Upgrade smoke: requires dagster upgrade or croniter<4 constraint update first.
+  "croniter==3.0.4",                # Docs: https://pypi.org/project/croniter/
 
-  # Core infrastructure
-  "click==8.1.7",                   # CLI framework. Docs: https://click.palletsprojects.com/
+  # SQL transformation (native ctx.sql + Jinja resolver, ≤2500 LOC).
+  # sqlglot moved to [project.optional-dependencies] lineage-advanced 2026-05-14
+  # per docs/research/otel_day1_decision.md §D2 (zero v0.1 callers; PoC #2 promoted
+  # with jinja2 + regex + difflib only). Note: dlt 1.26.0 transitively requires
+  # sqlglot, so users with the default install still receive it via dlt.
+  "jinja2==3.1.6",                  # Docs: https://jinja.palletsprojects.com/
+
+  # Core infrastructure.
+  # msgspec removed entirely 2026-05-14 per docs/research/otel_day1_decision.md §D3
+  # (zero callers under src/ tests/ poc/ scripts/; pure-stdlib substitutes suffice).
+  "click==8.1.8",                   # CLI framework. Docs: https://click.palletsprojects.com/
   "structlog==24.4.0",              # Structured logging. Docs: https://www.structlog.org/
-  "msgspec==0.18.6",                # Fast structured types for NucleusError + configs. Docs: https://jcristharif.com/msgspec/
   "typer==0.15.1",                  # CLI ergonomics on top of Click. Docs: https://typer.tiangolo.com/
   "rich==13.9.4",                   # Terminal UI. Docs: https://rich.readthedocs.io/
+  "pyyaml==6.0.3",                  # Used by CLI + intelligence/copilot for nucleus.yaml + opt-in. Docs: https://pyyaml.org/wiki/PyYAMLDocumentation
+  "orjson==3.11.9",                 # Workbench FastAPI default response class (~3x faster). Docs: https://github.com/ijl/orjson
 
-  # Observability (OpenTelemetry-compatible)
+  # Observability protocol (Tier 0 immortal per v4.1 §4.1).
+  # API package only: produces no-op NonRecordingSpan when no TracerProvider is set
+  # (https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html).
+  # SDK + exporters live under [project.optional-dependencies] observability per
+  # ADR-011 amendment 2026-05-14 (substrate-presence honored without shipping SDK
+  # bytes to non-opt-in users; docs/research/otel_day1_decision.md §D1).
   "opentelemetry-api==1.29.0",      # Docs: https://opentelemetry.io/docs/languages/python/
-  "opentelemetry-sdk==1.29.0",
+
+  # Lineage (asset-level v0.1; column-level v0.5+ via sqlglot)
+  "openlineage-python==1.47.1",     # Docs: https://openlineage.io/docs/client/python
+
+  # Workbench v0.2 HTTP stack (ADR-016). Pins verified on PyPI 2026-05-13.
+  "fastapi==0.136.1",               # Docs: https://fastapi.tiangolo.com/
+  "httpx==0.28.1",                  # Docs: https://www.python-httpx.org/
+  "uvicorn[standard]==0.46.0",      # Docs: https://www.uvicorn.org/
+
+  # Intelligence / AI Copilot (v0.2+, ADR-015). Single new runtime dep.
+  # Rollback: pip install litellm==1.83.14 (or git revert this PR).
+  # Upgrade smoke: tests/upgrade_smoke/test_litellm.py
+  # Docs: https://docs.litellm.ai/docs/
+  "litellm==1.83.14",               # MIT. Wraps 100+ LLM providers; Python >=3.10,<3.14.
 ]
 
 # ----------------------------------------------------------------------------
 # Optional dependencies
 # ----------------------------------------------------------------------------
+# Two tiers per ADR-012 amendment 2026-05-14:
+#   1. Runtime extras (`observability`, `lineage-advanced`) — exact pins required;
+#      checked by scripts/check_pinning.py with the same `==` rule as
+#      [project] dependencies. These are real runtime libs gated behind opt-in.
+#   2. Dev/docs extras (`dev`, `docs`) — `==` or `~=` accepted by default
+#      (linters/test runners can minor-flex); `--strict` upgrades to `==`-only.
+#
+# Install patterns:
+#   pip install nucleus                       # core only (~2-3 MB lighter)
+#   pip install nucleus[observability]        # + OTEL SDK for v0.5+ exporter wiring
+#   pip install nucleus[lineage-advanced]     # + sqlglot for column-lineage / SQL walker
+#   pip install -e ".[dev]"                   # contributor environment
+#   pip install -e ".[all]"                   # everything (CI convenience)
 [project.optional-dependencies]
+
+# Opt-in OTEL SDK + exporters (per ADR-011 §1 substrate-vs-transport split,
+# amended 2026-05-14: API stays in core as no-op substrate, SDK ships only when
+# the v0.5+ collector-export ADR fires or a power user wires their own exporter).
+# Install: `pip install nucleus[observability]`
+# Docs: https://opentelemetry.io/docs/languages/python/exporters/
+observability = [
+  "opentelemetry-sdk==1.29.0",      # version-locked to opentelemetry-api in core
+]
+
+# Snowflake source connector (ADR-019, connector expansion wave 2026-05-15).
+# Activates dlt's Snowflake extras (snowflake-connector-python + snowflake-sqlalchemy).
+# The base dlt==1.26.0 is already in core; this extras group adds the Snowflake dialect.
+# Rollback: pip install "dlt[snowflake]==<prior>" (remove section and revert to prior dlt pin).
+# Install: `pip install nucleus[snowflake]`
+# Docs: https://docs.snowflake.com/en/developer-guide/python-connector/sqlalchemy
+# License: snowflake-connector-python Apache-2.0 · GREEN; snowflake-sqlalchemy Apache-2.0 · GREEN
+snowflake = [
+  "dlt[snowflake]==1.26.0",  # same pin as core dlt; adds Snowflake dialect extras
+]
+
+# GCS object-storage connector (ADR-020, connector expansion wave 2026-05-15).
+# gcsfs provides ADC credentials + GCS filesystem for DuckDB register_filesystem().
+# Install: `pip install nucleus[gcs]`
+# Docs: https://gcsfs.readthedocs.io/en/latest/
+# License: BSD-3-Clause · GREEN
+# Upgrade smoke: add tests/upgrade_smoke/test_gcsfs.py before next version bump.
+gcs = [
+  "gcsfs==2026.5.0",  # CalVer; BSD-3-Clause; Python >=3.10 (satisfies >=3.11,<3.13)
+]
+
+# Opt-in column-level lineage + asset-graph dep extraction
+# (per docs/research/sqlglot.md §10; first concrete caller v0.5+ per
+# `nucleus_architecture_v4.1.md` §6.2 column-lineage roadmap).
+# Note: `dlt[sql_database,pyiceberg]==1.26.0` already pulls sqlglot transitively,
+# so users running the default install receive it indirectly. This extras group
+# exposes sqlglot as a direct, version-locked dep for projects that import it
+# explicitly without depending on dlt.
+# Install: `pip install nucleus[lineage-advanced]`
+# Docs: https://sqlglot.com/sqlglot.html
+lineage-advanced = [
+  "sqlglot==26.0.0",
+]
 
 # Development environment
 dev = [
@@ -81,6 +178,8 @@ dev = [
   "ruff==0.8.4",                    # Docs: https://docs.astral.sh/ruff/
   "mypy==1.13.0",                   # Docs: https://mypy.readthedocs.io/
   "pre-commit==4.0.1",              # Docs: https://pre-commit.com/
+  "psutil==7.2.2",                  # Boot-time + memory measurement (PoC #4). Docs: https://psutil.readthedocs.io/
+  # Verified 2026-05-13: v7.2.2 current on PyPI; BSD-3-Clause; Python >=3.6 (includes 3.11).
 
   # Testing
   "pytest==8.3.4",                  # Docs: https://docs.pytest.org/
@@ -98,14 +197,21 @@ dev = [
 ]
 
 # Documentation
+# Docs: https://squidfunk.github.io/mkdocs-material/
+# Install: pip install -e ".[docs]"
+# Build: mkdocs build --strict
+# Serve: mkdocs serve
 docs = [
-  "mkdocs==1.6.1",
-  "mkdocs-material==9.5.49",
-  "mkdocstrings[python]==0.27.0",
+  "mkdocs==1.6.1",                               # Docs: https://www.mkdocs.org/
+  "mkdocs-material==9.5.49",                     # Docs: https://squidfunk.github.io/mkdocs-material/
+  "mkdocstrings[python]==0.27.0",                # Docs: https://mkdocstrings.github.io/
+  "mkdocs-include-markdown-plugin==7.2.2",       # Docs: https://github.com/mondeja/mkdocs-include-markdown-plugin
+  "mkdocs-glightbox==0.5.2",                     # Docs: https://github.com/blueswen/mkdocs-glightbox
+  "pymdown-extensions==10.21.3",                 # Docs: https://facelessuser.github.io/pymdown-extensions/
 ]
 
 # All extras (CI convenience)
-all = ["nucleus[dev,docs]"]
+all = ["nucleus[dev,docs,observability,lineage-advanced,snowflake,gcs]"]
 
 # ----------------------------------------------------------------------------
 # Entry points

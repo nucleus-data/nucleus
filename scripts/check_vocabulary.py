@@ -44,7 +44,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
@@ -75,6 +74,18 @@ SKIP_PATTERNS = [
     "site/",  # mkdocs build output
     "build/",
     "dist/",
+    # Whole-file exemptions for retirement narratives + audit trails (per
+    # ADR-002 §8.6.1 evening-pass follow-up). These documents legitimately
+    # cite banned vocabulary as the subject of discussion.
+    "docs/archive/",                         # archived deprecated docs (moved 2026-05-15 REORG PR-A)
+    "architecture_design_conversation.md",   # superseded historical conversation (v4.1 line 17)
+    "docs/audits/",                          # audit trails MUST contain banned terms as evidence
+    "docs/audit/",                           # audit trails MUST contain banned terms as evidence (alt spelling)
+    "docs/decisions/",                       # ADRs MAY discuss what was decided NOT to do
+    "docs/research/",                        # research files cite competitor positioning narratives and ecosystem analysis
+    "docs/dev-guides/",                      # scaffolding guides reference banned comparator terms verbatim
+    "docs/roadmap/",                         # roadmap docs discuss positioning context and what we decided NOT to do
+    "pyproject.toml",                        # holds the ban-list itself; TOML can't carry HTML exemption markers
 ]
 
 # Inline exemption marker.
@@ -112,13 +123,14 @@ def _build_pattern(term: str) -> re.Pattern[str]:
 
 
 def _should_skip(path: Path) -> bool:
-    rel = path.relative_to(REPO_ROOT).as_posix()
+    try:
+        rel = path.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return True  # outside repo root (e.g. Windows broken symlinks)
     for pat in SKIP_PATTERNS:
         if rel.startswith(pat) or pat in rel:
             return True
-    if path.name.endswith(".banned.md"):
-        return True
-    return False
+    return path.name.endswith(".banned.md")
 
 
 def scan_files(roots: list[Path], terms: list[str]) -> list[Hit]:
@@ -130,7 +142,10 @@ def scan_files(roots: list[Path], terms: list[str]) -> list[Hit]:
         elif root.is_dir():
             files = []
             for ext in (".py", ".md", ".mdc", ".rst", ".txt", ".yml", ".yaml", ".toml", ".cfg"):
-                files.extend(root.rglob(f"*{ext}"))
+                try:
+                    files.extend(root.rglob(f"*{ext}"))
+                except (FileNotFoundError, PermissionError, OSError):
+                    continue
         else:
             continue
         for file in sorted(files):
@@ -168,10 +183,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     terms = _load_terms_from_pyproject()
-    if args.paths:
-        roots = [Path(p).resolve() for p in args.paths]
-    else:
-        roots = [REPO_ROOT]
+    roots = [Path(p).resolve() for p in args.paths] if args.paths else [REPO_ROOT]
     hits = scan_files(roots, terms)
 
     if args.json:
@@ -181,17 +193,16 @@ def main(argv: list[str] | None = None) -> int:
                 indent=2,
             )
         )
+    elif not hits:
+        print(f"Vocabulary check: PASS ({len(terms)} terms watched).")
     else:
-        if not hits:
-            print(f"Vocabulary check: PASS ({len(terms)} terms watched).")
-        else:
-            print(f"Vocabulary check: FAIL — {len(hits)} occurrence(s) of banned term(s):\n")
-            for h in hits:
-                print(f"  {h.file}:{h.line}  [\"{h.term}\"]")
-                print(f"      {h.excerpt}")
-            print("\nSee docs/conventions/engineering.md §15 for alternative vocabulary.")
-            print("If a legitimate use is required, add an inline exemption:")
-            print('  <!-- banned-term: <term> -->  on the same line.')
+        print(f"Vocabulary check: FAIL — {len(hits)} occurrence(s) of banned term(s):\n")
+        for h in hits:
+            print(f"  {h.file}:{h.line}  [\"{h.term}\"]")
+            print(f"      {h.excerpt}")
+        print("\nSee docs/conventions/engineering.md §15 for alternative vocabulary.")
+        print("If a legitimate use is required, add an inline exemption:")
+        print('  <!-- banned-term: <term> -->  on the same line.')
 
     return 1 if hits else 0
 
