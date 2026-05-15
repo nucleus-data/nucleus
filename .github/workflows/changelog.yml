@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           # Need the base branch to compute diff
           fetch-depth: 0
@@ -51,7 +51,7 @@ jobs:
         if: steps.skip.outputs.skip == 'true'
         run: echo "✅ CHANGELOG check skipped — ${{ steps.skip.outputs.reason }}"
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         if: steps.skip.outputs.skip == 'false'
         with:
           python-version: "3.11"
@@ -70,7 +70,7 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
