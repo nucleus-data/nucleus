@@ -13,38 +13,49 @@ the full deprecation cycle that core data APIs receive.
 
 ## [Unreleased]
 
-> Post-v0.2.0 work in flight. Move new bullets here as PRs land.
+> Post-v0.2.0 GA work in flight. Move new bullets here as PRs land.
 
-### Changed
-- **ruff upgrade `0.8.4` → `0.15.13` (ADR-027)** — adopted ruff 2026 style guide; ran `ruff format .` (107 files reformatted). Added `astral-sh/setup-uv@v3` to all 5 CI jobs replacing `pip install` (~2m 15s → ~8s). Updated `.pre-commit-config.yaml` ruff hook. Added `PLC0415`/`SIM105`/`N818`/`RUF022` to ignore list (intentional patterns). Rollback: `pip install ruff==0.8.4`. Docs: https://docs.astral.sh/ruff/ (ADR-027)
-- **Makefile `install` target** — uses `uv pip install -e ".[dev]"` if `uv` is on PATH, falls back to pip.
+---
 
-### Added
-- **`nucleus.db` BI handshake (`nucleus up`, ADR-026)** — `nucleus up` now generates `<project_root>/nucleus.db` containing one DuckDB table per materialised Iceberg asset (snapshot at boot time). Connect from any DuckDB-compatible BI tool (Superset, Evidence, Rill, Streamlit) via single file path. Superset: `duckdb:////<path>/nucleus.db`. Also writes `_nucleus_catalog_info` metadata table. Non-fatal: first boot with no assets produces valid empty metadata table. 7 tests in `tests/coordination/test_bi_handshake.py`. Cookbook: `docs/cookbook/bi-connectivity.md`. (ADR-026)
-- **`nucleus snapshot` CLI — Iceberg branch + tag management (ADR-028, Beta)** — `nucleus snapshot branch create/delete` and `nucleus snapshot tag create/delete` + `nucleus snapshot list` expose PyIceberg's `table.manage_snapshots()` API for snapshot isolation workflows. Useful for compliance archiving (EOW/EOM tags) and pre-commit audit branches. Full WAP (branch-targeted writes) deferred to v0.3 pending Lakekeeper. New error codes `NucleusSnapshotNotFoundError` (NE5015), `NucleusBranchAlreadyExistsError` (NE5016). 10 tests in `tests/cli/commands/test_snapshot.py`. PyIceberg API docs: https://py.iceberg.apache.org/api/#snapshot-management (ADR-028)
-- **`scripts/check_perf_budget.py` stub (ADR-023)** — placeholder script that prints the v0.2 performance budget table and exits 0. Full nightly benchmark automation deferred to v0.3.
+## [0.2.0] — 2026-05-15
 
-### Docs
-- **ADR-018..025 ratified** — all 8 Wave 1 ADRs flipped PROPOSED → ACCEPTED (ADR-018 was already ACCEPTED). Ratification date: 2026-05-15; shipped code: commit a41a82c (v0.2.0 handover bundle).
-- **ADR-026, ADR-027, ADR-028** flipped PROPOSED → ACCEPTED (code shipped in this bundle).
-- **`docs/cookbook/bi-connectivity.md`** — new cookbook page: "Connect Superset/Evidence/Rill/Streamlit to Nucleus via `nucleus.db`" with concrete connect-string examples for all 4 BI tools.
-- **`docs/compatibility.md`** — ruff row updated to `0.15.13`.
+> Wave 1 (11 autonomous builders, 2026-05-14 → 2026-05-15) + Wave 2 P0-1/P0-2/P0-3 reliability hardening + Workbench v0.3 interactive polish + uv/ruff toolchain + `nucleus.db` BI handshake + Iceberg branch/tag CLI + **v0.2 close-out batch** (chaos translate-leak fixes, UX polish, ADR-039, governance bumps). Beachhead validated (8/8 WSL E2E gates); PoC #5 external-tester kit ready.
 
-### Fixed
-- **workbench:** Offline-first static index.html — embedded Tailwind/React via local `static/vendor/`, system font stack, inline SVG icons replacing `lucide-react`. Fixes blank page on corporate networks blocking `cdn.tailwindcss.com`/`fonts.googleapis.com`/`esm.sh`. (ADR-016 Fork B)
+### v0.2 close-out batch (2026-05-15, post-Wave-2)
 
-### Added (Workbench v0.3 — Interactive Polish)
-- **Metallic-noise hero** — `feTurbulence` base frequency 0.75→0.65, rect opacity 0.03→1.0, `::before` CSS opacity 0.18→0.40 with `mix-blend-mode: overlay` and `feColorMatrix saturate=0`; cards gain 0.06-opacity multiply grain for consistent metallic texture across surfaces.
-- **Assets page** — full grid of clickable asset cards (filter input, schedule/contract/checks badges) replacing the "Coming soon" stub.
-- **Asset detail slide-over** — click any asset card → right-side panel showing deps, schedule, contract status, checks list, and a live **Materialize** button that triggers `/api/runs/trigger`, then streams SSE logs from `/api/runs/{run_id}/log` in a dark terminal panel.
-- **Runs page** — full table of materialization runs (status badge, asset, duration, started, rows) with status filter chips (All / Success / Failure / Running) and client-side asset search. Auto-refreshes every 6 seconds.
-- **Run detail slide-over** — click any run row → right-side panel with run metadata + SSE log stream via `EventSource`.
-- **Query page** — SQL textarea with Ctrl+Enter shortcut, example presets, and a scrollable tabular result preview consuming `/api/query`. Shows truncation banner when `truncated: true`.
-- **Schedules page** — 7-day visual timeline (dot matrix per asset × day) + per-schedule card listing next run times; consumes `/api/schedules`.
-- **⌘K Command Palette** — search bar now opens a full command palette (keyboard-navigable) that queries `/api/search` for assets, runs, and schedules and navigates to the matching page.
-- **Dashboard clickability** — Recent materializations rows → run detail slide-over; DAG asset nodes → asset detail slide-over; "View all" → Runs page.
+#### Fixed
+- **Chaos J3 / CF-1 closed (FileExistsError leak)** — `coordination/asset_materialization.py:_commit_to_iceberg` wraps `warehouse_dir.mkdir(parents=True, exist_ok=True)` in `translate()`. `exist_ok=True` does NOT suppress FileExistsError when the target is a non-directory entry (per Python pathlib docs), so the raw stdlib classname was leaking through. Per `docs/release/chaos_test_results.md` §J3.
+- **Chaos J8 / CF-2 + CF-3 closed (pydantic.ValidationError leak)** — `cli/main.py:_execute_sql` widens the existing `try/except` to wrap `_open_iceberg_catalog` + `_register_catalog_in_duckdb` calls. New `_pydantic_validation_handler` in `coordination/error_translation.py` routes `pydantic.ValidationError` → `NucleusCatalogError` (NE1007). Registered BEFORE `ValueError` in the registry because pydantic v2 `ValidationError` subclasses `ValueError`. Per chaos_test_results.md §J8.
+- **`NucleusRaceConditionDuringWrite` (NE5018)** — new error class + `_file_exists_handler` routing builtin `FileExistsError` → NE5018. Stub docs at `docs/errors/race-condition-during-write.md`. L4 Experience layer per ADR-006.
 
-### Added
+#### Added
+- **ADR-039 install-size split (ratified retroactively)** — `docs/decisions/ADR-039-install-size-split-extras.md` documents the layered-extras pattern (core / postgres / mysql / snowflake / s3 / gcs / ai / workbench / observability / lineage-advanced / all). The code shipped in pyproject.toml lines 41-49 + 105-107; ADR-039 was a phantom citation until now. Status: ACCEPTED.
+
+#### v0.2 UX polish (6 wins from `docs/research/ux_familiarity_audit.md`)
+- **Rec #1 — Status word next to dot in `nucleus runs list`** — Title-Case "Succeeded / Failed / Running / Cancelled" labels in CLI table + tail; matches Databricks Lakeflow + Snowflake Task Run History vocabulary. (~30 LOC)
+- **Rec #3 — `[NE3002]:` bracket-prefix in error headlines** — `_exit_nucleus_error` + 4 mirrored helpers in `cli/commands/{runs,schedule,snapshot,chat}.py` now emit `Error [NEXXXX]: <message>` so users can grep the NE-code directly. Matches Databricks `[ERROR_CONDITION]` and Snowflake `nnnnnn (sqlstate):` conventions. (~40 LOC across 5 files + 24 test substring updates)
+- **Rec #5 — Catalog 3-level namespace chip** — new `frontend/src/components/NamespacePath.tsx` renders the key as `<chip muted>{namespace}</chip> · <chip bold>{name}</chip>` with copy-on-click button. Visual hierarchy signal that 3-level DB/SF users recognise; gracefully extends to true 3-level when Lakekeeper lands at v0.3. (~120 LOC)
+- **Rec #6 — Last-materialized timestamp in Workbench Catalog** — `workbench/api/catalog.py` adds `last_materialized` field via RunLedger lookup (resolved ONCE per page request). New `frontend/src/lib/relativeTime.ts` hand-rolled "Xm ago / Yh ago / Zd ago" helper (no date-fns dep — offline bundle promise per ADR-016 §3 Fork B). CatalogPage shows new "Last materialized" column. (~90 LOC backend + 90 LOC frontend)
+- **Rec #7 — Cmd-Enter + `?` shortcut help modal** — `App.tsx` adds global `?` hotkey + `UIStore.keyboardHelpOpen` state. New `components/KeyboardHelpModal.tsx` cheatsheet (⌘K / Ctrl-K / `/` / ⌘-Enter / Ctrl-Enter / `?` / `Esc`). `QueryEditor.tsx` wires Monaco `addCommand(KeyMod.CtrlCmd | KeyCode.Enter, run)` via a `useRef` so the keybinding reads the freshest closure. Previous `handleKeyDown` was dead code. (~170 LOC)
+- **Rec #8 — `--format jsonl` alias for `--format json`** — `run`, `query`, `list`, `runs list`, `runs show` accept `jsonl` as an NDJSON-explicit synonym. Behaviour identical; signals NDJSON-ness up front for `jq` ecosystem users coming from Databricks / Snowflake JSON-array conventions. (~30 LOC)
+
+#### Docs
+- **`docs/research/performance_reliability_targets.md` demoted §2 to v0.3+ aspirational targets** — added status banner + §14 v0.2.0 empirical actuals per `docs/benchmarks/2026-05-15_baseline.md` (boot 2.1 s vs <500 ms claim, B4 Windows concurrent-run FAIL, B2 1 GB +29 %). §7.5 SLOs that DO hold empirically promoted as the v0.2.0 release contract. Anti-Over-Engineering default: "v0.2 actuals; v0.3 targets" honesty over aspirational claims that fail at first user validation. Per close-out checklist §1.9 Option A.
+- **`docs/audit/2026-05-15_frozen_worker_audit.md`** — meta-audit document of the 2026-05-15 IDE-crash recovery session. 78 transcripts inspected; zero FROZEN workers; pure sequenced commit pass.
+- **`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md`** — 894-line forward-looking release runbook (founder one-stop document for tag-push, PyPI OIDC, GitHub Pro, PoC #5 outreach).
+- **`docs/research/ux_familiarity_audit.md`** — 56 KB Databricks + Snowflake parity research that drove the v0.2 polish bundle above.
+- **`docs/errors/race-condition-during-write.md`** — new error reference stub for NE5018.
+
+#### Changed
+- **LOC budget phase v0.1 → v0.2** — `scripts/loc_budget.py` adds `"v0.2": 18000` to `PHASE_CEILINGS` and flips `--phase` default. v0.1 (8 K) was historical; v0.2 tracks the §11.6 18 K target. Default report now reads `46.2 % of v0.2 ceiling GREEN` instead of `104 % of v0.1 ceiling RED`.
+- **`scripts/check_vocabulary.py` ignores `.venv-*/`** — sibling worker venvs (`.venv-adr039/` etc.) inherit licence / README / docs containing banned terms verbatim; substring exclusion drops 5 false positives per worker pass. Pre-fix: 7 hits; post-fix: 0 hits (the 2 close-out doc hits carry inline `<!-- banned-term: -->` exemptions).
+
+#### Remote infrastructure
+- **Origin remote switched** to `github.com/nucleus-data/nucleus` (founder created 2026-05-15). Legacy `github.com/mtoanng/nucleus` preserved as `mtoanng` remote for the mirror. Corrupt `v0.1.0` tag (pointed at orphaned cleanup commit `0a65da5f`) deleted from local + `mtoanng` remote per close-out §1.6 critical-finding recovery; `v0.2.0` local tag also deleted; per close-out §1.3 Option B recommendation v0.1.0 stays unpushed (internal beta, no PyPI artifact). The v0.2.0 tag itself remains FOUNDER-GATED.
+
+### Wave 2 — reliability hardening (P0-1 / P0-2 / P0-3, ADR-024 / ADR-025)
+
+#### Added
 - **Active scheduling daemon (Wave 2 P0-1, ADR-017 §v0.2.1 mini-scheduler)** — `@nucleus.asset(schedule=...)` now EXECUTES on schedule. `coordination/daemon.py` implements a lightweight cron-poll loop (5s interval, croniter==3.0.4) that materializes due assets via the AMA. Daemon lifecycle: `nucleus schedule on` (background subprocess, pidfile at `.nucleus/.daemon.pid`), `nucleus schedule off`, `nucleus schedule trigger <key>` (one-shot bypass), `nucleus schedule status` (table). Cross-platform (Windows: psutil TerminateProcess; POSIX: SIGTERM). Zero Dagster classnames in user-facing output. New error codes: NE5012 (DaemonStartError), NE5013 (DaemonNotRunningError), NE5014 (DaemonAlreadyRunningError). ADR-017 amended to IMPLEMENTED.
 - **Durable run ledger** (`coordination/run_ledger.py`) — append-only NDJSON persistence at `<project_root>/.nucleus/runs/runs.ndjson`. API: `RunLedger.record_start`, `record_finish`, `list`, `get`, `tail`, `cancel`. Thread-safe; in-memory LRU cache of last 1000 records; tolerates single-line corruption. ADR-025 §P0-2.
 - **`nucleus runs` CLI** (`cli/commands/runs.py`) — 4 subcommands: `list` (Rich table with status-dot/run-id/asset/duration/started/trigger), `show` (Rich panel + fix-hint banner), `cancel` (ledger marker), `tail` (live `--follow` mode). `--format json` emits NDJSON per run. Beta tier. ADR-025 §P0-2.
@@ -56,11 +67,38 @@ the full deprecation cycle that core data APIs receive.
 - **Error-budget SLO definitions (ADR-024 P0-5)** — `coordination/error_budget.py` defines per-operation `target_p95_ms` / `target_p95_s` and `max_failure_rate` thresholds for 6 operations: boot, materialize_empty, materialize_1gb, query_100mb, ingest_postgres_1m_rows, schedule_resolution. OTEL enforcement deferred to v0.3+. 11 tests in `tests/coordination/test_error_budget.py`.
 - **Three new error codes (ADR-024 + ADR-006)** — `NucleusMemoryLimitExceeded` (NE2007, L1 Engines), `NucleusConcurrentRunError` (NE3008, L2 Coordination), `NucleusMaintenanceError` (NE3009, L2 Coordination). All have docs URLs and fix hints.
 
----
+### Workbench v0.3 — Interactive Polish (post-Wave-1)
 
-## [0.2.0] — 2026-05-15
+#### Added
+- **`nucleus.db` BI handshake (`nucleus up`, ADR-026)** — `nucleus up` now generates `<project_root>/nucleus.db` containing one DuckDB table per materialised Iceberg asset (snapshot at boot time). Connect from any DuckDB-compatible BI tool (Superset, Evidence, Rill, Streamlit) via single file path. Superset: `duckdb:////<path>/nucleus.db`. Also writes `_nucleus_catalog_info` metadata table. Non-fatal: first boot with no assets produces valid empty metadata table. 7 tests in `tests/coordination/test_bi_handshake.py`. Cookbook: `docs/cookbook/bi-connectivity.md`. (ADR-026)
+- **`nucleus snapshot` CLI — Iceberg branch + tag management (ADR-028, Beta)** — `nucleus snapshot branch create/delete` and `nucleus snapshot tag create/delete` + `nucleus snapshot list` expose PyIceberg's `table.manage_snapshots()` API for snapshot isolation workflows. Useful for compliance archiving (EOW/EOM tags) and pre-commit audit branches. Full WAP (branch-targeted writes) deferred to v0.3 pending Lakekeeper. New error codes `NucleusSnapshotNotFoundError` (NE5015), `NucleusBranchAlreadyExistsError` (NE5016). 10 tests in `tests/cli/commands/test_snapshot.py`. PyIceberg API docs: https://py.iceberg.apache.org/api/#snapshot-management (ADR-028)
+- **`scripts/check_perf_budget.py` stub (ADR-023)** — placeholder script that prints the v0.2 performance budget table and exits 0. Full nightly benchmark automation deferred to v0.3.
+- **Metallic-noise hero** — `feTurbulence` base frequency 0.75→0.65, rect opacity 0.03→1.0, `::before` CSS opacity 0.18→0.40 with `mix-blend-mode: overlay` and `feColorMatrix saturate=0`; cards gain 0.06-opacity multiply grain for consistent metallic texture across surfaces.
+- **Assets page** — full grid of clickable asset cards (filter input, schedule/contract/checks badges) replacing the "Coming soon" stub.
+- **Asset detail slide-over** — click any asset card → right-side panel showing deps, schedule, contract status, checks list, and a live **Materialize** button that triggers `/api/runs/trigger`, then streams SSE logs from `/api/runs/{run_id}/log` in a dark terminal panel.
+- **Runs page** — full table of materialization runs (status badge, asset, duration, started, rows) with status filter chips (All / Success / Failure / Running) and client-side asset search. Auto-refreshes every 6 seconds.
+- **Run detail slide-over** — click any run row → right-side panel with run metadata + SSE log stream via `EventSource`.
+- **Query page** — SQL textarea with Ctrl+Enter shortcut, example presets, and a scrollable tabular result preview consuming `/api/query`. Shows truncation banner when `truncated: true`.
+- **Schedules page** — 7-day visual timeline (dot matrix per asset × day) + per-schedule card listing next run times; consumes `/api/schedules`.
+- **⌘K Command Palette** — search bar now opens a full command palette (keyboard-navigable) that queries `/api/search` for assets, runs, and schedules and navigates to the matching page.
+- **Dashboard clickability** — Recent materializations rows → run detail slide-over; DAG asset nodes → asset detail slide-over; "View all" → Runs page.
 
-> Wave 1 bundle: 11 autonomous builders (2026-05-14 → 2026-05-15). Beachhead validated (8/8 WSL E2E gates); PoC #5 external-tester kit ready.
+#### Changed
+- **ruff upgrade `0.8.4` → `0.15.13` (ADR-027)** — adopted ruff 2026 style guide; ran `ruff format .` (107 files reformatted). Added `astral-sh/setup-uv@v3` to all 5 CI jobs replacing `pip install` (~2m 15s → ~8s). Updated `.pre-commit-config.yaml` ruff hook. Added `PLC0415`/`SIM105`/`N818`/`RUF022` to ignore list (intentional patterns). Rollback: `pip install ruff==0.8.4`. Docs: https://docs.astral.sh/ruff/ (ADR-027)
+- **Makefile `install` target** — uses `uv pip install -e ".[dev]"` if `uv` is on PATH, falls back to pip.
+
+#### Docs
+- **ADR-018..025 ratified** — all 8 Wave 1 ADRs flipped PROPOSED → ACCEPTED (ADR-018 was already ACCEPTED). Ratification date: 2026-05-15; shipped code: commit a41a82c (v0.2.0 handover bundle).
+- **ADR-026, ADR-027, ADR-028** flipped PROPOSED → ACCEPTED (code shipped in this bundle).
+- **`docs/cookbook/bi-connectivity.md`** — new cookbook page: "Connect Superset/Evidence/Rill/Streamlit to Nucleus via `nucleus.db`" with concrete connect-string examples for all 4 BI tools.
+- **`docs/compatibility.md`** — ruff row updated to `0.15.13`.
+
+#### Fixed
+- **workbench:** Offline-first static index.html — embedded Tailwind/React via local `static/vendor/`, system font stack, inline SVG icons replacing `lucide-react`. Fixes blank page on corporate networks blocking `cdn.tailwindcss.com`/`fonts.googleapis.com`/`esm.sh`. (ADR-016 Fork B)
+
+### Wave 1 bundle (initial v0.2.0 handover commit `a41a82c`, 2026-05-15)
+
+> 11 autonomous builders (2026-05-14 → 2026-05-15). Beachhead validated (8/8 WSL E2E gates); PoC #5 external-tester kit ready.
 
 ### Added
 - **Public documentation site** (`docs/site/`) — ~55-page MkDocs Material site covering installation, quickstart, concepts, guides, cookbook, CLI reference, API reference, errors, governance, and philosophy. Stack: `mkdocs==1.6.1`, `mkdocs-material==9.5.49`, `mkdocstrings[python]==0.27.0`, `mkdocs-include-markdown-plugin==7.2.2`, `mkdocs-glightbox==0.5.2`, `pymdown-extensions==10.21.3`. Serves at `mkdocs serve` locally; build CI in `.github/workflows/docs.yml`. ADR-021 PROPOSED.

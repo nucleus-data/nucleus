@@ -27,7 +27,7 @@ Everything else is rented from open source.
 
 **v0.1.0 Foundation — released (beta) 2026-05-14.** Beachhead empirically validated; PoC #5 external-tester kit ready.
 
-**v0.2.0 Public Launch — bundled 2026-05-15.** Wave 1 (11 builders) complete; handover commit staged; founder pushes tag.
+**v0.2.0 Public Launch — bundled + close-out 2026-05-15.** Wave 1 (11 builders) + Wave 2 P0-1/P0-2/P0-3 reliability hardening + Workbench v0.3 + close-out batch (chaos translate-leak fixes, UX polish, ADR-039) all in `main`. **Founder pushes the tag** per AGENTS.md §3 + `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` Section 4.5.
 
 ```
 [✓] Architecture v4.1 locked (supersedes v4.0 and v3)
@@ -51,11 +51,17 @@ Everything else is rented from open source.
 [✓] v0.1.0 tag bundle: `pyproject.toml` version → 0.1.0; CHANGELOG flipped; ADRs 001–016 ACCEPTED
 [✓] Wave 1 (11 builders): Workbench + 4 connectors + docs site + CI/CD + mass audit + research + release plan + roadmap + Bosch parity
 [✓] v0.2.0 tag bundle: `pyproject.toml` version → 0.2.0; CHANGELOG flipped; ADRs 018–025 PROPOSED
-[~] ADR-018 through ADR-025 ratification ← founder-gated
-[ ] Wave 2 launch: active scheduling daemon (ADR-025 P0-1) ← gated on ADR-023/024/025 ratification
+[✓] Wave 2 P0-1/P0-2/P0-3 implemented (active scheduling daemon + durable run ledger + advisory lock + memory_limit guard + snapshot maintenance)
+[✓] v0.2 close-out batch (2026-05-15): chaos J3/J8 translate-leak fixes + NE5018 + ADR-039 + perf-doc reconciliation + 6 UX polish wins + governance v0.1→v0.2 LOC bump
+[✓] Remote switch: origin → `github.com/nucleus-data/nucleus` (legacy `mtoanng/nucleus` preserved as `mtoanng` remote)
+[~] ADR-018 through ADR-025 ratification ← founder-gated (proposed → accepted on tag push)
+[ ] v0.2.0 git tag push ← FOUNDER-GATED per AGENTS §3 (NEVER unilateral; see v0.2_FOUNDER_CLOSE_CHECKLIST.md §4.5)
+[ ] PyPI publish via OIDC trusted publisher ← gated on founder PyPI OIDC pre-registration
+[ ] Branch protection on `main` ← gated on founder GitHub Pro upgrade (ruleset at .scratch/main_ruleset.json)
+[ ] PoC #5 external tester outreach ← gated on founder filling compensation + Calendly link + sending 20 outreach emails
 ```
 
-v0.2.0 source under `src/nucleus/` ships Workbench v0.2, 4 new connectors, 11-script governance suite, and the public docs site. Next milestone: Wave 2 implementer wave gated on ADR-023/024/025 founder ratification.
+v0.2.0 source under `src/nucleus/` ships Workbench v0.3, 4 new connectors, 11-script governance suite, the public docs site, Wave 2 reliability hardening, and v0.2 close-out polish. Next milestone: founder pushes v0.2.0 tag + PyPI OIDC pre-registration + branch protection apply (all manual founder actions per the close-out checklist).
 
 ---
 
