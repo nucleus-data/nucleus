@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/brand/nucleus-logo.png" alt="Nucleus" width="360" />
+</p>
+
 # Nucleus
 
 
