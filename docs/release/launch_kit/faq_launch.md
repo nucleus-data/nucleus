@@ -22,10 +22,10 @@ pip install "nucleus[workbench]"    # + fastapi + uvicorn extras
 pip install "nucleus[all]"          # all of the above
 ```
 
-Until PyPI publish completes, use the editable git checkout per the README:
+Before the release workflow publishes to PyPI, use the editable git checkout per the README:
 
 ```bash
-git clone https://github.com/mtoanng/nucleus.git
+git clone https://github.com/nucleus-data/nucleus.git
 cd nucleus
 python3.11 -m venv .venv && source .venv/bin/activate    # Windows: .venv\Scripts\Activate.ps1
 pip install -e ".[dev]"
@@ -297,8 +297,8 @@ Code of Conduct: Contributor Covenant. Governance: `GOVERNANCE.md`. Maintainers:
 
 ### Q24. Where do I get support?
 
-- **Bug reports + feature requests**: <https://github.com/mtoanng/nucleus/issues>
-- **Q&A and discussion**: <https://github.com/mtoanng/nucleus/discussions>
+- **Bug reports + feature requests**: <https://github.com/nucleus-data/nucleus/issues>
+- **Q&A and discussion**: <https://github.com/nucleus-data/nucleus/discussions>
 - **Security disclosure**: per `SECURITY.md` (90-day responsible disclosure window)
 - **Commercial / paid support**: not available in v0.2 (OSS only). Cloud tier (v1.0+) will include first-line support.
 
@@ -322,7 +322,7 @@ Every Nucleus error is typed and numbered per ADR-006. The numbering scheme:
 
 Every error has a `user_message`, `fix_hint`, `docs_url`, and `cause` (the original exception). The `docs_url` points to a fix recipe at `nucleus.dev/errors/<slug>` (currently `docs/errors/` in the repo until DNS lands).
 
-When you see a leaked external classname (`dagster.*`, `pyiceberg.*`, `duckdb.*`, `polars.*`, `pydantic.*`, `psycopg.*`) in CLI output — **that's a release-blocking bug**, not expected behavior. File an issue at <https://github.com/mtoanng/nucleus/issues> with the exact stack trace; it's covered by `scripts/dagster_leak_check.py` enforcement and we want to know.
+When you see a leaked external classname (`dagster.*`, `pyiceberg.*`, `duckdb.*`, `polars.*`, `pydantic.*`, `psycopg.*`) in CLI output — **that's a release-blocking bug**, not expected behavior. File an issue at <https://github.com/nucleus-data/nucleus/issues> with the exact stack trace; it's covered by `scripts/dagster_leak_check.py` enforcement and we want to know.
 
 Full error registry: `src/nucleus/errors.py`. Per-error fix docs: `docs/errors/`.
 
@@ -348,4 +348,4 @@ Related: per ADR-002 §8.1, "Iceberg company" is on the forbidden framings list.
 
 ---
 
-*This FAQ is honest and lives in the public repo. If a question is missing or an answer is wrong, file an issue at <https://github.com/mtoanng/nucleus/issues> and we'll fix it. Last updated 2026-05-15.*
+*This FAQ is honest and lives in the public repo. If a question is missing or an answer is wrong, file an issue at <https://github.com/nucleus-data/nucleus/issues> and we'll fix it. Last updated 2026-05-15.*

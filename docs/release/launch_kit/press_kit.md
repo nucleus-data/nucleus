@@ -22,7 +22,7 @@
 >
 > The headline metric is **30 minutes from `git clone` to a BI-ready Iceberg table** for a five-engineer team on MacBooks. The path to graduation is **zero effort** — Nucleus's Iceberg snapshots are vendor-neutral by construction, so when a team outgrows a single node, they point Databricks, Snowflake, or any Iceberg REST catalog at the same bucket and they are done.
 >
-> Built by a single founder. Validated against an 11-script governance suite. Apache 2.0. <https://github.com/mtoanng/nucleus>.
+> Built by a single founder. Validated against an 11-script governance suite. Apache 2.0. <https://github.com/nucleus-data/nucleus>.
 
 ---
 
@@ -63,8 +63,8 @@
 | Materialize 1 GB synthetic / 10M rows wall-clock (B2) | <30 s | 38.77 s | FAIL — within 30% of target |
 | Materialize 1 GB synthetic / 10M rows peak RSS (B2) | <3 GB | 1.48 GB | PASS |
 | Concurrent-run safety winner/loser split (B4) | exactly 1 winner | **BOTH committed snapshots on Windows** | FAIL — NTFS lock semantics; Linux/WSL passes |
-| TPC-H 10 GB suite median across 8 queries (B1) | <3 s | <TBD: blocked on HTTP 407 proxy auth for DuckDB tpch extension install> | SKIP-DEPS |
-| Postgres ingest 1M rows (B3) | <TBD> | <TBD: blocked on docker pull 500> | SKIP-DEPS |
+| TPC-H 10 GB suite median across 8 queries (B1) | <3 s | FOUNDER ACTION: remeasure on a clean network; prior run blocked by HTTP 407 proxy auth for DuckDB `tpch` extension install | SKIP-DEPS |
+| Postgres ingest 1M rows (B3) | FOUNDER ACTION: set target before v0.2.1 remeasurement | FOUNDER ACTION: remeasure after Docker pull 500 clears | SKIP-DEPS |
 | WSL beachhead E2E (8 gates) | 8/8 PASS, <30 min | **8/8 PASS, ~7 min boot** | PASS |
 | Real Iceberg snapshot ID written by E2E | non-zero | `7070059669214185406` (v0.1) | PASS |
 
@@ -79,9 +79,9 @@
 | Compositional logo (alt) | `assets/nucleus-logo-option-2-composable.png` | Alternative for "composable" framing |
 | README hero logo | `assets/brand/nucleus-logo.png` | Used in README.md |
 
-> *Workbench Editorial Hero screenshots are <TBD: capture from running Workbench v0.3 against `examples/01-ecommerce-elt/` after `nucleus workbench up`>. Suggested captures: (1) hero dashboard with stat chips, (2) Assets page with detail slide-over open, (3) Runs page with live SSE log streaming, (4) ⌘K command palette open. Save to `assets/screenshots/v0.2/` before press distribution.*
+> *WORKSTREAM C ACTION: capture Workbench Editorial Hero screenshots from running Workbench v0.3 against `examples/01-ecommerce-elt/` after `nucleus workbench up`. Suggested captures: (1) hero dashboard with stat chips, (2) Assets page with detail slide-over open, (3) Runs page with live SSE log streaming, (4) command palette open. Save to `assets/screenshots/v0.2/` before press distribution.*
 
-> *CLI animated demo (asciinema or terminalizer) is <TBD: record `nucleus init demo && cd demo && nucleus up && nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders && nucleus query "SELECT count(*) FROM {{ ref('raw.orders') }}"`>. Save to `assets/demos/v0.2/`.*
+> *WORKSTREAM C ACTION: record CLI animated demo (asciinema or terminalizer) for `nucleus init demo && cd demo && nucleus up && nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders && nucleus query "SELECT count(*) FROM {{ ref('raw.orders') }}"`. Save to `assets/demos/v0.2/`.*
 
 ---
 
@@ -143,14 +143,14 @@ Mo 24 decision gate (per ADR-002 §8.3): founder commits to (a) raise, (b) hand 
 
 | Channel | Contact |
 |---|---|
-| Press inquiries | <TBD: founder email — replace before publishing> |
-| GitHub | <https://github.com/mtoanng/nucleus> (or `https://github.com/nucleus-data/nucleus` if org-rename completes) |
-| Issues / bug reports | <https://github.com/mtoanng/nucleus/issues> |
+| Press inquiries | FOUNDER ACTION: add founder email before distributing externally |
+| GitHub | <https://github.com/nucleus-data/nucleus> |
+| Issues / bug reports | <https://github.com/nucleus-data/nucleus/issues> |
 | Security disclosure | per `SECURITY.md` (90-day responsible disclosure) |
-| Discussions | <https://github.com/mtoanng/nucleus/discussions> |
-| Twitter/X | <TBD: founder handle> |
-| LinkedIn | <TBD: founder profile URL> |
-| Hacker News thread | <TBD: pending Show HN post 2026-05-15/16> |
+| Discussions | <https://github.com/nucleus-data/nucleus/discussions> |
+| Twitter/X | FOUNDER ACTION: add founder handle before distributing externally |
+| LinkedIn | FOUNDER ACTION: add founder profile URL before distributing externally |
+| Hacker News thread | FOUNDER ACTION: paste Show HN URL after submission |
 
 ---
 

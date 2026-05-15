@@ -71,16 +71,14 @@ Nucleus v0.2.0 — local-first Iceberg pipelines from a laptop (Apache 2.0, Pyth
 >
 > **Quickstart:**
 >
->     git clone https://github.com/mtoanng/nucleus.git
->     cd nucleus
 >     python3.11 -m venv .venv && source .venv/bin/activate
->     pip install -e .
+>     pip install nucleus
 >     nucleus init demo && cd demo
 >     nucleus up
 >     nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders
 >     nucleus query "SELECT count(*) FROM {{ ref('raw.orders') }}"
 >
-> Repo: <https://github.com/mtoanng/nucleus>. Docs site: `mkdocs serve` from `docs/site/` (public URL pending DNS). Architecture: `nucleus_architecture_v4.1.md`. Apache 2.0.
+> Repo: <https://github.com/nucleus-data/nucleus>. Docs site: <https://nucleus-data.github.io/nucleus/> once GitHub Pages is enabled (repo must be public or GitHub Pro until then). Architecture: `nucleus_architecture_v4.1.md`. Apache 2.0.
 >
 > Telling me "this is just dbt + Dagster + DuckDB + pyiceberg with a CLI on top" is technically correct. The thesis is that the integration *is* the product for the 5–20 engineer team segment. Tell me where I'm wrong.
 

@@ -39,7 +39,7 @@
 >
 > If you lead a 5–20 engineer team building a greenfield analytics stack, **we'd love your feedback.** Try it. Tell us what breaks. Tell us what feels good. Tell us where the abstraction leaks.
 >
-> Repo: <https://github.com/mtoanng/nucleus> · Architecture: `nucleus_architecture_v4.1.md` · License: Apache 2.0.
+> Repo: <https://github.com/nucleus-data/nucleus> · Architecture: `nucleus_architecture_v4.1.md` · License: Apache 2.0.
 >
 > Built on the work of Apache Arrow, Iceberg, Parquet, DuckDB, Polars, Dagster, OpenLineage, and OpenTelemetry. If we ship something useful, it is because these foundations exist.
 >

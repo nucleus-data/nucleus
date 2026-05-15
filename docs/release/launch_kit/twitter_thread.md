@@ -182,7 +182,7 @@ v1.0 GA — best-case Mo 28-36
 ```
 Try it:
 
-→ Repo: github.com/mtoanng/nucleus
+→ Repo: github.com/nucleus-data/nucleus
 → Architecture: nucleus_architecture_v4.1.md (50 min read)
 → License: Apache 2.0
 
@@ -215,10 +215,10 @@ Thanks for reading. 🙏
 
 | Tweet | Asset | Path | Status |
 |---|---|---|---|
-| 1 | Hero terminal + Workbench split-screen | `assets/screenshots/v0.2/twitter_t1_hero.png` | <TBD: capture> |
-| 3 | 5-command terminal GIF | `assets/demos/v0.2/twitter_t3_install.gif` | <TBD: record asciinema → gif> |
-| 5 | Workbench dashboard full-res | `assets/screenshots/v0.2/twitter_t5_workbench.png` | <TBD: capture> |
-| 12 | Logo + tagline lockup | `assets/brand/twitter_t12_lockup.png` | <TBD: derive from `assets/brand/nucleus-logo.png`> |
+| 1 | Hero terminal + Workbench split-screen | `assets/screenshots/v0.2/twitter_t1_hero.png` | WORKSTREAM C ACTION: capture before posting |
+| 3 | 5-command terminal GIF | `assets/demos/v0.2/twitter_t3_install.gif` | WORKSTREAM C ACTION: record asciinema then export GIF |
+| 5 | Workbench dashboard full-res | `assets/screenshots/v0.2/twitter_t5_workbench.png` | WORKSTREAM C ACTION: capture before posting |
+| 12 | Logo + tagline lockup | `assets/brand/twitter_t12_lockup.png` | WORKSTREAM C ACTION: derive from `assets/brand/nucleus-logo.png` |
 
 ---
 

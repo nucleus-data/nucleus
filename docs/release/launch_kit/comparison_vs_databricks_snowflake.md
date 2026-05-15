@@ -164,4 +164,4 @@ Honestly: depends on whether the founder commits to (a) raise, (b) hand off, or 
 
 ---
 
-*This document is honest. If you find a claim that's wrong or out of date, file an issue at <https://github.com/mtoanng/nucleus/issues> with the section and the correction. Last verified 2026-05-15.*
+*This document is honest. If you find a claim that's wrong or out of date, file an issue at <https://github.com/nucleus-data/nucleus/issues> with the section and the correction. Last verified 2026-05-15.*

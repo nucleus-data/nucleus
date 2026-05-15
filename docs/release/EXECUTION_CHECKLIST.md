@@ -389,11 +389,13 @@ Present:
 # CI auto-runs on tag push per .github/workflows/release.yml
 # Monitor CI run for publish success
 
-# GitHub Release (if not automated):
-# gh release create v0.2.0 --title "Nucleus v0.2.0" --notes "See CHANGELOG.md"
+# GitHub Release is automated by .github/workflows/release.yml:
+# gh release view v0.2.0 --repo nucleus-data/nucleus
+# Fallback only if the workflow completed but no release exists:
+# gh release create v0.2.0 --repo nucleus-data/nucleus --title "Nucleus v0.2.0" --notes-file docs/release/v0.2.0_RELEASE_NOTES.md
 
 # Announce on:
-# - docs.nucleus-data.io (update "Latest" badge)
+# - https://nucleus-data.github.io/nucleus/ (update "Latest" badge once Pages is enabled)
 # - GitHub Discussions (announcement post)
 # - PoC #5 external testers (notify of new release to test against)
 ```

@@ -21,7 +21,8 @@
 #     (Settings → Environments → New → pypi → protection rule: tag)
 #
 # Per AGENTS.md Anti-Over-Engineering: the release script does NOT push the git
-# tag — that remains a founder-gated manual step (`git tag v0.1.1 && git push --tags`).
+# tag — that remains a founder-gated manual step (`git tag -a v0.2.0 ... && git push origin v0.2.0`).
+# After the tag push, this workflow publishes to PyPI and creates the GitHub Release.
 
 name: Release
 

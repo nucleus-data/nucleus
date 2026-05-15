@@ -87,7 +87,7 @@ LOC at v0.2.0 ship: **~8,300 / 12,000 phase ceiling** (per `python scripts/loc_b
 |---|---|---|
 | `pyproject.toml` version `0.2.0` | PRESENT | [`pyproject.toml`](../../pyproject.toml) |
 | `CHANGELOG.md` `[0.2.0]` section | PRESENT | [`CHANGELOG.md`](../../CHANGELOG.md) — dated 2026-05-15 |
-| Release notes (copy-paste body for `gh release create`) | PRESENT | [`docs/release/v0.2.0_RELEASE_NOTES.md`](v0.2.0_RELEASE_NOTES.md) |
+| Release notes (curated body for workflow-created GitHub Release) | PRESENT | [`docs/release/v0.2.0_RELEASE_NOTES.md`](v0.2.0_RELEASE_NOTES.md) |
 | Release readiness checklist | PRESENT | [`docs/release/v0.2.0_RELEASE_READINESS.md`](v0.2.0_RELEASE_READINESS.md) — 32 items |
 | OIDC publish workflow | PRESENT | [`.github/workflows/release.yml`](../../.github/workflows/release.yml) |
 | Packaging recipes (brew, scoop, chocolatey) | PRESENT | [`packaging/`](../../packaging/) — Homebrew formula, Scoop manifest, Chocolatey nuspec (drafts; founder publishes post-tag) |

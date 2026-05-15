@@ -201,10 +201,8 @@ HONEST disclosures: it's beta; our 2026-05-15 empirical baseline FAILED 11 metri
 
 Quickstart:
 
-  git clone https://github.com/nucleus-data/nucleus.git
-  cd nucleus
   python3.11 -m venv .venv && source .venv/bin/activate
-  pip install -e .
+  pip install nucleus
   nucleus init demo && cd demo
   nucleus up
   nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders
@@ -286,10 +284,8 @@ The architecture doc (nucleus_architecture_v4.1.md, ~50 min read) is the source 
 
 Quickstart:
 
-    git clone https://github.com/nucleus-data/nucleus.git
-    cd nucleus
     python3.11 -m venv .venv && source .venv/bin/activate
-    pip install -e .
+    pip install nucleus
     nucleus init demo && cd demo
     nucleus up
     nucleus run example.greeting
@@ -319,11 +315,11 @@ Happy to answer the obvious questions: why not dbt, why not Dagster directly, wh
 
 | Channel | Asset | Path | Status |
 |---|---|---|---|
-| Twitter Tweet 1 | 60-sec demo MP4 | `assets/demos/v0.2/launch_60s.mp4` | <pending — see `60_SECOND_DEMO_SCRIPT.md`> |
-| Twitter Tweet 4 | Workbench dashboard screenshot | `assets/screenshots/v0.2/workbench_hero.png` | <pending — capture from running Workbench> |
-| LinkedIn | hero image (logo + tagline) | `assets/screenshots/v0.2/linkedin_hero.png` | <pending — derive from `assets/brand/nucleus-logo.png`> |
+| Twitter Tweet 1 | 60-sec demo MP4 | `assets/demos/v0.2/launch_60s.mp4` | WORKSTREAM C ACTION: see `60_SECOND_DEMO_SCRIPT.md` |
+| Twitter Tweet 4 | Workbench dashboard screenshot | `assets/screenshots/v0.2/workbench_hero.png` | WORKSTREAM C ACTION: capture from running Workbench |
+| LinkedIn | hero image (logo + tagline) | `assets/screenshots/v0.2/linkedin_hero.png` | WORKSTREAM C ACTION: derive from `assets/brand/nucleus-logo.png` |
 | LinkedIn (alt) | 60-sec demo MP4 (native upload) | same as Twitter Tweet 1 | reuse |
-| dev.to | header image | `assets/screenshots/v0.2/devto_header.png` | <pending — composite logo + screenshot> |
+| dev.to | header image | `assets/screenshots/v0.2/devto_header.png` | WORKSTREAM C ACTION: composite logo + screenshot |
 | HN first comment | none (text-only) | — | n/a |
 | Reddit | none (text-only) | — | n/a (do NOT add image; text-first crowd) |
 

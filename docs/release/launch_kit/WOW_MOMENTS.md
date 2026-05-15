@@ -196,7 +196,7 @@ Subagent E already shipped [`README_HERO_PATCH.md`](README_HERO_PATCH.md) — a 
 
 **Current state**: lines 41-46 show `git clone https://github.com/nucleus-data/nucleus.git ... pip install -e ".[dev]"` as the **primary** install path, with a parenthetical "When publishing completes, `pip install nucleus` becomes the default path".
 
-**Proposal**: invert the priority. The v0.2.0 PyPI artifact IS published per the launch sequence — the README must lead with `pip install nucleus` (or `pip install "nucleus[postgres,workbench]"` for the full beachhead path). The editable-dev workflow stays in [`CONTRIBUTING.md`](../../../CONTRIBUTING.md). **Per [`docs/decisions/ADR-039-install-size-split-extras.md`](../../decisions/ADR-039-install-size-split-extras.md)**, the lean core install is `pip install nucleus` (~16 deps); extras are opt-in.
+**Proposal**: invert the priority once the release workflow publishes v0.2.0 to PyPI — the README should lead with `pip install nucleus` (or `pip install "nucleus[postgres,workbench]"` for the full beachhead path). Before PyPI is green, the editable-dev workflow stays in [`CONTRIBUTING.md`](../../../CONTRIBUTING.md). **Per [`docs/decisions/ADR-039-install-size-split-extras.md`](../../decisions/ADR-039-install-size-split-extras.md)**, the lean core install is `pip install nucleus` (~16 deps); extras are opt-in.
 
 **Verification**: after patch, the first `bash` block in the README contains `pip install nucleus`, not `git clone`.
 

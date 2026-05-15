@@ -14,7 +14,16 @@ This path is for **small product engineering teams** (on the order of five peopl
 - A running **local stack** from `nucleus up` (when Docker + compose are available)
 - At least one **materialized asset** and a **query** result against the warehouse
 
-## 1. Clone and install
+## 1. Install
+
+Public release path, after the `v0.2.0` PyPI workflow is green:
+
+```bash
+pip install nucleus
+nucleus version
+```
+
+Pre-PyPI or contributor path:
 
 ```bash
 git clone https://github.com/nucleus-data/nucleus.git
@@ -27,8 +36,6 @@ Activate the venv (Windows PowerShell: `.\.venv\Scripts\Activate.ps1`), then:
 ```bash
 pip install -e ".[dev]"
 ```
-
-PyPI install (`pip install nucleus`) lands when the maintainers cut the first public release; until then, use the editable line above.
 
 **Expected:** `nucleus version` prints Nucleus plus pinned dependency versions without errors.
 

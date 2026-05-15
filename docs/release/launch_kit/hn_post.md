@@ -21,10 +21,10 @@ Show HN: Nucleus – local-first Iceberg pipelines from a laptop, in <30 minutes
 ## URL field
 
 ```
-https://github.com/mtoanng/nucleus
+https://github.com/nucleus-data/nucleus
 ```
 
-*Or `https://github.com/nucleus-data/nucleus` if the org-rename completes before submission.*
+*Use the canonical org URL for launch. The legacy personal remote is historical only.*
 
 ---
 
@@ -47,10 +47,8 @@ https://github.com/mtoanng/nucleus
 >
 > Quickstart:
 >
->     git clone https://github.com/mtoanng/nucleus.git
->     cd nucleus
 >     python3.11 -m venv .venv && source .venv/bin/activate
->     pip install -e .
+>     pip install nucleus
 >     nucleus init demo && cd demo
 >     nucleus up
 >     nucleus run example.greeting
@@ -58,7 +56,7 @@ https://github.com/mtoanng/nucleus
 >
 > Happy to answer the obvious questions: why not dbt, why not Dagster directly, why not Spark, why not Databricks, why Iceberg over Delta. The honest one-line on each: dbt has the macro ecosystem and we don't (we own ~180 LOC of Jinja+ref resolver with a hard 2,500 LOC scope ceiling so we don't accidentally rebuild dbt — see v4.1 §5.6.0); Dagster directly is what we wrap, but the boot time + error-translation + asset-graph-hidden ergonomics meant a thin layer earned its keep; Spark is the JVM constraint we reject by design; Databricks is what we yield to, not what we replace; Iceberg is what every catalog is converging on (Polaris, Lakekeeper, Unity, R2) and Delta isn't.
 >
-> Code: <https://github.com/mtoanng/nucleus>. Apache 2.0. Issues + PRs welcome (limited contributor scope while Tier 1 stabilizes — open an issue first for anything large).
+> Code: <https://github.com/nucleus-data/nucleus>. Apache 2.0. Issues + PRs welcome (limited contributor scope while Tier 1 stabilizes — open an issue first for anything large). If PyPI publish is not green yet, defer posting; the local-dev fallback is `git clone https://github.com/nucleus-data/nucleus.git && cd nucleus && pip install -e ".[dev]"`.
 
 ---
 

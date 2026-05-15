@@ -154,7 +154,7 @@ Use this if A1 lands flat in the first 30 minutes (less than 5 upvotes / 0 comme
 - [ ] Confirm `Show HN: ` prefix is present (mandatory for the Show HN tag — moderators will retag if missing)
 - [ ] Title length ≤ 80 characters including spaces (HN soft limit)
 - [ ] Re-read against `AGENTS.md` §8 forbidden framings — none present in A1, A2, A3, A4, A5, C1, C2
-- [ ] Confirm the URL field is the GitHub repo (`https://github.com/nucleus-data/nucleus` if org-rename done, else `https://github.com/mtoanng/nucleus`) — NOT the docs site
+- [ ] Confirm the URL field is the canonical GitHub repo (`https://github.com/nucleus-data/nucleus`) — NOT the docs site
 - [ ] First-comment draft from `docs/release/launch_kit/hn_post.md` ready in the clipboard, ready to paste within 60 s of submission so it pins above other replies
 - [ ] Submit window is **Tue or Wed 09:00–10:00 ET** for max front-page reach (per the existing posting checklist)
 

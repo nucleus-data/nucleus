@@ -169,18 +169,19 @@
 
 ---
 
-## Phase 4 — GitHub Release (5 min)
+## Phase 4 — GitHub Release verification (5 min)
 
-- [ ] **Publish release** from `v0.2.0_RELEASE_NOTES.md` (concurrent worker; fallback below inlines a CHANGELOG pointer). _(2 min)_
+- [ ] **Verify the workflow-created GitHub Release exists**. `.github/workflows/release.yml` auto-creates the release after PyPI publish; do **not** run `gh release create` on the normal path. _(2 min)_
 
   ```powershell
-  if (Test-Path docs/release/v0.2.0_RELEASE_NOTES.md) { gh release create v0.2.0 --repo nucleus-data/nucleus --title "Nucleus v0.2.0" --notes-file docs/release/v0.2.0_RELEASE_NOTES.md } else { gh release create v0.2.0 --repo nucleus-data/nucleus --title "Nucleus v0.2.0" --notes "See CHANGELOG.md section [0.2.0] for full release notes." }
+  gh release view v0.2.0 --repo nucleus-data/nucleus
   ```
 
-- [ ] **Sanity-check render** + verify auto-attached source archives. _(3 min)_
+- [ ] **Replace the auto-generated body with curated notes**, if the auto-generated CHANGELOG extract needs polish. Manual `gh release create` is allowed only as fallback if `gh release view` returns 404 after the workflow completed successfully. _(3 min)_
 
   ```powershell
-  gh release view v0.2.0 --repo nucleus-data/nucleus; Start-Process "https://github.com/nucleus-data/nucleus/releases/tag/v0.2.0"
+  gh release edit v0.2.0 --repo nucleus-data/nucleus --notes-file docs/release/v0.2.0_RELEASE_NOTES.md
+  Start-Process "https://github.com/nucleus-data/nucleus/releases/tag/v0.2.0"
   ```
 
 ---

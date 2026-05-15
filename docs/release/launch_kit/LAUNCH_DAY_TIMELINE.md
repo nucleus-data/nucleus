@@ -11,7 +11,7 @@
 | Time (PT) | Task | Done? |
 |---|---|---|
 | 14:00 | **Open** `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` and confirm every Phase 1 item is GREEN. If any item is RED, stop — defer launch by one day. | [ ] |
-| 14:15 | **Set PoC #5 compensation** in `docs/poc/p5_beachhead/RECRUITMENT_PLAN.md` (recommended `$150` per 90-min session). Replace the `<TBD>` placeholder. | [ ] |
+| 14:15 | **Set PoC #5 compensation** in `docs/poc/p5_beachhead/RECRUITMENT_PLAN.md` (recommended `$150` per 90-min session). FOUNDER ACTION: replace the compensation placeholder before outreach. | [ ] |
 | 14:25 | **Publish the Calendly link** (e.g., `calendly.com/<you>/nucleus-poc5-30min`). Paste into `RECRUITMENT_PLAN.md` and into the 20 outreach email templates at `docs/poc/p5_beachhead/outreach_emails/`. | [ ] |
 | 14:45 | **Stage 20 outreach emails as Gmail drafts** — do not send yet. Each draft addressed individually, no BCC blast. | [ ] |
 | 15:00 | **Record the 60-second demo** per `docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`. Budget 90 min for retakes; ship if any take meets the retake checklist at the bottom of that file. | [ ] |
@@ -43,7 +43,7 @@
 | 05:10 | **Watch the PyPI publish workflow** — `gh run watch --repo nucleus-data/nucleus`. Expect ~6–8 min total. All three jobs must go green: `build`, `publish-pypi`, `create-release`. | [ ] |
 | 05:25 | **Cold install smoke from PyPI** — `python -m venv .venv-pypi && .\.venv-pypi\Scripts\Activate.ps1 && pip install nucleus==0.2.0 && nucleus version`. Must print `0.2.0`. | [ ] |
 | 05:35 | **Replace auto-generated Release body with curated notes** — `gh release edit v0.2.0 --notes-file docs/release/v0.2.0_RELEASE_NOTES.md`. | [ ] |
-| 05:45 | **Verify the docs site is live** — load <https://nucleus-data.github.io/nucleus> (or your domain) in a clean browser tab; click through the quickstart and confirm the install command on the landing page is `pip install nucleus`. | [ ] |
+| 05:45 | **Verify the docs site is live** — load <https://nucleus-data.github.io/nucleus/> (or your domain) in a clean browser tab; click through the quickstart and confirm the install copy distinguishes PyPI release install from local-dev editable install. GitHub Pages requires the repo to be public or GitHub Pro until enabled. | [ ] |
 | 05:50 | **Open all five composer tabs**, drafts already pasted: HN submit, Twitter, LinkedIn, Reddit /r/dataengineering, dev.to. Stage the URLs in a notes file so you can grab them quickly for cross-linking later. | [ ] |
 | 05:55 | **Final breath.** Re-read the HN first-comment draft (`docs/release/launch_kit/hn_post.md`). Make sure you can paste it within 60 s of submission. | [ ] |
 
@@ -60,7 +60,7 @@
 | 06:03 | **Fire Twitter / X thread** — paste all 10 tweets from `SOCIAL_POSTS.md` §1 in sequence; attach the 60-sec demo MP4 to Tweet 1; pin Tweet 1 to profile. | [ ] |
 | 06:10 | **Send the 20 PoC #5 outreach emails** — release the Gmail drafts staged at T-24 h. Each goes individually (no BCC). | [ ] |
 | 06:20 | **Capture the HN submission URL** (`news.ycombinator.com/item?id=NNNNNNNN`) — paste into a notes file for cross-channel replies. | [ ] |
-| 06:25 | **Self-upvote your own thread** — once, gently. Then walk away. (HN ranks on a velocity decay; over-upvoting from one IP looks like manipulation.) | [ ] |
+| 06:25 | **Do not manipulate votes.** Share the repo and answer comments in good faith; do not ask friends to vote and do not vote-ring. | [ ] |
 | 06:30 | **30-minute window CLOSED.** Move into response mode. | [ ] |
 
 ---

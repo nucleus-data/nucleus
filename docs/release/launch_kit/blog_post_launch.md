@@ -224,17 +224,17 @@ We do not promise dates. We *do* promise that every v0.3 commit will pass the sa
 
 ```bash
 # Get started in 30 seconds:
-git clone https://github.com/mtoanng/nucleus.git
+git clone https://github.com/nucleus-data/nucleus.git
 cd nucleus
 python3.11 -m venv .venv && source .venv/bin/activate
 pip install -e .
 
-# Or, when PyPI publish completes:
+# Or, after the release workflow publishes to PyPI:
 pip install nucleus
 ```
 
-- **Repo & quickstart**: <https://github.com/mtoanng/nucleus>
-- **Docs**: `docs/site/` (run `mkdocs serve`); public site URL pending DNS
+- **Repo & quickstart**: <https://github.com/nucleus-data/nucleus>
+- **Docs**: <https://nucleus-data.github.io/nucleus/> once GitHub Pages is enabled; until then use `docs/site/` locally with `mkdocs serve`
 - **Architecture deep-dive**: `nucleus_architecture_v4.1.md` (~50 min read)
 - **License**: Apache 2.0
 - **First example**: `examples/01-ecommerce-elt/`
