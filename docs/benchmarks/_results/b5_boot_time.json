@@ -1,0 +1,207 @@
+{
+  "hardware": {
+    "logical_cores": 8,
+    "machine": "AMD64",
+    "physical_cores": 4,
+    "platform": "Windows-10-10.0.26100-SP0",
+    "python": "3.11.9",
+    "ram_available_gb": 1.0,
+    "ram_total_gb": 15.7
+  },
+  "result": {
+    "command": "C:\\Users\\GOT4HC\\Mordern Data Platform\\.venv\\Scripts\\python.exe -m scripts.benchmarks.b5_boot_time --iterations 10",
+    "completed_at": "2026-05-15T10:45:09+00:00",
+    "elapsed_s": 181.83866880007554,
+    "name": "B5: Boot time",
+    "notes": [],
+    "overall_verdict": "FAIL",
+    "raw": {
+      "console_help_s": [
+        1.6683434000005946,
+        1.2068079999880865,
+        1.5897761000087485,
+        4.1879595000064,
+        10.061455599963665,
+        8.389810799970292,
+        8.938725700019859,
+        3.7704058999661356,
+        3.0482867000391707,
+        2.8646241000387818
+      ],
+      "console_help_stats": {
+        "max": 10.061455599963665,
+        "median": 3.409346300002653,
+        "min": 1.2068079999880865,
+        "p95": 9.55622714498895,
+        "p99": 9.960409908968723
+      },
+      "console_version_s": [
+        2.1073329999344423,
+        3.799352700007148,
+        4.26729610003531,
+        5.120823600096628,
+        3.425640399917029,
+        1.9983377000316978,
+        1.3196718000108376,
+        2.0155935999937356,
+        1.2167970000300556,
+        1.9726000999798998
+      ],
+      "console_version_stats": {
+        "max": 5.120823600096628,
+        "median": 2.061463299964089,
+        "min": 1.2167970000300556,
+        "p95": 4.736736225069034,
+        "p99": 5.0440061250911095
+      },
+      "module_help_s": [
+        5.977777699939907,
+        3.195396399940364,
+        2.138143499963917,
+        4.9914877999108285,
+        11.20013829995878,
+        4.186406499939039,
+        3.5156893000239506,
+        3.2803566000657156,
+        5.132533100084402,
+        6.326144200051203
+      ],
+      "module_help_stats": {
+        "max": 11.20013829995878,
+        "median": 4.588947149924934,
+        "min": 2.138143499963917,
+        "p95": 9.006840955000365,
+        "p99": 10.7614788309671
+      },
+      "module_version_s": [
+        3.3091821999987587,
+        4.209112100070342,
+        3.2098934000823647,
+        1.734649799996987,
+        2.92946880008094,
+        6.067307700053789,
+        14.766697500017472,
+        7.964601099956781,
+        5.562954099965282,
+        9.157693999935873
+      ],
+      "module_version_stats": {
+        "max": 14.766697500017472,
+        "median": 4.886033100017812,
+        "min": 1.734649799996987,
+        "p95": 12.242645924980746,
+        "p99": 14.26188718501013
+      }
+    },
+    "rows": [
+      {
+        "claim": "<500.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+321.5%",
+        "measured": "2.11s",
+        "metric": "nucleus --version (console, cold)",
+        "note": "console script via PEP 503 entry point",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<150.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+1274.3%",
+        "measured": "2.06s",
+        "metric": "nucleus --version (console, warm median over 9)",
+        "note": "",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<500.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+847.3%",
+        "measured": "4.74s",
+        "metric": "nucleus --version (console, P95)",
+        "note": "cold-claim reused for tail latency",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<500.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+233.7%",
+        "measured": "1.67s",
+        "metric": "nucleus --help (console, cold)",
+        "note": "",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<150.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+2172.9%",
+        "measured": "3.41s",
+        "metric": "nucleus --help (console, warm median over 9)",
+        "note": "",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<500.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+561.8%",
+        "measured": "3.31s",
+        "metric": "python -m nucleus.cli.main --version (cold)",
+        "note": "`-m` form has higher startup cost; surfaced separately so the gap is visible.",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<150.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+3157.4%",
+        "measured": "4.89s",
+        "metric": "python -m nucleus.cli.main --version (warm median over 9)",
+        "note": "",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<500.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+1095.6%",
+        "measured": "5.98s",
+        "metric": "python -m nucleus.cli.main --help (cold)",
+        "note": "",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<150.0ms",
+        "claim_ref": "perf doc \u00a72.1",
+        "delta": "+2959.3%",
+        "measured": "4.59s",
+        "metric": "python -m nucleus.cli.main --help (warm median over 9)",
+        "note": "",
+        "severity": "BLOCKER",
+        "verdict": "FAIL"
+      }
+    ],
+    "script": "scripts/benchmarks/b5_boot_time.py",
+    "started_at": "2026-05-15T10:42:07+00:00"
+  },
+  "schema_version": 1,
+  "software": {
+    "dagster": "1.9.5",
+    "dlt": "1.26.0",
+    "duckdb": "1.1.3",
+    "fastapi": "0.136.1",
+    "litellm": "1.83.14",
+    "nucleus": "0.1.0",
+    "polars": "1.18.0",
+    "psutil": "7.2.2",
+    "psycopg": "3.2.3",
+    "pyarrow": "18.1.0",
+    "pyiceberg": "0.11.1",
+    "sqlalchemy": "2.0.36",
+    "uvicorn": "0.46.0"
+  }
+}

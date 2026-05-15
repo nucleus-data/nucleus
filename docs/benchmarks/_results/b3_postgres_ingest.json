@@ -1,0 +1,52 @@
+{
+  "hardware": {
+    "logical_cores": 8,
+    "machine": "AMD64",
+    "physical_cores": 4,
+    "platform": "Windows-10-10.0.26100-SP0",
+    "python": "3.11.9",
+    "ram_available_gb": 0.9,
+    "ram_total_gb": 15.7
+  },
+  "result": {
+    "command": "C:\\Users\\GOT4HC\\Mordern Data Platform\\.venv\\Scripts\\python.exe -m scripts.benchmarks.b3_postgres_ingest --scale 1m",
+    "completed_at": "2026-05-15T10:47:58+00:00",
+    "elapsed_s": 37.64044099999592,
+    "name": "B3: Postgres ingest scale",
+    "notes": [
+      "docker pull: docker pull rc=1: request returned 500 Internal Server Error for API route and version http://%2F%2F.%2Fpipe%2FdockerDesktopLinuxEngine/v1.53/images/create?fromImage=docker.io%2Flibrary%2Fpostgres&tag=16-alpine, check "
+    ],
+    "overall_verdict": "SKIP-DEPS",
+    "raw": {},
+    "rows": [
+      {
+        "claim": "image cached",
+        "claim_ref": "prerequisite",
+        "delta": "",
+        "measured": "failed",
+        "metric": "docker pull postgres",
+        "note": "docker pull rc=1: request returned 500 Internal Server Error for API route and version http://%2F%2F.%2Fpipe%2FdockerDesktopLinuxEngine/v1.53/images/create?fromImage=docker.io%2Flibrary%2Fpostgres&tag=16-alpine, check ",
+        "severity": "MEDIUM",
+        "verdict": "SKIP-DEPS"
+      }
+    ],
+    "script": "scripts/benchmarks/b3_postgres_ingest.py",
+    "started_at": "2026-05-15T10:47:21+00:00"
+  },
+  "schema_version": 1,
+  "software": {
+    "dagster": "1.9.5",
+    "dlt": "1.26.0",
+    "duckdb": "1.1.3",
+    "fastapi": "0.136.1",
+    "litellm": "1.83.14",
+    "nucleus": "0.1.0",
+    "polars": "1.18.0",
+    "psutil": "7.2.2",
+    "psycopg": "3.2.3",
+    "pyarrow": "18.1.0",
+    "pyiceberg": "0.11.1",
+    "sqlalchemy": "2.0.36",
+    "uvicorn": "0.46.0"
+  }
+}

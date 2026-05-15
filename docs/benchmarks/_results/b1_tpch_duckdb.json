@@ -1,0 +1,77 @@
+{
+  "hardware": {
+    "logical_cores": 8,
+    "machine": "AMD64",
+    "physical_cores": 4,
+    "platform": "Windows-10-10.0.26100-SP0",
+    "python": "3.11.9",
+    "ram_available_gb": 0.8,
+    "ram_total_gb": 15.7
+  },
+  "result": {
+    "command": "C:\\Users\\GOT4HC\\Mordern Data Platform\\.venv\\Scripts\\python.exe -m scripts.benchmarks.b1_tpch_duckdb --scale-factor 10 --runs 3",
+    "completed_at": "2026-05-15T10:47:19+00:00",
+    "elapsed_s": 0.22607459989376366,
+    "name": "B1: TPC-H 10 GB",
+    "notes": [
+      "DuckDB extension catalogue (http://extensions.duckdb.org/) unreachable: HTTP 407 Proxy Authentication Required. INSTALL tpch will fail; skipping benchmark per task spec (no fabricated numbers)."
+    ],
+    "overall_verdict": "SKIP-DEPS",
+    "raw": {
+      "proxy_probe": {
+        "blocked": true,
+        "reason": "HTTP 407 Proxy Authentication Required"
+      }
+    },
+    "rows": [
+      {
+        "claim": "duckdb extension catalogue reachable",
+        "claim_ref": "prerequisite",
+        "delta": "",
+        "measured": "blocked: HTTP 407 Proxy Authentication Required",
+        "metric": "TPC-H tpch extension install",
+        "note": "re-run on a network with HTTP egress to extensions.duckdb.org",
+        "severity": "LOW",
+        "verdict": "SKIP-DEPS"
+      },
+      {
+        "claim": "<3.00s",
+        "claim_ref": "perf doc \u00a72.3",
+        "delta": "",
+        "measured": "(skipped)",
+        "metric": "TPC-H suite median (across 8 queries)",
+        "note": "extension unavailable",
+        "severity": "LOW",
+        "verdict": "SKIP-DEPS"
+      },
+      {
+        "claim": "<10.00s",
+        "claim_ref": "perf doc \u00a72.3",
+        "delta": "",
+        "measured": "(skipped)",
+        "metric": "TPC-H suite P95 (across 8 queries)",
+        "note": "extension unavailable",
+        "severity": "LOW",
+        "verdict": "SKIP-DEPS"
+      }
+    ],
+    "script": "scripts/benchmarks/b1_tpch_duckdb.py",
+    "started_at": "2026-05-15T10:47:19+00:00"
+  },
+  "schema_version": 1,
+  "software": {
+    "dagster": "1.9.5",
+    "dlt": "1.26.0",
+    "duckdb": "1.1.3",
+    "fastapi": "0.136.1",
+    "litellm": "1.83.14",
+    "nucleus": "0.1.0",
+    "polars": "1.18.0",
+    "psutil": "7.2.2",
+    "psycopg": "3.2.3",
+    "pyarrow": "18.1.0",
+    "pyiceberg": "0.11.1",
+    "sqlalchemy": "2.0.36",
+    "uvicorn": "0.46.0"
+  }
+}
