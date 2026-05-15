@@ -94,14 +94,20 @@ jobs:
       # ---- 3. trivy fs: secret scan (warning-only) --------------------------
       # Use the official setup-trivy action (cached binaries, GitHub-maintained)
       # instead of the upstream install.sh + curl pattern, which broke on the
-      # v0.58.2 pin (CI runs/25934949898 exit code 1 from sh -s). Per AGENTS.md
-      # §11.12: trivy v0.68.2 is the version documented in setup-trivy's README.
+      # v0.58.2 pin (CI runs/25934949898 exit code 1 from sh -s).
+      #
+      # Version pin must be >= v0.69.2: most trivy releases were deleted from
+      # GitHub in March 2026, breaking install.sh for any older tag (including
+      # v0.68.2 from the action's README). See:
+      #   https://github.com/aquasecurity/setup-trivy/issues/30
+      # Pinning to the latest stable v0.70.0 (2026-04-17) per AGENTS.md §11.12
+      # — exact pin, docs-verified, post-deletion window so artifacts persist.
       # Docs (action): https://github.com/aquasecurity/setup-trivy/blob/main/README.md
-      # Docs (trivy):  https://github.com/aquasecurity/trivy/releases/tag/v0.68.2
+      # Docs (trivy):  https://github.com/aquasecurity/trivy/releases/tag/v0.70.0
       - name: Install trivy
         uses: aquasecurity/setup-trivy@v0.2.6
         with:
-          version: v0.68.2
+          version: v0.70.0
 
       - name: trivy fs (secrets + misconfig)
         run: |
