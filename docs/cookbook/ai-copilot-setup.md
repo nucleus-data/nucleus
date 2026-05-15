@@ -170,10 +170,10 @@ Trade-offs:
 The CLI `--provider` switch only lists `anthropic`, `openai`, and `ollama`, but LiteLLM still routes any **full model id** you place in `copilot.model`. For backends like Groq or Together:
 
 1. Export the vendor key LiteLLM documents (examples—confirm names on [LiteLLM providers](https://docs.litellm.ai/docs/providers)):
-   - Groq: `GROQ_API_KEY`
-   - Together AI: `TOGETHER_API_KEY`
-   - Mistral AI: `MISTRAL_API_KEY`
-2. Set `copilot.model` to the exact LiteLLM model string (usually `provider/model`, e.g. `groq/llama-3.3-70b-versatile`).
+   - Groq: `GROQ_API_KEY` ([Groq provider doc](https://docs.litellm.ai/docs/providers/groq))
+   - Together AI: `TOGETHERAI_API_KEY` ([Together AI provider doc](https://docs.litellm.ai/docs/providers/togetherai))
+   - Mistral AI: `MISTRAL_API_KEY` ([Mistral provider doc](https://docs.litellm.ai/docs/providers/mistral))
+2. Set `copilot.model` to the exact LiteLLM model string (for example `groq/llama-3.3-70b-versatile`, `together_ai/togethercomputer/Llama-2-7B-32K-Instruct`, or `mistral/mistral-small-latest`).
 3. Set `copilot.provider` to match a **pricing bucket** you configure under `copilot.pricing`, or accept that pre-flight **cost estimates** fall back to generic defaults until you add accurate per-million-token rates.
 
 Example shape (illustrative model id — verify against current LiteLLM docs):

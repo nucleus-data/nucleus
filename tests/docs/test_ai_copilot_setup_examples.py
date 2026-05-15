@@ -42,7 +42,7 @@ _ALLOWED_EXPORT_VARS = frozenset(
         "AZURE_API_TYPE",
         # Third-party backends cited in cookbook + LiteLLM provider index.
         "GROQ_API_KEY",
-        "TOGETHER_API_KEY",
+        "TOGETHERAI_API_KEY",
         "MISTRAL_API_KEY",
     }
 )
