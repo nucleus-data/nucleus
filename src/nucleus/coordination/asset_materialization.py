@@ -349,7 +349,16 @@ def _commit_to_iceberg(
     # threads at AMA connection init before any query.  Lowered RAM fraction
     # 0.80 → 0.60 in v0.2 — see _DUCKDB_RAM_FRACTION docstring.
     # Docs: https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
-    warehouse_dir.mkdir(parents=True, exist_ok=True)
+    #
+    # The mkdir is wrapped in translate() to catch FileExistsError when the
+    # warehouse path already exists as a non-directory entry (chaos J3 / CF-1
+    # — see docs/release/chaos_test_results.md §J3).  Path.mkdir(exist_ok=True)
+    # only suppresses FileExistsError when the existing entry IS a directory.
+    # Docs: https://docs.python.org/3/library/pathlib.html#pathlib.Path.mkdir
+    try:
+        warehouse_dir.mkdir(parents=True, exist_ok=True)
+    except Exception as exc:  # noqa: BLE001 - boundary; translate() catches FileExistsError + others.
+        raise translate(exc) from exc
     spill_dir = warehouse_dir.parent / ".nucleus" / "duckdb_spill"
     mem_limit = _compute_duckdb_memory_limit(memory_limit_str)
     _duckdb_conn = duckdb.connect()

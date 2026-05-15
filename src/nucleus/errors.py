@@ -1064,6 +1064,40 @@ class NucleusBranchAlreadyExistsError(NucleusError):
     DEFAULT_DOCS_URL = f"{_DOCS_BASE}/branch-already-exists"
 
 
+# ============================================================================
+# Materialization race-condition error (NE5018 per v0.2 close-out blocker #6)
+# Closes chaos J3 (CF-1) translate() gap — FileExistsError leak when the
+# warehouse path already exists as a non-directory entry.
+# ============================================================================
+
+
+class NucleusRaceConditionDuringWrite(NucleusError):
+    """A materialization write hit a filesystem entry that blocked the path.
+
+    Fired when the warehouse / catalog directory cannot be created because
+    a file (or other non-directory entry) already exists at the target
+    path. Typical trigger: another writer raced ahead of the AMA between
+    its mkdir check and the actual mkdir syscall, or the warehouse path
+    was externally replaced with a non-directory entry (operator action,
+    backup-tool collision, hostile-filesystem mock).
+
+    Source: builtin ``FileExistsError`` raised by ``Path.mkdir`` /
+    ``os.makedirs`` when ``exist_ok=True`` cannot suppress because the
+    existing entry is not itself a directory.
+
+    Layer (ADR-006 §1): L4 Experience — surfaces through the CLI when
+    the AMA's pre-write mkdir fails before any Iceberg catalog touch.
+
+    See ``docs/errors/NE5018-race-condition-during-write.md`` +
+    ``docs/release/chaos_test_results.md`` §J3 (CF-1).
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE5018"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/race-condition-during-write"
+
+
 __all__ = [
     "NucleusError",
     # Asset / catalog
@@ -1121,6 +1155,8 @@ __all__ = [
     # Iceberg snapshot management (NE5015-NE5016 — ADR-028)
     "NucleusSnapshotNotFoundError",
     "NucleusBranchAlreadyExistsError",
+    # Materialization race-condition (NE5018 — v0.2 chaos J3 fix)
+    "NucleusRaceConditionDuringWrite",
     # Reliability hardening (NE2007 + NE3008 + NE3009 — ADR-024)
     "NucleusMemoryLimitExceeded",
     "NucleusConcurrentRunError",

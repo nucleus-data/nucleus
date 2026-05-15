@@ -19,6 +19,7 @@ from collections.abc import Callable, Iterator
 from nucleus.errors import (
     NucleusAssetNotFound,
     NucleusAssetNotMaterialized,
+    NucleusCatalogError,
     NucleusCommitConflictError,
     NucleusCommitUnknownError,
     NucleusError,
@@ -26,6 +27,7 @@ from nucleus.errors import (
     NucleusIOError,
     NucleusNetworkError,
     NucleusPermissionError,
+    NucleusRaceConditionDuringWrite,
     NucleusResourceError,
     NucleusSchemaError,
     NucleusSchemaEvolutionError,
@@ -301,6 +303,57 @@ def _timeout_error_handler(exc: BaseException) -> NucleusError:
     )
 
 
+def _file_exists_handler(exc: BaseException) -> NucleusError:
+    """Builtin ``FileExistsError`` → ``NucleusRaceConditionDuringWrite`` (NE5018).
+
+    Fires when a write path's mkdir fails because the target already
+    exists as a non-directory entry. Closes chaos J3 (CF-1) translate()
+    gap — see ``docs/release/chaos_test_results.md`` §J3.
+
+    Docs: https://docs.python.org/3/library/exceptions.html#FileExistsError
+    """
+    msg = str(exc) or "(no message)"
+    return NucleusRaceConditionDuringWrite(
+        user_message=(
+            f"Could not create the write target — a non-directory entry already "
+            f"exists at the path: {msg}"
+        ),
+        fix_hint=(
+            "Remove the conflicting file (or restore the directory) at the warehouse / "
+            "catalog path, then re-run. If another process is racing, retry; the AMA "
+            "will serialize via the advisory lock."
+        ),
+        cause=exc,
+    )
+
+
+def _pydantic_validation_handler(exc: BaseException) -> NucleusError:
+    """pydantic v2 ``ValidationError`` → ``NucleusCatalogError`` (NE1007).
+
+    The most common source is pyiceberg's ``TableMetadata`` parse: a
+    corrupted ``*.metadata.json`` (truncated, empty, externally edited)
+    surfaces as ``pydantic_core._pydantic_core.ValidationError`` from
+    ``pyiceberg.table.metadata.parse_raw``. Closes chaos J8 (CF-2 + CF-3)
+    translate() gap — see ``docs/release/chaos_test_results.md`` §J8.
+
+    Docs: https://docs.pydantic.dev/latest/api/pydantic_core/#pydantic_core.ValidationError
+    Docs: https://py.iceberg.apache.org/api/  (pyiceberg==0.11.1)
+    """
+    msg = str(exc) or "(no message)"
+    summary = msg.splitlines()[0] if msg else "validation failed"
+    return NucleusCatalogError(
+        user_message=(
+            f"Catalog metadata is corrupt or unreadable: {summary}"
+        ),
+        fix_hint=(
+            "Inspect the catalog's *.metadata.json files for truncation or external "
+            "edits. Restore from a recent snapshot if available, or re-materialize the "
+            "asset from the source."
+        ),
+        cause=exc,
+    )
+
+
 # Lazy registry: avoids importing dagster at module load. Built on first call.
 # NEEDS VERIFICATION on first PoC run: confirm
 # ``dagster.DagsterExecutionStepExecutionError`` is the exact class name and
@@ -359,12 +412,27 @@ def _registry() -> dict[type, Handler]:
         except ImportError:
             pass
 
+        # pydantic v2 ValidationError — surfaces from pyiceberg's TableMetadata
+        # parse when *.metadata.json is corrupt (J8 / CF-2 / CF-3). Registered
+        # BEFORE ValueError because pydantic.ValidationError subclasses ValueError
+        # in v2; isinstance dispatch order is unspecified for dict iteration, so
+        # the specific handler must register before the generic ValueError.
+        # Docs: https://docs.pydantic.dev/latest/api/pydantic_core/#pydantic_core.ValidationError
+        try:
+            from pydantic import ValidationError as _PydanticValidationError
+
+            registry[_PydanticValidationError] = _pydantic_validation_handler
+        except ImportError:
+            pass
+
         # Stdlib exception handlers. ``PermissionError`` and ``FileNotFoundError``
         # subclass ``OSError``; ``TimeoutError`` (PEP 3151) and ``ConnectionError``
-        # also subclass ``OSError``. Order matters here only for documentation —
-        # ``translate()`` matches by ``isinstance``, so the specific subclasses
-        # remain reachable. Docs: https://docs.python.org/3/library/exceptions.html
+        # also subclass ``OSError``; ``FileExistsError`` likewise. Order matters
+        # here only for documentation — ``translate()`` matches by ``isinstance``,
+        # so the specific subclasses remain reachable.
+        # Docs: https://docs.python.org/3/library/exceptions.html
         registry[FileNotFoundError] = _file_not_found_handler
+        registry[FileExistsError] = _file_exists_handler
         registry[PermissionError] = _permission_error_handler
         registry[TimeoutError] = _timeout_error_handler
         registry[ConnectionError] = _connection_error_handler
