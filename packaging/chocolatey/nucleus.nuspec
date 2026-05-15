@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nucleus Chocolatey package — DRAFT for v0.2.0.
+
+  Schema reference: https://docs.chocolatey.org/en-us/create/create-packages
+  Nuspec reference: https://learn.microsoft.com/en-us/nuget/reference/nuspec
+
+  PRE-PUBLISH CHECKLIST:
+    1. Update <version> to match the GitHub release tag (without leading 'v').
+    2. Confirm the wheel URL inside tools/chocolateyInstall.ps1 references the
+       correct release tag (also keyed on $env:ChocolateyPackageVersion).
+    3. Compute SHA256 of the published wheel and paste into tools/chocolateyInstall.ps1
+       at the marked placeholder.
+    4. Update <releaseNotes> with a link to CHANGELOG.md anchor for this version.
+    5. Run `choco pack` from this directory, then `choco install nucleus -dvy -s .`
+       in a clean sandbox to validate before publishing.
+
+  PYPI NAME NOTE: the bare `nucleus` name is squatted on PyPI. The Chocolatey
+  package id is still `nucleus` (the user-facing CLI binary is `nucleus`), but
+  the wheel we download in chocolateyInstall.ps1 is named `nucleus_data-*.whl`
+  per PyPI distribution name `nucleus-data`. See ../pypi/PUBLISH_RUNBOOK.md.
+-->
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>nucleus</id>
+    <version>0.2.0</version>
+    <packageSourceUrl>https://github.com/nucleus-data/nucleus/tree/main/packaging/chocolatey</packageSourceUrl>
+    <owners>nucleus-data</owners>
+    <title>Nucleus (Install)</title>
+    <authors>Nucleus Contributors</authors>
+    <projectUrl>https://github.com/nucleus-data/nucleus</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/nucleus-data/nucleus/v0.2.0/assets/brand/nucleus-logo.png</iconUrl>
+    <copyright>Copyright (c) 2026 Nucleus Contributors</copyright>
+    <licenseUrl>https://github.com/nucleus-data/nucleus/blob/v0.2.0/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/nucleus-data/nucleus</projectSourceUrl>
+    <docsUrl>https://github.com/nucleus-data/nucleus/blob/v0.2.0/docs/onboarding/quickstart.md</docsUrl>
+    <bugTrackerUrl>https://github.com/nucleus-data/nucleus/issues</bugTrackerUrl>
+    <tags>nucleus python iceberg duckdb polars data-engineering lakehouse cli</tags>
+    <summary>Ship data products from a laptop — local-first SDK + CLI for Iceberg pipelines.</summary>
+    <description><![CDATA[
+**Nucleus** is a local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks on open Apache foundations. It wraps DuckDB, Polars, Apache Iceberg, PyArrow, and embedded orchestration behind a single `ctx` SDK and a `nucleus` CLI.
+
+**Designed for**: small teams (~5 engineers, 100GB-5TB greenfield data) building net-new analytics on laptops before they graduate to a cloud warehouse.
+
+**No JVM** in the default path. Apache-2.0 core. Iceberg snapshots port to Databricks, Snowflake, or any Iceberg REST catalog when you outgrow a single node.
+
+## What this package installs
+
+* Python 3.11 dependency (auto-installed if not present, via the `python311` Chocolatey package).
+* An isolated Python virtualenv at `$env:ChocolateyToolsLocation\nucleus\venv\` containing the `nucleus-data` PyPI wheel and its dependencies.
+* A `nucleus.exe` shim on `$PATH` so users can run `nucleus init`, `nucleus up`, `nucleus query`, etc.
+
+## Quickstart
+
+```powershell
+nucleus init demo
+cd demo
+nucleus up
+nucleus query "SELECT 'hello, nucleus' AS msg"
+nucleus down
+```
+
+## Notes
+
+* PyPI distribution name is `nucleus-data` because the bare `nucleus` name is squatted on PyPI. The CLI binary remains `nucleus`. To install via pip directly: `pip install nucleus-data`.
+* First run of `nucleus up` may take ~30s while pyiceberg, polars, duckdb, and pyarrow wheels are fetched and warmed.
+* Source: https://github.com/nucleus-data/nucleus
+]]></description>
+    <releaseNotes>https://github.com/nucleus-data/nucleus/blob/v0.2.0/CHANGELOG.md#v020</releaseNotes>
+    <dependencies>
+      <!--
+        Chocolatey will install python311 first if it's not already on the box.
+        We pin to >= 3.11.0 < 4.0; matches pyproject.toml requires-python.
+      -->
+      <dependency id="python311" version="3.11.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

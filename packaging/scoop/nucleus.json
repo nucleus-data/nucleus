@@ -1,0 +1,56 @@
+{
+    "$schema": "https://raw.githubusercontent.com/ScoopInstaller/Scoop/master/schema.json",
+    "version": "0.2.0",
+    "description": "Ship data products from a laptop \u2014 local-first SDK + CLI for Iceberg pipelines.",
+    "homepage": "https://github.com/nucleus-data/nucleus",
+    "license": "Apache-2.0",
+    "notes": [
+        "Nucleus installs into an isolated Python virtualenv at $dir\\venv.",
+        "First boot of `nucleus up` may take ~30 s (downloads pyiceberg, polars, duckdb, pyarrow wheels).",
+        "Quickstart: nucleus init demo && cd demo && nucleus up && nucleus down",
+        "PyPI distribution name is `nucleus-data` (the bare `nucleus` name is squatted on PyPI).",
+        "Docs: https://github.com/nucleus-data/nucleus/blob/main/docs/onboarding/quickstart.md"
+    ],
+    "depends": [
+        "main/python311"
+    ],
+    "url": "https://github.com/nucleus-data/nucleus/releases/download/v0.2.0/nucleus_data-0.2.0-py3-none-any.whl",
+    "hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "pre_install": [
+        "# Create an isolated venv inside the Scoop install dir so we never",
+        "# pollute the user's system Python and so `scoop uninstall nucleus`",
+        "# is a clean rmdir. The Python 3.11 dep is provided by main/python311.",
+        "& \"$env:SCOOP\\apps\\python311\\current\\python.exe\" -m venv \"$dir\\venv\"",
+        "if ($LASTEXITCODE -ne 0) { throw 'NUCLEUS-INSTALL: failed to create virtualenv (Python 3.11 missing?)' }"
+    ],
+    "installer": {
+        "script": [
+            "& \"$dir\\venv\\Scripts\\python.exe\" -m pip install --no-warn-script-location --upgrade pip",
+            "& \"$dir\\venv\\Scripts\\python.exe\" -m pip install --no-warn-script-location \"$dir\\nucleus_data-0.2.0-py3-none-any.whl\"",
+            "if ($LASTEXITCODE -ne 0) { throw 'NUCLEUS-INSTALL: pip install failed (see scoop log above)' }"
+        ]
+    },
+    "post_install": [
+        "# Smoke test \u2014 fail loudly if the entry point is missing.",
+        "& \"$dir\\venv\\Scripts\\nucleus.exe\" --version",
+        "if ($LASTEXITCODE -ne 0) { throw 'NUCLEUS-INSTALL: nucleus --version returned non-zero; install incomplete' }"
+    ],
+    "uninstaller": {
+        "script": [
+            "if (Test-Path \"$dir\\venv\") { Remove-Item -Recurse -Force \"$dir\\venv\" }"
+        ]
+    },
+    "bin": [
+        "venv\\Scripts\\nucleus.exe"
+    ],
+    "checkver": {
+        "github": "https://github.com/nucleus-data/nucleus",
+        "regex": "v([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://github.com/nucleus-data/nucleus/releases/download/v$version/nucleus_data-$version-py3-none-any.whl",
+        "hash": {
+            "url": "$baseurl/nucleus_data-$version-py3-none-any.whl.sha256"
+        }
+    }
+}

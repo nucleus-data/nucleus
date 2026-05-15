@@ -1,0 +1,132 @@
+# Nucleus snap definition — DRAFT for v0.3+ (NOT YET PUBLISHED).
+#
+# v0.2.0 ships brew + scoop + chocolatey + pip. Snap is a v0.3+ "if real demand
+# emerges" channel, captured here only so the founder can see the rough cost
+# before committing.
+#
+# Schema: https://snapcraft.io/docs/snapcraft-yaml-schema
+# Python plugin: https://snapcraft.io/docs/python-plugin
+# Confinement: https://snapcraft.io/docs/snap-confinement
+#
+# OPEN QUESTIONS for the founder before promotion to a published snap:
+#
+#   1. CONFINEMENT MODEL.
+#      - "strict" + appropriate plugs = harder to set up, plays nicely with
+#        the snap store review queue, but the user must connect plugs manually
+#        for arbitrary file paths (e.g., `snap connect nucleus:home`,
+#        `snap connect nucleus:removable-media`).
+#      - "classic" = full host filesystem access, but requires manual review
+#        from Canonical for store acceptance (1-4 weeks). Most data CLIs use
+#        classic; cf. `snap install --classic poetry` (declined by Snapcraft
+#        as of 2024 — Poetry distributes via pip instead).
+#      Below: "strict" with plugs as a starting point. Switch to "classic" if
+#      user reports show the plug-connection UX is too hostile.
+#
+#   2. BASE IMAGE.
+#      - core24 (Ubuntu 24.04 base, Python 3.12.x) — newer; matches our
+#        requires-python upper bound (<3.13).
+#      - core22 (Ubuntu 22.04 base, Python 3.10.x) — older but Python 3.10
+#        is BELOW our pyproject floor of 3.11. Would need a snap python part
+#        to install 3.11 separately.
+#      Below: core24.
+#
+#   3. PYPI NAME.
+#      - Same name-collision warning as PyPI (../pypi/PUBLISH_RUNBOOK.md):
+#        the bare `nucleus` name is taken on PyPI. Snap installs from
+#        `nucleus-data` and shims to a `nucleus` command via apps:nucleus:command.
+#
+#   4. STORE CHANNELS.
+#      - stable / candidate / beta / edge — recommend shipping to "edge" first
+#        (auto-updates from main branch CI), then promote to stable per release
+#        per Snapcraft conventions.
+
+name: nucleus
+title: Nucleus
+version: '0.2.0'
+summary: Ship data products from a laptop — local-first SDK + CLI for Iceberg.
+description: |
+  Nucleus is a local-first Python SDK + CLI for building Iceberg-native pipelines
+  and analytics stacks on open Apache foundations. It wraps DuckDB, Polars,
+  Apache Iceberg, PyArrow, and embedded orchestration behind a single `ctx`
+  Python SDK and a `nucleus` CLI.
+
+  Designed for small teams (~5 engineers, 100GB-5TB greenfield data) building
+  net-new analytics on laptops before they graduate to a cloud warehouse.
+
+  No JVM in the default path. Apache-2.0 core. Iceberg snapshots port to
+  Databricks, Snowflake, or any Iceberg REST catalog when you outgrow a
+  single node.
+
+  Quickstart:
+    nucleus init demo
+    cd demo
+    nucleus up
+    nucleus query "SELECT 'hello, nucleus' AS msg"
+    nucleus down
+
+  Note: PyPI distribution name is `nucleus-data` (the bare `nucleus` name is
+  squatted on PyPI). The CLI binary remains `nucleus`.
+
+# core24 = Ubuntu 24.04 LTS base, Python 3.12.x available.
+# Matches pyproject.toml `requires-python = ">=3.11,<3.13"`.
+base: core24
+
+# strict + plugs gives us a clean review path; user manually connects plugs
+# they need beyond ~/snap/nucleus. If real demand pushes us to "classic",
+# the migration is a one-line change here + a request to snap-advocacy.
+confinement: strict
+grade: stable
+
+# Targets x86_64 + arm64 (Linux). pyiceberg / polars / duckdb / pyarrow all
+# ship Linux wheels for both arches.
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+
+apps:
+  nucleus:
+    command: bin/nucleus
+    plugs:
+      - home              # ~/...        — user project dirs
+      - network           # outbound for pyiceberg, dlt source connectors
+      - network-bind      # `nucleus up` may bind localhost ports for MinIO
+      - removable-media   # /media/...   — external SSDs sometimes used for warehouses
+      # NOT included by default (user opts in with `snap connect`):
+      #   - personal-files = []        # broader $HOME access
+      #   - system-files  = [...]      # /etc / /usr access
+      # Reasoning: keep blast radius small; if a user complains about a path
+      # that doesn't work, document the `snap connect` they need.
+
+parts:
+  nucleus:
+    plugin: python
+    source: https://github.com/nucleus-data/nucleus.git
+    source-tag: v0.2.0
+    # PEP 517 build via hatchling (already in pyproject.toml [build-system]).
+    # The python plugin runs `pip install <source>`, which resolves PyPI
+    # distribution name `nucleus-data` from pyproject.toml [project] name
+    # AFTER the founder bumps it from `nucleus` per ../pypi/PUBLISH_RUNBOOK.md.
+    python-requirements:
+      - requirements.txt   # OPTIONAL — not present today; Snap python plugin
+                           # falls through to pyproject.toml if absent.
+    build-packages:
+      - git
+      - build-essential
+    stage-packages:
+      # Runtime libs the wheel binaries link against. Polars/duckdb/pyarrow
+      # ship manylinux wheels with bundled libs so this list stays small.
+      - libssl3
+      - ca-certificates
+
+# OPTIONAL — uncomment when shipping to the snap store:
+# license: Apache-2.0
+# contact: https://github.com/nucleus-data/nucleus/issues
+# website: https://github.com/nucleus-data/nucleus
+# source-code: https://github.com/nucleus-data/nucleus
+# issues: https://github.com/nucleus-data/nucleus/issues
+
+# OPTIONAL — automate the version bump from a build env var when run from CI:
+# adopt-info: nucleus
+# parts.nucleus.override-pull: |
+#   craftctl default
+#   craftctl set version=$(git describe --tags --abbrev=0 | sed 's/^v//')
