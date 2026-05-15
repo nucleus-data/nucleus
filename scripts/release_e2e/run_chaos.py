@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import os
 import platform
+import re
 import shutil
 import signal
 import sqlite3
@@ -115,6 +116,135 @@ def _result_stub(sid: str, name: str) -> ChaosResult:
     reason = "TODO: implement post-Wave-1"
     _print(f"  [{sid}] {name:<45} SKIP  {reason}")
     return ChaosResult(sid, name, "SKIP", 0.0, skip_reason=reason)
+
+
+# ---------------------------------------------------------------------------
+# Output-parsing helpers (NE-code classification + traceback extraction)
+# ---------------------------------------------------------------------------
+# These helpers are pure-functional and exercised by the smoke tests in
+# ``tests/chaos/test_chaos_smoke.py``.  Each chaos scenario invokes the
+# ``nucleus`` CLI as a subprocess; before declaring PASS / FAIL it needs to
+# (a) map the rendered ``Docs: <URL>`` link back to its stable NE-code so
+# the per-scenario PASS row records the actual error class triggered, and
+# (b) detect any leaked Python traceback so a chaos run that exposes a
+# raw ``FileExistsError`` (etc.) does not silently PASS just because the
+# subprocess exit code happened to be non-zero.
+
+# Stable slug → NE-code lookup.  Slugs match the ``DEFAULT_DOCS_URL``
+# trailing path component declared by each ``NucleusError`` subclass in
+# ``src/nucleus/errors.py``.  Codes are PERMANENT per ADR-006 §3 — extending
+# this map is additive only; entries are never renamed or recycled.
+_SLUG_TO_NE_CODE: dict[str, str] = {
+    "network": "NE1010",
+    "concurrent-run": "NE3008",
+    "schema-evolution": "NE1004",
+    "schema": "NE2001",
+    "io": "NE1005",
+    "source-connection": "NE1001",
+    "commit-conflict": "NE1002",
+    "commit-unknown": "NE1003",
+    "permission": "NE1006",
+    "catalog": "NE1007",
+    "memory-limit": "NE2007",
+    "asset-not-found": "NE3002",
+    "internal": "NE3001",
+    "maintenance": "NE3009",
+}
+
+# ``Docs: <URL>`` line as rendered by ``NucleusError.rendered()``.  The
+# regex tolerates 0..N spaces between the colon and the URL (the renderer
+# uses a single space, but Worker A2's earlier capture had a double-space
+# variant after a wrap).  The slug is the final path component.
+_DOCS_URL_RE: re.Pattern[str] = re.compile(
+    r"Docs:\s*https://nucleus\.dev/errors/([a-z0-9-]+)",
+    re.IGNORECASE,
+)
+
+# Direct NE-code mention, e.g. inside the user-message body: ``"NE3008 the
+# asset is locked"``.  Layer prefix matches the 1-5 bands declared in
+# ``src/nucleus/errors.py`` module docstring.
+_NE_CODE_RE: re.Pattern[str] = re.compile(r"\bNE[1-5]\d{3}\b")
+
+
+def _classify_ne_code(text: str) -> str | None:
+    """Return the NE-code mentioned in *text* — Docs URL first, raw code second.
+
+    Returns ``None`` when no recognized NE-code appears in the text.  The
+    Docs URL form wins over a raw code mention because the docs URL is what
+    every NucleusError renders by default and is therefore the most reliable
+    signal in chaos-scenario captures.
+
+    Per ``docs/architecture/sequence_error_translation.md`` §3 +
+    ADR-006 §3 (permanent codes).
+    """
+    docs_match = _DOCS_URL_RE.search(text)
+    if docs_match is not None:
+        slug = docs_match.group(1).lower()
+        code = _SLUG_TO_NE_CODE.get(slug)
+        if code is not None:
+            return code
+    raw_match = _NE_CODE_RE.search(text)
+    if raw_match is not None:
+        return raw_match.group(0)
+    return None
+
+
+# ``File "<path>", line <N>, in <funcname>`` — the canonical traceback frame
+# emitted by CPython.  We capture path / line / funcname so the chaos
+# summary can pinpoint the LAST ``src/nucleus/`` frame, which is the actual
+# error origin inside the platform (deeper frames are usually wrapped
+# library internals).
+_TRACEBACK_FRAME_RE: re.Pattern[str] = re.compile(
+    r'^\s*File\s+"(?P<path>[^"]+)",\s+line\s+(?P<line>\d+),\s+in\s+(?P<func>\S+)',
+    re.MULTILINE,
+)
+
+# Final exception line: ``ExceptionClass: message`` (or just
+# ``ExceptionClass`` for some bare raises).  Strict identifier shape on the
+# class name avoids matching arbitrary ``Word: stuff`` lines elsewhere.
+_EXC_CLASS_RE: re.Pattern[str] = re.compile(
+    r"^(?P<cls>[A-Z][A-Za-z0-9_]*Error|[A-Z][A-Za-z0-9_]*Exception|[A-Z][A-Za-z0-9_]*)(?::|$)",
+    re.MULTILINE,
+)
+
+
+def _extract_raw_exception(text: str) -> tuple[str, str]:
+    """Parse a Python traceback for ``(exc_class, last_src_nucleus_frame)``.
+
+    Returns ``("", "")`` when *text* contains no ``Traceback (most recent
+    call last):`` header.  When a traceback exists, returns:
+
+    - ``exc_class``: the exception class name from the final
+      ``ExceptionName: msg`` line.
+    - ``last_src_nucleus_frame``: the deepest ``src/nucleus/`` frame,
+      formatted as ``"src/nucleus/<sub>/<file>.py:<line> in <func>()"``
+      (forward slashes regardless of input platform).
+
+    Used by chaos scenarios to detect raw-Python-traceback leaks past the
+    Error Translation Layer (v4.1 §6.4 / AGENTS.md §11.7).  A non-empty
+    return value indicates the leak must be fixed before the scenario can
+    claim PASS.
+    """
+    if "Traceback (most recent call last):" not in text:
+        return ("", "")
+    nucleus_frames: list[str] = []
+    for frame in _TRACEBACK_FRAME_RE.finditer(text):
+        path = frame.group("path").replace("\\", "/")
+        marker = "src/nucleus/"
+        idx = path.find(marker)
+        if idx == -1:
+            continue
+        rel_path = path[idx:]
+        line_no = frame.group("line")
+        func = frame.group("func")
+        nucleus_frames.append(f"{rel_path}:{line_no} in {func}()")
+    last_frame = nucleus_frames[-1] if nucleus_frames else ""
+    # Final exception class line — last identifier-shaped match wins so
+    # chained tracebacks (``During handling of the above ...``) resolve to
+    # the outermost exception that actually reached the user.
+    exc_matches = _EXC_CLASS_RE.findall(text)
+    exc_class = exc_matches[-1] if exc_matches else ""
+    return (exc_class, last_frame)
 
 
 # ---------------------------------------------------------------------------
