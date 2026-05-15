@@ -265,7 +265,7 @@ dev = [
   "hypothesis==6.123.7",            # Property-based testing for type mappings
 
   # Local infrastructure for tests
-  "testcontainers==4.9.0",          # Postgres/MinIO containers for integration tests
+  "testcontainers==4.14.2",          # Postgres/MinIO containers for integration tests
 
   # Optional runtime packages mirrored for the dev test matrix.
   # Post-ADR-039 the install-size split moves these out of the default end-user
