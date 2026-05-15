@@ -30,7 +30,32 @@ the full deprecation cycle that core data APIs receive.
 
 ## [0.2.0] — 2026-05-15
 
-> Wave 1 (11 autonomous builders, 2026-05-14 → 2026-05-15) + Wave 2 P0-1/P0-2/P0-3 reliability hardening + Workbench v0.3 interactive polish + uv/ruff toolchain + `nucleus.db` BI handshake + Iceberg branch/tag CLI + **v0.2 close-out batch** (chaos translate-leak fixes, UX polish, ADR-039, governance bumps). Beachhead validated (8/8 WSL E2E gates); PoC #5 external-tester kit ready.
+> Wave 1 (11 autonomous builders, 2026-05-14 → 2026-05-15) + Wave 2 P0-1/P0-2/P0-3 reliability hardening + Workbench v0.3 interactive polish + uv/ruff toolchain + `nucleus.db` BI handshake + Iceberg branch/tag CLI + **v0.2 close-out batch** (chaos translate-leak fixes, UX polish, ADR-039, governance bumps) + **ultimate-sprint close-out** (cross-test flake fix, layering ADR-040, `nucleus list` subapp registration, README hero polish, vocab + ADR-012 gcsfs governance bake-in). Beachhead validated (8/8 WSL E2E gates); PoC #5 external-tester kit ready.
+
+### Ultimate-sprint close-out (2026-05-16, post-Wave-2 + post-close-out-batch)
+
+#### Fixed
+- **Cross-directory test_expire_wraps_pyiceberg_exception flake resolved** — M5 mock snapshots now use a 0.1-day timestamp spread (matching M4) so multiple `_make_snapshot` calls on fast hardware never land in the same millisecond. The strict `s.timestamp_ms < expire_before_ms` candidate filter in `coordination/snapshot_maintenance.expire_old_snapshots` now always finds candidates → `commit()` always runs → `DID NOT RAISE NucleusMaintenanceError` stops firing in the full pytest sweep. Verified PASS on Windows 2026-05-16 across the 891-test full sweep.
+- **CLI ↔ Workbench peer-import layering FAIL cleared** — `scripts/check_layering.py` refactored from `LAYERS.index(...)` order comparison to a `LAYER_DEPTH: dict[str, int]` keyed by architectural depth. `ctx`, `cli`, and `workbench` all share depth `4` as Layer 4 (Experience) surfaces per `nucleus_architecture_v4.1.md` §8.1; peer-imports between same-depth surfaces are explicitly allowed. Downward enforcement and cross-engine rule unchanged. ADR-040 (ACCEPTED 2026-05-15) documents the decision; verification §re-verified 2026-05-16. `cli/main.py:1334` (`from nucleus.workbench.cli import app`) now PASSes governance.
+- **`nucleus list` registered as Typer subapp** — main.py's inline `@app.command(name="list") def list_assets` scaffold (text/json only) replaced by `app.add_typer(_list_app, name="list", help="...")` mounting the richer `cli/commands/list.py` subapp. `nucleus list` now surfaces `--namespace` filter, `--format jsonl` alias, and Iceberg-catalog-backed materialization status (PoC #5 Checkpoint 7 closer). `tests/cli/commands/test_list.py` 12/12 PASS through both the standalone subapp and the main-app integration.
+- **Vocabulary banned-term hits cleared** — Two intentional negations of "AI-first" (the `AGENTS.md` §8 forbidden framing being explicitly rejected) in `docs/HANDOVER.md` line 14 and `docs/release/launch_kit/WOW_MOMENTS.md` line 120 now carry inline `<!-- banned-term: AI-first -->` self-suppressions, matching the existing pattern at WOW_MOMENTS.md line 148 and HANDOVER.md lines 16/466/616. `scripts/check_vocabulary.py` SKIP_PATTERNS gains `.scratch/` so transient agent-worker commit-message drafts (already git-ignored) no longer pollute the gate.
+- **Stale orphaned site docs deleted** — `docs/site/cli-reference/list.md` (107 lines, never wired into `mkdocs.yml`) removed. The live, more detailed reference lives at `docs/cli/list.md` (141 lines).
+
+#### Added
+- **README.md hero rewrite** — Lines 10-80 replaced with the launch-day hero per `docs/release/launch_kit/README_HERO_PATCH.md` (synthesised with `WOW_MOMENTS.md` §"Five proposed README improvements"). Front-loads the 60-second demo, surfaces a 3-command quickstart, replaces the 5-row vendor matrix with a 1-row persona matrix, adds the PyPI version + Docs badges, demotes the "v0.1 beta" badge to "v0.2 beta", deletes the `git clone ... pip install -e .[dev]` developer-only install path (now in CONTRIBUTING.md), keeps Five Pillars / Architecture / ctx SDK / CLI / Yield-to-giants / Repository / Acknowledgments blocks unchanged.
+- **`docs/decisions/ADR-040-cli-workbench-peer-import.md`** — ACCEPTED 2026-05-15. Documents the cli ↔ workbench peer-import allowance with rationale (Path B — peer-import allow), forces analysed (strict directional rule vs architecture intent vs anti-over-engineering vs dbt/Cursor/Vercel UX), and alternatives rejected (workbench-side register hook; setuptools entry-points). Verification re-confirmed 2026-05-16.
+- **`docs/release/v0.2.0_FINAL_STATE.md`** — Pre-launch summary the founder reads before working `FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`. Lists the close-out commits, governance scores, pytest status, LOC budget, pre-existing failures still red (with rationale), founder-gated remaining items, and a one-line confidence verdict.
+
+#### Changed
+- **ADR-012 Runtime pin matrix** — `gcsfs==2026.5.0` promoted from amendment-paragraph fallback (where `scripts/upgrade_smoke.py adr_012_cross_check` was already picking it up) into a canonical matrix row. BSD-3-Clause · GREEN · pairs with `s3fs==2026.4.0` cadence (both fsspec-family). Origin: ADR-020 (object-storage connectors via DuckDB httpfs). The 2026-05-15 amendment paragraph is retained as audit trail per the ADR-012 §Trigger rule ("amendments are additive only").
+- **`.github/workflows/release.yml`** — Adds `python scripts/check_install_size.py` to the governance gate step, restoring parity with `docs/release/PACKAGING_COMPLETENESS_AUDIT.md` §8 (11/11 governance scripts in CI).
+
+#### Verification
+- 11/11 governance scripts EXIT 0 locally (vocabulary / pinning / loc_budget / dagster_leak / error_codes / api_stability / layering / licenses / install_size / lazy_imports / changelog).
+- `python scripts/upgrade_smoke.py`: all gates PASS except the pytest --cov-fail-under=70 + 4 pre-existing test failures documented in `docs/release/v0.2.0_FINAL_STATE.md` §"Pre-existing failures still red".
+- LOC budget: `src/nucleus/=8506 LOC / 18000 ceiling (GREEN)` — 47.3 % of v0.2 phase ceiling.
+- `tests/cli/commands/test_list.py`: 12/12 PASS.
+- `tests/coordination/test_snapshot_maintenance.py`: 9/9 PASS (in isolation, per-directory, and full sweep).
 
 ### v0.2 close-out batch (2026-05-15, post-Wave-2)
 

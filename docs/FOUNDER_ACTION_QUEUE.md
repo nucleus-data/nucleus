@@ -9,6 +9,8 @@
 
 **Master runbook**: See **`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`** — the sole artifact the founder reads on launch day. 7 phases, time-sequenced, every step has a copy-pasteable verification command.
 
+**2026-05-15/16 Ultimate sprint close-out — all 8 subagents returned (1 errored, 1 refire); the foreground close-out builder (subagent I) bundled the remaining work into `main` across 5 commits (Phase 1+2 combined → Phase 7); final state ready for founder runbook execution.** See `docs/release/v0.2.0_FINAL_STATE.md` for the per-commit summary, governance scores, pytest status, and confidence verdict. No new founder-gated items beyond what's already in `FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md` (PyPI OIDC registration, tag push, branch protection apply, 60-sec demo recording, Show HN / Twitter / Reddit / LinkedIn announcements, PoC #5 recruitment outreach).
+
 **Time budget**:
 - Pre-launch (Phases 0–4): **~2 h** founder hands-on time.
 - Launch day (Phases 5–6): **4–8 h** ongoing monitoring (windowed attention; can multitask).
