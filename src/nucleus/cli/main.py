@@ -1207,53 +1207,6 @@ def query(
         _exit_nucleus_error(err)
 
 
-@app.command(name="list")
-def list_assets(
-    format_: Annotated[
-        str,
-        typer.Option(
-            "--format",
-            "-f",
-            envvar="NUCLEUS_FORMAT",
-            help="Output format: [bold]text[/bold] | json.",
-        ),
-    ] = "text",
-) -> None:
-    """List all registered assets in the current project.
-
-    Imports the project's ``assets/`` package so all
-    ``@nucleus.asset``-decorated functions register, then prints the
-    registry as a table.
-
-    Per [bold]nucleus_cli_spec.md §3[/bold] list section +
-    poc5-blocker-list-discoverability.
-
-    [bold]Examples[/bold]
-
-        nucleus list
-        nucleus list --format json
-    """
-    try:
-        # UX audit Rec #8: ``jsonl`` accepted as alias for ``json``.
-        if format_ not in {"text", "json", "jsonl"}:
-            raise NucleusInvalidAssetDefinition(
-                user_message=f"--format {format_!r} is not supported for `nucleus list`.",
-                fix_hint="Pass --format text (default), --format json, or --format jsonl (alias).",
-            )
-        if format_ == "jsonl":
-            format_ = "json"
-        config_path = _locate_project_config()
-        _import_assets_package(config_path.parent)
-        from nucleus.sdk.decorators import _registered_keys
-
-        keys = _registered_keys()
-        from nucleus.cli.rendering import render_asset_list
-
-        render_asset_list(keys, format_=format_)  # type: ignore[arg-type]
-    except NucleusError as err:
-        _exit_nucleus_error(err)
-
-
 @app.command()
 def version(
     check_updates: Annotated[
@@ -1328,6 +1281,7 @@ def version(
 
 from nucleus.cli.commands.chat import chat as _chat_cmd
 from nucleus.cli.commands.dagit import dagit as _dagit_cmd
+from nucleus.cli.commands.list import app as _list_app
 from nucleus.cli.commands.runs import runs_app as _runs_app
 from nucleus.cli.commands.schedule import schedule_app as _schedule_app
 from nucleus.cli.commands.snapshot import snapshot_app as _snapshot_app
@@ -1380,6 +1334,19 @@ app.add_typer(
         "Manage Iceberg snapshot references (branches + tags) on assets (Beta, ADR-028). "
         "Write-audit-publish branch writes require Lakekeeper — deferred to v0.3."
     ),
+)
+
+# `nucleus list` — registered-asset discoverability (PoC #5 Checkpoint 7).
+# Mounted as a Typer sub-app so the richer surface in
+# ``cli/commands/list.py`` (``--namespace``, ``--format jsonl`` alias,
+# materialization status from the Iceberg catalog) replaces the earlier
+# inline scaffold. The sub-app uses ``invoke_without_command=True`` so
+# ``nucleus list`` runs the listing directly with no sub-command required.
+# Docs: https://typer.tiangolo.com/tutorial/subcommands/add-typer/
+app.add_typer(
+    _list_app,
+    name="list",
+    help="List registered assets with materialization status (Beta).",
 )
 
 
