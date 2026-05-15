@@ -1,0 +1,42 @@
+# syntax=docker/dockerfile:1
+# Production-oriented CLI + Workbench image — same wheel build as Dockerfile.nucleus.
+# Docs: https://docs.docker.com/reference/dockerfile/
+# Build: docker compose -f docker-compose.production.yaml build nucleus
+
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
+COPY pyproject.toml README.md LICENSE CHANGELOG.md ./
+COPY src ./src
+
+RUN python -m pip install --upgrade pip wheel \
+    && pip wheel . -w /wheels
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+LABEL org.opencontainers.image.title="Nucleus (production reference)" \
+      org.opencontainers.image.description="CLI + Workbench for single-node self-hosted deployments" \
+      org.opencontainers.image.licenses="Apache-2.0"
+
+COPY --from=builder /wheels /wheels
+
+RUN pip install --no-cache-dir /wheels/*.whl \
+    && rm -rf /wheels \
+    && adduser --system --disabled-password --home /home/nucleus nucleus \
+    && mkdir -p /workspace \
+    && chown -R nucleus:nucleus /app /workspace
+
+USER nucleus
+
+WORKDIR /workspace
+
+ENTRYPOINT ["nucleus"]
+
+# Override in Compose (Workbench binds 0.0.0.0:8765).
+CMD ["version"]

@@ -1,0 +1,156 @@
+# Reference single-node stack: SeaweedFS (S3 API) + Nucleus Workbench + Caddy (TLS).
+# Storage default per ADR-008 — docs/decisions/ADR-008-storage-substrate-v01.md
+# Validate: docker compose -f docker-compose.production.yaml config
+#
+# Prerequisites on Linux VM:
+#   mkdir -p var/lib/seaweedfs var/lib/caddy/data var/lib/caddy/config
+#   export NUCLEUS_PROJECT_HOST_PATH=/srv/nucleus/myproject   # path to nucleus_project.yaml root
+#   export CADDY_SITE_ADDRESS=nucleus.example.com             # hostname for ACME / TLS
+#
+# Optional auth for Workbench: put secrets in .env.production (never commit).
+
+name: nucleus-production
+
+services:
+  storage:
+    image: chrislusf/seaweedfs:4.23
+    # Docs: https://github.com/seaweedfs/seaweedfs/wiki — minimal S3 gateway layout mirrors docker-compose.yml
+    command: server -s3 -dir=/data -s3.port=9000
+    volumes:
+      - seaweedfs_data:/data
+    networks:
+      - nucleus_backend
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    healthcheck:
+      # Official wiki HTTP-API pages vary by topology; this compose uses `weed server -s3` only (no separate master :9333).
+      # Verified approach: process liveness — avoids coupling to undocumented /healthz paths on the S3 listener.
+      test: ["CMD-SHELL", "pgrep -x weed >/dev/null 2>&1 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+
+  nucleus:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.production
+    image: nucleus:production-local
+    depends_on:
+      storage:
+        condition: service_healthy
+    working_dir: /workspace
+    command:
+      - workbench
+      - up
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8765"
+      - --no-browser
+    env_file:
+      - path: .env.production
+        required: false
+    environment:
+      S3_ENDPOINT_URL: http://storage:9000
+      AWS_EC2_METADATA_DISABLED: "true"
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-nucleus-dev-access-key}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-nucleus-dev-secret-key}
+    volumes:
+      - type: bind
+        source: ${NUCLEUS_PROJECT_HOST_PATH:-.}
+        target: /workspace
+    networks:
+      nucleus_backend: {}
+      nucleus_edge: {}
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "8.0"
+          memory: 12G
+        reservations:
+          cpus: "1.0"
+          memory: 1G
+    healthcheck:
+      # FastAPI route — src/nucleus/workbench/app.py ``GET /api/health``
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8765/api/health\", timeout=5)"',
+        ]
+      interval: 20s
+      timeout: 8s
+      retries: 5
+      start_period: 45s
+
+  caddy:
+    image: caddy:2.8.4-alpine
+    # Docs: https://caddyserver.com/docs/command-line#caddy-reverse-proxy — HTTPS inferred when ``--from`` uses a hostname.
+    depends_on:
+      nucleus:
+        condition: service_healthy
+    command:
+      - caddy
+      - reverse-proxy
+      - --from
+      - "${CADDY_SITE_ADDRESS:-localhost}"
+      - --to
+      - http://nucleus:8765
+      - --change-host-header
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - nucleus_edge
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 64M
+    healthcheck:
+      # ``caddy reverse-proxy`` disables the admin API (:2019). Process liveness is enough for this reference stack.
+      test: ["CMD-SHELL", "pgrep -x caddy >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+networks:
+  nucleus_backend:
+    internal: true
+  nucleus_edge: {}
+
+volumes:
+  seaweedfs_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${SEAWEEDFS_DATA_ROOT:-./var/lib/seaweedfs}
+  caddy_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${CADDY_DATA_ROOT:-./var/lib/caddy/data}
+  caddy_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${CADDY_CONFIG_ROOT:-./var/lib/caddy/config}
