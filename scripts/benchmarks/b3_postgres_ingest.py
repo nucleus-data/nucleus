@@ -128,12 +128,20 @@ def _start_pg_container(image: str, port: int) -> tuple[str, str]:
     """
     name = CONTAINER_NAME_PREFIX + uuid.uuid4().hex[:8]
     cmd = [
-        "docker", "run", "-d", "--rm",
-        "--name", name,
-        "-p", f"{port}:5432",
-        "-e", f"POSTGRES_USER={PG_USER}",
-        "-e", f"POSTGRES_PASSWORD={PG_PASSWORD}",
-        "-e", f"POSTGRES_DB={PG_DB}",
+        "docker",
+        "run",
+        "-d",
+        "--rm",
+        "--name",
+        name,
+        "-p",
+        f"{port}:5432",
+        "-e",
+        f"POSTGRES_USER={PG_USER}",
+        "-e",
+        f"POSTGRES_PASSWORD={PG_PASSWORD}",
+        "-e",
+        f"POSTGRES_DB={PG_DB}",
         image,
     ]
     proc = subprocess.run(cmd, capture_output=True, text=True, check=False, timeout=60)
@@ -174,8 +182,10 @@ def _wait_for_pg_ready(port: int, timeout_s: float) -> bool:
         except Exception as exc:  # noqa: BLE001 — keep polling until deadline
             last_exc = exc
             time.sleep(0.3)
-    print(f"[B3] pg never ready: {type(last_exc).__name__ if last_exc else 'unknown'}: "
-          f"{str(last_exc)[:120] if last_exc else ''}")
+    print(
+        f"[B3] pg never ready: {type(last_exc).__name__ if last_exc else 'unknown'}: "
+        f"{str(last_exc)[:120] if last_exc else ''}"
+    )
     return False
 
 
@@ -209,9 +219,7 @@ def _seed_postgres(conn_str: str, rows: int) -> tuple[float, str]:
         """)
 
         with conn.cursor() as cur:
-            with cur.copy(
-                f"COPY {table_name} FROM STDIN WITH (FORMAT TEXT)"
-            ) as copy:
+            with cur.copy(f"COPY {table_name} FROM STDIN WITH (FORMAT TEXT)") as copy:
                 # 10k rows per CSV chunk to limit Python overhead.
                 names = [f"name_{i % 1000}" for i in range(min(rows, 10_000))]
                 groups = [f"group_{i % 50}" for i in range(min(rows, 10_000))]
@@ -250,28 +258,32 @@ def _do_ingest_one(
     container, err = _start_pg_container(image, port)
     if err:
         notes.append(err)
-        rows_out.append(BenchRow(
-            metric=label,
-            claim_ref="perf doc §2.4",
-            claim=f"<{fmt_seconds(float(scale['claim_wall_s']))}",  # type: ignore[arg-type]
-            measured="(skipped)",
-            verdict=SKIP_DEPS,
-            severity=MEDIUM,
-            note=err,
-        ))
+        rows_out.append(
+            BenchRow(
+                metric=label,
+                claim_ref="perf doc §2.4",
+                claim=f"<{fmt_seconds(float(scale['claim_wall_s']))}",  # type: ignore[arg-type]
+                measured="(skipped)",
+                verdict=SKIP_DEPS,
+                severity=MEDIUM,
+                note=err,
+            )
+        )
         return rows_out, {}, notes
 
     if not _wait_for_pg_ready(port, PG_READY_TIMEOUT_S):
         notes.append(f"Postgres ({image}) never became ready within {PG_READY_TIMEOUT_S}s.")
-        rows_out.append(BenchRow(
-            metric=label,
-            claim_ref="perf doc §2.4",
-            claim=f"<{fmt_seconds(float(scale['claim_wall_s']))}",  # type: ignore[arg-type]
-            measured="(skipped)",
-            verdict=SKIP_DEPS,
-            severity=MEDIUM,
-            note="pg never ready",
-        ))
+        rows_out.append(
+            BenchRow(
+                metric=label,
+                claim_ref="perf doc §2.4",
+                claim=f"<{fmt_seconds(float(scale['claim_wall_s']))}",  # type: ignore[arg-type]
+                measured="(skipped)",
+                verdict=SKIP_DEPS,
+                severity=MEDIUM,
+                note="pg never ready",
+            )
+        )
         _kill_container(container)
         return rows_out, {}, notes
 
@@ -311,15 +323,17 @@ def _do_ingest_one(
     _kill_container(container)
 
     if err_str is not None:
-        rows_out.append(BenchRow(
-            metric=f"{label} — wall-clock",
-            claim_ref="perf doc §2.4",
-            claim=f"<{fmt_seconds(float(scale['claim_wall_s']))}",  # type: ignore[arg-type]
-            measured="(error)",
-            verdict=FAIL,
-            severity=BLOCKER,
-            note=err_str[:200],
-        ))
+        rows_out.append(
+            BenchRow(
+                metric=f"{label} — wall-clock",
+                claim_ref="perf doc §2.4",
+                claim=f"<{fmt_seconds(float(scale['claim_wall_s']))}",  # type: ignore[arg-type]
+                measured="(error)",
+                verdict=FAIL,
+                severity=BLOCKER,
+                note=err_str[:200],
+            )
+        )
         return rows_out, {"error": err_str, "wall_s": wall_s}, notes
 
     claim_wall = float(scale["claim_wall_s"])  # type: ignore[arg-type]
@@ -327,36 +341,40 @@ def _do_ingest_one(
     wall_verdict = classify(wall_s, claim_wall)
     rss_verdict = classify(float(peak_bytes), claim_rss)
 
-    rows_out.append(BenchRow(
-        metric=f"{label} — wall-clock",
-        claim_ref="perf doc §2.4",
-        claim=f"<{fmt_seconds(claim_wall)}",
-        measured=fmt_seconds(wall_s),
-        verdict=wall_verdict,
-        delta=fmt_delta(wall_s, claim_wall),
-        severity="" if wall_verdict == PASS else severity_for(wall_s, claim_wall),
-    ))
-    rows_out.append(BenchRow(
-        metric=f"{label} — peak RSS",
-        claim_ref="perf doc §3 (informational)",
-        claim=f"<{fmt_bytes(claim_rss)}",
-        measured=fmt_bytes(float(peak_bytes)),
-        verdict=rss_verdict,
-        delta=fmt_delta(float(peak_bytes), claim_rss),
-        severity="" if rss_verdict == PASS else severity_for(float(peak_bytes), claim_rss),
-    ))
-    rows_out.append(BenchRow(
-        metric=f"{label} — row count",
-        claim_ref="seed contract",
-        claim=f"{n_rows:,}",
-        measured=f"{row_count:,}" if row_count is not None else "(none)",
-        verdict=PASS if row_count == n_rows else FAIL,
-        delta="0" if row_count == n_rows else (
-            f"+{(row_count or 0) - n_rows}"
-        ),
-        severity="" if row_count == n_rows else BLOCKER,
-        note="row-count mismatch is correctness, not perf",
-    ))
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — wall-clock",
+            claim_ref="perf doc §2.4",
+            claim=f"<{fmt_seconds(claim_wall)}",
+            measured=fmt_seconds(wall_s),
+            verdict=wall_verdict,
+            delta=fmt_delta(wall_s, claim_wall),
+            severity="" if wall_verdict == PASS else severity_for(wall_s, claim_wall),
+        )
+    )
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — peak RSS",
+            claim_ref="perf doc §3 (informational)",
+            claim=f"<{fmt_bytes(claim_rss)}",
+            measured=fmt_bytes(float(peak_bytes)),
+            verdict=rss_verdict,
+            delta=fmt_delta(float(peak_bytes), claim_rss),
+            severity="" if rss_verdict == PASS else severity_for(float(peak_bytes), claim_rss),
+        )
+    )
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — row count",
+            claim_ref="seed contract",
+            claim=f"{n_rows:,}",
+            measured=f"{row_count:,}" if row_count is not None else "(none)",
+            verdict=PASS if row_count == n_rows else FAIL,
+            delta="0" if row_count == n_rows else (f"+{(row_count or 0) - n_rows}"),
+            severity="" if row_count == n_rows else BLOCKER,
+            note="row-count mismatch is correctness, not perf",
+        )
+    )
 
     raw = {
         "scale_key": scale_key,
@@ -379,7 +397,7 @@ def main(argv: list[str] | None = None) -> int:
         choices=["1m", "10m", "all"],
         default="1m",
         help="Which scale(s) to run. 1m = 1,000,000 rows; 10m = 10,000,000 rows; "
-             "all = both. Default: 1m.",
+        "all = both. Default: 1m.",
     )
     parser.add_argument(
         "--image",
@@ -398,29 +416,33 @@ def main(argv: list[str] | None = None) -> int:
 
     if not docker_available():
         notes.append("docker CLI not found or not responsive — B3 cannot run.")
-        rows.append(BenchRow(
-            metric="Postgres ingest (1m + 10m)",
-            claim_ref="perf doc §2.4",
-            claim="docker required",
-            measured="(skipped)",
-            verdict=SKIP_DEPS,
-            severity=LOW,
-            note="docker --version returned non-zero; install Docker Desktop or skip B3.",
-        ))
+        rows.append(
+            BenchRow(
+                metric="Postgres ingest (1m + 10m)",
+                claim_ref="perf doc §2.4",
+                claim="docker required",
+                measured="(skipped)",
+                verdict=SKIP_DEPS,
+                severity=LOW,
+                note="docker --version returned non-zero; install Docker Desktop or skip B3.",
+            )
+        )
         overall = SKIP_DEPS
     else:
         ok_pull, msg = _docker_pull(args.image)
         notes.append(f"docker pull: {msg}")
         if not ok_pull:
-            rows.append(BenchRow(
-                metric="docker pull postgres",
-                claim_ref="prerequisite",
-                claim="image cached",
-                measured="failed",
-                verdict=SKIP_DEPS,
-                severity=MEDIUM,
-                note=msg,
-            ))
+            rows.append(
+                BenchRow(
+                    metric="docker pull postgres",
+                    claim_ref="prerequisite",
+                    claim="image cached",
+                    measured="failed",
+                    verdict=SKIP_DEPS,
+                    severity=MEDIUM,
+                    note=msg,
+                )
+            )
             overall = SKIP_DEPS
         else:
             base_dir = Path(tempfile.mkdtemp(prefix="nucleus_bench_b3_"))

@@ -130,7 +130,12 @@ def _is_path_like_receiver(node: ast.expr) -> bool:
     if isinstance(node, ast.Call):
         # Path("..."), pathlib.Path("..."), PurePath("..."), etc.
         func = node.func
-        if isinstance(func, ast.Name) and func.id in {"Path", "PurePath", "WindowsPath", "PosixPath"}:
+        if isinstance(func, ast.Name) and func.id in {
+            "Path",
+            "PurePath",
+            "WindowsPath",
+            "PosixPath",
+        }:
             return True
         if isinstance(func, ast.Attribute) and func.attr in {
             "Path",
@@ -241,14 +246,14 @@ def _render(report: RenameReport, target: Path) -> str:
             "(rename(2)) and near-atomic on NTFS (MoveFileEx with "
             "MOVEFILE_REPLACE_EXISTING)."
         )
-        lines.append(
-            "Docs: https://docs.python.org/3.11/library/os.html#os.replace"
-        )
+        lines.append("Docs: https://docs.python.org/3.11/library/os.html#os.replace")
         return "\n".join(lines)
 
     lines.append(f"FAIL: found {len(report.violations)} forbidden call(s).")
     lines.append("")
-    lines.append("Migrate each call to os.replace() / Path.replace() (Python 3.3+, cross-platform atomic):")
+    lines.append(
+        "Migrate each call to os.replace() / Path.replace() (Python 3.3+, cross-platform atomic):"
+    )
     lines.append("")
     for path, lineno, kind, content in report.violations:
         rel = path.relative_to(REPO_ROOT) if path.is_relative_to(REPO_ROOT) else path
@@ -310,9 +315,7 @@ def main(argv: list[str] | None = None) -> int:
                     "violations": [
                         {
                             "file": str(
-                                p.relative_to(REPO_ROOT)
-                                if p.is_relative_to(REPO_ROOT)
-                                else p
+                                p.relative_to(REPO_ROOT) if p.is_relative_to(REPO_ROOT) else p
                             ),
                             "line": ln,
                             "kind": kind,

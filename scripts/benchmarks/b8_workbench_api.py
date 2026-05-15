@@ -108,11 +108,13 @@ def _seed_warehouse(warehouse: Path, rows: int = 10_000) -> str:
     import nucleus
 
     asset_key = "bench.api_demo"
-    df = pl.DataFrame({
-        "id": list(range(rows)),
-        "amount": [(i * 1.5) % 1000.0 for i in range(rows)],
-        "name": [f"name_{i % 100}" for i in range(rows)],
-    })
+    df = pl.DataFrame(
+        {
+            "id": list(range(rows)),
+            "amount": [(i * 1.5) % 1000.0 for i in range(rows)],
+            "name": [f"name_{i % 100}" for i in range(rows)],
+        }
+    )
 
     @nucleus.asset(asset_key)
     def _body() -> pl.DataFrame:
@@ -186,8 +188,9 @@ def _spawn_uvicorn(host: str, port: int, log_path: Path) -> subprocess.Popen[byt
     )
 
 
-def _post_query(host: str, port: int, sql: str, warehouse: Path, *,
-                limit: int = 200) -> tuple[float, int, dict | str]:
+def _post_query(
+    host: str, port: int, sql: str, warehouse: Path, *, limit: int = 200
+) -> tuple[float, int, dict | str]:
     """POST one query; return ``(elapsed_s, status_code, body)``."""
     import httpx
 
@@ -284,18 +287,20 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
 
     installed, missing = _check_workbench_extras_installed()
     if not installed:
-        rows.append(BenchRow(
-            metric="Workbench extras installed",
-            claim_ref="prerequisite",
-            claim="fastapi + uvicorn importable",
-            measured=f"missing: {missing}",
-            verdict=SKIP_DEPS,
-            severity=LOW,
-            note=(
-                "Workbench is an optional extra per ADR-039 install-size split. "
-                "Run `pip install -e .[workbench]` to enable."
-            ),
-        ))
+        rows.append(
+            BenchRow(
+                metric="Workbench extras installed",
+                claim_ref="prerequisite",
+                claim="fastapi + uvicorn importable",
+                measured=f"missing: {missing}",
+                verdict=SKIP_DEPS,
+                severity=LOW,
+                note=(
+                    "Workbench is an optional extra per ADR-039 install-size split. "
+                    "Run `pip install -e .[workbench]` to enable."
+                ),
+            )
+        )
         completed_at = now_iso()
         elapsed_total = benchmark_clock() - started
         result = BenchResult(
@@ -330,14 +335,16 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
     try:
         asset_key = _seed_warehouse(warehouse, rows=args.rows)
     except Exception as exc:
-        rows.append(BenchRow(
-            metric="warehouse seed",
-            claim_ref="prerequisite",
-            claim="materialize bench.api_demo",
-            measured=f"{type(exc).__name__}: {exc!s}"[:200],
-            verdict=FAIL,
-            severity=BLOCKER,
-        ))
+        rows.append(
+            BenchRow(
+                metric="warehouse seed",
+                claim_ref="prerequisite",
+                claim="materialize bench.api_demo",
+                measured=f"{type(exc).__name__}: {exc!s}"[:200],
+                verdict=FAIL,
+                severity=BLOCKER,
+            )
+        )
         shutil.rmtree(base_dir, ignore_errors=True)
         completed_at = now_iso()
         elapsed_total = benchmark_clock() - started
@@ -378,15 +385,17 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
             log_tail = log_path.read_text(encoding="utf-8", errors="replace")[-1000:]
         except OSError:
             pass
-        rows.append(BenchRow(
-            metric="uvicorn ready",
-            claim_ref="prerequisite",
-            claim=f"server reachable within {SERVER_READY_TIMEOUT_S:.0f}s",
-            measured="never ready",
-            verdict=SKIP_DEPS,
-            severity=MEDIUM,
-            note=f"log tail: {log_tail[-300:].strip()}",
-        ))
+        rows.append(
+            BenchRow(
+                metric="uvicorn ready",
+                claim_ref="prerequisite",
+                claim=f"server reachable within {SERVER_READY_TIMEOUT_S:.0f}s",
+                measured="never ready",
+                verdict=SKIP_DEPS,
+                severity=MEDIUM,
+                note=f"log tail: {log_tail[-300:].strip()}",
+            )
+        )
         shutil.rmtree(base_dir, ignore_errors=True)
         completed_at = now_iso()
         elapsed_total = benchmark_clock() - started
@@ -406,16 +415,18 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
         return 0
 
     # Server is up — record spin-up time as informational.
-    rows.append(BenchRow(
-        metric="uvicorn spin-up wall",
-        claim_ref="perf doc §2.6 (initial page load <2s)",
-        claim="<2s",
-        measured=fmt_seconds(spawn_elapsed),
-        verdict=classify(spawn_elapsed, 2.0, lower_is_better=True),
-        delta="",
-        severity="" if spawn_elapsed <= 2.0 else severity_for(spawn_elapsed, 2.0),
-        note="includes ASGI wiring + CORS middleware + static mount",
-    ))
+    rows.append(
+        BenchRow(
+            metric="uvicorn spin-up wall",
+            claim_ref="perf doc §2.6 (initial page load <2s)",
+            claim="<2s",
+            measured=fmt_seconds(spawn_elapsed),
+            verdict=classify(spawn_elapsed, 2.0, lower_is_better=True),
+            delta="",
+            severity="" if spawn_elapsed <= 2.0 else severity_for(spawn_elapsed, 2.0),
+            note="includes ASGI wiring + CORS middleware + static mount",
+        )
+    )
 
     try:
         # /api/health probe (warm). Use the proxy-bypass client so corporate
@@ -435,22 +446,24 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
         if health_samples:
             s = stats_summary(health_samples)
             verdict_h = classify(float(s["median"]), CLAIM_HEALTH_LATENCY_S)
-            rows.append(BenchRow(
-                metric="/api/health (median)",
-                claim_ref="perf doc §2.6",
-                claim=f"<{fmt_seconds(CLAIM_HEALTH_LATENCY_S)}",
-                measured=fmt_seconds(float(s["median"])),
-                verdict=verdict_h,
-                delta=(
-                    f"min={fmt_seconds(float(s['min']))} "
-                    f"P95={fmt_seconds(float(s['p95']))} "
-                    f"P99={fmt_seconds(float(s['p99']))}"
-                ),
-                severity="" if verdict_h == PASS else severity_for(
-                    float(s["median"]), CLAIM_HEALTH_LATENCY_S
-                ),
-                note=f"n={len(health_samples)}",
-            ))
+            rows.append(
+                BenchRow(
+                    metric="/api/health (median)",
+                    claim_ref="perf doc §2.6",
+                    claim=f"<{fmt_seconds(CLAIM_HEALTH_LATENCY_S)}",
+                    measured=fmt_seconds(float(s["median"])),
+                    verdict=verdict_h,
+                    delta=(
+                        f"min={fmt_seconds(float(s['min']))} "
+                        f"P95={fmt_seconds(float(s['p95']))} "
+                        f"P99={fmt_seconds(float(s['p99']))}"
+                    ),
+                    severity=""
+                    if verdict_h == PASS
+                    else severity_for(float(s["median"]), CLAIM_HEALTH_LATENCY_S),
+                    note=f"n={len(health_samples)}",
+                )
+            )
 
         # /api/query probes.
         for label, sql in _build_query_set(asset_key):
@@ -460,24 +473,24 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
                 wall, status, _body = _post_query(host, port, sql, warehouse)
                 if status != 200:
                     # Surface the failure verbatim; do NOT retry per task spec.
-                    notes.append(
-                        f"{label} run #{i + 1}: status={status} body={str(_body)[:160]}"
-                    )
+                    notes.append(f"{label} run #{i + 1}: status={status} body={str(_body)[:160]}")
                 else:
                     samples.append(wall)
             if samples:
                 rows.append(_row_for_query(label, samples))
                 raw[f"{label} samples"] = samples
             else:
-                rows.append(BenchRow(
-                    metric=f"{label} (median)",
-                    claim_ref="user expectation",
-                    claim=f"<{fmt_seconds(INFORMATIONAL_QUERY_BUDGET_S)}",
-                    measured="(no successful runs)",
-                    verdict=FAIL,
-                    severity=BLOCKER,
-                    note="all calls returned non-200; see notes",
-                ))
+                rows.append(
+                    BenchRow(
+                        metric=f"{label} (median)",
+                        claim_ref="user expectation",
+                        claim=f"<{fmt_seconds(INFORMATIONAL_QUERY_BUDGET_S)}",
+                        measured="(no successful runs)",
+                        verdict=FAIL,
+                        severity=BLOCKER,
+                        note="all calls returned non-200; see notes",
+                    )
+                )
     finally:
         proc.terminate()
         try:

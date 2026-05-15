@@ -1,4 +1,3 @@
-
 # the pattern in tests/coordination/test_asset_materialization.py).
 """Tests for :mod:`nucleus.coordination.lineage` (the OL emitter).
 

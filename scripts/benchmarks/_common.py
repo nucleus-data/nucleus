@@ -184,8 +184,13 @@ def percentile(values: list[float], pct: float) -> float:
 def stats_summary(values: list[float]) -> dict[str, float]:
     """Return ``min/median/p95/p99/max`` for a list of float samples."""
     if not values:
-        return {"min": float("nan"), "median": float("nan"), "p95": float("nan"),
-                "p99": float("nan"), "max": float("nan")}
+        return {
+            "min": float("nan"),
+            "median": float("nan"),
+            "p95": float("nan"),
+            "p99": float("nan"),
+            "max": float("nan"),
+        }
     return {
         "min": float(min(values)),
         "median": float(statistics.median(values)),

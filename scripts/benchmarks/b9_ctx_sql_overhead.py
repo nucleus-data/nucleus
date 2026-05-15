@@ -97,11 +97,13 @@ def _seed_warehouse(warehouse: Path, rows: int) -> tuple[str, Path]:
     import nucleus
 
     asset_key = "bench.sql_overhead"
-    df = pl.DataFrame({
-        "id": list(range(rows)),
-        "amount": [(i * 1.5) % 1000.0 for i in range(rows)],
-        "name": [f"name_{i % 100}" for i in range(rows)],
-    })
+    df = pl.DataFrame(
+        {
+            "id": list(range(rows)),
+            "amount": [(i * 1.5) % 1000.0 for i in range(rows)],
+            "name": [f"name_{i % 100}" for i in range(rows)],
+        }
+    )
 
     @nucleus.asset(asset_key)
     def _body() -> pl.DataFrame:
@@ -173,9 +175,7 @@ def _time_raw_duckdb(query_template: str, parquet: Path) -> float:
         con.close()
 
 
-def _row_for_query(
-    label: str, ctx_samples: list[float], raw_samples: list[float]
-) -> BenchRow:
+def _row_for_query(label: str, ctx_samples: list[float], raw_samples: list[float]) -> BenchRow:
     """Return one BenchRow comparing ctx.sql vs raw DuckDB medians."""
     if not ctx_samples or not raw_samples:
         return BenchRow(
@@ -250,17 +250,21 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0915 — flat orches
     print(f"[B9] seeding warehouse with {args.rows:,} rows ...")
     try:
         asset_key, parquet = _seed_warehouse(warehouse, rows=args.rows)
-        notes.append(f"seed asset={asset_key}; parquet={parquet.name} "
-                     f"({parquet.stat().st_size if parquet.exists() else 0} bytes)")
+        notes.append(
+            f"seed asset={asset_key}; parquet={parquet.name} "
+            f"({parquet.stat().st_size if parquet.exists() else 0} bytes)"
+        )
     except Exception as exc:
-        rows.append(BenchRow(
-            metric="seed warehouse",
-            claim_ref="prerequisite",
-            claim="materialize bench.sql_overhead",
-            measured=f"{type(exc).__name__}: {exc!s}"[:200],
-            verdict=FAIL,
-            severity=BLOCKER,
-        ))
+        rows.append(
+            BenchRow(
+                metric="seed warehouse",
+                claim_ref="prerequisite",
+                claim="materialize bench.sql_overhead",
+                measured=f"{type(exc).__name__}: {exc!s}"[:200],
+                verdict=FAIL,
+                severity=BLOCKER,
+            )
+        )
         overall = FAIL
         completed_at = now_iso()
         elapsed_total = benchmark_clock() - started
@@ -281,15 +285,17 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0915 — flat orches
         return 1
 
     if not parquet.exists():
-        rows.append(BenchRow(
-            metric="locate Parquet for raw-DuckDB path",
-            claim_ref="prerequisite",
-            claim="exactly 1 Parquet file under warehouse/",
-            measured="no Parquet found",
-            verdict=FAIL,
-            severity=BLOCKER,
-            note=f"warehouse={warehouse}",
-        ))
+        rows.append(
+            BenchRow(
+                metric="locate Parquet for raw-DuckDB path",
+                claim_ref="prerequisite",
+                claim="exactly 1 Parquet file under warehouse/",
+                measured="no Parquet found",
+                verdict=FAIL,
+                severity=BLOCKER,
+                note=f"warehouse={warehouse}",
+            )
+        )
         overall = FAIL
 
     queries = _build_query_pairs(asset_key)

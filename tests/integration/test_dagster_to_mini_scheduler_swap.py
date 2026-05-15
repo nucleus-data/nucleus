@@ -226,8 +226,7 @@ def test_mini_scheduler_path_has_no_dagster_classname_leak(tmp_path: Path) -> No
         )
         for chunk in rendered_fields:
             assert "dagster." not in chunk.lower(), (
-                f"Dagster identifier leaked in MaterializationResult chunk: "
-                f"{chunk!r}"
+                f"Dagster identifier leaked in MaterializationResult chunk: {chunk!r}"
             )
 
 

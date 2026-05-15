@@ -183,8 +183,9 @@ def _compute_duckdb_threads() -> int:
         if logical and logical > 0:
             return int(logical)
     except ImportError:
-        logger.debug("psutil not available; using %d-thread DuckDB default",
-                     _DUCKDB_THREADS_FALLBACK)
+        logger.debug(
+            "psutil not available; using %d-thread DuckDB default", _DUCKDB_THREADS_FALLBACK
+        )
     return _DUCKDB_THREADS_FALLBACK
 
 
@@ -606,10 +607,7 @@ def materialize_asset(
     # The default path (env var unset) is unchanged — this is a strictly
     # gated, opt-in route used by the integration test in
     # ``tests/integration/test_dagster_to_mini_scheduler_swap.py``.
-    if (
-        not _via_mini_scheduler
-        and os.environ.get("NUCLEUS_USE_MINI_SCHEDULER") == "1"
-    ):
+    if not _via_mini_scheduler and os.environ.get("NUCLEUS_USE_MINI_SCHEDULER") == "1":
         from nucleus.coordination.daemon import run_asset as _mini_run
 
         return _mini_run(

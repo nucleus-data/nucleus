@@ -189,8 +189,7 @@ def _render(report: InstallSizeReport, max_core: int) -> str:
         "Install-size check (ADR-039)",
         "=" * 60,
         (
-            f"PASS: [project.dependencies] = {report.core_count} "
-            f"entries (limit {max_core})."
+            f"PASS: [project.dependencies] = {report.core_count} entries (limit {max_core})."
             if report.ok
             else f"FAIL: budget or pinning violation."
         ),

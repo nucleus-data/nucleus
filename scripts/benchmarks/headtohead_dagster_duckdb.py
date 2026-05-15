@@ -474,7 +474,9 @@ def _row_boot(nuc_agg: dict[str, float], raw_agg: dict[str, float]) -> BenchRow:
         delta_text = "n/a"
         note = "raw median not available"
     return BenchRow(
-        metric="boot-to-first-materialisation wall-clock (median, n=" + str(int(nuc_agg.get("n", 0))) + ")",
+        metric="boot-to-first-materialisation wall-clock (median, n="
+        + str(int(nuc_agg.get("n", 0)))
+        + ")",
         claim_ref="head-to-head report",
         claim="report median + delta",
         measured=(
@@ -499,15 +501,9 @@ def _row_error(nuc_text: str, raw_text: str) -> BenchRow:
           mere presence of ``dagster.``, ``duckdb.``, or ``pyiceberg.``
           in the raw excerpt confirms the wrap differentiator.
     """
-    nuc_is_translated = bool(
-        re.search(r"\bNucleus[A-Za-z]+Error\b", nuc_text)
-    )
-    nuc_has_substrate_leak = bool(
-        re.search(r"\b(dagster|duckdb|pyiceberg)\.", nuc_text)
-    )
-    raw_has_substrate_leak = bool(
-        re.search(r"\b(dagster|duckdb|pyiceberg)\.", raw_text)
-    )
+    nuc_is_translated = bool(re.search(r"\bNucleus[A-Za-z]+Error\b", nuc_text))
+    nuc_has_substrate_leak = bool(re.search(r"\b(dagster|duckdb|pyiceberg)\.", nuc_text))
+    raw_has_substrate_leak = bool(re.search(r"\b(dagster|duckdb|pyiceberg)\.", raw_text))
     if nuc_is_translated and not nuc_has_substrate_leak:
         verdict = PASS
         if raw_has_substrate_leak:
@@ -537,9 +533,7 @@ def _row_error(nuc_text: str, raw_text: str) -> BenchRow:
             "Nucleus surfaces a NucleusXxxError with no substrate class "
             "names; raw surfaces substrate text"
         ),
-        measured=(
-            f"nucleus_excerpt={nuc_text[:140]!r} | raw_excerpt={raw_text[:140]!r}"
-        ),
+        measured=(f"nucleus_excerpt={nuc_text[:140]!r} | raw_excerpt={raw_text[:140]!r}"),
         verdict=verdict,
         severity=severity,
         note=note,
@@ -585,12 +579,12 @@ def _run_full(args: argparse.Namespace) -> tuple[BenchResult, int]:
         )
         if code != 0:
             nuc_failures += 1
-            notes.append(
-                f"nucleus run {i} exit={code} err_tail={err[-200:]!r}"
-            )
+            notes.append(f"nucleus run {i} exit={code} err_tail={err[-200:]!r}")
             continue
         nuc_samples.append(wall)
-        print(f"  nucleus run {i + 1}: {fmt_seconds(wall)} stdout_tail={out.strip().splitlines()[-1] if out.strip() else ''}")
+        print(
+            f"  nucleus run {i + 1}: {fmt_seconds(wall)} stdout_tail={out.strip().splitlines()[-1] if out.strip() else ''}"
+        )
 
     for i in range(args.runs):
         raw_src = _render(
@@ -599,14 +593,10 @@ def _run_full(args: argparse.Namespace) -> tuple[BenchResult, int]:
             rows=args.rows,
             src_path=REPO_ROOT,
         )
-        wall, code, out, err = _run_subprocess(
-            raw_src, base_dir / f"raw_scripts_{i}", "raw_run"
-        )
+        wall, code, out, err = _run_subprocess(raw_src, base_dir / f"raw_scripts_{i}", "raw_run")
         if code != 0:
             raw_failures += 1
-            notes.append(
-                f"raw run {i} exit={code} err_tail={err[-200:]!r}"
-            )
+            notes.append(f"raw run {i} exit={code} err_tail={err[-200:]!r}")
             continue
         raw_samples.append(wall)
         print(f"  raw run {i + 1}: {fmt_seconds(wall)}")
@@ -620,14 +610,16 @@ def _run_full(args: argparse.Namespace) -> tuple[BenchResult, int]:
     raw_out["failures"] = {"nucleus": nuc_failures, "raw": raw_failures}
 
     if not nuc_samples:
-        rows.append(BenchRow(
-            metric="Nucleus runs",
-            claim_ref="prerequisite",
-            claim="at least one Nucleus run completes",
-            measured="zero successful samples",
-            verdict=FAIL,
-            severity=BLOCKER,
-        ))
+        rows.append(
+            BenchRow(
+                metric="Nucleus runs",
+                claim_ref="prerequisite",
+                claim="at least one Nucleus run completes",
+                measured="zero successful samples",
+                verdict=FAIL,
+                severity=BLOCKER,
+            )
+        )
         overall = FAIL
     rows.append(_row_boot(nuc_agg, raw_agg))
 
@@ -665,8 +657,7 @@ def _run_full(args: argparse.Namespace) -> tuple[BenchResult, int]:
         name="head-to-head: Nucleus vs raw Dagster + DuckDB (3-asset DAG)",
         script="scripts/benchmarks/headtohead_dagster_duckdb.py",
         command=(
-            f"{sys.executable} -m scripts.benchmarks.headtohead_dagster_duckdb "
-            f"--runs {args.runs}"
+            f"{sys.executable} -m scripts.benchmarks.headtohead_dagster_duckdb --runs {args.runs}"
         ),
         started_at=started_at,
         completed_at=completed_at,
@@ -710,7 +701,11 @@ def _run_dry(args: argparse.Namespace) -> int:
             claim="placeholders replace cleanly",
             measured=(
                 "nucleus chars="
-                + str(len(_render(NUCLEUS_IMPL, warehouse=Path("/tmp/x"), rows=10, src_path=REPO_ROOT)))
+                + str(
+                    len(
+                        _render(NUCLEUS_IMPL, warehouse=Path("/tmp/x"), rows=10, src_path=REPO_ROOT)
+                    )
+                )
                 + " raw chars="
                 + str(len(_render(RAW_IMPL, warehouse=Path("/tmp/x"), rows=10, src_path=REPO_ROOT)))
             ),
@@ -729,9 +724,7 @@ def _run_dry(args: argparse.Namespace) -> int:
     result = BenchResult(
         name="head-to-head: Nucleus vs raw Dagster + DuckDB (DRY-RUN)",
         script="scripts/benchmarks/headtohead_dagster_duckdb.py",
-        command=(
-            f"{sys.executable} -m scripts.benchmarks.headtohead_dagster_duckdb --dry-run"
-        ),
+        command=(f"{sys.executable} -m scripts.benchmarks.headtohead_dagster_duckdb --dry-run"),
         started_at=started_at,
         completed_at=now_iso(),
         elapsed_s=elapsed_total,
@@ -748,10 +741,7 @@ def _run_dry(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Head-to-head benchmark: Nucleus vs raw Dagster + DuckDB on a "
-            "3-asset DAG."
-        )
+        description=("Head-to-head benchmark: Nucleus vs raw Dagster + DuckDB on a 3-asset DAG.")
     )
     parser.add_argument(
         "--runs",

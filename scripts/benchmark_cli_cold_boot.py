@@ -155,9 +155,7 @@ def _run_once(argv: tuple[str, ...], timeout_s: float) -> tuple[float, str | Non
     return elapsed_ms, None
 
 
-def _bench_command(
-    argv: tuple[str, ...], runs: int, timeout_s: float
-) -> CommandTiming:
+def _bench_command(argv: tuple[str, ...], runs: int, timeout_s: float) -> CommandTiming:
     """Run ``argv`` ``runs`` times and collect timings + failures."""
     timing = CommandTiming(argv=argv)
     for _ in range(runs):
@@ -172,9 +170,7 @@ def _bench_command(
 def _format_row(label: str, timing: CommandTiming) -> str:
     """Render one timing row for the human-readable report."""
     if not timing.runs_ms:
-        return (
-            f"  {label:<22}  no successful runs (failures: {len(timing.failures)})"
-        )
+        return f"  {label:<22}  no successful runs (failures: {len(timing.failures)})"
     return (
         f"  {label:<22}  "
         f"min={timing.min_ms:>7.1f}ms  "

@@ -29,7 +29,9 @@ def _make_catalog(namespaces: list[str], tables: dict[str, pa.Table]) -> MagicMo
     catalog.list_namespaces.return_value = [(ns,) for ns in namespaces]
 
     def _list_tables(ns: str) -> list[tuple[str, str]]:
-        return [(ns, name) for name in [k.split(".", 1)[1] for k in tables if k.startswith(f"{ns}.")]]
+        return [
+            (ns, name) for name in [k.split(".", 1)[1] for k in tables if k.startswith(f"{ns}.")]
+        ]
 
     catalog.list_tables.side_effect = _list_tables
 
@@ -96,7 +98,9 @@ def test_metadata_table_present(tmp_path: Path) -> None:
     db_path = generate_nucleus_db(tmp_path, catalog)
 
     with duckdb.connect(str(db_path)) as conn:
-        meta = conn.execute(f'SELECT asset_key, duckdb_table, row_count FROM "{_CATALOG_META_TABLE}"').fetchall()
+        meta = conn.execute(
+            f'SELECT asset_key, duckdb_table, row_count FROM "{_CATALOG_META_TABLE}"'
+        ).fetchall()
 
     assert len(meta) == 1
     assert meta[0][0] == "raw.users"

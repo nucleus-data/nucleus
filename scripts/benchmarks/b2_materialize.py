@@ -285,29 +285,33 @@ def _run_scale(
     rows_out.append(_claim_row_for_rss(scale, float(stats["peak_rss_bytes"])))  # type: ignore[arg-type]
 
     # Auxiliary informational rows — no PASS/FAIL claim attached.
-    rows_out.append(BenchRow(
-        metric=f"{label} — Iceberg snapshot size",
-        claim_ref="perf doc §4 (zstd 4-8x)",
-        claim="ratio reported below",
-        measured=fmt_bytes(float(stats["snapshot_bytes"])),  # type: ignore[arg-type]
-        verdict=PASS,
-        delta=(
-            f"raw Parquet={fmt_bytes(parquet_bytes)}; "
-            f"snapshot/parquet={float(stats['snapshot_bytes']) / max(parquet_bytes, 1):.2f}x"
-        ),
-    ))
-    rows_out.append(BenchRow(
-        metric=f"{label} — row count",
-        claim_ref="generator spec",
-        claim=f"{n_rows:,}",
-        measured=f"{int(stats['row_count']):,}",
-        verdict=PASS if int(stats["row_count"]) == n_rows else FAIL,
-        delta="0" if int(stats["row_count"]) == n_rows else (
-            f"+{int(stats['row_count']) - n_rows}"
-        ),
-        severity="" if int(stats["row_count"]) == n_rows else BLOCKER,
-        note="row-count mismatch indicates a write bug, not a perf issue",
-    ))
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — Iceberg snapshot size",
+            claim_ref="perf doc §4 (zstd 4-8x)",
+            claim="ratio reported below",
+            measured=fmt_bytes(float(stats["snapshot_bytes"])),  # type: ignore[arg-type]
+            verdict=PASS,
+            delta=(
+                f"raw Parquet={fmt_bytes(parquet_bytes)}; "
+                f"snapshot/parquet={float(stats['snapshot_bytes']) / max(parquet_bytes, 1):.2f}x"
+            ),
+        )
+    )
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — row count",
+            claim_ref="generator spec",
+            claim=f"{n_rows:,}",
+            measured=f"{int(stats['row_count']):,}",
+            verdict=PASS if int(stats["row_count"]) == n_rows else FAIL,
+            delta="0"
+            if int(stats["row_count"]) == n_rows
+            else (f"+{int(stats['row_count']) - n_rows}"),
+            severity="" if int(stats["row_count"]) == n_rows else BLOCKER,
+            note="row-count mismatch indicates a write bug, not a perf issue",
+        )
+    )
 
     raw = {
         "asset_key": scale["asset_key"],
@@ -346,7 +350,7 @@ def main(argv: list[str] | None = None) -> int:
         choices=["1", "10", "all"],
         default="1",
         help="Which scale(s) to run. 1 = 10M rows ~1 GB; 10 = 100M rows ~10 GB; "
-             "all = both. Default: 1.",
+        "all = both. Default: 1.",
     )
     parser.add_argument(
         "--no-streaming",
@@ -386,16 +390,18 @@ def main(argv: list[str] | None = None) -> int:
     for scale_key in scales_to_run:
         if not _check_disk_space(scale_key, base_dir, notes):
             scale = _SCALES[scale_key]
-            rows.append(BenchRow(
-                metric=f"{scale['label']} — wall-clock",
-                claim_ref="perf doc §2.2",
-                claim=f"<{fmt_seconds(float(scale['claim_wall_s']))}",  # type: ignore[arg-type]
-                measured="(skipped)",
-                verdict=SKIP_DEPS,
-                delta="insufficient free disk",
-                severity=MEDIUM,
-                note=notes[-1],
-            ))
+            rows.append(
+                BenchRow(
+                    metric=f"{scale['label']} — wall-clock",
+                    claim_ref="perf doc §2.2",
+                    claim=f"<{fmt_seconds(float(scale['claim_wall_s']))}",  # type: ignore[arg-type]
+                    measured="(skipped)",
+                    verdict=SKIP_DEPS,
+                    delta="insufficient free disk",
+                    severity=MEDIUM,
+                    note=notes[-1],
+                )
+            )
             overall_verdict = SKIP_DEPS if overall_verdict == PASS else overall_verdict
             continue
 
@@ -413,15 +419,17 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as exc:  # noqa: BLE001 — surface any failure as a benchmark FAIL row
             verdict_msg = f"{type(exc).__name__}: {exc}"
             print(f"[B2] EXCEPTION on scale={scale_key}: {verdict_msg}")
-            rows.append(BenchRow(
-                metric=f"{scale['label']} — execution",
-                claim_ref="perf doc §2.2",
-                claim="materializes without error",
-                measured=verdict_msg[:200],
-                verdict=FAIL,
-                severity=BLOCKER,
-                note="see stderr for full traceback",
-            ))
+            rows.append(
+                BenchRow(
+                    metric=f"{scale['label']} — execution",
+                    claim_ref="perf doc §2.2",
+                    claim="materializes without error",
+                    measured=verdict_msg[:200],
+                    verdict=FAIL,
+                    severity=BLOCKER,
+                    note="see stderr for full traceback",
+                )
+            )
             overall_verdict = FAIL
 
     # Aggregate verdict — any FAIL wins, otherwise SKIP-DEPS, otherwise PASS.

@@ -94,7 +94,11 @@ def _open_ice_table(asset_key: str, project_root: Path | None = None) -> tuple[P
     from nucleus.coordination.error_translation import translate
 
     if project_root is None:
-        from nucleus.cli.main import _locate_project_config, _load_project_config, _resolve_warehouse_dir
+        from nucleus.cli.main import (
+            _locate_project_config,
+            _load_project_config,
+            _resolve_warehouse_dir,
+        )
 
         config_path = _locate_project_config()
         config = _load_project_config(config_path)
@@ -153,15 +157,21 @@ def branch_create(
     branch_name: Annotated[str, typer.Argument(help="Name for the new branch.")],
     snapshot_id: Annotated[
         int | None,
-        typer.Option("--snapshot-id", help="Snapshot ID to anchor the branch. Defaults to current snapshot."),
+        typer.Option(
+            "--snapshot-id", help="Snapshot ID to anchor the branch. Defaults to current snapshot."
+        ),
     ] = None,
     max_ref_age_ms: Annotated[
         int | None,
-        typer.Option("--max-ref-age-ms", help="Maximum reference age in milliseconds before expiry."),
+        typer.Option(
+            "--max-ref-age-ms", help="Maximum reference age in milliseconds before expiry."
+        ),
     ] = None,
     min_snapshots_to_keep: Annotated[
         int | None,
-        typer.Option("--min-snapshots-to-keep", help="Minimum number of snapshots to retain on this branch."),
+        typer.Option(
+            "--min-snapshots-to-keep", help="Minimum number of snapshots to retain on this branch."
+        ),
     ] = None,
 ) -> None:
     """Create a snapshot branch on an Iceberg asset.
@@ -275,7 +285,9 @@ def tag_create(
     ] = None,
     max_ref_age_ms: Annotated[
         int | None,
-        typer.Option("--max-ref-age-ms", help="Maximum reference age in milliseconds before expiry."),
+        typer.Option(
+            "--max-ref-age-ms", help="Maximum reference age in milliseconds before expiry."
+        ),
     ] = None,
 ) -> None:
     """Create a snapshot tag on an Iceberg asset.
@@ -309,7 +321,9 @@ def tag_create(
         from nucleus.coordination.error_translation import translate
 
         try:
-            ice_table.manage_snapshots().create_tag(snap_id, tag_name, max_ref_age_ms=max_ref_age_ms).commit()  # type: ignore[union-attr]
+            ice_table.manage_snapshots().create_tag(
+                snap_id, tag_name, max_ref_age_ms=max_ref_age_ms
+            ).commit()  # type: ignore[union-attr]
         except NucleusError:
             raise
         except Exception as exc:
@@ -417,8 +431,16 @@ def snapshot_list(
             typer.echo(_json.dumps(payload, indent=2))
             return
 
-        branches = [(name, ref) for name, ref in sorted(refs.items()) if ref.snapshot_ref_type == SnapshotRefType.BRANCH]
-        tags = [(name, ref) for name, ref in sorted(refs.items()) if ref.snapshot_ref_type == SnapshotRefType.TAG]
+        branches = [
+            (name, ref)
+            for name, ref in sorted(refs.items())
+            if ref.snapshot_ref_type == SnapshotRefType.BRANCH
+        ]
+        tags = [
+            (name, ref)
+            for name, ref in sorted(refs.items())
+            if ref.snapshot_ref_type == SnapshotRefType.TAG
+        ]
 
         typer.echo(f"Asset: {asset}")
         typer.echo("")

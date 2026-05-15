@@ -41,6 +41,7 @@ def _resolve_ledger() -> RunLedger | None:
     """
     try:
         from nucleus.cli.main import _locate_project_config  # lazy: keeps CLI off the API hot path
+
         config_path = _locate_project_config()
         return RunLedger(config_path.parent)
     except NucleusError:

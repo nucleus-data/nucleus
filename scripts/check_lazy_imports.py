@@ -353,10 +353,7 @@ def main() -> int:
         "--target",
         type=Path,
         default=_DEFAULT_TARGET,
-        help=(
-            "File to scan as the CLI entry point. Defaults to "
-            "src/nucleus/cli/main.py."
-        ),
+        help=("File to scan as the CLI entry point. Defaults to src/nucleus/cli/main.py."),
     )
     parser.add_argument(
         "--max-depth",

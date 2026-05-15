@@ -250,9 +250,7 @@ class TestListEmptyAndErrors:
 class TestListMaterializationStatus:
     def test_t09_materialized_status_after_run(self, project: Path) -> None:
         """T09: after ``nucleus run example.greeting``, the row is ``materialized=yes``."""
-        run_result = CliRunner(mix_stderr=False).invoke(
-            nucleus_app, ["run", "example.greeting"]
-        )
+        run_result = CliRunner(mix_stderr=False).invoke(nucleus_app, ["run", "example.greeting"])
         assert run_result.exit_code == 0, run_result.stderr
 
         # Reset the registry first so re-importing assets/example.py inside
@@ -264,9 +262,7 @@ class TestListMaterializationStatus:
 
         result = runner.invoke(list_app, ["--format", "json"])
         assert result.exit_code == 0, result.stderr
-        rows = [
-            json.loads(line) for line in result.stdout.splitlines() if line.strip()
-        ]
+        rows = [json.loads(line) for line in result.stdout.splitlines() if line.strip()]
         greeting = next(r for r in rows if r["key"] == "example.greeting")
         assert greeting["materialized"] is True
         assert greeting["last_materialized_ms"] is not None
@@ -296,9 +292,7 @@ class TestListPolish:
         )
         result = runner.invoke(list_app, ["--format", "json"])
         assert result.exit_code == 0, result.stderr
-        rows = [
-            json.loads(line) for line in result.stdout.splitlines() if line.strip()
-        ]
+        rows = [json.loads(line) for line in result.stdout.splitlines() if line.strip()]
         long_row = next(r for r in rows if r["key"] == "raw.docs_long")
         assert 0 < len(long_row["description"]) <= 60
 

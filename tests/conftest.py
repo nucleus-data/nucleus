@@ -59,9 +59,7 @@ def pytest_collection_modifyitems(
         'Set them or run with `pytest -m "not integration"`.'
     )
     for item in items:
-        has_marker = any(
-            marker.name == "integration" for marker in item.iter_markers()
-        )
+        has_marker = any(marker.name == "integration" for marker in item.iter_markers())
         if has_marker and not has_integration_env:
             item.add_marker(skip_integration)
 

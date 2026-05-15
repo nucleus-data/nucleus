@@ -118,10 +118,7 @@ class HarnessReport:
 
     @property
     def ok(self) -> bool:
-        return (
-            self.counts.get(_OUTCOME_TORN, 0) == 0
-            and self.counts.get(_OUTCOME_MISSING, 0) == 0
-        )
+        return self.counts.get(_OUTCOME_TORN, 0) == 0 and self.counts.get(_OUTCOME_MISSING, 0) == 0
 
 
 # ---------------------------------------------------------------------------
@@ -298,8 +295,7 @@ def _render(report: HarnessReport) -> str:
 
     if report.ok:
         summary_lines.append(
-            "PASS: zero unexpected states. os.replace appears atomic on this "
-            "filesystem."
+            "PASS: zero unexpected states. os.replace appears atomic on this filesystem."
         )
     else:
         summary_lines.append(

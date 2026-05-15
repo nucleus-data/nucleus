@@ -202,9 +202,9 @@ class TestLazyImportsActuallyExecute:
         is deterministic regardless of whether earlier tests imported
         litellm via integration paths.
         """
-        copilot_src = (
-            _REPO_ROOT / "src" / "nucleus" / "intelligence" / "copilot.py"
-        ).read_text(encoding="utf-8")
+        copilot_src = (_REPO_ROOT / "src" / "nucleus" / "intelligence" / "copilot.py").read_text(
+            encoding="utf-8"
+        )
         # Heuristic: the literal ``import litellm`` must NOT appear at
         # column 0 (top-level); it MUST appear with leading whitespace
         # (inside a function body).

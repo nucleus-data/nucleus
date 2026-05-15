@@ -106,7 +106,7 @@ def _build_dag(asset_count: int, layer_depth: int) -> list[tuple[str, list[str]]
             if upstream:
                 fan_in = min(3, len(upstream))
                 start = (j * fan_in) % len(upstream)
-                deps = upstream[start:start + fan_in]
+                deps = upstream[start : start + fan_in]
                 if not deps:
                     deps = upstream[:fan_in]
             else:
@@ -115,9 +115,7 @@ def _build_dag(asset_count: int, layer_depth: int) -> list[tuple[str, list[str]]
     return pairs
 
 
-def _register_dag(
-    pairs: list[tuple[str, list[str]]], rows_per_asset: int
-) -> None:
+def _register_dag(pairs: list[tuple[str, list[str]]], rows_per_asset: int) -> None:
     """Register every asset in ``pairs`` via :func:`nucleus.asset`.
 
     Each asset body returns a tiny Polars DataFrame with deterministic
@@ -133,11 +131,13 @@ def _register_dag(
         rows = rows_per_asset
 
         def _body() -> pl.DataFrame:
-            return pl.DataFrame({
-                "id": list(range(rows)),
-                "asset_key": [key] * rows,
-                "value": [i * 1.5 for i in range(rows)],
-            })
+            return pl.DataFrame(
+                {
+                    "id": list(range(rows)),
+                    "asset_key": [key] * rows,
+                    "value": [i * 1.5 for i in range(rows)],
+                }
+            )
 
         return _body
 
@@ -195,7 +195,10 @@ def _verify_snapshots(warehouse: Path, expected_assets: list[str]) -> tuple[bool
             except Exception:
                 missing.append(key)
         if missing:
-            return False, f"{len(missing)}/{len(expected_assets)} assets missing snapshots: {missing[:5]}"
+            return (
+                False,
+                f"{len(missing)}/{len(expected_assets)} assets missing snapshots: {missing[:5]}",
+            )
         return True, f"all {len(expected_assets)} assets committed"
     except Exception as exc:
         return False, f"verification failed: {type(exc).__name__}: {exc}"
@@ -230,67 +233,75 @@ def _run_one_shape(
     try:
         total_wall, per_wall, _per_snap = _materialize_in_order(pairs, warehouse)
     except Exception as exc:
-        rows_out.append(BenchRow(
-            metric=f"{label} — execution",
-            claim_ref="user expectation (no perf doc claim)",
-            claim="materializes all assets without error",
-            measured=f"{type(exc).__name__}: {exc!s}"[:200],
-            verdict=FAIL,
-            severity=BLOCKER,
-            note="see stderr for full traceback",
-        ))
+        rows_out.append(
+            BenchRow(
+                metric=f"{label} — execution",
+                claim_ref="user expectation (no perf doc claim)",
+                claim="materializes all assets without error",
+                measured=f"{type(exc).__name__}: {exc!s}"[:200],
+                verdict=FAIL,
+                severity=BLOCKER,
+                note="see stderr for full traceback",
+            )
+        )
         return rows_out, {"error": str(exc)}, notes
 
     coordination_overhead = total_wall - sum(per_wall)
     per_stats = stats_summary(per_wall)
 
-    rows_out.append(BenchRow(
-        metric=f"{label} — total wall-clock",
-        claim_ref="user expectation",
-        claim=f"~{asset_count} x per-asset cost (informational)",
-        measured=fmt_seconds(total_wall),
-        verdict=PASS,
-        delta=(
-            f"per-asset median={fmt_seconds(per_stats['median'])} "
-            f"P95={fmt_seconds(per_stats['p95'])}"
-        ),
-        note=f"materialized {asset_count} assets in dep order",
-    ))
-    rows_out.append(BenchRow(
-        metric=f"{label} — coordination overhead",
-        claim_ref="informational",
-        claim="~0 (low Iceberg commit ceremony per asset)",
-        measured=fmt_seconds(max(0.0, coordination_overhead)),
-        verdict=PASS,
-        delta=(
-            f"{(coordination_overhead / max(total_wall, 1e-9)) * 100:.1f}% of total"
-        ),
-        note=(
-            "total_wall - sum(per_asset_wall); <5% means commit ceremony is "
-            "small relative to compute"
-        ),
-    ))
-    rows_out.append(BenchRow(
-        metric=f"{label} — per-asset wall (median / P95 / max)",
-        claim_ref="informational",
-        claim="bounded by per-asset compute (rows x schema)",
-        measured=(
-            f"median={fmt_seconds(per_stats['median'])} "
-            f"P95={fmt_seconds(per_stats['p95'])} "
-            f"max={fmt_seconds(per_stats['max'])}"
-        ),
-        verdict=PASS,
-    ))
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — total wall-clock",
+            claim_ref="user expectation",
+            claim=f"~{asset_count} x per-asset cost (informational)",
+            measured=fmt_seconds(total_wall),
+            verdict=PASS,
+            delta=(
+                f"per-asset median={fmt_seconds(per_stats['median'])} "
+                f"P95={fmt_seconds(per_stats['p95'])}"
+            ),
+            note=f"materialized {asset_count} assets in dep order",
+        )
+    )
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — coordination overhead",
+            claim_ref="informational",
+            claim="~0 (low Iceberg commit ceremony per asset)",
+            measured=fmt_seconds(max(0.0, coordination_overhead)),
+            verdict=PASS,
+            delta=(f"{(coordination_overhead / max(total_wall, 1e-9)) * 100:.1f}% of total"),
+            note=(
+                "total_wall - sum(per_asset_wall); <5% means commit ceremony is "
+                "small relative to compute"
+            ),
+        )
+    )
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — per-asset wall (median / P95 / max)",
+            claim_ref="informational",
+            claim="bounded by per-asset compute (rows x schema)",
+            measured=(
+                f"median={fmt_seconds(per_stats['median'])} "
+                f"P95={fmt_seconds(per_stats['p95'])} "
+                f"max={fmt_seconds(per_stats['max'])}"
+            ),
+            verdict=PASS,
+        )
+    )
 
     ok, detail = _verify_snapshots(warehouse, [k for k, _ in pairs])
-    rows_out.append(BenchRow(
-        metric=f"{label} — snapshot verification",
-        claim_ref="user expectation",
-        claim=f"{asset_count} assets each have a committed snapshot",
-        measured=detail,
-        verdict=PASS if ok else FAIL,
-        severity="" if ok else BLOCKER,
-    ))
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — snapshot verification",
+            claim_ref="user expectation",
+            claim=f"{asset_count} assets each have a committed snapshot",
+            measured=detail,
+            verdict=PASS if ok else FAIL,
+            severity="" if ok else BLOCKER,
+        )
+    )
 
     raw = {
         "asset_count": asset_count,
@@ -341,14 +352,16 @@ def main(argv: list[str] | None = None) -> int:
                 sk, base_dir=base_dir, rows_per_asset=args.rows
             )
         except Exception as exc:
-            shape_rows = [BenchRow(
-                metric=f"shape={sk}",
-                claim_ref="user expectation",
-                claim="benchmark completes",
-                measured=f"{type(exc).__name__}: {exc!s}"[:200],
-                verdict=FAIL,
-                severity=BLOCKER,
-            )]
+            shape_rows = [
+                BenchRow(
+                    metric=f"shape={sk}",
+                    claim_ref="user expectation",
+                    claim="benchmark completes",
+                    measured=f"{type(exc).__name__}: {exc!s}"[:200],
+                    verdict=FAIL,
+                    severity=BLOCKER,
+                )
+            ]
             shape_raw = {"error": str(exc)}
             shape_notes = []
         rows.extend(shape_rows)

@@ -97,7 +97,8 @@ def _generate_tpch(con: object, scale_factor: int) -> tuple[float, list[str]]:
     started = benchmark_clock()
     con.execute(f"CALL dbgen(sf={scale_factor})")  # type: ignore[attr-defined]
     tables = [
-        row[0] for row in con.execute(  # type: ignore[attr-defined]
+        row[0]
+        for row in con.execute(  # type: ignore[attr-defined]
             "SELECT table_name FROM information_schema.tables "
             "WHERE table_schema = 'main' ORDER BY table_name"
         ).fetchall()
@@ -146,12 +147,10 @@ def _row_for_query(query_no: int, samples: list[float]) -> BenchRow:
 def _summary_rows(per_query_samples: dict[int, list[float]]) -> list[BenchRow]:
     """Build the suite-wide median + P95 rows that the perf doc claims address."""
     medians = [
-        float(stats_summary(samples)["median"])
-        for samples in per_query_samples.values() if samples
+        float(stats_summary(samples)["median"]) for samples in per_query_samples.values() if samples
     ]
     p95s = [
-        float(stats_summary(samples)["p95"])
-        for samples in per_query_samples.values() if samples
+        float(stats_summary(samples)["p95"]) for samples in per_query_samples.values() if samples
     ]
     if not medians:
         return []
@@ -184,9 +183,7 @@ def _summary_rows(per_query_samples: dict[int, list[float]]) -> list[BenchRow]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="Nucleus B1 — TPC-H 10 GB on DuckDB benchmark."
-    )
+    parser = argparse.ArgumentParser(description="Nucleus B1 — TPC-H 10 GB on DuckDB benchmark.")
     parser.add_argument(
         "--scale-factor",
         type=int,
@@ -221,33 +218,39 @@ def main(argv: list[str] | None = None) -> int:
             f"DuckDB extension catalogue ({_DUCKDB_EXT_PROBE_URL}) unreachable: {reason}. "
             "INSTALL tpch will fail; skipping benchmark per task spec (no fabricated numbers)."
         )
-        rows.append(BenchRow(
-            metric="TPC-H tpch extension install",
-            claim_ref="prerequisite",
-            claim="duckdb extension catalogue reachable",
-            measured=f"blocked: {reason[:120]}",
-            verdict=SKIP_DEPS,
-            severity=LOW,
-            note="re-run on a network with HTTP egress to extensions.duckdb.org",
-        ))
-        rows.append(BenchRow(
-            metric="TPC-H suite median (across 8 queries)",
-            claim_ref="perf doc §2.3",
-            claim=f"<{fmt_seconds(CLAIM_MEDIAN_S)}",
-            measured="(skipped)",
-            verdict=SKIP_DEPS,
-            severity=LOW,
-            note="extension unavailable",
-        ))
-        rows.append(BenchRow(
-            metric="TPC-H suite P95 (across 8 queries)",
-            claim_ref="perf doc §2.3",
-            claim=f"<{fmt_seconds(CLAIM_P95_S)}",
-            measured="(skipped)",
-            verdict=SKIP_DEPS,
-            severity=LOW,
-            note="extension unavailable",
-        ))
+        rows.append(
+            BenchRow(
+                metric="TPC-H tpch extension install",
+                claim_ref="prerequisite",
+                claim="duckdb extension catalogue reachable",
+                measured=f"blocked: {reason[:120]}",
+                verdict=SKIP_DEPS,
+                severity=LOW,
+                note="re-run on a network with HTTP egress to extensions.duckdb.org",
+            )
+        )
+        rows.append(
+            BenchRow(
+                metric="TPC-H suite median (across 8 queries)",
+                claim_ref="perf doc §2.3",
+                claim=f"<{fmt_seconds(CLAIM_MEDIAN_S)}",
+                measured="(skipped)",
+                verdict=SKIP_DEPS,
+                severity=LOW,
+                note="extension unavailable",
+            )
+        )
+        rows.append(
+            BenchRow(
+                metric="TPC-H suite P95 (across 8 queries)",
+                claim_ref="perf doc §2.3",
+                claim=f"<{fmt_seconds(CLAIM_P95_S)}",
+                measured="(skipped)",
+                verdict=SKIP_DEPS,
+                severity=LOW,
+                note="extension unavailable",
+            )
+        )
         overall_verdict = SKIP_DEPS
         completed_at = now_iso()
         elapsed_total = benchmark_clock() - started
@@ -285,15 +288,17 @@ def main(argv: list[str] | None = None) -> int:
         ok, msg = _try_load_tpch_extension(con)
         if not ok:
             notes.append(f"INSTALL/LOAD tpch failed: {msg}")
-            rows.append(BenchRow(
-                metric="TPC-H extension install",
-                claim_ref="prerequisite",
-                claim="extension installs cleanly",
-                measured=f"failed: {msg[:160]}",
-                verdict=SKIP_DEPS,
-                severity=MEDIUM,
-                note="see DuckDB extension docs at https://duckdb.org/docs/extensions/tpch.html",
-            ))
+            rows.append(
+                BenchRow(
+                    metric="TPC-H extension install",
+                    claim_ref="prerequisite",
+                    claim="extension installs cleanly",
+                    measured=f"failed: {msg[:160]}",
+                    verdict=SKIP_DEPS,
+                    severity=MEDIUM,
+                    note="see DuckDB extension docs at https://duckdb.org/docs/extensions/tpch.html",
+                )
+            )
             overall_verdict = SKIP_DEPS
         else:
             print(f"[B1] generating TPC-H sf={args.scale_factor} ...")

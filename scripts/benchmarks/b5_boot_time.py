@@ -169,32 +169,47 @@ def main(argv: list[str] | None = None) -> int:
         h_exe_elapsed, h_exe_errs = _measure_command(cmd_h_exe, args.iterations)
         h_exe_stats = stats_summary(h_exe_elapsed)
 
-        rows.append(_row_for("nucleus --version (console, cold)",
-                             v_exe_elapsed[0], CLAIM_VERSION_COLD_S,
-                             note="console script via PEP 503 entry point"))
-        rows.append(_row_for(
-            f"nucleus --version (console, warm median over {args.iterations - 1})",
-            v_exe_stats["median"],
-            CLAIM_VERSION_WARM_S,
-        ))
-        rows.append(_row_for(
-            "nucleus --version (console, P95)",
-            v_exe_stats["p95"],
-            CLAIM_VERSION_COLD_S,
-            note="cold-claim reused for tail latency",
-        ))
-        rows.append(_row_for("nucleus --help (console, cold)",
-                             h_exe_elapsed[0], CLAIM_HELP_COLD_S))
-        rows.append(_row_for(
-            f"nucleus --help (console, warm median over {args.iterations - 1})",
-            h_exe_stats["median"], CLAIM_HELP_WARM_S,
-        ))
+        rows.append(
+            _row_for(
+                "nucleus --version (console, cold)",
+                v_exe_elapsed[0],
+                CLAIM_VERSION_COLD_S,
+                note="console script via PEP 503 entry point",
+            )
+        )
+        rows.append(
+            _row_for(
+                f"nucleus --version (console, warm median over {args.iterations - 1})",
+                v_exe_stats["median"],
+                CLAIM_VERSION_WARM_S,
+            )
+        )
+        rows.append(
+            _row_for(
+                "nucleus --version (console, P95)",
+                v_exe_stats["p95"],
+                CLAIM_VERSION_COLD_S,
+                note="cold-claim reused for tail latency",
+            )
+        )
+        rows.append(_row_for("nucleus --help (console, cold)", h_exe_elapsed[0], CLAIM_HELP_COLD_S))
+        rows.append(
+            _row_for(
+                f"nucleus --help (console, warm median over {args.iterations - 1})",
+                h_exe_stats["median"],
+                CLAIM_HELP_WARM_S,
+            )
+        )
         if v_exe_errs:
-            notes.append(f"nucleus --version (console) had {len(v_exe_errs)} non-zero exits; "
-                         f"first: {v_exe_errs[0]}")
+            notes.append(
+                f"nucleus --version (console) had {len(v_exe_errs)} non-zero exits; "
+                f"first: {v_exe_errs[0]}"
+            )
         if h_exe_errs:
-            notes.append(f"nucleus --help (console) had {len(h_exe_errs)} non-zero exits; "
-                         f"first: {h_exe_errs[0]}")
+            notes.append(
+                f"nucleus --help (console) had {len(h_exe_errs)} non-zero exits; "
+                f"first: {h_exe_errs[0]}"
+            )
         raw["console_version_s"] = v_exe_elapsed
         raw["console_version_stats"] = v_exe_stats
         raw["console_help_s"] = h_exe_elapsed
@@ -213,32 +228,42 @@ def main(argv: list[str] | None = None) -> int:
     help_elapsed, help_errs = _measure_command(cmd_help, args.iterations)
     help_stats = stats_summary(help_elapsed)
 
-    rows.append(_row_for(
-        "python -m nucleus.cli.main --version (cold)",
-        version_elapsed[0] if version_elapsed else float("nan"),
-        CLAIM_VERSION_COLD_S,
-        note="`-m` form has higher startup cost; surfaced separately so the gap is visible.",
-    ))
-    rows.append(_row_for(
-        f"python -m nucleus.cli.main --version (warm median over {args.iterations - 1})",
-        version_stats["median"], CLAIM_VERSION_WARM_S,
-    ))
-    rows.append(_row_for(
-        "python -m nucleus.cli.main --help (cold)",
-        help_elapsed[0] if help_elapsed else float("nan"),
-        CLAIM_HELP_COLD_S,
-    ))
-    rows.append(_row_for(
-        f"python -m nucleus.cli.main --help (warm median over {args.iterations - 1})",
-        help_stats["median"], CLAIM_HELP_WARM_S,
-    ))
+    rows.append(
+        _row_for(
+            "python -m nucleus.cli.main --version (cold)",
+            version_elapsed[0] if version_elapsed else float("nan"),
+            CLAIM_VERSION_COLD_S,
+            note="`-m` form has higher startup cost; surfaced separately so the gap is visible.",
+        )
+    )
+    rows.append(
+        _row_for(
+            f"python -m nucleus.cli.main --version (warm median over {args.iterations - 1})",
+            version_stats["median"],
+            CLAIM_VERSION_WARM_S,
+        )
+    )
+    rows.append(
+        _row_for(
+            "python -m nucleus.cli.main --help (cold)",
+            help_elapsed[0] if help_elapsed else float("nan"),
+            CLAIM_HELP_COLD_S,
+        )
+    )
+    rows.append(
+        _row_for(
+            f"python -m nucleus.cli.main --help (warm median over {args.iterations - 1})",
+            help_stats["median"],
+            CLAIM_HELP_WARM_S,
+        )
+    )
 
     if version_errs:
-        notes.append(f"python -m --version had {len(version_errs)} non-zero exits; "
-                     f"first: {version_errs[0]}")
+        notes.append(
+            f"python -m --version had {len(version_errs)} non-zero exits; first: {version_errs[0]}"
+        )
     if help_errs:
-        notes.append(f"python -m --help had {len(help_errs)} non-zero exits; "
-                     f"first: {help_errs[0]}")
+        notes.append(f"python -m --help had {len(help_errs)} non-zero exits; first: {help_errs[0]}")
     raw["module_version_s"] = version_elapsed
     raw["module_version_stats"] = version_stats
     raw["module_help_s"] = help_elapsed
@@ -255,21 +280,28 @@ def main(argv: list[str] | None = None) -> int:
             up_args = [python, "-m", "nucleus.cli.main", "up"]
             up_wall, up_rc, up_err = _spawn_command(up_args)
             verdict = PASS if up_rc == 0 and up_wall <= 10.0 else FAIL
-            rows.append(BenchRow(
-                metric="nucleus up (cold boot)",
-                claim_ref="perf doc §2.1; PoC #4",
-                claim="<10s",
-                measured=fmt_seconds(up_wall),
-                verdict=verdict,
-                delta=fmt_delta(up_wall, 10.0),
-                severity="" if verdict == PASS else severity_for(up_wall, 10.0),
-                note=("docker stack started" if up_rc == 0
-                      else f"rc={up_rc} stderr={up_err.strip()[:120]}"),
-            ))
+            rows.append(
+                BenchRow(
+                    metric="nucleus up (cold boot)",
+                    claim_ref="perf doc §2.1; PoC #4",
+                    claim="<10s",
+                    measured=fmt_seconds(up_wall),
+                    verdict=verdict,
+                    delta=fmt_delta(up_wall, 10.0),
+                    severity="" if verdict == PASS else severity_for(up_wall, 10.0),
+                    note=(
+                        "docker stack started"
+                        if up_rc == 0
+                        else f"rc={up_rc} stderr={up_err.strip()[:120]}"
+                    ),
+                )
+            )
             # Cleanup — best-effort `nucleus down`. Not measured.
             subprocess.run(  # noqa: S603 — controlled args, not user input
                 [python, "-m", "nucleus.cli.main", "down"],
-                capture_output=True, check=False, timeout=60,
+                capture_output=True,
+                check=False,
+                timeout=60,
             )
 
     overall = PASS if all(r.verdict == PASS for r in rows) else FAIL
@@ -296,7 +328,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[B5] overall = {overall} (suite elapsed {fmt_seconds(elapsed_total)})")
     for r in rows:
         sev = f" [{r.severity}]" if r.severity else ""
-        print(f"  - {r.metric}: claim={r.claim} measured={r.measured} delta={r.delta} -> {r.verdict}{sev}")
+        print(
+            f"  - {r.metric}: claim={r.claim} measured={r.measured} delta={r.delta} -> {r.verdict}{sev}"
+        )
     return 0 if overall == PASS else 1
 
 

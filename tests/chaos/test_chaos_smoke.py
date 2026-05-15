@@ -92,12 +92,12 @@ def test_traceback_extractor_strips_leading_pkg_prefix(chaos_module) -> None:
     """When a leaked traceback is captured, exception class is rendered with full dotted path."""
     extract = chaos_module._extract_raw_exception
     sample = (
-        'Traceback (most recent call last):\n'
+        "Traceback (most recent call last):\n"
         '  File "C:\\path\\src\\nucleus\\coordination\\foo.py", line 42, in run\n'
-        '    bar()\n'
+        "    bar()\n"
         '  File "C:\\path\\src\\nucleus\\lib\\bar.py", line 99, in bar\n'
         '    raise FileExistsError("oops")\n'
-        'FileExistsError: oops\n'
+        "FileExistsError: oops\n"
     )
     exc_class, last_frame = extract(sample)
     assert exc_class == "FileExistsError"

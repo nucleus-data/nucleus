@@ -133,16 +133,18 @@ def _gen_lineitem_parquet(target: Path, rows: int) -> int:
 
     flags = ["A", "N", "R"]
     statuses = ["F", "O"]
-    df = pl.DataFrame({
-        "id": list(range(rows)),
-        "l_quantity": [(i % 50) + 1.0 for i in range(rows)],
-        "l_extendedprice": [(i * 13.37) % 100000.0 for i in range(rows)],
-        "l_discount": [((i % 11) / 100.0) for i in range(rows)],
-        "l_tax": [((i % 9) / 100.0) for i in range(rows)],
-        "l_returnflag": [flags[i % 3] for i in range(rows)],
-        "l_linestatus": [statuses[i % 2] for i in range(rows)],
-        "l_shipdate": [f"1998-{(i % 12) + 1:02d}-01" for i in range(rows)],
-    }).with_columns(pl.col("l_shipdate").str.to_date())
+    df = pl.DataFrame(
+        {
+            "id": list(range(rows)),
+            "l_quantity": [(i % 50) + 1.0 for i in range(rows)],
+            "l_extendedprice": [(i * 13.37) % 100000.0 for i in range(rows)],
+            "l_discount": [((i % 11) / 100.0) for i in range(rows)],
+            "l_tax": [((i % 9) / 100.0) for i in range(rows)],
+            "l_returnflag": [flags[i % 3] for i in range(rows)],
+            "l_linestatus": [statuses[i % 2] for i in range(rows)],
+            "l_shipdate": [f"1998-{(i % 12) + 1:02d}-01" for i in range(rows)],
+        }
+    ).with_columns(pl.col("l_shipdate").str.to_date())
     df.write_parquet(target)
     return target.stat().st_size
 
@@ -210,9 +212,7 @@ def _run_nucleus(parquet: Path, work: Path) -> dict[str, object]:
         peak_rss = watcher.stop()
     transform_wall = benchmark_clock() - transform_started
     snap_rows = result.row_count or 0
-    out_paths = sorted(
-        (warehouse / "marts" / "q1").rglob("*.parquet")
-    )
+    out_paths = sorted((warehouse / "marts" / "q1").rglob("*.parquet"))
     out_size = sum(p.stat().st_size for p in out_paths) if out_paths else 0
     return {
         "transform_wall_s": transform_wall,
@@ -233,7 +233,8 @@ def _write_dbt_project(project_dir: Path, parquet: Path, db_path: Path) -> None:
     project_dir.mkdir(parents=True, exist_ok=True)
     (project_dir / "models").mkdir(exist_ok=True)
     parquet_uri = parquet.resolve().as_posix()
-    (project_dir / "dbt_project.yml").write_text(textwrap.dedent(f"""
+    (project_dir / "dbt_project.yml").write_text(
+        textwrap.dedent(f"""
         name: 'nucleus_h2h'
         version: '1.0.0'
         config-version: 2
@@ -244,8 +245,11 @@ def _write_dbt_project(project_dir: Path, parquet: Path, db_path: Path) -> None:
         models:
           nucleus_h2h:
             +materialized: table
-    """).strip(), encoding="utf-8")
-    (project_dir / "profiles.yml").write_text(textwrap.dedent(f"""
+    """).strip(),
+        encoding="utf-8",
+    )
+    (project_dir / "profiles.yml").write_text(
+        textwrap.dedent(f"""
         h2h:
           target: dev
           outputs:
@@ -253,7 +257,9 @@ def _write_dbt_project(project_dir: Path, parquet: Path, db_path: Path) -> None:
               type: duckdb
               path: '{db_path.resolve().as_posix()}'
               threads: 1
-    """).strip(), encoding="utf-8")
+    """).strip(),
+        encoding="utf-8",
+    )
     (project_dir / "models" / "raw_lineitem.sql").write_text(
         f"SELECT * FROM read_parquet('{parquet_uri}')\n",
         encoding="utf-8",
@@ -279,9 +285,14 @@ def _run_dbt_duckdb(parquet: Path, work: Path) -> dict[str, object]:
     env = os.environ.copy()
     env["DBT_PROFILES_DIR"] = str(project_dir.resolve())
     cmd = [
-        sys.executable, "-m", "dbt.cli.main", "run",
-        "--project-dir", str(project_dir.resolve()),
-        "--profiles-dir", str(project_dir.resolve()),
+        sys.executable,
+        "-m",
+        "dbt.cli.main",
+        "run",
+        "--project-dir",
+        str(project_dir.resolve()),
+        "--profiles-dir",
+        str(project_dir.resolve()),
     ]
     watcher = RSSWatcher().start()
     started = benchmark_clock()
@@ -384,9 +395,7 @@ def _row_byte_compare(label: str, nuc: dict[str, float], dbt: dict[str, float]) 
         metric=label,
         claim_ref="head-to-head report",
         claim="report output sizes (informational)",
-        measured=(
-            f"nucleus={fmt_bytes(nuc_med)} dbt-duckdb={fmt_bytes(dbt_med)}"
-        ),
+        measured=(f"nucleus={fmt_bytes(nuc_med)} dbt-duckdb={fmt_bytes(dbt_med)}"),
         verdict=PASS,
         note="formats differ: Iceberg snapshot vs DuckDB native table",
     )
@@ -412,21 +421,21 @@ def _run_full(args: argparse.Namespace) -> tuple[BenchResult, int]:
     raw_out["dbt_status"] = dbt_status
 
     if not available:
-        rows.append(BenchRow(
-            metric="dbt-duckdb availability",
-            claim_ref="prerequisite",
-            claim="dbt-duckdb importable",
-            measured=dbt_status,
-            verdict=SKIP_DEPS,
-            severity=MEDIUM,
-            note=(
-                "Install in a side venv to run the full harness: "
-                "`pip install dbt-duckdb`. The Nucleus side will still run."
-            ),
-        ))
-        notes.append(
-            "dbt-duckdb missing; running Nucleus path standalone for context."
+        rows.append(
+            BenchRow(
+                metric="dbt-duckdb availability",
+                claim_ref="prerequisite",
+                claim="dbt-duckdb importable",
+                measured=dbt_status,
+                verdict=SKIP_DEPS,
+                severity=MEDIUM,
+                note=(
+                    "Install in a side venv to run the full harness: "
+                    "`pip install dbt-duckdb`. The Nucleus side will still run."
+                ),
+            )
         )
+        notes.append("dbt-duckdb missing; running Nucleus path standalone for context.")
 
     nuc_samples: list[dict[str, object]] = []
     print(f"[h2h-dbt] running Nucleus n={args.runs} ...")
@@ -477,45 +486,56 @@ def _run_full(args: argparse.Namespace) -> tuple[BenchResult, int]:
     raw_out["dbt_agg"] = dbt_agg
 
     if not nuc_samples:
-        rows.append(BenchRow(
-            metric="Nucleus runs",
-            claim_ref="prerequisite",
-            claim="at least one Nucleus run completes",
-            measured="zero successful samples",
-            verdict=FAIL,
-            severity=BLOCKER,
-        ))
+        rows.append(
+            BenchRow(
+                metric="Nucleus runs",
+                claim_ref="prerequisite",
+                claim="at least one Nucleus run completes",
+                measured="zero successful samples",
+                verdict=FAIL,
+                severity=BLOCKER,
+            )
+        )
         overall = FAIL
     else:
-        rows.append(_row_compare(
-            "transformation wall-clock (median, n=" + str(args.runs) + ")",
-            nuc_agg["transform"], dbt_agg["transform"],
-        ))
-        rows.append(_row_compare(
-            "peak RSS during run",
-            nuc_agg["rss"], dbt_agg["rss"],
-        ))
-        rows.append(_row_byte_compare(
-            "output size on disk",
-            nuc_agg["out_bytes"], dbt_agg["out_bytes"],
-        ))
+        rows.append(
+            _row_compare(
+                "transformation wall-clock (median, n=" + str(args.runs) + ")",
+                nuc_agg["transform"],
+                dbt_agg["transform"],
+            )
+        )
+        rows.append(
+            _row_compare(
+                "peak RSS during run",
+                nuc_agg["rss"],
+                dbt_agg["rss"],
+            )
+        )
+        rows.append(
+            _row_byte_compare(
+                "output size on disk",
+                nuc_agg["out_bytes"],
+                dbt_agg["out_bytes"],
+            )
+        )
         nuc_rows_med = nuc_agg["rows_out"].get("median", -1.0)
         dbt_rows_med = dbt_agg["rows_out"].get("median", -1.0)
-        rows_match = (
-            available and abs(nuc_rows_med - dbt_rows_med) < 0.5
-        ) or (not available)
-        rows.append(BenchRow(
-            metric="output row count agreement",
-            claim_ref="sanity check",
-            claim="both engines produce same row count",
-            measured=f"nucleus={int(nuc_rows_med)} dbt-duckdb={int(dbt_rows_med)}",
-            verdict=PASS if rows_match else FAIL,
-            severity="" if rows_match else HIGH,
-            note=(
-                "TPC-H Q1 yields up to 3 returnflag x 2 linestatus = 6 rows; "
-                "the seeded data covers a subset"
-            ),
-        ))
+        rows_match = (available and abs(nuc_rows_med - dbt_rows_med) < 0.5) or (not available)
+        rows.append(
+            BenchRow(
+                metric="output row count agreement",
+                claim_ref="sanity check",
+                claim="both engines produce same row count",
+                measured=f"nucleus={int(nuc_rows_med)} dbt-duckdb={int(dbt_rows_med)}",
+                verdict=PASS if rows_match else FAIL,
+                severity="" if rows_match else HIGH,
+                note=(
+                    "TPC-H Q1 yields up to 3 returnflag x 2 linestatus = 6 rows; "
+                    "the seeded data covers a subset"
+                ),
+            )
+        )
 
     if any(r.verdict == FAIL for r in rows):
         overall = FAIL
@@ -584,8 +604,7 @@ def _run_dry(args: argparse.Namespace) -> int:
             claim_ref="self-test",
             claim="harness can render TPC-H Q1 + write dbt project",
             measured=(
-                f"_TPCH_Q1_SQL_len={len(_TPCH_Q1_SQL)} chars; "
-                f"runs={args.runs}; rows={args.rows}"
+                f"_TPCH_Q1_SQL_len={len(_TPCH_Q1_SQL)} chars; runs={args.runs}; rows={args.rows}"
             ),
             verdict=PASS,
         ),
@@ -595,9 +614,7 @@ def _run_dry(args: argparse.Namespace) -> int:
     result = BenchResult(
         name="head-to-head: Nucleus vs dbt-duckdb (DRY-RUN)",
         script="scripts/benchmarks/headtohead_dbt_duckdb.py",
-        command=(
-            f"{sys.executable} -m scripts.benchmarks.headtohead_dbt_duckdb --dry-run"
-        ),
+        command=(f"{sys.executable} -m scripts.benchmarks.headtohead_dbt_duckdb --dry-run"),
         started_at=started_at,
         completed_at=now_iso(),
         elapsed_s=elapsed_total,

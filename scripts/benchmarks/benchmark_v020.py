@@ -70,20 +70,24 @@ from scripts.benchmarks._common import (
 # Order matters — boot-time first so `nucleus --version` cold cache is the
 # first cost a user reads.
 _SUITE_RELEASE: tuple[tuple[str, str, list[str], str], ...] = (
-    ("b5", "scripts.benchmarks.b5_boot_time",      ["--iterations", "10"], "b5_boot_time"),
-    ("b2", "scripts.benchmarks.b2_materialize",    ["--scale", "1"],       "b2_materialize"),
-    ("b6", "scripts.benchmarks.b6_dag_materialize", ["--shape", "10"],     "b6_dag_materialize"),
-    ("b7", "scripts.benchmarks.b7_check_overhead", ["--scale", "1m"],      "b7_check_overhead"),
-    ("b9", "scripts.benchmarks.b9_ctx_sql_overhead", ["--runs", "5"],      "b9_ctx_sql_overhead"),
-    ("b8", "scripts.benchmarks.b8_workbench_api",  ["--runs", "10"],       "b8_workbench_api"),
+    ("b5", "scripts.benchmarks.b5_boot_time", ["--iterations", "10"], "b5_boot_time"),
+    ("b2", "scripts.benchmarks.b2_materialize", ["--scale", "1"], "b2_materialize"),
+    ("b6", "scripts.benchmarks.b6_dag_materialize", ["--shape", "10"], "b6_dag_materialize"),
+    ("b7", "scripts.benchmarks.b7_check_overhead", ["--scale", "1m"], "b7_check_overhead"),
+    ("b9", "scripts.benchmarks.b9_ctx_sql_overhead", ["--runs", "5"], "b9_ctx_sql_overhead"),
+    ("b8", "scripts.benchmarks.b8_workbench_api", ["--runs", "10"], "b8_workbench_api"),
 )
 
 # Optional benchmarks that need external services (Docker / DuckDB extension
 # catalogue / multi-process serialization). Run on --suite all only.
 _SUITE_OPTIONAL: tuple[tuple[str, str, list[str], str], ...] = (
     ("b4", "scripts.benchmarks.b4_concurrent_run", ["--hold", "5"], "b4_concurrent_run"),
-    ("b1", "scripts.benchmarks.b1_tpch_duckdb",
-     ["--scale-factor", "10", "--runs", "3"], "b1_tpch_duckdb"),
+    (
+        "b1",
+        "scripts.benchmarks.b1_tpch_duckdb",
+        ["--scale-factor", "10", "--runs", "3"],
+        "b1_tpch_duckdb",
+    ),
     ("b3", "scripts.benchmarks.b3_postgres_ingest", ["--scale", "1m"], "b3_postgres_ingest"),
 )
 
@@ -152,8 +156,7 @@ def _load_result(filename: str) -> dict[str, Any] | None:
 
 def _aggregate_verdict(per_bench: list[dict[str, Any]]) -> str:
     """Aggregate per-benchmark overall_verdict into one suite verdict."""
-    overall = [str(b["result"].get("overall_verdict", "")) for b in per_bench
-               if "result" in b]
+    overall = [str(b["result"].get("overall_verdict", "")) for b in per_bench if "result" in b]
     if FAIL in overall:
         return FAIL
     if all(v == PASS for v in overall) and overall:
@@ -219,13 +222,15 @@ def main(argv: list[str] | None = None) -> int:
             if rc not in (0, 1):
                 print(f"[v020]   stderr tail: {stderr_tail[-600:]}")
         loaded = _load_result(result_name)
-        per_bench.append({
-            "short": short,
-            "module": module,
-            "result": (loaded or {}).get("result"),
-            "hardware": (loaded or {}).get("hardware"),
-            "software": (loaded or {}).get("software"),
-        })
+        per_bench.append(
+            {
+                "short": short,
+                "module": module,
+                "result": (loaded or {}).get("result"),
+                "hardware": (loaded or {}).get("hardware"),
+                "software": (loaded or {}).get("software"),
+            }
+        )
 
     suite_elapsed = benchmark_clock() - suite_started
     completed_at = now_iso()
@@ -238,10 +243,14 @@ def main(argv: list[str] | None = None) -> int:
         "completed_at": completed_at,
         "suite_elapsed_s": suite_elapsed,
         "overall_verdict": _aggregate_verdict(per_bench),
-        "hardware": (per_bench[0]["hardware"] if per_bench and per_bench[0]["hardware"]
-                     else hardware_specs()),
-        "software": (per_bench[0]["software"] if per_bench and per_bench[0]["software"]
-                     else software_versions()),
+        "hardware": (
+            per_bench[0]["hardware"] if per_bench and per_bench[0]["hardware"] else hardware_specs()
+        ),
+        "software": (
+            per_bench[0]["software"]
+            if per_bench and per_bench[0]["software"]
+            else software_versions()
+        ),
         "benchmarks": per_bench,
         "report_url": "docs/research/benchmarks_v0.2.0.md",
         "rerun_command": f"python scripts/benchmarks/benchmark_v020.py --suite {args.suite}",
@@ -249,14 +258,17 @@ def main(argv: list[str] | None = None) -> int:
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     tmp = args.output.with_suffix(".json.tmp")
-    tmp.write_text(json.dumps(consolidated, indent=2, sort_keys=True, default=str),
-                   encoding="utf-8")
+    tmp.write_text(
+        json.dumps(consolidated, indent=2, sort_keys=True, default=str), encoding="utf-8"
+    )
     tmp.replace(args.output)
 
     print()
     print(f"[v020] wrote consolidated JSON to {args.output}")
-    print(f"[v020] suite verdict: {consolidated['overall_verdict']} "
-          f"(elapsed {fmt_seconds(suite_elapsed)})")
+    print(
+        f"[v020] suite verdict: {consolidated['overall_verdict']} "
+        f"(elapsed {fmt_seconds(suite_elapsed)})"
+    )
     print("[v020] benchmark summary:")
     for line in _summary_lines(per_bench):
         print(line)

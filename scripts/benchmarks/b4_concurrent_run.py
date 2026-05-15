@@ -144,6 +144,7 @@ def _write_worker_module(tmp_dir: Path, hold_s: float) -> Path:
 def _run_worker(python_exe: str, worker: Path, role: str, warehouse: Path) -> dict[str, object]:
     """Run one worker process and parse the JSON-line outcome."""
     import json
+
     proc = subprocess.run(
         [python_exe, str(worker), role, str(warehouse)],
         capture_output=True,
@@ -171,10 +172,14 @@ def _run_worker(python_exe: str, worker: Path, role: str, warehouse: Path) -> di
     }
 
 
-def _launch_pair(python_exe: str, worker: Path, warehouse: Path,
-                 ) -> tuple[dict[str, object], dict[str, object]]:
+def _launch_pair(
+    python_exe: str,
+    worker: Path,
+    warehouse: Path,
+) -> tuple[dict[str, object], dict[str, object]]:
     """Start two worker subprocesses overlapping in time, then collect outcomes."""
     import json
+
     proc_a = subprocess.Popen(
         [python_exe, str(worker), "A", str(warehouse)],
         stdout=subprocess.PIPE,
@@ -224,7 +229,9 @@ def _launch_pair(python_exe: str, worker: Path, warehouse: Path,
 def _verify_iceberg_state(warehouse: Path, expected_rows: int) -> tuple[bool, str]:
     """Open the resulting Iceberg table and check row count + snapshot count."""
     try:
-        from pyiceberg.catalog import load_catalog  # Docs: https://py.iceberg.apache.org/api/catalog/
+        from pyiceberg.catalog import (
+            load_catalog,
+        )  # Docs: https://py.iceberg.apache.org/api/catalog/
 
         catalog_db = warehouse / "catalog.db"
         catalog = load_catalog(
@@ -254,7 +261,7 @@ def main(argv: list[str] | None = None) -> int:
         type=float,
         default=DEFAULT_HOLD_S,
         help="Seconds the worker sleeps inside the asset body (forces overlap). "
-             f"Default: {DEFAULT_HOLD_S}",
+        f"Default: {DEFAULT_HOLD_S}",
     )
     args = parser.parse_args(argv)
 
@@ -293,105 +300,121 @@ def main(argv: list[str] | None = None) -> int:
         # Per perf doc §5: NE3008 is the actual code (perf doc says NE5002 — see
         # the module docstring for the discrepancy note).
         if loser_code != "NE3008":
-            rows.append(BenchRow(
-                metric="loser error code",
-                claim_ref="perf doc §5 + §8 row #6",
-                claim="NE3008 (NucleusConcurrentRunError)",
-                measured=loser_code or "(unset)",
+            rows.append(
+                BenchRow(
+                    metric="loser error code",
+                    claim_ref="perf doc §5 + §8 row #6",
+                    claim="NE3008 (NucleusConcurrentRunError)",
+                    measured=loser_code or "(unset)",
+                    verdict=FAIL,
+                    severity=HIGH,
+                    note=(
+                        "Perf doc §8 row #6 says NE5002 — that's a doc bug; actual code "
+                        "is NE3008 per src/nucleus/errors.py:885."
+                    ),
+                )
+            )
+        else:
+            rows.append(
+                BenchRow(
+                    metric="loser error code",
+                    claim_ref="perf doc §5 (corrected)",
+                    claim="NE3008",
+                    measured="NE3008",
+                    verdict=PASS,
+                )
+            )
+        rows.append(
+            BenchRow(
+                metric="winner / loser split",
+                claim_ref="perf doc §8 row #6",
+                claim="exactly 1 winner + 1 blocked-or-failed",
+                measured=f"winners={winner_count} losers={loser_count}",
+                verdict=PASS,
+            )
+        )
+    elif winner_count == 2:
+        rows.append(
+            BenchRow(
+                metric="winner / loser split",
+                claim_ref="perf doc §8 row #6",
+                claim="exactly 1 winner",
+                measured=f"BOTH committed snapshots: A={res_a['snapshot_id']}, B={res_b['snapshot_id']}",
+                verdict=FAIL,
+                severity=BLOCKER,
+                note="Lock did NOT serialise; possible silent data race per perf doc §6.2 row #1.",
+            )
+        )
+    elif winner_count == 0:
+        rows.append(
+            BenchRow(
+                metric="winner / loser split",
+                claim_ref="perf doc §8 row #6",
+                claim="exactly 1 winner",
+                measured="zero winners (both errored)",
+                verdict=FAIL,
+                severity=BLOCKER,
+                note=f"A.outcome={res_a['outcome']!r} B.outcome={res_b['outcome']!r}",
+            )
+        )
+    else:
+        rows.append(
+            BenchRow(
+                metric="winner / loser split",
+                claim_ref="perf doc §8 row #6",
+                claim="exactly 1 winner + 1 blocked-or-failed",
+                measured=f"winners={winner_count} losers={loser_count} errors={error_count}",
                 verdict=FAIL,
                 severity=HIGH,
-                note=(
-                    "Perf doc §8 row #6 says NE5002 — that's a doc bug; actual code "
-                    "is NE3008 per src/nucleus/errors.py:885."
-                ),
-            ))
-        else:
-            rows.append(BenchRow(
-                metric="loser error code",
-                claim_ref="perf doc §5 (corrected)",
-                claim="NE3008",
-                measured="NE3008",
-                verdict=PASS,
-            ))
-        rows.append(BenchRow(
-            metric="winner / loser split",
-            claim_ref="perf doc §8 row #6",
-            claim="exactly 1 winner + 1 blocked-or-failed",
-            measured=f"winners={winner_count} losers={loser_count}",
-            verdict=PASS,
-        ))
-    elif winner_count == 2:
-        rows.append(BenchRow(
-            metric="winner / loser split",
-            claim_ref="perf doc §8 row #6",
-            claim="exactly 1 winner",
-            measured=f"BOTH committed snapshots: A={res_a['snapshot_id']}, B={res_b['snapshot_id']}",
-            verdict=FAIL,
-            severity=BLOCKER,
-            note="Lock did NOT serialise; possible silent data race per perf doc §6.2 row #1.",
-        ))
-    elif winner_count == 0:
-        rows.append(BenchRow(
-            metric="winner / loser split",
-            claim_ref="perf doc §8 row #6",
-            claim="exactly 1 winner",
-            measured="zero winners (both errored)",
-            verdict=FAIL,
-            severity=BLOCKER,
-            note=f"A.outcome={res_a['outcome']!r} B.outcome={res_b['outcome']!r}",
-        ))
-    else:
-        rows.append(BenchRow(
-            metric="winner / loser split",
-            claim_ref="perf doc §8 row #6",
-            claim="exactly 1 winner + 1 blocked-or-failed",
-            measured=f"winners={winner_count} losers={loser_count} errors={error_count}",
-            verdict=FAIL,
-            severity=HIGH,
-            note="unexpected outcome combination",
-        ))
+                note="unexpected outcome combination",
+            )
+        )
 
     # Verify Iceberg state — exactly 5 rows (the worker DataFrame size).
     ok, detail = _verify_iceberg_state(warehouse, expected_rows=5)
-    rows.append(BenchRow(
-        metric="post-race Iceberg state",
-        claim_ref="perf doc §8 row #6",
-        claim="row_count = 5 (one snapshot's worth, no double-write)",
-        measured=detail,
-        verdict=PASS if ok else FAIL,
-        severity="" if ok else BLOCKER,
-    ))
+    rows.append(
+        BenchRow(
+            metric="post-race Iceberg state",
+            claim_ref="perf doc §8 row #6",
+            claim="row_count = 5 (one snapshot's worth, no double-write)",
+            measured=detail,
+            verdict=PASS if ok else FAIL,
+            severity="" if ok else BLOCKER,
+        )
+    )
 
     # Surface a wall-clock note for context — the loser should give up
     # quickly (lock contention is fast), the winner takes hold + commit time.
-    rows.append(BenchRow(
-        metric="winner wall-clock",
-        claim_ref="informational",
-        claim=f"~{args.hold + 5.0:.1f}s (hold + commit overhead)",
-        measured=fmt_seconds(float((res_a if res_a["outcome"] == "winner" else res_b).get(
-            "wall_s") or 0.0)),
-        verdict=PASS,
-        note="not a budget claim; recorded for context",
-    ))
-    rows.append(BenchRow(
-        metric="loser wall-clock",
-        claim_ref="informational",
-        claim="< winner wall-clock (released early)",
-        measured=fmt_seconds(float((res_a if res_a["outcome"] == "loser" else res_b).get(
-            "wall_s") or 0.0)),
-        verdict=PASS,
-        note="not a budget claim; recorded for context",
-    ))
+    rows.append(
+        BenchRow(
+            metric="winner wall-clock",
+            claim_ref="informational",
+            claim=f"~{args.hold + 5.0:.1f}s (hold + commit overhead)",
+            measured=fmt_seconds(
+                float((res_a if res_a["outcome"] == "winner" else res_b).get("wall_s") or 0.0)
+            ),
+            verdict=PASS,
+            note="not a budget claim; recorded for context",
+        )
+    )
+    rows.append(
+        BenchRow(
+            metric="loser wall-clock",
+            claim_ref="informational",
+            claim="< winner wall-clock (released early)",
+            measured=fmt_seconds(
+                float((res_a if res_a["outcome"] == "loser" else res_b).get("wall_s") or 0.0)
+            ),
+            verdict=PASS,
+            note="not a budget claim; recorded for context",
+        )
+    )
 
     overall = PASS if all(r.verdict == PASS for r in rows) else FAIL
 
     if overall != PASS:
-        notes.append(
-            f"A stdout tail: {res_a['stdout_tail'][-500:]}"
-        )
-        notes.append(
-            f"B stderr tail: {res_b['stderr_tail'][-500:]}"
-        )
+        notes.append(f"A stdout tail: {res_a['stdout_tail'][-500:]}")
+        notes.append(f"B stderr tail: {res_b['stderr_tail'][-500:]}")
 
     completed_at = now_iso()
     elapsed_total = benchmark_clock() - started

@@ -110,7 +110,11 @@ def generate_nucleus_db(project_root: Path, catalog: Any) -> Path:
                     table_location = ice_table.location()
 
                     if snapshot is None:
-                        logger.debug("Asset %s.%s has no snapshot yet — skipping nucleus.db entry.", ns, tbl_name)
+                        logger.debug(
+                            "Asset %s.%s has no snapshot yet — skipping nucleus.db entry.",
+                            ns,
+                            tbl_name,
+                        )
                         continue
 
                     arrow_table = ice_table.scan().to_arrow()
@@ -139,7 +143,9 @@ def generate_nucleus_db(project_root: Path, catalog: Any) -> Path:
                         "row_count": str(len(arrow_table)),
                     }
                 )
-                logger.debug("nucleus.db: wrote table '%s' (%d rows).", duckdb_table, len(arrow_table))
+                logger.debug(
+                    "nucleus.db: wrote table '%s' (%d rows).", duckdb_table, len(arrow_table)
+                )
 
         # Write the metadata table.
         conn.execute(f'DROP TABLE IF EXISTS "{_CATALOG_META_TABLE}"')

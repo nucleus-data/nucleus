@@ -227,9 +227,7 @@ def test_compute_duckdb_threads_falls_back_to_logical() -> None:
     with patch("psutil.cpu_count") as mock_cpu:
         mock_cpu.side_effect = lambda logical=True: None if logical is False else 8
         threads = _compute_duckdb_threads()
-    assert threads == 8, (
-        f"Expected logical-core fallback (8); got {threads}."
-    )
+    assert threads == 8, f"Expected logical-core fallback (8); got {threads}."
 
 
 def test_compute_duckdb_threads_falls_back_to_constant() -> None:

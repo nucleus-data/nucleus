@@ -342,9 +342,7 @@ def _pydantic_validation_handler(exc: BaseException) -> NucleusError:
     msg = str(exc) or "(no message)"
     summary = msg.splitlines()[0] if msg else "validation failed"
     return NucleusCatalogError(
-        user_message=(
-            f"Catalog metadata is corrupt or unreadable: {summary}"
-        ),
+        user_message=(f"Catalog metadata is corrupt or unreadable: {summary}"),
         fix_hint=(
             "Inspect the catalog's *.metadata.json files for truncation or external "
             "edits. Restore from a recent snapshot if available, or re-materialize the "

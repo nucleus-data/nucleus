@@ -94,11 +94,13 @@ def _build_dataframe(rows: int) -> object:
     """
     import polars as pl  # Docs: https://docs.pola.rs/api/python/stable/
 
-    return pl.DataFrame({
-        "id": list(range(rows)),
-        "amount": [(i * 1.5) % 1000.0 for i in range(rows)],
-        "name": [f"name_{i % 1000}" for i in range(rows)],
-    })
+    return pl.DataFrame(
+        {
+            "id": list(range(rows)),
+            "amount": [(i * 1.5) % 1000.0 for i in range(rows)],
+            "name": [f"name_{i % 1000}" for i in range(rows)],
+        }
+    )
 
 
 def _register_asset_no_checks(asset_key: str, rows: int) -> None:
@@ -110,7 +112,6 @@ def _register_asset_no_checks(asset_key: str, rows: int) -> None:
     @nucleus.asset(asset_key)
     def _body() -> object:
         return df
-
 
 
 def _register_asset_with_checks(asset_key: str, rows: int) -> None:
@@ -213,14 +214,16 @@ def _run_one_scale(  # noqa: PLR0915 — flat orchestration; refactor would obsc
     try:
         baseline_wall, baseline_rows = _materialize_once(asset_key, warehouse_baseline)
     except Exception as exc:
-        rows_out.append(BenchRow(
-            metric=f"{label} — baseline materialize",
-            claim_ref="prerequisite",
-            claim="materialize succeeds without checks",
-            measured=f"{type(exc).__name__}: {exc!s}"[:200],
-            verdict=FAIL,
-            severity=BLOCKER,
-        ))
+        rows_out.append(
+            BenchRow(
+                metric=f"{label} — baseline materialize",
+                claim_ref="prerequisite",
+                claim="materialize succeeds without checks",
+                measured=f"{type(exc).__name__}: {exc!s}"[:200],
+                verdict=FAIL,
+                severity=BLOCKER,
+            )
+        )
         return rows_out, {"error_baseline": str(exc)}, notes
     print(f"[B7]   baseline wall = {fmt_seconds(baseline_wall)} (rows={baseline_rows})")
 
@@ -233,15 +236,17 @@ def _run_one_scale(  # noqa: PLR0915 — flat orchestration; refactor would obsc
     try:
         checked_wall, checked_rows = _materialize_once(asset_key, warehouse_checked)
     except Exception as exc:
-        rows_out.append(BenchRow(
-            metric=f"{label} — checked materialize",
-            claim_ref="user expectation",
-            claim="materialize succeeds with checks attached",
-            measured=f"{type(exc).__name__}: {exc!s}"[:200],
-            verdict=FAIL,
-            severity=BLOCKER,
-            note="baseline succeeded; check path is the regression",
-        ))
+        rows_out.append(
+            BenchRow(
+                metric=f"{label} — checked materialize",
+                claim_ref="user expectation",
+                claim="materialize succeeds with checks attached",
+                measured=f"{type(exc).__name__}: {exc!s}"[:200],
+                verdict=FAIL,
+                severity=BLOCKER,
+                note="baseline succeeded; check path is the regression",
+            )
+        )
         return rows_out, {"baseline_wall_s": baseline_wall, "error_checked": str(exc)}, notes
     print(f"[B7]   checked wall = {fmt_seconds(checked_wall)} (rows={checked_rows})")
 
@@ -265,32 +270,38 @@ def _run_one_scale(  # noqa: PLR0915 — flat orchestration; refactor would obsc
         verdict = FAIL
         severity = LOW
 
-    rows_out.append(BenchRow(
-        metric=f"{label} — baseline materialize wall (no checks)",
-        claim_ref="informational",
-        claim="bounded by per-asset compute",
-        measured=fmt_seconds(baseline_wall),
-        verdict=PASS,
-        note=f"row_count={baseline_rows:,}",
-    ))
-    rows_out.append(BenchRow(
-        metric=f"{label} — checked materialize wall (3 checks)",
-        claim_ref="informational",
-        claim="baseline + check cost",
-        measured=fmt_seconds(checked_wall),
-        verdict=PASS,
-        note=f"row_count={checked_rows:,}",
-    ))
-    rows_out.append(BenchRow(
-        metric=f"{label} — check overhead",
-        claim_ref="user expectation",
-        claim="<50% of baseline materialize wall (low cost)",
-        measured=f"{fmt_seconds(overhead_s)} ({overhead_pct:.1f}%)",
-        verdict=verdict,
-        delta=f"+{overhead_pct:.1f}%" if not math.isnan(overhead_pct) else "n/a",
-        severity=severity,
-        note="3 representative checks: not_null + unique + range",
-    ))
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — baseline materialize wall (no checks)",
+            claim_ref="informational",
+            claim="bounded by per-asset compute",
+            measured=fmt_seconds(baseline_wall),
+            verdict=PASS,
+            note=f"row_count={baseline_rows:,}",
+        )
+    )
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — checked materialize wall (3 checks)",
+            claim_ref="informational",
+            claim="baseline + check cost",
+            measured=fmt_seconds(checked_wall),
+            verdict=PASS,
+            note=f"row_count={checked_rows:,}",
+        )
+    )
+    rows_out.append(
+        BenchRow(
+            metric=f"{label} — check overhead",
+            claim_ref="user expectation",
+            claim="<50% of baseline materialize wall (low cost)",
+            measured=f"{fmt_seconds(overhead_s)} ({overhead_pct:.1f}%)",
+            verdict=verdict,
+            delta=f"+{overhead_pct:.1f}%" if not math.isnan(overhead_pct) else "n/a",
+            severity=severity,
+            note="3 representative checks: not_null + unique + range",
+        )
+    )
 
     raw = {
         "scale": scale_key,
@@ -328,14 +339,16 @@ def main(argv: list[str] | None = None) -> int:
         try:
             scale_rows, scale_raw, scale_notes = _run_one_scale(sk, base_dir=base_dir)
         except Exception as exc:
-            scale_rows = [BenchRow(
-                metric=f"scale={sk}",
-                claim_ref="user expectation",
-                claim="benchmark completes",
-                measured=f"{type(exc).__name__}: {exc!s}"[:200],
-                verdict=FAIL,
-                severity=BLOCKER,
-            )]
+            scale_rows = [
+                BenchRow(
+                    metric=f"scale={sk}",
+                    claim_ref="user expectation",
+                    claim="benchmark completes",
+                    measured=f"{type(exc).__name__}: {exc!s}"[:200],
+                    verdict=FAIL,
+                    severity=BLOCKER,
+                )
+            ]
             scale_raw = {"error": str(exc)}
             scale_notes = []
         rows.extend(scale_rows)

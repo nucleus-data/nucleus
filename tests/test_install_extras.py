@@ -168,9 +168,9 @@ def test_extras_group_visible_in_wheel_metadata(group: str, _minimum: int) -> No
     observed = _installed_extras_for_pkg("nucleus", group)
     if not observed:
         pytest.skip(
-            f"Installed nucleus=={installed_version} surfaces no `extra == \"{group}\"` "
+            f'Installed nucleus=={installed_version} surfaces no `extra == "{group}"` '
             f"requires-rows. Likely a stale editable install; re-run "
-            f"`pip install -e .` (or `pip install -e \".[{group}]\"`) and re-test."
+            f'`pip install -e .` (or `pip install -e ".[{group}]"`) and re-test.'
         )
 
     missing = declared - observed
@@ -195,9 +195,7 @@ def test_all_meta_group_is_self_reference() -> None:
     """
     deps = _extras_from_pyproject("all")
     assert deps, "`all` meta-group is empty -- expected one self-reference entry."
-    assert len(deps) == 1, (
-        f"`all` meta-group should be a single self-reference entry, got: {deps}"
-    )
+    assert len(deps) == 1, f"`all` meta-group should be a single self-reference entry, got: {deps}"
     entry = deps[0].strip()
     self_ref_re = re.compile(r"^nucleus\s*\[\s*[a-zA-Z][a-zA-Z0-9_,\-\s]*\]\s*$")
     assert self_ref_re.match(entry), (

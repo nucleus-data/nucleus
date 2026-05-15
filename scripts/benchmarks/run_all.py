@@ -228,7 +228,7 @@ def _render_version_caveats(sw: dict[str, str]) -> str:
     if source_v and source_v != nucleus_v:
         return (
             "\n### Version metadata drift\n\n"
-            f"- `importlib.metadata.version(\"nucleus\")` reports **{nucleus_v}**, "
+            f'- `importlib.metadata.version("nucleus")` reports **{nucleus_v}**, '
             f"but `nucleus.__version__` reads **{source_v}** from the source. "
             f"This indicates the editable install dist-info is stale — re-run "
             f"`pip install -e .` to refresh. CLI users see `{source_v}` because "
@@ -271,7 +271,9 @@ def _render_report(short_names: list[str], total_wall_s: float) -> str:
         if loaded is not None:
             sections.append({"short_name": sn, **loaded})
     if not sections:
-        return f"# Nucleus Empirical Benchmark Baseline — {today}\n\n_(no benchmark results found)_\n"
+        return (
+            f"# Nucleus Empirical Benchmark Baseline — {today}\n\n_(no benchmark results found)_\n"
+        )
 
     # Pull hardware + software from the first section (consistent across run).
     hw = sections[0].get("hardware", hardware_specs())
@@ -292,7 +294,8 @@ def _render_report(short_names: list[str], total_wall_s: float) -> str:
 
     parts: list[str] = []
     parts.append(f"# Nucleus Empirical Benchmark Baseline — {today}\n")
-    parts.append(textwrap.dedent(f"""
+    parts.append(
+        textwrap.dedent(f"""
         > Honest measurements of the v0.2.0 GA performance + reliability claims
         > documented in `docs/research/performance_reliability_targets.md`.
         >
@@ -302,7 +305,9 @@ def _render_report(short_names: list[str], total_wall_s: float) -> str:
         > `python scripts/benchmarks/run_all.py`. Per AGENTS.md §11.13 a regression
         > >10 % vs this baseline is a CI-blocking event; per the task spec a real
         > FAIL must surface honestly — never fake numbers.
-    """).strip() + "\n")
+    """).strip()
+        + "\n"
+    )
 
     parts.append(f"\n## Run summary\n")
     parts.append(f"- **Generated**: {now_iso()}")
@@ -331,7 +336,8 @@ def _render_report(short_names: list[str], total_wall_s: float) -> str:
     parts.append(_render_version_caveats(sw))
 
     parts.append("\n## How to re-run\n")
-    parts.append(textwrap.dedent("""
+    parts.append(
+        textwrap.dedent("""
         ```bash
         # Full suite (recommended; re-renders this document):
         python scripts/benchmarks/run_all.py
@@ -343,7 +349,9 @@ def _render_report(short_names: list[str], total_wall_s: float) -> str:
         python -m scripts.benchmarks.b1_tpch_duckdb --scale-factor 10 --runs 3
         python -m scripts.benchmarks.b3_postgres_ingest --scale 1m
         ```
-    """).strip() + "\n")
+    """).strip()
+        + "\n"
+    )
 
     for sec in sections:
         result = sec["result"]
@@ -352,8 +360,10 @@ def _render_report(short_names: list[str], total_wall_s: float) -> str:
         parts.append(f"- **Script**: `{result.get('script')}`")
         parts.append(f"- **Command**: `{result.get('command')}`")
         parts.append(f"- **Wall-clock**: {fmt_seconds(float(result.get('elapsed_s', 0)))}")
-        parts.append(f"- **Started / completed**: "
-                     f"{result.get('started_at')} → {result.get('completed_at')}\n")
+        parts.append(
+            f"- **Started / completed**: "
+            f"{result.get('started_at')} → {result.get('completed_at')}\n"
+        )
         parts.append(_render_table(result.get("rows", [])))
 
         notes = result.get("notes") or []
@@ -378,8 +388,7 @@ def main(argv: list[str] | None = None) -> int:
         "--only",
         type=str,
         default=None,
-        help="Comma-separated subset of benchmarks to run (default: all). "
-             "Example: --only b5,b2,b4",
+        help="Comma-separated subset of benchmarks to run (default: all). Example: --only b5,b2,b4",
     )
     parser.add_argument(
         "--report-only",
@@ -391,19 +400,19 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         default=None,
         help="Override the markdown output path "
-             "(default: docs/benchmarks/<YYYY-MM-DD>_baseline.md).",
+        "(default: docs/benchmarks/<YYYY-MM-DD>_baseline.md).",
     )
     args = parser.parse_args(argv)
 
     requested: list[str] = (
         [s.strip().lower() for s in args.only.split(",") if s.strip()]
-        if args.only else [s for s, _ in BENCHMARKS]
+        if args.only
+        else [s for s, _ in BENCHMARKS]
     )
     pairs = _short_name_pairs()
     unknown = [s for s in requested if s not in pairs]
     if unknown:
-        print(f"[run_all] unknown benchmark(s): {unknown}; valid: {sorted(pairs)}",
-              file=sys.stderr)
+        print(f"[run_all] unknown benchmark(s): {unknown}; valid: {sorted(pairs)}", file=sys.stderr)
         return 2
 
     started = benchmark_clock()
