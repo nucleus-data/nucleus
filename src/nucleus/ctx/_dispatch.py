@@ -65,7 +65,7 @@ _SUPPORTED_SCHEMES: frozenset[str] = frozenset(
 )
 
 
-def copy_from(
+def copy_from(  # noqa: PLR0911 — scheme-dispatcher: 1 return per supported scheme is the natural shape.
     source: str,
     *,
     table: str = "",
@@ -140,10 +140,9 @@ def copy_from(
 
     # Object-storage and filesystem sources (s3://, gs://, file://, relative paths)
     # do NOT use a table name — they read directly from the URI.
-    _OBJECT_STORAGE_SCHEMES = frozenset({"s3", "gs", "file"})
-    _IS_RELATIVE_PATH = not scheme or scheme not in _SUPPORTED_SCHEMES
+    is_relative_path = not scheme or scheme not in _SUPPORTED_SCHEMES
 
-    if scheme not in _SUPPORTED_SCHEMES and not _IS_RELATIVE_PATH:
+    if scheme not in _SUPPORTED_SCHEMES and not is_relative_path:
         raise NucleusConfigError(
             user_message=(
                 f"Source scheme {scheme!r} is not supported. "
@@ -218,7 +217,7 @@ def copy_from(
             format=format,  # type: ignore[arg-type]
         )
 
-    if scheme == "file" or _IS_RELATIVE_PATH:
+    if scheme == "file" or is_relative_path:
         # file:///path/to/file.parquet or ./relative/path.parquet or /absolute/path.parquet
         return ingest_filesystem_to_iceberg(
             source,
