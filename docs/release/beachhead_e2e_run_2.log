@@ -1,0 +1,28 @@
+Working directory: C:\Users\GOT4HC\AppData\Local\Temp\nucleus_beachhead_0t_liso5
+Nucleus invocation: C:\Users\GOT4HC\Mordern Data Platform\.venv\Scripts\python.exe -m nucleus.cli.main
+
+  [step 1] setup                        PASS          0.00s  (tmp dir registered)
+  [step 2] nucleus version              PASS          2.83s
+  [step 3] nucleus init                 PASS          1.23s
+  [step 4] SQLite source seed           PASS          0.05s  (3 rows)
+  [step 5] nucleus ingest               PASS         16.63s
+  [step 6] nucleus query                PASS         29.94s
+  [step 7] nucleus run                  PASS         27.47s
+
+============================================================
+Nucleus v0.1 Beachhead E2E - Result Summary
+============================================================
+Step                           Status           Elapsed
+------------------------------------------------------------
+1. setup                       PASS               0.00s
+2. nucleus version             PASS               2.83s
+3. nucleus init                PASS               1.23s
+4. SQLite source seed          PASS               0.05s
+5. nucleus ingest              PASS              16.63s
+6. nucleus query               PASS              29.94s
+7. nucleus run                 PASS              27.47s
+------------------------------------------------------------
+TOTAL elapsed: 78.16s    Target: 30 minutes (1800s)
+Headroom: 1721.84s
+============================================================
+Status: PASS

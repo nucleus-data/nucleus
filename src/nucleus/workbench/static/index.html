@@ -258,6 +258,69 @@
       transition: border-color 0.15s;
     }
     .sql-editor:focus { border-color: #2A5BFA; background: #fff; }
+
+    /* ── Empty-state pattern (universal) ────────────────────────── */
+    /* Used when an API returns zero rows — friendly call-to-action */
+    /* over a blank panel.  Brand palette only; no external assets. */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; padding: 40px 24px; text-align: center; color: #5A6273;
+    }
+    .empty-state-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(42,91,250,0.06); border: 1px solid rgba(42,91,250,0.12);
+      display: flex; align-items: center; justify-content: center; color: #2A5BFA;
+    }
+    .empty-state-title { font-size: 14px; font-weight: 700; color: #0A0E1A; margin: 0; }
+    .empty-state-desc { font-size: 12px; color: #5A6273; margin: 0; max-width: 340px; line-height: 1.5; }
+    .empty-state-cta {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+      border-radius: 6px; background: #0A0E1A; color: #fff; font-size: 12px;
+      font-weight: 600; font-family: ui-monospace, Consolas, monospace;
+      border: none; cursor: default; user-select: text;
+    }
+    .empty-state-link {
+      font-size: 12px; color: #2A5BFA; text-decoration: none;
+      border-bottom: 1px solid rgba(42,91,250,0.30); cursor: pointer;
+      background: transparent; border-top: none; border-left: none; border-right: none;
+      padding: 0; font-family: inherit;
+    }
+    .empty-state-link:hover { border-bottom-color: #2A5BFA; }
+
+    /* ── Retry button (paired with ErrorBanner) ─────────────────── */
+    .retry-btn {
+      display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+      border-radius: 6px; background: #fff; color: #DC2626;
+      border: 1px solid rgba(220,38,38,0.30); font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background 0.12s;
+    }
+    .retry-btn:hover { background: rgba(220,38,38,0.06); }
+    .retry-btn:focus { outline: 2px solid rgba(220,38,38,0.30); outline-offset: 1px; }
+
+    /* ── Skeleton loader (shimmer placeholder) ──────────────────── */
+    @keyframes skel-shimmer {
+      0%   { background-position: -300px 0; }
+      100% { background-position: 300px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #F5F7FA 0%, #EEF0F4 50%, #F5F7FA 100%);
+      background-size: 600px 100%;
+      animation: skel-shimmer 1.4s ease-in-out infinite;
+      border-radius: 6px;
+    }
+    .skel-row { height: 14px; margin-bottom: 10px; }
+
+    /* ── Accessibility: focus rings on interactive surfaces ─────── */
+    button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+      outline: 2px solid #2A5BFA; outline-offset: 2px; border-radius: 4px;
+    }
+    .filter-chip:focus-visible { outline: 2px solid #2A5BFA; outline-offset: 2px; }
+
+    /* ── Visually hidden but screen-reader accessible ───────────── */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
   </style>
 
   <script src="vendor/react.production.min.js"></script>
@@ -309,12 +372,31 @@ function Icon({ name, size=16, color, style, className }) {
 }
 
 /* ── API helpers ───────────────────────────────────────────────── */
-async function apiFetch(path) {
+/* apiFetch is the lightweight GET helper used by list/detail pages.   */
+/* When `withMeta=true` it returns { data, error, hint } so callers    */
+/* can render an ErrorBanner + retry button instead of a blank panel. */
+async function apiFetch(path, withMeta=false) {
   try {
     const r = await fetch(path);
-    if (!r.ok) return null;
-    return await r.json();
-  } catch { return null; }
+    if (!r.ok) {
+      if (!withMeta) return null;
+      const body = await r.json().catch(() => ({}));
+      return {
+        data: null,
+        error: body?.detail?.user_message || `Request failed (${r.status}).`,
+        hint:  body?.detail?.fix_hint || 'Check that the Workbench server is running and the project is loaded.',
+      };
+    }
+    const data = await r.json();
+    return withMeta ? { data, error: null, hint: null } : data;
+  } catch (e) {
+    if (!withMeta) return null;
+    return {
+      data: null,
+      error: 'Cannot reach the Workbench API.',
+      hint:  'Is the FastAPI server running?  Try `nucleus workbench up` from your project root.',
+    };
+  }
 }
 async function apiCall(path, opts={}) {
   try {
@@ -364,13 +446,47 @@ function fmtCellVal(v) {
 }
 
 /* ── ErrorBanner ───────────────────────────────────────────────── */
-function ErrorBanner({ message, hint }) {
+/* Renders a NucleusError-style failure with optional fix hint and    */
+/* retry button.  Translation already happened on the backend; this   */
+/* component only displays user_message + fix_hint per v4.1 §6.4.    */
+function ErrorBanner({ message, hint, onRetry, retryLabel }) {
   if (!message) return null;
-  return h('div', { className:'error-banner' },
+  return h('div', { className:'error-banner', role:'alert' },
     h('div', { style:{ display:'flex', alignItems:'center', gap:8 } },
-      h(Icon,{ name:'AlertCircle', size:14 }), message,
+      h(Icon,{ name:'AlertCircle', size:14 }),
+      h('span', { style:{ flex:1 } }, message),
+      onRetry && h('button', { className:'retry-btn', onClick:onRetry, type:'button',
+        'aria-label':'Retry the failed request' },
+        h(Icon,{ name:'RefreshCw', size:11 }), retryLabel || 'Retry',
+      ),
     ),
     hint && h('div',{ className:'error-banner-hint' }, hint),
+  );
+}
+
+/* ── EmptyState ────────────────────────────────────────────────── */
+/* Friendly zero-data state.  Use when an API returns 0 rows AND     */
+/* the user has not applied a filter that would explain it.  The CTA */
+/* should be the next action (e.g. `nucleus init`, `nucleus run`).   */
+function EmptyState({ icon, title, description, command, linkLabel, onLink }) {
+  return h('div', { className:'empty-state', role:'status' },
+    icon && h('div', { className:'empty-state-icon' }, h(Icon,{ name:icon, size:22 })),
+    title && h('p', { className:'empty-state-title' }, title),
+    description && h('p', { className:'empty-state-desc' }, description),
+    command && h('span', { className:'empty-state-cta' }, '$ '+command),
+    onLink && h('button', { className:'empty-state-link', onClick:onLink, type:'button' }, linkLabel || 'Learn more'),
+  );
+}
+
+/* ── Skeleton ──────────────────────────────────────────────────── */
+/* Shimmer placeholder used for the initial dashboard render so the  */
+/* user never sees a blank flash before data arrives.                */
+function Skeleton({ rows=3, width='100%' }) {
+  return h('div', { 'aria-hidden':'true', style:{ padding:'8px 0' } },
+    Array.from({ length:rows }).map((_, i) =>
+      h('div', { key:i, className:'skeleton skel-row',
+        style:{ width: typeof width==='string' ? width : `${width}px` } })
+    ),
   );
 }
 
@@ -514,12 +630,14 @@ function RecentRunsCard({ runs, loading, onRunClick }) {
     ),
     h('div', { style:{ padding:'4px 18px', flex:1 } },
       loading
-        ? h('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', height:160, color:'#5A6273', fontSize:13 } }, h(Icon,{ name:'Loader2', size:16, className:'spin' }))
+        ? h('div', { style:{ padding:'12px 0' } }, h(Skeleton, { rows:5 }))
         : runs.length===0
-          ? h('div', { style:{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', height:160, color:'#5A6273', gap:8 } },
-              h('span', { style:{ fontSize:28, opacity:0.3 } }, '▶'),
-              h('p', { style:{ fontSize:12, margin:0 } }, 'No materializations yet'),
-            )
+          ? h(EmptyState, {
+              icon:'Play',
+              title:'No materializations yet',
+              description:'Trigger one from an asset card or the CLI to see runs here.',
+              command:'nucleus run <asset-key>',
+            })
           : runs.slice(0,8).map(r =>
               h('div', { key:r.run_id, className:'run-row', onClick:()=>onRunClick&&onRunClick(r) },
                 h('span', { className:'dot '+statusDotClass(r.status) }),
@@ -533,46 +651,47 @@ function RecentRunsCard({ runs, loading, onRunClick }) {
 }
 
 /* ── PipelineDAGCard ───────────────────────────────────────────── */
+/* Renders the asset DAG.  When the registry is empty we surface a    */
+/* friendly empty state pointing at `nucleus init`, instead of fake   */
+/* placeholder nodes that would mislead the operator.                 */
 function PipelineDAGCard({ assets, loading, setPage, onAssetClick }) {
   const positions = [
     { x:20, y:20 }, { x:20, y:100 }, { x:200, y:20 },
     { x:200, y:100 }, { x:120, y:160 }, { x:200, y:220 },
   ];
   const realNodes = assets.slice(0,6);
-  const demoMode = realNodes.length===0;
-
-  const demoNodes = [
-    { key:'orders_silver', x:20, y:20 },
-    { key:'customers_dim', x:200, y:70 },
-    { key:'revenue_daily', x:120, y:150, highlight:true },
-    { key:'bi_export', x:200, y:220 },
-  ];
-  const nodes = demoMode ? demoNodes : realNodes.map((a,i) => ({ ...a, ...positions[i] }));
+  const isEmpty = !loading && realNodes.length===0;
+  const nodes = realNodes.map((a,i) => ({ ...a, ...positions[i] }));
 
   return h('div', { className:'card', style:{ display:'flex', flexDirection:'column', minHeight:300, overflow:'hidden' } },
     h('div', { style:{ display:'flex', alignItems:'center', padding:'16px 18px 12px', borderBottom:'1px solid #EEF0F4' } },
       h('span', { style:{ fontSize:14, fontWeight:700, letterSpacing:'-0.01em' } }, 'Asset graph'),
-      h('button', { onClick:()=>setPage('assets'), style:{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5, fontSize:12, fontWeight:500, color:'#5A6273', border:'1px solid #EEF0F4', background:'transparent', borderRadius:6, padding:'3px 8px', cursor:'pointer' } },
+      !isEmpty && h('button', { onClick:()=>setPage('assets'), style:{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5, fontSize:12, fontWeight:500, color:'#5A6273', border:'1px solid #EEF0F4', background:'transparent', borderRadius:6, padding:'3px 8px', cursor:'pointer' }, 'aria-label':'Open asset graph explorer' },
         h(Icon,{ name:'Maximize2', size:11 }), 'Explore all'),
     ),
     h('div', { style:{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', padding:16 } },
-      h('svg', { width:'100%', height:220, viewBox:'0 0 400 260', fill:'none' },
-        demoMode && h('g', null,
-          h('line', { x1:80, y1:38, x2:140, y2:145, stroke:'#EEF0F4', strokeWidth:1.5 }),
-          h('line', { x1:260, y1:88, x2:190, y2:145, stroke:'#EEF0F4', strokeWidth:1.5 }),
-          h('line', { x1:180, y1:168, x2:250, y2:215, stroke:'#EEF0F4', strokeWidth:1.5 }),
-        ),
-        ...nodes.map((node, i) =>
-          h('g', { key:node.key, style:{ cursor:'pointer' }, onClick:()=>onAssetClick&&onAssetClick(node.key) },
-            h('rect', { x:node.x, y:node.y, width:130, height:36, rx:8, fill:node.highlight?'rgba(124,58,237,0.08)':'#FAFAFA', stroke:node.highlight?'#7C3AED':'#EEF0F4', strokeWidth:node.highlight?2:1.5 }),
-            h('text', { x:node.x+10, y:node.y+22, fontSize:10, fill:node.highlight?'#7C3AED':'#5A6273', fontFamily:'ui-monospace,Consolas,monospace', fontWeight:600 },
-              node.key.length>14 ? node.key.slice(0,14)+'…' : node.key,
+      loading
+        ? h('div', { style:{ width:'100%', padding:'8px 12px' } }, h(Skeleton, { rows:6 }))
+        : isEmpty
+          ? h(EmptyState, {
+              icon:'Database',
+              title:'No assets registered yet',
+              description:'Define a Python function with @nucleus.asset, or scaffold a starter project from the CLI.',
+              command:'nucleus init my-project',
+            })
+          : h('svg', { width:'100%', height:220, viewBox:'0 0 400 260', fill:'none', role:'img', 'aria-label':'Asset dependency graph' },
+              ...nodes.map((node, i) =>
+                h('g', { key:node.key, style:{ cursor:'pointer' }, onClick:()=>onAssetClick&&onAssetClick(node.key), tabIndex:0,
+                  onKeyDown:e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onAssetClick&&onAssetClick(node.key);} } },
+                  h('rect', { x:node.x, y:node.y, width:130, height:36, rx:8, fill:node.highlight?'rgba(124,58,237,0.08)':'#FAFAFA', stroke:node.highlight?'#7C3AED':'#EEF0F4', strokeWidth:node.highlight?2:1.5 }),
+                  h('text', { x:node.x+10, y:node.y+22, fontSize:10, fill:node.highlight?'#7C3AED':'#5A6273', fontFamily:'ui-monospace,Consolas,monospace', fontWeight:600 },
+                    node.key.length>14 ? node.key.slice(0,14)+'…' : node.key,
+                  ),
+                )
+              ),
             ),
-          )
-        ),
-      ),
     ),
-    h('div', { style:{ padding:'10px 18px', borderTop:'1px solid #EEF0F4', display:'flex', gap:16, fontSize:11, color:'#5A6273' } },
+    !isEmpty && h('div', { style:{ padding:'10px 18px', borderTop:'1px solid #EEF0F4', display:'flex', gap:16, fontSize:11, color:'#5A6273' } },
       ['Success','Warning','Failed','Skipped'].map((label, i) =>
         h('span', { key:label, style:{ display:'flex', alignItems:'center', gap:4 } },
           h('span', { style:{ width:7, height:7, borderRadius:'50%', background:['#10B981','#F59E0B','#EF4444','#94A3B8'][i], display:'inline-block' } }),
@@ -771,8 +890,17 @@ function AssetsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [selected, setSelected] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
-  useEffect(() => { apiFetch('/api/assets').then(d => { setAssets(d||[]); setLoading(false); }); }, []);
+  useEffect(() => {
+    setLoading(true); setLoadError(null);
+    apiFetch('/api/assets', true).then(res => {
+      if (res.error) { setLoadError(res); setAssets([]); }
+      else { setAssets(res.data || []); setLoadError(null); }
+      setLoading(false);
+    });
+  }, [reloadKey]);
 
   const filtered = useMemo(() =>
     assets.filter(a => !filter || a.key.toLowerCase().includes(filter.toLowerCase())),
@@ -788,16 +916,31 @@ function AssetsPage() {
       h('div', { style:{ marginLeft:'auto', display:'flex', alignItems:'center', gap:8 } },
         h('div', { style:{ display:'flex', alignItems:'center', gap:8, background:'#FAFAFA', border:'1px solid #EEF0F4', borderRadius:8, padding:'7px 12px' } },
           h(Icon,{ name:'Search', size:13, style:{ color:'#9BA3AF' } }),
-          h('input', { type:'text', placeholder:'Filter assets…', value:filter, onChange:e=>setFilter(e.target.value), style:{ border:'none', outline:'none', background:'transparent', fontSize:13, width:220, color:'#0A0E1A' } }),
-          filter && h('button', { onClick:()=>setFilter(''), style:{ border:'none', background:'transparent', cursor:'pointer', padding:0, display:'flex', color:'#9BA3AF' } }, h(Icon,{ name:'X', size:12 })),
+          h('label', { className:'sr-only', htmlFor:'asset-filter-input' }, 'Filter assets'),
+          h('input', { id:'asset-filter-input', type:'text', placeholder:'Filter assets…', value:filter, onChange:e=>setFilter(e.target.value), style:{ border:'none', outline:'none', background:'transparent', fontSize:13, width:220, color:'#0A0E1A' } }),
+          filter && h('button', { onClick:()=>setFilter(''), 'aria-label':'Clear filter', style:{ border:'none', background:'transparent', cursor:'pointer', padding:0, display:'flex', color:'#9BA3AF' } }, h(Icon,{ name:'X', size:12 })),
         ),
       ),
     ),
+    loadError && h('div', { style:{ marginBottom:16 } },
+      h(ErrorBanner, { message:loadError.error, hint:loadError.hint, onRetry:()=>setReloadKey(k=>k+1) }),
+    ),
     loading
-      ? h('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', height:200 } }, h(Icon,{ name:'Loader2', size:24, className:'spin', style:{ color:'#5A6273' } }))
-      : filtered.length===0
-        ? h('div', { style:{ textAlign:'center', padding:60, color:'#9BA3AF', fontSize:14 } }, filter ? `No assets match "${filter}"` : 'No assets registered. Create your first @nucleus.asset.')
-        : h('div', { style:{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:16 } },
+      ? h('div', { style:{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:16 } },
+          Array.from({ length:6 }).map((_, i) =>
+            h('div', { key:i, className:'card', style:{ padding:20 } }, h(Skeleton, { rows:3 })),
+          ),
+        )
+      : !loadError && filtered.length===0
+        ? filter
+          ? h(EmptyState, { icon:'Search', title:'No assets match', description:`No registered asset matches "${filter}".`, linkLabel:'Clear filter', onLink:()=>setFilter('') })
+          : h(EmptyState, {
+              icon:'Database',
+              title:'No assets registered',
+              description:'Add a Python function with @nucleus.asset and import it from your project, or scaffold a starter project.',
+              command:'nucleus init my-project',
+            })
+        : !loadError && h('div', { style:{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:16 } },
             filtered.map(asset =>
               h('div', { key:asset.key, className:'card asset-card', style:{ padding:20 }, onClick:()=>setSelected(asset.key) },
                 h('div', { style:{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8, marginBottom:12 } },
@@ -827,12 +970,19 @@ function RunsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    apiFetch('/api/runs?limit=100').then(d => { setRuns(d||[]); setLoading(false); });
+    setLoading(true); setLoadError(null);
+    apiFetch('/api/runs?limit=100', true).then(res => {
+      if (res.error) { setLoadError(res); setRuns([]); }
+      else { setRuns(res.data || []); setLoadError(null); }
+      setLoading(false);
+    });
     const t = setInterval(() => apiFetch('/api/runs?limit=100').then(d => d && setRuns(d)), 6000);
     return () => clearInterval(t);
-  }, []);
+  }, [reloadKey]);
 
   const filtered = useMemo(() =>
     runs.filter(r => {
@@ -865,16 +1015,33 @@ function RunsPage() {
       ),
       h('div', { style:{ marginLeft:'auto', display:'flex', alignItems:'center', gap:8, background:'#FAFAFA', border:'1px solid #EEF0F4', borderRadius:8, padding:'7px 12px' } },
         h(Icon,{ name:'Search', size:13, style:{ color:'#9BA3AF' } }),
-        h('input', { type:'text', placeholder:'Filter by asset…', value:search, onChange:e=>setSearch(e.target.value), style:{ border:'none', outline:'none', background:'transparent', fontSize:13, width:180, color:'#0A0E1A' } }),
-        search && h('button', { onClick:()=>setSearch(''), style:{ border:'none', background:'transparent', cursor:'pointer', display:'flex', color:'#9BA3AF' } }, h(Icon,{ name:'X', size:12 })),
+        h('label', { className:'sr-only', htmlFor:'runs-filter-input' }, 'Filter runs by asset key'),
+        h('input', { id:'runs-filter-input', type:'text', placeholder:'Filter by asset…', value:search, onChange:e=>setSearch(e.target.value), style:{ border:'none', outline:'none', background:'transparent', fontSize:13, width:180, color:'#0A0E1A' } }),
+        search && h('button', { onClick:()=>setSearch(''), 'aria-label':'Clear asset filter', style:{ border:'none', background:'transparent', cursor:'pointer', display:'flex', color:'#9BA3AF' } }, h(Icon,{ name:'X', size:12 })),
       ),
+    ),
+    loadError && h('div', { style:{ marginBottom:16 } },
+      h(ErrorBanner, { message:loadError.error, hint:loadError.hint, onRetry:()=>setReloadKey(k=>k+1) }),
     ),
     h('div', { className:'card', style:{ overflow:'hidden' } },
       loading
-        ? h('div', { style:{ padding:40, display:'flex', alignItems:'center', justifyContent:'center' } }, h(Icon,{ name:'Loader2', size:24, className:'spin', style:{ color:'#5A6273' } }))
-        : filtered.length===0
-          ? h('div', { style:{ padding:48, textAlign:'center', color:'#9BA3AF', fontSize:14 } }, 'No runs match the current filter.')
-          : h('table', { style:{ width:'100%', borderCollapse:'collapse', fontSize:13 } },
+        ? h('div', { style:{ padding:'24px 20px' } }, h(Skeleton, { rows:6 }))
+        : !loadError && runs.length===0
+          ? h(EmptyState, {
+              icon:'Play',
+              title:'No materializations recorded',
+              description:'Trigger a run from the CLI or click Materialize on an asset card.  Runs appear here in real time.',
+              command:'nucleus run <asset-key>',
+            })
+          : !loadError && filtered.length===0
+            ? h(EmptyState, {
+                icon:'Filter',
+                title:'No runs match the current filter',
+                description:`Adjust the status filter${search?' or clear the search':''} to see more runs.`,
+                linkLabel: search ? 'Clear search' : null,
+                onLink: search ? ()=>setSearch('') : null,
+              })
+            : h('table', { style:{ width:'100%', borderCollapse:'collapse', fontSize:13 } },
               h('thead', null,
                 h('tr', null,
                   ...['Status','Asset','Duration','Started','Rows'].map(col =>
@@ -953,7 +1120,14 @@ function QueryPage() {
         ),
       ),
     ),
-    error && h(ErrorBanner, { message:error, hint }),
+    error && h('div', { style:{ marginBottom:16 } }, h(ErrorBanner, { message:error, hint, onRetry:execute, retryLabel:'Re-run query' })),
+    !result && !error && !loading && h('div', { className:'card', style:{ marginTop:0 } },
+      h(EmptyState, {
+        icon:'Code2',
+        title:'Run a query to see results',
+        description:'Press Run query (or Ctrl+Enter) to execute the SQL above.  Use {{ ref(\'asset_key\') }} to reference any registered asset.',
+      }),
+    ),
     result && result.columns?.length>0 && h('div', { className:'card', style:{ overflow:'hidden' } },
       result.truncated && h('div', { style:{ padding:'8px 16px', background:'rgba(245,158,11,0.06)', borderBottom:'1px solid rgba(245,158,11,0.15)', fontSize:12, color:'#D97706' } },
         h(Icon,{ name:'AlertCircle', size:12, style:{ marginRight:5 } }),
@@ -971,7 +1145,13 @@ function QueryPage() {
         ),
       ),
     ),
-    result && result.columns?.length===0 && h('div', { style:{ padding:32, textAlign:'center', color:'#9BA3AF', fontSize:13 } }, 'Query returned 0 results.'),
+    result && result.columns?.length===0 && h('div', { className:'card' },
+      h(EmptyState, {
+        icon:'CheckCircle',
+        title:'Query returned 0 rows',
+        description:'The query executed successfully but matched no rows.  Try removing WHERE filters or running SHOW TABLES to inspect the catalog.',
+      }),
+    ),
   );
 }
 
@@ -979,8 +1159,17 @@ function QueryPage() {
 function SchedulesPage() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
-  useEffect(() => { apiFetch('/api/schedules').then(d => { setSchedules(d||[]); setLoading(false); }); }, []);
+  useEffect(() => {
+    setLoading(true); setLoadError(null);
+    apiFetch('/api/schedules', true).then(res => {
+      if (res.error) { setLoadError(res); setSchedules([]); }
+      else { setSchedules(res.data || []); setLoadError(null); }
+      setLoading(false);
+    });
+  }, [reloadKey]);
 
   const today = new Date();
   today.setHours(0,0,0,0);
@@ -995,11 +1184,19 @@ function SchedulesPage() {
       h('h2', { style:{ fontSize:22, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.02em' } }, 'Schedules'),
       h('p', { style:{ fontSize:13, color:'#5A6273', margin:0 } }, schedules.length+' scheduled asset'+(schedules.length!==1?'s':'')+' · Next 7 days'),
     ),
+    loadError && h('div', { style:{ marginBottom:16 } },
+      h(ErrorBanner, { message:loadError.error, hint:loadError.hint, onRetry:()=>setReloadKey(k=>k+1) }),
+    ),
     loading
-      ? h('div', { style:{ padding:48, display:'flex', justifyContent:'center' } }, h(Icon,{ name:'Loader2', size:24, className:'spin', style:{ color:'#5A6273' } }))
-      : schedules.length===0
-        ? h('div', { style:{ textAlign:'center', padding:60, color:'#9BA3AF', fontSize:14 } }, 'No scheduled assets. Add schedule= to @nucleus.asset to register a schedule.')
-        : h('div', { style:{ display:'flex', flexDirection:'column', gap:16 } },
+      ? h('div', { className:'card', style:{ padding:'24px 20px' } }, h(Skeleton, { rows:5 }))
+      : !loadError && schedules.length===0
+        ? h(EmptyState, {
+            icon:'Calendar',
+            title:'No scheduled assets',
+            description:'Pass schedule="@daily" (or any cron expression) to @nucleus.asset to schedule a run.',
+            command:'@nucleus.asset(schedule="@daily")',
+          })
+        : !loadError && h('div', { style:{ display:'flex', flexDirection:'column', gap:16 } },
             h('div', { className:'card', style:{ padding:0, overflow:'hidden' } },
               h('div', { style:{ padding:'14px 20px', borderBottom:'1px solid #EEF0F4', fontSize:13, fontWeight:700 } }, '7-day run timeline'),
               h('div', { style:{ overflowX:'auto' } },
@@ -1070,11 +1267,20 @@ function App() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [selectedRun, setSelectedRun] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
+  const [dashError, setDashError] = useState(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
-    apiFetch('/api/dashboard/summary').then(d => { setSummary(d); setLoadingSummary(false); });
-    apiFetch('/api/assets').then(d => { setAssets(d||[]); setLoadingAssets(false); });
-  }, []);
+    setLoadingSummary(true); setLoadingAssets(true); setDashError(null);
+    apiFetch('/api/dashboard/summary', true).then(res => {
+      if (res.error) setDashError(res); else setSummary(res.data);
+      setLoadingSummary(false);
+    });
+    apiFetch('/api/assets', true).then(res => {
+      if (res.error && !dashError) setDashError(res); else setAssets(res.data || []);
+      setLoadingAssets(false);
+    });
+  }, [reloadKey]);
 
   useEffect(() => {
     function onKey(e) { if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); setPaletteOpen(p=>!p); } }
@@ -1106,6 +1312,9 @@ function App() {
     /* Page body */
     isDash
       ? h('section', { style:{ background:'#fff', padding:'28px 48px 48px' } },
+          dashError && h('div', { style:{ marginBottom:20 } },
+            h(ErrorBanner, { message:dashError.error, hint:dashError.hint, onRetry:()=>setReloadKey(k=>k+1) }),
+          ),
           h('div', { className:'grid-3' },
             h(RecentRunsCard, { runs:recent, loading:loadingSummary, onRunClick:r => { if(r==='all') navigateTo('runs'); else setSelectedRun(r); } }),
             h(PipelineDAGCard, { assets, loading:loadingAssets, setPage:navigateTo, onAssetClick:key=>setSelectedAsset(key) }),
