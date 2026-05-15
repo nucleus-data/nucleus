@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nucleus Workbench</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="alternate icon" type="image/x-icon" href="favicon.ico" />
 
   <!--
     Nucleus Workbench — Offline-First Static SPA (Editorial Hero v0.3)
@@ -1058,42 +1060,6 @@ function SchedulesPage() {
   );
 }
 
-/* ── DashboardPage ─────────────────────────────────────────────── */
-function DashboardPage({ summary, assets, loadingSummary, loadingAssets, setPage }) {
-  const [selectedRun, setSelectedRun] = useState(null);
-  const [selectedAsset, setSelectedAsset] = useState(null);
-  const recent = summary?.recent_runs || [];
-
-  return h('div', { style:{ minHeight:'100vh', display:'flex', flexDirection:'column', background:'#fff' } },
-    h('section', { style:{ flexShrink:0 } },
-      h('div', { style:{ padding:'32px 48px 0' } },
-        h('h1', { style:{ fontSize:'clamp(52px,7vw,96px)', fontWeight:900, color:'#fff', margin:0, lineHeight:1.02, letterSpacing:'-0.04em' } }, "Today's pipeline"),
-      ),
-      h('div', { style:{ padding:'24px 48px 40px', display:'flex', alignItems:'center', gap:0, flexWrap:'wrap' } },
-        h('div', { style:{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.15)', borderRadius:12, padding:'8px 6px', backdropFilter:'blur(10px)' } },
-          h(StatChip, { icon:h(Icon,{ name:'Database', size:14 }), label:(summary?.total_assets??'…')+' ASSETS', sep:true }),
-          h(StatChip, { icon:h(Icon,{ name:'BarChart3', size:14 }), label:formatRows(summary?.total_rows)+' ROWS', sep:true }),
-          h(StatChip, { icon:h(Icon,{ name:'CheckCircle', size:14 }), label:summary ? summary.checks_green+'/'+summary.checks_total+' GREEN' : '…', sep:true }),
-          h(StatChip, { icon:h(Icon,{ name:'Clock', size:14 }), label:relativeAgo(summary?.last_run_ago_seconds) }),
-        ),
-      ),
-    ),
-    h('section', { style:{ background:'#fff', padding:'28px 48px 48px', flex:1 } },
-      h('div', { className:'grid-3' },
-        h(RecentRunsCard, { runs:recent, loading:loadingSummary, onRunClick:r => { if(r==='all') setPage('runs'); else setSelectedRun(r); } }),
-        h(PipelineDAGCard, { assets, loading:loadingAssets, setPage, onAssetClick:key=>setSelectedAsset(key) }),
-        h(CopilotCard),
-      ),
-    ),
-    h(SlideOver, { isOpen:!!selectedRun, onClose:()=>setSelectedRun(null), title:'Run detail' },
-      selectedRun && h(RunDetailPanel, { run:selectedRun }),
-    ),
-    h(SlideOver, { isOpen:!!selectedAsset, onClose:()=>setSelectedAsset(null), title:'Asset detail' },
-      selectedAsset && h(AssetDetailPanel, { assetKey:selectedAsset }),
-    ),
-  );
-}
-
 /* ── App ───────────────────────────────────────────────────────── */
 function App() {
   const [page, setPage] = useState('dashboard');
@@ -1102,6 +1068,8 @@ function App() {
   const [loadingSummary, setLoadingSummary] = useState(true);
   const [loadingAssets, setLoadingAssets] = useState(true);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [selectedRun, setSelectedRun] = useState(null);
+  const [selectedAsset, setSelectedAsset] = useState(null);
 
   useEffect(() => {
     apiFetch('/api/dashboard/summary').then(d => { setSummary(d); setLoadingSummary(false); });
@@ -1115,14 +1083,35 @@ function App() {
   }, []);
 
   function navigateTo(pg) { setPage(pg); window.scrollTo(0,0); }
+  const recent = summary?.recent_runs || [];
+  const isDash = page==='dashboard';
 
-  return h('div', { style:{ minHeight:'100vh' } },
+  return h('div', { style:{ minHeight:'100vh', background:'#fff' } },
     h(CommandPalette, { isOpen:paletteOpen, onClose:()=>setPaletteOpen(false), setPage:navigateTo }),
+    /* Hero — contains TopNav + (dashboard only) title + stat chips */
     h('div', { className:'hero' },
       h(TopNav, { page, setPage:navigateTo, onSearch:()=>setPaletteOpen(true) }),
+      isDash && h('div', { style:{ padding:'32px 48px 0' } },
+        h('h1', { style:{ fontSize:'clamp(52px,7vw,96px)', fontWeight:900, color:'#fff', margin:0, lineHeight:1.02, letterSpacing:'-0.04em' } }, "Today's pipeline"),
+      ),
+      isDash && h('div', { style:{ padding:'24px 48px 40px', display:'flex', alignItems:'center', flexWrap:'wrap' } },
+        h('div', { style:{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.15)', borderRadius:12, padding:'8px 6px', backdropFilter:'blur(10px)' } },
+          h(StatChip, { icon:h(Icon,{ name:'Database', size:14 }), label:(summary?.total_assets??'…')+' ASSETS', sep:true }),
+          h(StatChip, { icon:h(Icon,{ name:'BarChart3', size:14 }), label:formatRows(summary?.total_rows)+' ROWS', sep:true }),
+          h(StatChip, { icon:h(Icon,{ name:'CheckCircle', size:14 }), label:summary ? summary.checks_green+'/'+summary.checks_total+' GREEN' : '…', sep:true }),
+          h(StatChip, { icon:h(Icon,{ name:'Clock', size:14 }), label:relativeAgo(summary?.last_run_ago_seconds) }),
+        ),
+      ),
     ),
-    page==='dashboard'
-      ? h(DashboardPage, { summary, assets, loadingSummary, loadingAssets, setPage:navigateTo })
+    /* Page body */
+    isDash
+      ? h('section', { style:{ background:'#fff', padding:'28px 48px 48px' } },
+          h('div', { className:'grid-3' },
+            h(RecentRunsCard, { runs:recent, loading:loadingSummary, onRunClick:r => { if(r==='all') navigateTo('runs'); else setSelectedRun(r); } }),
+            h(PipelineDAGCard, { assets, loading:loadingAssets, setPage:navigateTo, onAssetClick:key=>setSelectedAsset(key) }),
+            h(CopilotCard),
+          ),
+        )
       : page==='assets'
         ? h(AssetsPage)
         : page==='runs'
@@ -1132,6 +1121,12 @@ function App() {
             : page==='schedules'
               ? h(SchedulesPage)
               : null,
+    h(SlideOver, { isOpen:!!selectedRun, onClose:()=>setSelectedRun(null), title:'Run detail' },
+      selectedRun && h(RunDetailPanel, { run:selectedRun }),
+    ),
+    h(SlideOver, { isOpen:!!selectedAsset, onClose:()=>setSelectedAsset(null), title:'Asset detail' },
+      selectedAsset && h(AssetDetailPanel, { assetKey:selectedAsset }),
+    ),
   );
 }
 
