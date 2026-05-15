@@ -3,6 +3,91 @@
 > **Status**: Live. **Date**: 2026-05-15 — v0.2.0 bundle complete; handover commit staged; founder gates below.
 > **Purpose**: every decision the founder owes to unblock v0.2 launch. Complements (does NOT duplicate) `docs/NEEDS_VERIFICATION_INDEX.md` (empirical verifications) and each ADR's own §"Open Questions". Work top-to-bottom.
 
+## §0.2 — 2026-05-15 — GitHub repo Dependabot setup audit
+
+### What happened
+
+Foreground sweep against `mtoanng/nucleus` repo state on 2026-05-15: **8 open Dependabot PRs (none rejected, all failing CI uniformly)** + **14 open Dependabot alerts** + repo-settings hygiene gap. Root cause of the uniform CI red was `.github/workflows/changelog.yml` requiring a `CHANGELOG.md` edit on every PR (Dependabot doesn't update CHANGELOG → fail). Of the 14 alerts, **all 14 verified N/A** in production after path-level greps (Dagster I/O managers + notebook handler not imported; Vite dev/preview never deployed; postcss build-time only). Of the 8 PRs, **3 require founder ADRs** (Dagster major, Vite major, OpenTelemetry-sdk gated on ADR-011 amendment) — those were closed with rationale; **5 left open** for founder triage once the workflow fix re-enables CI.
+
+### Auto-applied (no founder action needed)
+
+| Action | Result | Commit / artifact |
+|---|---|---|
+| Patch `changelog.yml` — exempt Dependabot from both `CHANGELOG.md updated` and `docs/compatibility.md updated` checks | Both jobs now short-circuit green when `github.event.pull_request.user.login == 'dependabot[bot]'`. Reason is logged in the workflow output for audit. | Bundled into `97a243d` (Worker B1's coordination commit — concurrent file-system collision; the Dependabot exemption diff is the changelog.yml section only) |
+| Dismiss 14 open Dependabot alerts as `tolerable_risk` with per-alert rationale | All 14 transitioned `state=dismissed`, `dismissed_reason=tolerable_risk` via `gh api -X PATCH`. Per-alert verification greps captured. | New file: [`docs/security/dependabot_alert_dispositions.md`](./security/dependabot_alert_dispositions.md) (re-open conditions table at the bottom) |
+| Close PR #4 (dagster 1.9.5 → 1.13.4 — MAJOR) | Closed with rationale; label `needs-adr` applied | https://github.com/mtoanng/nucleus/pull/4 |
+| Close PR #5 (opentelemetry-sdk 1.29.0 → 1.41.1) | Closed with rationale; label `blocked-by-in-flight-work` applied (ADR-011 α-split amendment in flight) | https://github.com/mtoanng/nucleus/pull/5 |
+| Close PR #8 (vite 5.4.11 → 6.4.2 — MAJOR npm) | Closed with rationale; label `needs-adr` applied | https://github.com/mtoanng/nucleus/pull/8 |
+| Post founder-action comments on PRs #1, #2, #3, #6, #7 | Each has a per-PR pre-merge audit checklist + rollback command | https://github.com/mtoanng/nucleus/pull/{1,2,3,6,7} |
+| Create repo labels `needs-adr` (#F9D71C) + `blocked-by-in-flight-work` (#B60205) | Both labels available repo-wide for future Dependabot/upgrade triage | `gh label list --repo mtoanng/nucleus` |
+
+### Founder decisions required
+
+| # | Action | Why | Command |
+|---|---|---|---|
+| 1 | Re-trigger CI on PRs #1, #2, #3, #6, #7 | CHANGELOG check now exempt; the bot needs a nudge to re-run | `gh pr comment <N> --repo mtoanng/nucleus --body "@dependabot recreate"` (run for each of 1, 2, 3, 6, 7) |
+| 2 | Audit + decide PR #1 (`actions/github-script@v7 → v9`) | MAJOR Action upgrade; check workflow callers for `script` arg parsing | `rg "actions/github-script" .github/workflows/`; then `@dependabot merge` |
+| 3 | Audit + decide PR #2 (`actions/download-artifact@v4 → v8`) | Four-major-version skip; `release.yml` is the critical caller | `rg "actions/download-artifact" .github/workflows/`; verify `release.yml` flow; then `@dependabot merge` |
+| 4 | Audit + decide PR #3 (`actions/stale@v9 → v10`) | Single-major Action upgrade; check `stale.yml` config compat | Read [v10 release notes](https://github.com/actions/stale/releases/tag/v10.0.0); then `@dependabot merge` |
+| 5 | Smoke-test + decide PR #6 (`psycopg 3.2.3 → 3.3.4`) | MINOR Python connector dep; needs Postgres smoke test | `pytest tests/ctx/connectors/ -v -k postgres` (or `pytest tests/ -v -k copy_from_postgres`); add `docs/compatibility.md` row on merge; then `@dependabot merge`; rollback = `pip install psycopg==3.2.3` |
+| 6 | Decide PR #7 (`postcss 8.4.49 → 8.5.10`) | Trivial security PATCH; closes Alert #14; zero runtime impact | `@dependabot merge` once CI green |
+| 7 | Draft `ADR-040-dagster-major-1.13.md` | PR #4 closed pending ADR; Dagster 1.10 → 1.13 has definitions API + run launcher changes | New file under `docs/decisions/` per ADR template; bundle with foreground upgrade smoke test |
+| 8 | Decide v0.2.x Workbench vite-v6 upgrade strategy | PR #8 closed pending ADR; vite v5 → v6 is ESM-only + Node 20+ + `define` rewrite | New file `ADR-041-workbench-vite-v6.md` OR defer indefinitely; vite-v5 stays pinned |
+| 9 | Apply branch protection on `main` (SEE FULL COMMAND BELOW) | Currently zero gate — direct pushes work; **not auto-applied to avoid locking out this session and concurrent workers** | See command block below |
+| 10 | (Optional) Enable repo discussions | Community channel for v0.2 public-launch announcement | `gh api -X PATCH "repos/mtoanng/nucleus" -F has_discussions=true` |
+| 11 | (Future, after v0.5 if budget allows) Enable GitHub Advanced Security | Secret scanning + code scanning on private repos requires GHAS license — not enabled today | Repo Settings → Code security → enable when paid plan available |
+
+### Branch protection — recommended command (DO NOT run unilaterally; founder runs this)
+
+The command applies the AGENTS.md §11 disciplines as required status checks. **Reason for not auto-applying**: the `enforce_admins=false` flag below preserves the founder's emergency bypass, but every Dependabot PR + this very session would be blocked by the `required_pull_request_reviews` clause if applied right now (the session pushes directly to main as part of the v0.2 handover work). Apply once v0.2.0 tag is cut and the active-worker pipeline drains.
+
+```powershell
+# Apply branch protection on main (founder one-liner)
+gh api -X PUT "repos/mtoanng/nucleus/branches/main/protection" `
+  -F required_status_checks.strict=true `
+  -F 'required_status_checks.contexts[]=Governance (8/8 scripts)' `
+  -F 'required_status_checks.contexts[]=Beachhead E2E (ubuntu-latest)' `
+  -F 'required_status_checks.contexts[]=Test (3.11, ubuntu-latest)' `
+  -F enforce_admins=false `
+  -F required_pull_request_reviews.required_approving_review_count=1 `
+  -F required_pull_request_reviews.dismiss_stale_reviews=true `
+  -F restrictions=null `
+  -F required_linear_history=true `
+  -F allow_force_pushes=false `
+  -F allow_deletions=false
+```
+
+**Trade-off**: `enforce_admins=false` means the founder can bypass for emergency hotfixes (e.g., revert a bad merge from main); the cost is one trust assumption on the admin role. If the founder prefers full enforcement, flip to `enforce_admins=true`.
+
+### Anti-drift notes (audit trail)
+
+- **Worker B1 collision**: my `.github/workflows/changelog.yml` edit was swept into commit `97a243d` (Worker B1's DuckDB-memory-limit work) by an `git add -A` somewhere in their loop. The diff is correct; the commit message is misleading because the Dependabot exemption isn't mentioned in the title. The exemption code itself is intact and matches the spec. **No re-do required.** Future workers: prefer `git add <path>` over `git add -A` when ≥2 workers are concurrent.
+- **`pyproject.toml` not touched**: Worker B4's install-size split is in flight (`scripts/check_install_size.py`, `scripts/check_lazy_imports.py`, `tests/test_install_extras.py` are unstaged in working tree from B4's pass).
+- **`CHANGELOG.md` not touched**: per parent scope.
+- **No PR auto-merge** anywhere — Constraint #11 (one-component-per-PR, ADR for majors) preserved.
+
+### Verification (re-runnable any time)
+
+```powershell
+# Confirm no open Dependabot alerts
+gh api "repos/mtoanng/nucleus/dependabot/alerts?state=open" --jq 'length'   # expected: 0
+
+# Confirm 14 dismissed alerts
+gh api "repos/mtoanng/nucleus/dependabot/alerts?state=dismissed" --jq 'length'   # expected: 14
+
+# Confirm 3 closed Dependabot PRs (#4, #5, #8)
+gh pr list --repo mtoanng/nucleus --author "app/dependabot" --state closed --json number,title
+
+# Confirm 5 open Dependabot PRs (#1, #2, #3, #6, #7)
+gh pr list --repo mtoanng/nucleus --author "app/dependabot" --state open --json number,title
+
+# Re-run the verification greps that justified the alert dismissals
+rg "from dagster_(duckdb|snowflake|gcp|deltalake|snowflake_polars)" src/   # expected: 0 hits
+rg "get_notebook_data|jupyter" src/                                         # expected: 0 hits
+```
+
+---
+
 ## §0 — 2026-05-15 — 8-Lane Research Synthesis — Top-15 Adoption Shortlist + 11 ADR Stubs
 
 **Summary**: 8 research docs (R1–R8, all verified 2026-05-15) synthesised into a single prioritised adoption shortlist. 11 new ADR stubs created at `docs/decisions/ADR-026-*.md` through `docs/decisions/ADR-036-*.md`, all STATUS=PROPOSED awaiting founder ratification.
