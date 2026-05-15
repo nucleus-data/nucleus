@@ -37,6 +37,20 @@ classifiers = [
 # ----------------------------------------------------------------------------
 # Each line: pinned version + docs URL.
 # To upgrade: see docs/compatibility.md upgrade workflow.
+#
+# Install-size split (ADR-039, PoC #5 blocker, 2026-05-15)
+# ---------------------------------------------------------
+# `[project.dependencies]` below is the LEAN core: only the surface required
+# to run `nucleus init / up / down / list / query / run` against SQLite +
+# filesystem-Iceberg + the substrate (Dagster + OTEL no-op + OpenLineage
+# emit). Source connectors (Postgres / MySQL / Snowflake), the AI Copilot,
+# the Workbench HTTP stack, and observability exporters live under
+# `[project.optional-dependencies]` below — `pip install nucleus[postgres]`,
+# `nucleus[ai]`, `nucleus[workbench]`, `nucleus[all]`, etc.
+#
+# Hard limit: <30 entries in `[project.dependencies]` enforced by
+# `scripts/check_install_size.py`. Target: clean install in <60 s on a warm
+# pip cache (empirical numbers in ADR-039 §"Empirical install time").
 dependencies = [
   # Tier 1 engines
   "duckdb==1.1.3",                  # Docs: https://duckdb.org/docs/api/python/overview
@@ -47,106 +61,134 @@ dependencies = [
   "pyiceberg[sql-sqlite,s3fs,duckdb]==0.11.1",  # Docs: https://py.iceberg.apache.org/
   "s3fs==2026.4.0",                 # Explicit top-level pin per ADR-012 NV (b) cleared 2026-05-13. BSD-3-Clause. Docs: https://s3fs.readthedocs.io/
 
-  # Tier 2 orchestration substrate (hidden behind ctx)
+  # Tier 2 orchestration substrate (hidden behind ctx).
+  # Dagster stays in core because `coordination/error_translation.py` lazy-imports
+  # it on every materialize/run path; demoting it would break the beachhead E2E.
   "dagster==1.9.5",                 # Docs: https://docs.dagster.io/api
 
-  # Tier 2 ingestion helpers (for ctx.copy_from in v0.1)
-  "sqlalchemy==2.0.36",             # Docs: https://docs.sqlalchemy.org/en/20/
-  "psycopg[binary]==3.2.3",         # Docs: https://www.psycopg.org/psycopg3/docs/
-  "pymysql==1.1.1",                 # Docs: https://pymysql.readthedocs.io/
-  # dlt Stage 1 Postgres source (ADR-014, 2026-05-13). Exact pin per AGENTS.md §11.13.
-  # One-component-per-PR per §11.13; 24 h cool-down after merge.
-  # Rollback: pip install dlt==1.26.0 (or git revert the PR; see ADR-014 §Rollback).
-  # Docs: https://dlthub.com/docs/general-usage/pipeline
-  # Upgrade smoke: tests/upgrade_smoke/test_dlt_upgrade.py
-  "dlt[sql_database,pyiceberg]==1.26.0",  # Apache-2.0 · JVM-free (pyiceberg-core = Rust)
-
   # Schedule cron parsing + preview (ADR-017 schedule exposure).
-  # One-component-per-PR per AGENTS.md §11.13 Constraint #11.
-  # Version constraint: dagster==1.9.5 requires croniter<4,>=0.3.34; pin to latest
-  # <4 release (3.0.4, released 2024-10-25). croniter is already a transitive dep
-  # via dagster — this line makes it a direct dep for explicit version governance.
-  # Rollback: pip install croniter==3.0.3 (or remove line + rely on dagster transitive).
-  # Docs: https://pypi.org/project/croniter/ (croniter==3.0.4, MIT, Python >=2.6)
-  # Upgrade smoke: requires dagster upgrade or croniter<4 constraint update first.
+  # croniter is also pulled transitively by dagster; this line makes it
+  # a direct dep for explicit version governance.
+  # Docs: https://pypi.org/project/croniter/ (croniter==3.0.4, MIT)
   "croniter==3.0.4",                # Docs: https://pypi.org/project/croniter/
 
   # SQL transformation (native ctx.sql + Jinja resolver, ≤2500 LOC).
-  # sqlglot moved to [project.optional-dependencies] lineage-advanced 2026-05-14
-  # per docs/research/otel_day1_decision.md §D2 (zero v0.1 callers; PoC #2 promoted
-  # with jinja2 + regex + difflib only). Note: dlt 1.26.0 transitively requires
-  # sqlglot, so users with the default install still receive it via dlt.
+  # sqlglot lives in [project.optional-dependencies] lineage-advanced
+  # (ADR-012 amendment 2026-05-14); core uses jinja2 + regex + difflib only.
   "jinja2==3.1.6",                  # Docs: https://jinja.palletsprojects.com/
 
   # Core infrastructure.
-  # msgspec removed entirely 2026-05-14 per docs/research/otel_day1_decision.md §D3
-  # (zero callers under src/ tests/ poc/ scripts/; pure-stdlib substitutes suffice).
+  # msgspec removed entirely 2026-05-14 per docs/research/otel_day1_decision.md §D3.
   "click==8.1.8",                   # CLI framework. Docs: https://click.palletsprojects.com/
   "structlog==24.4.0",              # Structured logging. Docs: https://www.structlog.org/
   "typer==0.15.1",                  # CLI ergonomics on top of Click. Docs: https://typer.tiangolo.com/
   "rich==13.9.4",                   # Terminal UI. Docs: https://rich.readthedocs.io/
-  "pyyaml==6.0.3",                  # Used by CLI + intelligence/copilot for nucleus.yaml + opt-in. Docs: https://pyyaml.org/wiki/PyYAMLDocumentation
-  "orjson==3.11.9",                 # Workbench FastAPI default response class (~3x faster). Docs: https://github.com/ijl/orjson
+  "pyyaml==6.0.3",                  # nucleus.yaml + .copilot_opt_in sentinel. Docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 
   # Observability protocol (Tier 0 immortal per v4.1 §4.1).
   # API package only: produces no-op NonRecordingSpan when no TracerProvider is set
   # (https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html).
   # SDK + exporters live under [project.optional-dependencies] observability per
-  # ADR-011 amendment 2026-05-14 (substrate-presence honored without shipping SDK
-  # bytes to non-opt-in users; docs/research/otel_day1_decision.md §D1).
+  # ADR-011 amendment 2026-05-14.
   "opentelemetry-api==1.29.0",      # Docs: https://opentelemetry.io/docs/languages/python/
 
   # Lineage (asset-level v0.1; column-level v0.5+ via sqlglot)
   "openlineage-python==1.47.1",     # Docs: https://openlineage.io/docs/client/python
 
-  # Workbench v0.2 HTTP stack (ADR-016). Pins verified on PyPI 2026-05-13.
-  "fastapi==0.136.1",               # Docs: https://fastapi.tiangolo.com/
+  # Minimal HTTP client — used by `nucleus up` MinIO ready-probe in
+  # `cli/main.py` `_wait_local_storage_ready` (lazy-imported there).
+  # Kept in core so the readiness probe survives without any extras.
   "httpx==0.28.1",                  # Docs: https://www.python-httpx.org/
-  "uvicorn[standard]==0.46.0",      # Docs: https://www.uvicorn.org/
-
-  # Intelligence / AI Copilot (v0.2+, ADR-015). Single new runtime dep.
-  # Rollback: pip install litellm==1.83.14 (or git revert this PR).
-  # Upgrade smoke: tests/upgrade_smoke/test_litellm.py
-  # Docs: https://docs.litellm.ai/docs/
-  "litellm==1.83.14",               # MIT. Wraps 100+ LLM providers; Python >=3.10,<3.14.
 ]
 
 # ----------------------------------------------------------------------------
-# Optional dependencies
+# Optional dependencies (ADR-039 install-size split, 2026-05-15)
 # ----------------------------------------------------------------------------
-# Two tiers per ADR-012 amendment 2026-05-14:
-#   1. Runtime extras (`observability`, `lineage-advanced`) — exact pins required;
-#      checked by scripts/check_pinning.py with the same `==` rule as
-#      [project] dependencies. These are real runtime libs gated behind opt-in.
-#   2. Dev/docs extras (`dev`, `docs`) — `==` or `~=` accepted by default
+# Two tiers per ADR-012 amendment 2026-05-14 + ADR-039 install-size split
+# (PoC #5 blocker — `pip install nucleus` <60 s, <30 deps):
+#
+#   1. Runtime extras  — exact pins required; checked by
+#      `scripts/check_pinning.py` with the same `==` rule as
+#      `[project] dependencies`. These are real runtime libraries shipped
+#      behind opt-in install. Listed in RUNTIME_EXTRAS_GROUPS in
+#      `scripts/check_pinning.py` (postgres, mysql, snowflake, s3, gcs, ai,
+#      workbench, observability, lineage-advanced).
+#
+#   2. Dev / docs extras (`dev`, `docs`) — `==` or `~=` accepted by default
 #      (linters/test runners can minor-flex); `--strict` upgrades to `==`-only.
 #
 # Install patterns:
-#   pip install nucleus                       # core only (~2-3 MB lighter)
+#   pip install nucleus                       # core only (~16 deps, <60 s install)
+#   pip install nucleus[postgres]             # + Postgres source connector
+#   pip install nucleus[mysql]                # + MySQL source connector
+#   pip install nucleus[snowflake]            # + Snowflake source connector
+#   pip install nucleus[s3]                   # + raw S3 helpers (s3fs already in core)
+#   pip install nucleus[gcs]                  # + GCS source connector
+#   pip install nucleus[ai]                   # + AI Copilot (`nucleus chat`)
+#   pip install nucleus[workbench]            # + Workbench HTTP UI (`nucleus workbench up`)
 #   pip install nucleus[observability]        # + OTEL SDK for v0.5+ exporter wiring
-#   pip install nucleus[lineage-advanced]     # + sqlglot for column-lineage / SQL walker
-#   pip install -e ".[dev]"                   # contributor environment
-#   pip install -e ".[all]"                   # everything (CI convenience)
+#   pip install nucleus[lineage-advanced]     # + sqlglot for column-lineage walker
+#   pip install -e ".[all]"                   # all runtime extras (no dev tooling)
+#   pip install -e ".[dev]"                   # contributor lint/test environment
+#   pip install -e ".[dev,all]"               # contributor + everything (CI default)
+#
+# Boundary rule (ADR-039 §"Per-module ownership matrix"): modules under
+# `src/nucleus/` reachable from core code paths MUST NOT do a module-top
+# `import psycopg / fastapi / litellm / dlt / snowflake / gcsfs`. The CLI uses
+# lazy imports inside command bodies; module-level imports of optional libs
+# crash users who installed core only. Validated in `tests/test_install_extras.py`.
 [project.optional-dependencies]
 
-# Opt-in OTEL SDK + exporters (per ADR-011 §1 substrate-vs-transport split,
-# amended 2026-05-14: API stays in core as no-op substrate, SDK ships only when
-# the v0.5+ collector-export ADR fires or a power user wires their own exporter).
-# Install: `pip install nucleus[observability]`
-# Docs: https://opentelemetry.io/docs/languages/python/exporters/
-observability = [
-  "opentelemetry-sdk==1.29.0",      # version-locked to opentelemetry-api in core
+# Postgres source connector (ADR-014, dlt sql_database Stage 1 wave 2026-05-13).
+# Activates SQLAlchemy + psycopg3 + dlt's sql_database verified source.
+# Install: `pip install nucleus[postgres]`
+# Docs: https://docs.sqlalchemy.org/en/20/dialects/postgresql.html
+#       https://www.psycopg.org/psycopg3/docs/
+#       https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database
+# License: sqlalchemy MIT · GREEN; psycopg LGPLv3+ · YELLOW (dynamic-link exempt
+# per ADR-007 §Tier 2); dlt Apache-2.0 · GREEN.
+# Rollback: `pip uninstall psycopg sqlalchemy dlt` (extras can be re-added later).
+postgres = [
+  "sqlalchemy==2.0.36",                  # Docs: https://docs.sqlalchemy.org/en/20/
+  "psycopg[binary]==3.2.3",              # Docs: https://www.psycopg.org/psycopg3/docs/
+  "dlt[sql_database,pyiceberg]==1.26.0", # Docs: https://dlthub.com/docs/general-usage/pipeline
+]
+
+# MySQL source connector (ADR-014 §"MySQL parity (2026-05-14)").
+# Activates SQLAlchemy + pymysql + dlt's sql_database. SQLAlchemy and dlt are
+# duplicated with the postgres extras intentionally — `pip` dedups them at
+# resolve time so users running `pip install nucleus[postgres,mysql]` get a
+# single SQLAlchemy + single dlt.
+# Install: `pip install nucleus[mysql]`
+# Docs: https://docs.sqlalchemy.org/en/20/dialects/mysql.html
+#       https://pymysql.readthedocs.io/
+# License: pymysql MIT · GREEN; sqlalchemy MIT · GREEN; dlt Apache-2.0 · GREEN.
+mysql = [
+  "sqlalchemy==2.0.36",                  # Docs: https://docs.sqlalchemy.org/en/20/dialects/mysql.html
+  "pymysql==1.1.1",                      # Docs: https://pymysql.readthedocs.io/
+  "dlt[sql_database,pyiceberg]==1.26.0", # Docs: https://dlthub.com/docs/general-usage/pipeline
 ]
 
 # Snowflake source connector (ADR-019, connector expansion wave 2026-05-15).
 # Activates dlt's Snowflake extras (snowflake-connector-python + snowflake-sqlalchemy).
-# The base dlt==1.26.0 is already in core; this extras group adds the Snowflake dialect.
-# Rollback: pip install "dlt[snowflake]==<prior>" (remove section and revert to prior dlt pin).
+# Rollback: pip install "dlt[snowflake]==<prior>" (remove section and revert).
 # Install: `pip install nucleus[snowflake]`
 # Docs: https://docs.snowflake.com/en/developer-guide/python-connector/sqlalchemy
-# License: snowflake-connector-python Apache-2.0 · GREEN; snowflake-sqlalchemy Apache-2.0 · GREEN
+# License: snowflake-connector-python Apache-2.0 · GREEN; snowflake-sqlalchemy Apache-2.0 · GREEN.
 snowflake = [
-  "dlt[snowflake]==1.26.0",  # same pin as core dlt; adds Snowflake dialect extras
+  "dlt[snowflake]==1.26.0",              # adds snowflake-connector-python + snowflake-sqlalchemy
+]
+
+# S3 helpers — `s3fs==2026.4.0` is ALREADY in core (Tier 1 pin), so the default
+# install can read `s3://…` URIs via pyiceberg + DuckDB httpfs. This extras
+# group is a self-reference for `pip install nucleus[s3]` discoverability and
+# version-locks the same `s3fs` pin so a user-managed `[s3]` install matches
+# core. Power users wanting the raw AWS SDK should `pip install boto3` directly.
+# Install: `pip install nucleus[s3]`
+# Docs: https://s3fs.readthedocs.io/
+# License: BSD-3-Clause · GREEN.
+s3 = [
+  "s3fs==2026.4.0",                      # same pin as core; pip dedups
 ]
 
 # GCS object-storage connector (ADR-020, connector expansion wave 2026-05-15).
@@ -156,16 +198,50 @@ snowflake = [
 # License: BSD-3-Clause · GREEN
 # Upgrade smoke: add tests/upgrade_smoke/test_gcsfs.py before next version bump.
 gcs = [
-  "gcsfs==2026.5.0",  # CalVer; BSD-3-Clause; Python >=3.10 (satisfies >=3.11,<3.13)
+  "gcsfs==2026.5.0",                     # CalVer; BSD-3-Clause; Python >=3.10 (satisfies >=3.11,<3.13)
+]
+
+# AI Copilot — `nucleus chat` + intelligence layer wrappers (ADR-015).
+# Install: `pip install nucleus[ai]`
+# Docs: https://docs.litellm.ai/docs/
+# License: MIT · GREEN. Wraps 100+ LLM providers; Python >=3.10,<3.14.
+# Rollback: `pip install litellm==1.83.14` (or `pip uninstall litellm`).
+# Upgrade smoke: tests/upgrade_smoke/test_litellm.py
+# Friendly-error: if a user runs `nucleus chat` without this extra installed,
+# `nucleus.intelligence.copilot` raises NE6001 pointing at
+# `pip install nucleus[ai]` (rather than a raw ModuleNotFoundError).
+ai = [
+  "litellm==1.83.14",                    # MIT. Single new runtime dep per AGENTS.md §11.13
+]
+
+# Workbench HTTP UI — FastAPI + React SPA (ADR-016 Fork B).
+# Install: `pip install nucleus[workbench]`
+# Docs: https://fastapi.tiangolo.com/ · https://www.uvicorn.org/ · https://github.com/ijl/orjson
+# License: fastapi MIT · GREEN; uvicorn BSD-3-Clause · GREEN; orjson (Apache-2.0 OR MIT) AND MPL-2.0 · YELLOW.
+# Rollback: `pip uninstall fastapi uvicorn orjson` (the React SPA still ships in the wheel as static files).
+workbench = [
+  "fastapi==0.136.1",                    # Docs: https://fastapi.tiangolo.com/
+  "uvicorn[standard]==0.46.0",           # Docs: https://www.uvicorn.org/
+  "orjson==3.11.9",                      # Docs: https://github.com/ijl/orjson
+]
+
+# Opt-in OTEL SDK + exporters (per ADR-011 §1 substrate-vs-transport split,
+# amended 2026-05-14: API stays in core as no-op substrate, SDK ships only when
+# the v0.5+ collector-export ADR fires or a power user wires their own exporter).
+# Install: `pip install nucleus[observability]`
+# Docs: https://opentelemetry.io/docs/languages/python/exporters/
+observability = [
+  "opentelemetry-sdk==1.29.0",           # version-locked to opentelemetry-api in core
 ]
 
 # Opt-in column-level lineage + asset-graph dep extraction
 # (per docs/research/sqlglot.md §10; first concrete caller v0.5+ per
 # `nucleus_architecture_v4.1.md` §6.2 column-lineage roadmap).
-# Note: `dlt[sql_database,pyiceberg]==1.26.0` already pulls sqlglot transitively,
-# so users running the default install receive it indirectly. This extras group
-# exposes sqlglot as a direct, version-locked dep for projects that import it
-# explicitly without depending on dlt.
+# Note: when `nucleus[postgres]` / `nucleus[mysql]` / `nucleus[snowflake]` is
+# installed, dlt transitively pulls sqlglot too — so those users effectively
+# receive it without `[lineage-advanced]`. This extras group exposes sqlglot
+# as a direct, version-locked dep for projects that import it without
+# depending on dlt (e.g. pure DuckDB stacks).
 # Install: `pip install nucleus[lineage-advanced]`
 # Docs: https://sqlglot.com/sqlglot.html
 lineage-advanced = [
@@ -210,8 +286,15 @@ docs = [
   "pymdown-extensions==10.21.3",                 # Docs: https://facelessuser.github.io/pymdown-extensions/
 ]
 
-# All extras (CI convenience)
-all = ["nucleus[dev,docs,observability,lineage-advanced,snowflake,gcs]"]
+# Meta-group: union of every RUNTIME extras group (no `dev`, no `docs`).
+# Per PEP 508 self-reference: `nucleus[...]` resolves when installing this
+# package from a local checkout (`pip install -e ".[all]"`) or from PyPI
+# (`pip install nucleus[all]`). Verified against `pip>=21.2` (we ship with
+# pip 26.x in dev) per PEP 631 + https://peps.python.org/pep-0508/#extras.
+# Contributors who also want lint/test should run `pip install -e ".[dev,all]"`.
+all = [
+  "nucleus[postgres,mysql,snowflake,s3,gcs,ai,workbench,observability,lineage-advanced]",
+]
 
 # ----------------------------------------------------------------------------
 # Entry points
