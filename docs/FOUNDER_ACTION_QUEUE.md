@@ -126,7 +126,7 @@ Skipped sections (already in HEAD):
 - **Pinning check**: PASS after 3.4 (install-split)
 - **Vocabulary check**: 6 pre-existing hits, no new from any commit
   - 5 false positives in `.venv-adr039/` (gitignored Worker B4 test venv; `check_vocabulary.py` lacks `.venv-*` exclusion)
-  - 1 real hit in `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (untracked file uses banned "data OS"; not in any commit's tree)
+  - 1 real hit in `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (untracked file uses banned "data OS"; not in any commit's tree) <!-- banned-term: Data OS -->
 - **pytest tests/cli (excluding lazy_imports)**: 233 passed in 51s, 0 failures (exit 1 from coverage gate 47.59% vs 70% required - pre-existing)
 - **LOC budget**: 8,229/8,000 = **102.9% of v0.1 ceiling RED**. Under v0.2 ceiling (18,000) this is **46% GREEN**, but `scripts/loc_budget.py` was not bumped because 3.9 was skipped (script in HEAD already at v0.1 reference; no diff to apply). Founder action 12 below.
 - **Push**: SUCCESS, `029ef0d..aebe6b7  main -> main`

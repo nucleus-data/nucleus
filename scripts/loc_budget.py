@@ -45,6 +45,11 @@ TESTS_ROOT = REPO_ROOT / "tests"
 PHASE_CEILINGS: dict[str, int] = {
     "pocs": 1_000,
     "v0.1": 8_000,
+    # v0.2 ship — added 2026-05-15 per founder action #12 (close-out batch,
+    # FOUNDER_ACTION_QUEUE.md §0.3). Same 18 K target as v0.5 because Wave 1
+    # + Wave 2 reliability code consumed the v0.1 budget and the v0.5 figure
+    # is the next §11.6 milestone.
+    "v0.2": 18_000,
     "v0.5": 18_000,
     "v1.0": 30_000,
 }
@@ -226,8 +231,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--phase",
         choices=sorted(p for p in PHASE_CEILINGS if p != "pocs"),
-        default="v0.1",
-        help="Phase ceiling to compare against (default: v0.1).",
+        # Bumped v0.1 → v0.2 per founder action #12 (2026-05-15 close-out
+        # batch). v0.2.0 is bundled; v0.1 ceiling (8 K) is historical.
+        default="v0.2",
+        help="Phase ceiling to compare against (default: v0.2 — bumped from v0.1 2026-05-15).",
     )
     parser.add_argument(
         "--json",

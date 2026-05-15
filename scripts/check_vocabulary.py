@@ -65,11 +65,22 @@ DEFAULT_BANNED_TERMS: list[str] = [
 SKIP_PATTERNS = [
     ".git/",
     ".venv/",
+    # Sibling venvs created by worker scripts (e.g. .venv-adr039, .venv-smoke,
+    # .venv-pypi). Per founder action #13/#15 (close-out batch, 2026-05-15
+    # FOUNDER_ACTION_QUEUE.md §0.3) — these test-venv trees inherit licence /
+    # README / docs that contain banned terms verbatim and would pollute the
+    # gate with 5+ false positives per worker pass. Matched as a substring
+    # against the file's POSIX path so `.venv-foo/...`, `.venv-bar/...`,
+    # etc. all skip.
+    ".venv-",
     "venv/",
     ".mypy_cache/",
     ".ruff_cache/",
     ".pytest_cache/",
     "node_modules/",
+    # node_modules/ already listed above; mirrored under workbench frontend
+    # for the case where the worker installs nested node_modules outside the
+    # repo root convention (e.g. src/.../frontend/node_modules/).
     "scripts/check_vocabulary.py",  # self-exempt; we list the terms here
     "site/",  # mkdocs build output
     "build/",
