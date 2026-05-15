@@ -33,6 +33,7 @@ Docs:
 
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -66,6 +67,19 @@ _FORBIDDEN_CLASSNAMES = (
 # Module-level CliRunner so we can assert separately on stdout vs stderr —
 # the dagit command writes user-facing errors to stderr per cli_spec §5.4.
 runner = CliRunner(mix_stderr=False)
+
+
+# Rich wraps each dash/word in its own SGR escape when Click renders ``--help``,
+# so the literal ``--port`` substring no longer survives a naïve ``in`` check
+# on the colorised stdout. Strip CSI/SGR sequences before substring assertions
+# so the tests pin behaviour rather than the renderer's escape layout.
+# ECMA-48 CSI grammar: ``ESC [ <params> m``.
+_ANSI_CSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def _strip_ansi(text: str) -> str:
+    """Remove ANSI CSI/SGR escapes so help-output substring asserts are stable."""
+    return _ANSI_CSI_RE.sub("", text)
 
 
 @pytest.fixture
@@ -124,15 +138,15 @@ class TestHelp:
 
     def test_dagit_help_lists_port_flag(self) -> None:
         result = runner.invoke(app, ["dagit", "--help"])
-        assert "--port" in result.stdout
+        assert "--port" in _strip_ansi(result.stdout)
 
     def test_dagit_help_lists_workspace_flag(self) -> None:
         result = runner.invoke(app, ["dagit", "--help"])
-        assert "--workspace" in result.stdout
+        assert "--workspace" in _strip_ansi(result.stdout)
 
     def test_dagit_help_lists_no_browser_flag(self) -> None:
         result = runner.invoke(app, ["dagit", "--help"])
-        assert "--no-browser" in result.stdout
+        assert "--no-browser" in _strip_ansi(result.stdout)
 
     def test_dagit_appears_in_root_help(self) -> None:
         """``nucleus --help`` must list dagit alongside the v0.1 commands."""

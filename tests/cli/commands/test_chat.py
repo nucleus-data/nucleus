@@ -29,6 +29,7 @@ Docs:
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -61,6 +62,19 @@ _FORBIDDEN_CLASSNAMES = (
 # mix_stderr=False so we can assert separately on stdout vs stderr —
 # the chat command writes user-facing errors to stderr per cli_spec §5.4.
 runner = CliRunner(mix_stderr=False)
+
+
+# Rich wraps each dash/word in its own SGR escape when Click renders ``--help``,
+# so the literal ``--provider`` substring no longer survives a naïve ``in``
+# check on the colorised stdout. Strip CSI/SGR sequences before substring
+# assertions so the tests pin behaviour rather than the renderer's escape
+# layout. ECMA-48 CSI grammar: ``ESC [ <params> m``.
+_ANSI_CSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def _strip_ansi(text: str) -> str:
+    """Remove ANSI CSI/SGR escapes so help-output substring asserts are stable."""
+    return _ANSI_CSI_RE.sub("", text)
 
 
 def _make_reply(
@@ -112,11 +126,11 @@ class TestHelp:
 
     def test_chat_help_mentions_provider_flag(self) -> None:
         result = runner.invoke(app, ["chat", "--help"])
-        assert "--provider" in result.stdout
+        assert "--provider" in _strip_ansi(result.stdout)
 
     def test_chat_help_mentions_json_flag(self) -> None:
         result = runner.invoke(app, ["chat", "--help"])
-        assert "--json" in result.stdout
+        assert "--json" in _strip_ansi(result.stdout)
 
     def test_chat_command_appears_in_root_help(self) -> None:
         """``nucleus --help`` must list the chat command alongside v0.1 commands."""

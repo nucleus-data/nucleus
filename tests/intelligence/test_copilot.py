@@ -281,11 +281,42 @@ def test_gather_context_size_within_cap():
     )
 
 
-def test_gather_context_reads_fail_events():
-    """T11c: gather_context reads FAIL events from .nucleus/lineage/*.ndjson."""
+def test_gather_context_reads_fail_events(tmp_path: Path) -> None:
+    """T11c: gather_context reads FAIL events from .nucleus/lineage/*.ndjson.
+
+    Writes the OpenLineage fixture inside ``tmp_path`` rather than relying on
+    a checked-in fixture: ``.nucleus/`` is in the root ``.gitignore`` (line
+    117), so a committed fixture under ``tests/intelligence/fixtures/.../
+    .nucleus/lineage/`` would be invisible on CI checkout. Refactor keeps
+    the test self-contained and skips the ``.gitignore`` carve-out fight.
+    """
     from nucleus.intelligence.context import gather_context
 
-    ctx = gather_context(FIXTURE_ROOT)
+    (tmp_path / "nucleus_project.yaml").write_text(
+        "project:\n  name: fixture-project\nstorage:\n  warehouse: ./data/warehouse\n",
+        encoding="utf-8",
+    )
+    lineage_dir = tmp_path / ".nucleus" / "lineage"
+    lineage_dir.mkdir(parents=True, exist_ok=True)
+    fail_event = {
+        "eventType": "FAIL",
+        "eventTime": "2026-05-15T10:05:00Z",
+        "run": {
+            "runId": "fail-001",
+            "facets": {
+                "errorMessage": {
+                    "message": "Schema mismatch in asset transform: expected int, got str",
+                    "programmaticName": "NucleusSchemaError",
+                },
+            },
+        },
+        "job": {"namespace": "test", "name": "raw.orders"},
+        "inputs": [],
+        "outputs": [],
+    }
+    (lineage_dir / "events.ndjson").write_text(json.dumps(fail_event) + "\n", encoding="utf-8")
+
+    ctx = gather_context(tmp_path)
 
     assert len(ctx["recent_errors"]) > 0
     for err in ctx["recent_errors"]:

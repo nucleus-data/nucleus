@@ -55,10 +55,21 @@ from nucleus.sdk.decorators import asset as _asset_decorator
 # ----------------------------------------------------------------------------
 
 # SHA-256 of the bundled ``assets/example.py`` (raw, with unrendered ``{{``/
-# ``}}`` escapes). When the template legitimately changes, recompute via
-# ``python -c "import hashlib; print(hashlib.sha256(open('src/nucleus/templates/v01/assets/example.py','rb').read()).hexdigest())"``
+# ``}}`` escapes) computed over the LF-normalised byte stream.
+#
+# ``.gitattributes`` pins this file at ``text eol=lf`` so the index stores LF,
+# but the working-tree view on Windows checkouts is CRLF and ``pip install -e .``
+# on Linux/macOS keeps the LF bytes. Locking the constant to the CRLF hash
+# breaks CI; locking to the raw bytes' hash breaks Windows. The test below
+# canonicalises ``b"\r\n" -> b"\n"`` before hashing so a single constant
+# pins the file across both line-ending modes.
+#
+# When the template legitimately changes, recompute via:
+#   python -c "import hashlib; from pathlib import Path; \
+#     print(hashlib.sha256(Path('src/nucleus/templates/v01/assets/example.py')\
+#     .read_bytes().replace(b'\r\n', b'\n')).hexdigest())"
 # and update this constant in the SAME PR that edits the template.
-_EXAMPLE_PY_SHA256 = "2976a5f73065cb6515b5ce7a35f36edc7b763388185589ee999093a32f1f0a7d"
+_EXAMPLE_PY_SHA256 = "9e2950c681899010ab80941778b58e2abf535444f1e01a6fd93465b5771d55a3"
 
 # The 7 template files the spec promises (``nucleus_cli_spec.md`` §3.1) plus Compose.
 # Each tuple = (relative path under v01/, post-rename name on disk after init).
@@ -265,18 +276,26 @@ class TestExampleAsset:
             )
 
     def test_byte_level_regression_locked(self) -> None:
-        """SHA-256 of the bundled file is locked.
+        """SHA-256 of the bundled file is locked (LF-normalised).
+
+        Normalise ``b"\\r\\n" -> b"\\n"`` before hashing so the constant pins
+        the same value on Windows working trees (where git materialises CRLF
+        per ``core.autocrlf``) and on Linux/macOS CI (where ``.gitattributes``
+        ``eol=lf`` keeps LF on disk). The template content — not its line-ending
+        encoding — is what we want to lock.
 
         If this test fails, you edited the template — that is OK, but you must
         ALSO update ``_EXAMPLE_PY_SHA256`` at the top of this file in the SAME
         PR. Running ``nucleus init demo`` and inspecting ``demo/assets/example.py``
         end-to-end before bumping the constant is a hard requirement.
         """
-        actual = hashlib.sha256(_read_template_bytes("assets/example.py")).hexdigest()
+        raw = _read_template_bytes("assets/example.py")
+        normalised = raw.replace(b"\r\n", b"\n")
+        actual = hashlib.sha256(normalised).hexdigest()
         assert actual == _EXAMPLE_PY_SHA256, (
             f"\n\nTemplate file ``assets/example.py`` changed.\n"
-            f"  expected SHA-256: {_EXAMPLE_PY_SHA256}\n"
-            f"  actual SHA-256:   {actual}\n\n"
+            f"  expected SHA-256 (LF-normalised): {_EXAMPLE_PY_SHA256}\n"
+            f"  actual SHA-256   (LF-normalised): {actual}\n\n"
             "If this change is intentional, update _EXAMPLE_PY_SHA256 in "
             "tests/templates/test_v01_template.py and re-verify "
             "`nucleus init demo` produces the expected file end-to-end."
