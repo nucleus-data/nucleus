@@ -4,12 +4,17 @@ Verifies that imports follow the strict directional rule:
 
     Layer N may import from layer N or LOWER, never higher.
 
-Layer order (lowest to highest)::
+Layer depth (lowest to highest)::
 
-    physics  →  engines  →  coordination  →  intelligence  →  ctx  →  cli
+    physics  →  engines  →  coordination  →  intelligence  →  {ctx, cli, workbench}
 
-If a file under ``src/nucleus/<layer>/...`` imports from a HIGHER layer
-(e.g. ``physics/`` importing from ``ctx/``), the build fails.
+Layers at the **same depth** are peers and may import freely from each
+other. Per ``nucleus_architecture_v4.1.md`` §8.1, ``ctx`` (SDK),
+``cli`` (operator surface), and ``workbench`` (GUI surface) are all
+Layer 4 (Experience) surfaces, not stacked sub-layers — see ADR-040.
+
+If a file under ``src/nucleus/<layer>/...`` imports from a HIGHER-depth
+layer (e.g. ``physics/`` importing from ``ctx/``), the build fails.
 
 Special rules
 -------------
@@ -32,7 +37,8 @@ Reading guide
 -------------
 - We use ``ast`` (not regex) so we never miscount comments or strings.
 - The walker classifies each file's "home" layer based on its directory.
-- For each import, we look up the imported module's layer and compare.
+- For each import, we look up the imported module's layer and compare
+  using ``LAYER_DEPTH`` (peer layers share a depth).
 """
 
 from __future__ import annotations
@@ -46,18 +52,24 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_ROOT = REPO_ROOT / "src" / "nucleus"
 
-# Layer order: lower index = lower in the stack (foundational).
-# Higher layers may depend on lower; lower may NOT depend on higher.
-LAYERS: list[str] = [
-    "_internal",  # shared toolbox; sits below everything
-    "physics",  # L0
-    "engines",  # L1
-    "coordination",  # L2
-    "intelligence",  # L3
-    "ctx",  # L4 (SDK)
-    "cli",  # L4 (operator surface)
-    "workbench",  # L4 (GUI surface; ADR-016)
-]
+# Layer depth controls allowed import direction.
+# Lower number = lower in the stack (foundational).
+# Imports may flow within or down the stack, never up.
+# Layers at the SAME depth are peers and may import freely from each
+# other (e.g. ``cli ↔ workbench`` per ADR-040 — both Experience-layer
+# surfaces per nucleus_architecture_v4.1.md §8.1).
+LAYER_DEPTH: dict[str, int] = {
+    "_internal": -1,  # shared toolbox; sits below all real layers
+    "physics": 0,  # L0
+    "engines": 1,  # L1
+    "coordination": 2,  # L2
+    "intelligence": 3,  # L3
+    "ctx": 4,  # L4 — SDK surface
+    "cli": 4,  # L4 — operator surface (peer of ctx + workbench)
+    "workbench": 4,  # L4 — GUI surface (peer of ctx + cli; ADR-016 + ADR-040)
+}
+# Membership list (preserves declaration order for deterministic output).
+LAYERS: list[str] = list(LAYER_DEPTH.keys())
 
 
 @dataclass
@@ -128,7 +140,7 @@ def _violations_for_imported_module(
     node: ast.AST,
     mod: str,
     importer_layer: str,
-    importer_idx: int,
+    importer_depth: int,
     file: Path,
 ) -> list[Violation]:
     imported_layer = _module_layer(mod)
@@ -150,9 +162,10 @@ def _violations_for_imported_module(
 
     out: list[Violation] = []
 
-    # Rule 2: no upward imports.
-    imported_idx = LAYERS.index(imported_layer)
-    if imported_idx > importer_idx:
+    # Rule 2: no upward imports. Peers at the same depth may import freely
+    # from each other (ADR-040 — ``cli ↔ workbench`` Experience-layer peers).
+    imported_depth = LAYER_DEPTH[imported_layer]
+    if imported_depth > importer_depth:
         out.append(
             Violation(
                 file=rel_str,
@@ -204,7 +217,7 @@ def _scan_file(file: Path) -> list[Violation]:
         return []
 
     rel_str = file.relative_to(REPO_ROOT).as_posix()
-    importer_idx = LAYERS.index(importer_layer)
+    importer_depth = LAYER_DEPTH[importer_layer]
     out: list[Violation] = []
 
     for node in ast.walk(tree):
@@ -215,7 +228,7 @@ def _scan_file(file: Path) -> list[Violation]:
                     node=node,
                     mod=mod,
                     importer_layer=importer_layer,
-                    importer_idx=importer_idx,
+                    importer_depth=importer_depth,
                     file=file,
                 )
             )

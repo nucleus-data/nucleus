@@ -98,6 +98,7 @@ jobs:
           python scripts/check_api_stability.py
           python scripts/check_layering.py
           python scripts/check_licenses.py
+          python scripts/check_install_size.py
 
       - name: Run test suite
         run: pytest tests/ poc/ -m "not integration and not slow" --no-cov -q

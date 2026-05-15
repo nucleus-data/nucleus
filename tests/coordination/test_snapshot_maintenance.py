@@ -139,8 +139,18 @@ def test_expire_respects_min_snapshots(tmp_path: Path) -> None:
 
 
 def test_expire_wraps_pyiceberg_exception(tmp_path: Path) -> None:
-    """M5: pyiceberg commit failure → NucleusMaintenanceError (NE3009)."""
-    snaps = [_make_snapshot(i, days_ago=90) for i in range(15)]
+    """M5: pyiceberg commit failure → NucleusMaintenanceError (NE3009).
+
+    Regression: snapshots use a 0.1-day timestamp spread (matching M4) to
+    guarantee distinct ``timestamp_ms`` values. Without the spread, multiple
+    ``_make_snapshot`` calls on fast hardware land in the same millisecond,
+    causing the strict ``s.timestamp_ms < expire_before_ms`` candidate filter
+    in ``snapshot_maintenance.expire_old_snapshots`` to yield zero candidates
+    and short-circuit before ``commit()`` runs — the test then sees
+    ``DID NOT RAISE NucleusMaintenanceError`` non-deterministically.
+    Docs: https://docs.pytest.org/en/stable/how-to/fixtures.html
+    """
+    snaps = [_make_snapshot(i, days_ago=90 + i * 0.1) for i in range(15)]
     table = _make_table(snaps)
     # Make commit() raise an arbitrary exception
     expire_builder = table.maintenance.expire_snapshots.return_value
