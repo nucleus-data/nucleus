@@ -267,6 +267,20 @@ dev = [
   # Local infrastructure for tests
   "testcontainers==4.9.0",          # Postgres/MinIO containers for integration tests
 
+  # Optional runtime packages mirrored for the dev test matrix.
+  # Post-ADR-039 the install-size split moves these out of the default end-user
+  # install (`pip install nucleus`), but contributors running `pip install -e ".[dev]"`
+  # need every feature importable so the full test suite (tests/copilot/,
+  # tests/workbench/, tests/connectors/, tests/upgrade_smoke/) runs end-to-end.
+  # ADR-039 §3 ("Extras Design"): the split is for END USERS, not for dev.
+  # Pins MUST match the source extras group exactly so pip resolver dedups
+  # cleanly when contributors run `pip install -e ".[dev,all]"`.
+  "dlt[sql_database,pyiceberg]==1.26.0", # Source pin: [postgres] / [mysql] groups (lines 154, 169)
+  "litellm==1.83.14",               # Source pin: [ai] group (line 214); MIT
+  "fastapi==0.136.1",               # Source pin: [workbench] group (line 223)
+  "uvicorn[standard]==0.46.0",      # Source pin: [workbench] group (line 224)
+  "httpx==0.28.1",                  # Source pin: [project.dependencies] core (line 101)
+
   # Build / packaging
   "hatchling==1.27.0",
   "build==1.2.2.post1",
