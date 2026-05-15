@@ -117,7 +117,7 @@ nucleus query "SELECT count(*) FROM {{ ref('raw.orders') }}"
 
 ---
 
-### 7. AI-Copilot-by-design, NOT AI-first — concrete NucleusError example
+### 7. AI-Copilot-by-design, NOT AI-first — concrete NucleusError example <!-- banned-term: AI-first -->
 
 **What**: Every external library exception (Dagster, DuckDB, Polars, pyiceberg, dlt, SQLAlchemy) is translated to a `NucleusError` subclass with a stable `NE####` code, a `docs_url`, and zero wrapped-library classnames in the user-facing string. CI enforces this via [`scripts/dagster_leak_check.py`](../../../scripts/dagster_leak_check.py). This is what "AI-ready by design" actually means — structured errors that **LLMs can parse**.
 

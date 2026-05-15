@@ -81,6 +81,14 @@ SKIP_PATTERNS = [
     # node_modules/ already listed above; mirrored under workbench frontend
     # for the case where the worker installs nested node_modules outside the
     # repo root convention (e.g. src/.../frontend/node_modules/).
+    # Transient agent-worker inter-process scratch space — git-ignored
+    # already (`.gitignore` "/.scratch/"), but the vocab scanner walks the
+    # disk regardless of git tracking, so worker commit-message drafts +
+    # benchmark text snippets that legitimately quote banned terms
+    # ("Governance: vocabulary clean (pre-existing docs/HANDOVER.md AI-first ...")
+    # would otherwise pollute the gate. Added 2026-05-16 during the v0.2.0
+    # ultimate-sprint close-out builder pass; matches the .venv- precedent.
+    ".scratch/",
     "scripts/check_vocabulary.py",  # self-exempt; we list the terms here
     "site/",  # mkdocs build output
     "build/",

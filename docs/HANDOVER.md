@@ -11,7 +11,7 @@
 
 When you open this file disoriented, read this section before anything else.
 
-**What Nucleus is.** A local-first Python SDK (`ctx`) + CLI (`nucleus`) for building Iceberg-native pipelines and analytics stacks. It ships data products from a laptop. It graduates cleanly to any Iceberg catalog (Polaris, Lakekeeper, Unity, R2, Databricks, Snowflake) when teams outgrow the laptop. It is **AI-ready by design**, not AI-first.
+**What Nucleus is.** A local-first Python SDK (`ctx`) + CLI (`nucleus`) for building Iceberg-native pipelines and analytics stacks. It ships data products from a laptop. It graduates cleanly to any Iceberg catalog (Polaris, Lakekeeper, Unity, R2, Databricks, Snowflake) when teams outgrow the laptop. It is **AI-ready by design**, not AI-first. <!-- banned-term: AI-first -->
 
 **What Nucleus is not** (per [`AGENTS.md`](../AGENTS.md) §8 — re-read if you start drifting): not a database, not a SQL engine, not a DataFrame engine, not an orchestrator, not a "Data OS" or "Spark killer" or "AI-native platform". The forbidden framings list has 13 entries — if you ever catch a marketing draft or AI suggestion drifting toward one, push back hard. <!-- banned-term: multiple -->
 
