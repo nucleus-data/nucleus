@@ -189,7 +189,7 @@ docs-clean:  ## Remove the docs build artifacts
 # ----------------------------------------------------------------------------
 
 .PHONY: verify-all
-verify-all:  ## Run all 11 governance scripts + pytest + LOC budget
+verify-all:  ## Run all 12 governance scripts + pytest + LOC budget
 	@echo "=== Nucleus verify-all gate ==="
 	python scripts/check_vocabulary.py
 	python scripts/check_pinning.py
@@ -202,6 +202,7 @@ verify-all:  ## Run all 11 governance scripts + pytest + LOC budget
 	python scripts/check_secrets.py
 	python scripts/check_circular_imports.py
 	python scripts/check_docstrings.py
+	python scripts/check_lazy_imports.py
 	python -m pytest tests/ -q --tb=short --no-cov
 	@echo ""
 	@echo "verify-all PASSED."

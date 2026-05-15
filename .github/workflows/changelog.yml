@@ -32,15 +32,24 @@ jobs:
           # Need the base branch to compute diff
           fetch-depth: 0
 
-      - name: Check for [skip-changelog] label
+      - name: Check for [skip-changelog] label or Dependabot author
         id: skip
         run: |
           LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          AUTHOR="${{ github.event.pull_request.user.login }}"
           if [[ "$LABELS" == *"skip-changelog"* ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "reason=skip-changelog label" >> "$GITHUB_OUTPUT"
+          elif [[ "$AUTHOR" == "dependabot[bot]" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "reason=dependabot author (per Constraint #11; CHANGELOG updated when founder merges)" >> "$GITHUB_OUTPUT"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Report skip reason
+        if: steps.skip.outputs.skip == 'true'
+        run: echo "✅ CHANGELOG check skipped — ${{ steps.skip.outputs.reason }}"
 
       - uses: actions/setup-python@v5
         if: steps.skip.outputs.skip == 'false'
@@ -65,8 +74,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Dependabot PRs are exempt — the founder runs the Constraint #11 upgrade
+      # workflow (changelog read + smoke test + rollback command + compatibility.md
+      # row) on merge, not in the bot PR itself.
+      - name: Check if author is Dependabot
+        id: dependabot
+        run: |
+          if [[ "${{ github.event.pull_request.user.login }}" == "dependabot[bot]" ]]; then
+            echo "is_dependabot=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Author is Dependabot — compatibility.md check exempt (Constraint #11 enforced on founder merge)"
+          else
+            echo "is_dependabot=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check if pyproject.toml changed
         id: toml-changed
+        if: steps.dependabot.outputs.is_dependabot == 'false'
         run: |
           git diff --name-only "origin/${{ github.event.pull_request.base.ref }}" HEAD \
             | grep -q "^pyproject\.toml$" \
@@ -74,7 +97,7 @@ jobs:
             || echo "changed=false" >> "$GITHUB_OUTPUT"
 
       - name: Check if compatibility.md was also updated
-        if: steps.toml-changed.outputs.changed == 'true'
+        if: steps.dependabot.outputs.is_dependabot == 'false' && steps.toml-changed.outputs.changed == 'true'
         run: |
           git diff --name-only "origin/${{ github.event.pull_request.base.ref }}" HEAD \
             | grep -q "^docs/compatibility\.md$" \

@@ -110,14 +110,21 @@ _NO_ROW_COUNT_YET: Final[int] = 0
 _UpstreamMode = Literal["skip", "materialize", "validate"]
 
 # ---------------------------------------------------------------------------
-# DuckDB memory_limit helper (ADR-024 P0-1)
+# DuckDB perf settings (ADR-024 P0-1; perf doc §10 #2)
 # ---------------------------------------------------------------------------
 
 # Fraction of total RAM to target for DuckDB's memory_limit.
-_DUCKDB_RAM_FRACTION: float = 0.80
+# Lowered 0.80 → 0.60 per ``docs/research/performance_reliability_targets.md``
+# §10 item #2 — the upstream default of 80 % combined with no GROUP BY hash
+# spill on `memory_limit` exhaustion (https://duckdb.org/docs/1.3/guides/troubleshooting/oom_errors)
+# silently OOM-kills the process on machines that also run Docker containers,
+# IDEs, or browser tabs.  60 % leaves headroom for the host OS.
+_DUCKDB_RAM_FRACTION: float = 0.60
 # Absolute floor (2 GB) and ceiling (32 GB) regardless of physical RAM.
 _DUCKDB_MEM_FLOOR_BYTES: int = 2 * 1024**3
 _DUCKDB_MEM_CEIL_BYTES: int = 32 * 1024**3
+# Fallback thread count when neither physical-core nor logical-core lookup works.
+_DUCKDB_THREADS_FALLBACK: int = 4
 
 
 def _compute_duckdb_memory_limit(override_str: str | None = None) -> str:
@@ -126,10 +133,12 @@ def _compute_duckdb_memory_limit(override_str: str | None = None) -> str:
     Priority:
     1. *override_str* — caller-supplied value from ``nucleus_project.yaml``
        ``memory_limit`` key (e.g. ``"8GB"``).
-    2. ``psutil``-derived 80 % of total RAM, clamped to [2 GB, 32 GB].
+    2. ``psutil``-derived 60 % of total RAM, clamped to [2 GB, 32 GB].
+       (Lowered from 80 % in v0.2 per perf doc §10 item #2.)
     3. ``"10GB"`` fallback when ``psutil`` is unavailable.
 
     Docs: https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
+    Docs: https://psutil.readthedocs.io/en/latest/#psutil.virtual_memory
     Per ``docs/decisions/ADR-024-reliability-hardening-plan.md`` P0-1.
     """
     if override_str:
@@ -147,8 +156,49 @@ def _compute_duckdb_memory_limit(override_str: str | None = None) -> str:
         return "10GB"
 
 
-def _apply_duckdb_memory_limit(conn: Any, memory_limit_str: str, spill_dir: Path) -> None:
-    """Apply ``SET memory_limit`` and ``SET temp_directory`` to *conn*.
+def _compute_duckdb_threads() -> int:
+    """Return the ``SET threads`` value for this machine.
+
+    Prefers physical-core count over logical-core count: DuckDB's vectorized
+    pipeline does not benefit from SMT/hyper-threads for analytical workloads
+    (https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
+    §"Threads"), and exceeding physical cores degrades cache-locality.
+
+    Fallback chain:
+    1. ``psutil.cpu_count(logical=False)`` — physical cores
+    2. ``psutil.cpu_count()`` — logical cores
+    3. ``_DUCKDB_THREADS_FALLBACK`` (4)
+
+    Docs: https://psutil.readthedocs.io/en/latest/#psutil.cpu_count
+    Per perf doc §10 item #2.
+    """
+    try:
+        import psutil  # Docs: https://psutil.readthedocs.io/en/latest/
+
+        physical = psutil.cpu_count(logical=False)
+        if physical and physical > 0:
+            return int(physical)
+        logical = psutil.cpu_count()
+        if logical and logical > 0:
+            return int(logical)
+    except ImportError:
+        logger.debug("psutil not available; using %d-thread DuckDB default",
+                     _DUCKDB_THREADS_FALLBACK)
+    return _DUCKDB_THREADS_FALLBACK
+
+
+def _apply_duckdb_memory_limit(
+    conn: Any,
+    memory_limit_str: str,
+    spill_dir: Path,
+    *,
+    threads: int | None = None,
+) -> None:
+    """Apply DuckDB perf settings (memory_limit, temp_directory, threads) to *conn*.
+
+    The function name is preserved for back-compat with the existing P0-1
+    test suite; the keyword-only ``threads`` arg is the v0.2 addition per
+    perf doc §10 item #2.
 
     Translates ``duckdb.OutOfMemoryException`` (and similar) into
     :class:`~nucleus.errors.NucleusMemoryLimitExceeded` (NE2007).
@@ -157,15 +207,26 @@ def _apply_duckdb_memory_limit(conn: Any, memory_limit_str: str, spill_dir: Path
         conn: An open DuckDB connection.
         memory_limit_str: Value for ``SET memory_limit``, e.g. ``"8GB"``.
         spill_dir: Directory for DuckDB spill-to-disk files.  Created if absent.
+        threads: Optional explicit thread count.  When ``None``, the value is
+            derived from :func:`_compute_duckdb_threads`.  Pass an integer
+            (e.g. ``8``) to override.
 
     Docs: https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
-    Per ADR-024 P0-1.
+    Docs: https://duckdb.org/docs/configuration/overview
+    Per ADR-024 P0-1 + perf doc §10 #2.
     """
     try:
         spill_dir.mkdir(parents=True, exist_ok=True)
         conn.execute(f"SET memory_limit = '{memory_limit_str}'")
         conn.execute(f"SET temp_directory = '{spill_dir.resolve().as_posix()}'")
-        logger.debug("DuckDB memory_limit=%s, spill=%s", memory_limit_str, spill_dir)
+        thread_count = threads if threads is not None else _compute_duckdb_threads()
+        conn.execute(f"SET threads = {thread_count}")
+        logger.debug(
+            "DuckDB memory_limit=%s, threads=%d, spill=%s",
+            memory_limit_str,
+            thread_count,
+            spill_dir,
+        )
     except Exception as exc:
         exc_name = type(exc).__name__.lower()
         if "memory" in exc_name or "oom" in exc_name or "outofmemory" in exc_name:
@@ -284,7 +345,9 @@ def _commit_to_iceberg(
     import polars as pl  # Docs: https://docs.pola.rs/api/python/stable/
     import pyarrow as pa  # Docs: https://arrow.apache.org/docs/python/api.html
 
-    # ADR-024 P0-1: apply memory_limit at AMA connection init before any query.
+    # ADR-024 P0-1 + perf doc §10 #2: apply memory_limit, temp_directory, and
+    # threads at AMA connection init before any query.  Lowered RAM fraction
+    # 0.80 → 0.60 in v0.2 — see _DUCKDB_RAM_FRACTION docstring.
     # Docs: https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
     warehouse_dir.mkdir(parents=True, exist_ok=True)
     spill_dir = warehouse_dir.parent / ".nucleus" / "duckdb_spill"
