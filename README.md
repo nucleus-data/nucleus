@@ -176,7 +176,18 @@ Detailed flag and stability text: [`nucleus_cli_spec.md`](nucleus_cli_spec.md).
 
 ## Yield-to-giants strategy
 
-Nucleus **complements** Databricks/Snowflake — Iceberg bytes port first; hybrid dispatch and federation are **later roadmap items** (`nucleus_architecture_v4.1.md` section 8).
+Nucleus **complements** Databricks/Snowflake -- Iceberg bytes port first; hybrid dispatch and federation are **later roadmap items** (`nucleus_architecture_v4.1.md` section 10).
+
+The day a single laptop is no longer enough, three modes (per architecture section 10) cover the path forward:
+
+- **Mode 1 -- Graduation (today, v0.1+)**: point a giant at the same Iceberg lakehouse on S3. Zero data movement. Step-by-step recipes:
+  - [`docs/cookbook/graduate-to-databricks.md`](docs/cookbook/graduate-to-databricks.md)
+  - [`docs/cookbook/graduate-to-snowflake.md`](docs/cookbook/graduate-to-snowflake.md)
+  - [`docs/cookbook/graduate-to-bigquery.md`](docs/cookbook/graduate-to-bigquery.md)
+- **Mode 2 -- Hybrid compute (spec PROPOSED, implementation v0.3+)**: dispatch heavy assets to Databricks/Snowflake/BigQuery via `@nucleus.asset(compute="databricks://...")`. Asset graph stays local; only the heavy step yields. Design spec: [`docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md`](docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md).
+- **Mode 3 -- Federation (v2.0+)**: Iceberg REST catalog federation for Data Mesh. Per architecture section 10.3.
+
+Honest caveats -- the graduation cookbooks document a path, not a battle-tested runbook; PoC #5 external-tester field test is the first systematic validation. Each cookbook lists its NEEDS VERIFICATION items inline.
 
 ---
 

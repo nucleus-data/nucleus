@@ -204,6 +204,10 @@ nav:
       - Schema Evolution: cookbook/schema-evolution.md
       - Iceberg Time Travel: cookbook/iceberg-time-travel.md
       - AI Copilot Prompts: cookbook/ai-copilot-prompts.md
+      - Graduation:
+          - Graduate to Databricks: cookbook/graduate-to-databricks.md
+          - Graduate to Snowflake: cookbook/graduate-to-snowflake.md
+          - Graduate to BigQuery: cookbook/graduate-to-bigquery.md
   - CLI Reference:
       - cli-reference/index.md
       - nucleus init: cli-reference/init.md

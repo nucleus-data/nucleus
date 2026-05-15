@@ -86,8 +86,8 @@ Nucleus does **not** compete with Databricks/Snowflake. We integrate via three m
 
 | Mode | Mechanism | When available |
 |---|---|---|
-| **Mode 1: Graduation** | Iceberg portability — user exports catalog to Databricks/Snowflake/Polaris with zero migration. User's code + SQL assets read the same Parquet files. | v0.1 (Iceberg is the substrate from day 1) |
-| **Mode 2: Hybrid Compute** | Dispatch heavy assets to Databricks/Snowflake via `compute="databricks"` in `@nucleus.asset`. Nucleus handles the dispatch; user code unchanged. | v0.5+ (Hybrid dispatch ADR) |
+| **Mode 1: Graduation** | Iceberg portability -- user points Databricks/Snowflake/Polaris at the same lakehouse with zero data movement. User's code + SQL assets read the same Parquet files. Step-by-step cookbooks: [`docs/cookbook/graduate-to-databricks.md`](../cookbook/graduate-to-databricks.md), [`graduate-to-snowflake.md`](../cookbook/graduate-to-snowflake.md), [`graduate-to-bigquery.md`](../cookbook/graduate-to-bigquery.md). | v0.1 (Iceberg is the substrate from day 1) |
+| **Mode 2: Hybrid Compute** | Dispatch heavy assets to Databricks/Snowflake via `compute="databricks://..."` in `@nucleus.asset`. Nucleus handles the dispatch; user code unchanged. Design spec: [ADR-041](../decisions/ADR-041-mode-2-hybrid-compute-dispatch.md) (PROPOSED 2026-05-15). Implementation milestone: `wave-3-mode2-implementation`, target **v0.3+** (pulled forward from architecture's v1.5+ target per ADR-041 section 6; founder amendment to `v4.1` section 18.6 required at acceptance). | v0.3+ (per ADR-041) |
 | **Mode 3: Federation** | Iceberg REST catalog federation for Data Mesh — cross-org asset sharing without data movement. | v2.0+ (Mode 3 federated mesh) |
 
 ---
