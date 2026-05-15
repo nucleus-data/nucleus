@@ -81,7 +81,16 @@ _DEP_RE = re.compile(
 )
 
 # ADR-012 markdown row parser: matches `pkg[extras]==X.Y.Z` (with optional backticks).
+# Used for the table-row scan where the version cell ends at a `|` or end-of-line.
 _ADR_PIN_RE = re.compile(r"`?([a-zA-Z][a-zA-Z0-9_.\-]*)(?:\[[^\]]+\])?==([^`\s|]+)`?")
+
+# Tighter pin regex for **Amended** prose paragraphs at the bottom of ADR-012.
+# Restricts the version capture to PEP 440-shaped characters so it stops at
+# JSON-array delimiters (`"`, `]`) and other punctuation around in-prose
+# `pkg==X.Y.Z` mentions.
+_ADR_AMENDMENT_PIN_RE = re.compile(
+    r"`?([a-zA-Z][a-zA-Z0-9_.\-]*)(?:\[[^\]]+\])?==([A-Za-z0-9._\-+]+)"
+)
 
 
 @dataclass
@@ -107,12 +116,33 @@ def _parse_dep(raw: str) -> tuple[str, str, str] | None:
     return (m["pkg"], m["op"], m["ver"]) if m else None
 
 
+# Optional-dependencies groups that do NOT ship runtime libraries
+# (contributor tooling + aggregate meta-extras).
+# Every other `[project.optional-dependencies]` group is treated as
+# runtime extras and contributes to the ADR-012 cross-check pin set.
+# See ADR-039 §3 "Extras Design" (2026-05-15) for the canonical taxonomy
+# of runtime extras (postgres / mysql / snowflake / s3 / gcs / ai /
+# workbench / observability / lineage-advanced).
+_NON_RUNTIME_EXTRAS: frozenset[str] = frozenset({"dev", "docs", "all"})
+
+
 def parse_pyproject_pins(path: Path) -> tuple[dict[str, str], dict[str, str], dict[str, str]]:
     """Return ``(runtime, dev, runtime_extras)`` where each dict is ``pkg -> raw spec``.
 
-    ``runtime_extras`` spans ADR-012 optional-runtime groups
-    (``observability``, ``lineage-advanced``) — exact-pinned like core
-    per ``check_pinning.py`` / ADR-012 amendment 2026-05-14.
+    ``runtime_extras`` spans **every** ``[project.optional-dependencies]``
+    group that ships real runtime libraries — i.e. all groups except the
+    ones listed in :data:`_NON_RUNTIME_EXTRAS` (``dev``, ``docs``, ``all``).
+    Post-ADR-039 install-size split (2026-05-15), Tier 1/2 runtime libs
+    like ``dlt``, ``fastapi``, ``litellm``, ``orjson``, ``psycopg``,
+    ``pymysql``, ``sqlalchemy``, and ``uvicorn`` live under per-feature
+    extras (``postgres`` / ``mysql`` / ``snowflake`` / ``ai`` /
+    ``workbench``) rather than ``[project] dependencies``; the
+    ADR-012 cross-check must scan those groups or it falsely reports
+    drift for every package the install-size split moved out of core.
+    Exact-pin enforcement on these groups stays delegated to
+    ``scripts/check_pinning.py``; this helper only surfaces the pins so
+    :func:`gate_adr_012_cross_check` can diff them against the ADR-012
+    matrix.
     """
     data = tomllib.loads(path.read_text(encoding="utf-8"))
     proj = data.get("project", {})
@@ -130,8 +160,10 @@ def parse_pyproject_pins(path: Path) -> tuple[dict[str, str], dict[str, str], di
         if parsed:
             pkg, op, ver = parsed
             dev[pkg] = f"{op}{ver}"
-    for group in ("observability", "lineage-advanced"):
-        for raw in opt.get(group, []):
+    for group_name, raw_deps in opt.items():
+        if group_name in _NON_RUNTIME_EXTRAS:
+            continue
+        for raw in raw_deps:
             parsed = _parse_dep(raw)
             if parsed:
                 pkg, op, ver = parsed
@@ -145,29 +177,49 @@ def parse_adr_012_pins(path: Path) -> dict[str, str]:
     Skips the Python floor (``>=3.11,<3.13``), transitive entries
     (``transitive via ...``), and every section other than
     ``### Runtime pin matrix``.
+
+    Also scans ``**Amended**:`` paragraphs at the bottom of the doc for
+    pins that have shipped via an amendment before the matrix table was
+    refreshed (e.g., ``gcsfs==2026.5.0`` arrived via the 2026-05-15
+    connector-expansion amendment). Amendments are **additive only**:
+    a pin found in amendment prose is recorded only if the matrix table
+    did not already define one for that package, so post-acceptance
+    rollback lines like ``pip install click==8.1.7`` cannot override
+    the canonical ``click==8.1.8`` row.
     """
     if not path.exists():
         return {}
     pins: dict[str, str] = {}
+    amendment_pins: dict[str, str] = {}
     in_runtime_section = False
+    in_amendment = False
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.startswith("### Runtime pin matrix"):
             in_runtime_section = True
+            in_amendment = False
             continue
         if in_runtime_section and line.startswith("###"):
             in_runtime_section = False
             continue
-        if not in_runtime_section or not line.startswith("|"):
-            continue
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if len(cells) < 2:
-            continue
-        component = cells[0].strip("`")
-        if component.lower() in {"component", ""} or set(component) <= {"-", " "}:
-            continue
-        m = _ADR_PIN_RE.search(cells[1])
-        if m:
-            pins[m.group(1)] = m.group(2)
+        if line.lstrip().startswith("**Amended**"):
+            in_runtime_section = False
+            in_amendment = True
+        if in_runtime_section and line.startswith("|"):
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if len(cells) < 2:
+                continue
+            component = cells[0].strip("`")
+            if component.lower() in {"component", ""} or set(component) <= {"-", " "}:
+                continue
+            m = _ADR_PIN_RE.search(cells[1])
+            if m:
+                pins[m.group(1)] = m.group(2)
+        elif in_amendment:
+            for m in _ADR_AMENDMENT_PIN_RE.finditer(line):
+                pkg, ver = m.group(1), m.group(2)
+                amendment_pins.setdefault(pkg, ver)
+    for pkg, ver in amendment_pins.items():
+        pins.setdefault(pkg, ver)
     return pins
 
 
