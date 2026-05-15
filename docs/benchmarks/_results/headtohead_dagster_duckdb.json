@@ -1,0 +1,78 @@
+{
+  "hardware": {
+    "logical_cores": 8,
+    "machine": "AMD64",
+    "physical_cores": 4,
+    "platform": "Windows-10-10.0.26100-SP0",
+    "python": "3.11.9",
+    "ram_available_gb": 2.8,
+    "ram_total_gb": 15.7
+  },
+  "result": {
+    "command": "C:\\Users\\GOT4HC\\Mordern Data Platform\\.venv\\Scripts\\python.exe -m scripts.benchmarks.headtohead_dagster_duckdb --dry-run",
+    "completed_at": "2026-05-15T20:02:49+00:00",
+    "elapsed_s": 0.0014522999990731478,
+    "name": "head-to-head: Nucleus vs raw Dagster + DuckDB (DRY-RUN)",
+    "notes": [
+      "dry-run: no subprocesses spawned"
+    ],
+    "overall_verdict": "PASS",
+    "raw": {
+      "dry_run": true,
+      "loc": {
+        "nucleus": 36,
+        "raw": 68
+      }
+    },
+    "rows": [
+      {
+        "claim": "harness can count LOC without spawning subprocesses",
+        "claim_ref": "self-test",
+        "delta": "",
+        "measured": "nucleus=36 raw=68 delta=+32",
+        "metric": "dry-run: meaningful LOC counted",
+        "note": "",
+        "severity": "",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "placeholders replace cleanly",
+        "claim_ref": "self-test",
+        "delta": "",
+        "measured": "nucleus chars=1461 raw chars=2477",
+        "metric": "dry-run: implementations renderable",
+        "note": "",
+        "severity": "",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "sys.executable is a runnable Python",
+        "claim_ref": "self-test",
+        "delta": "",
+        "measured": "C:\\Users\\GOT4HC\\Mordern Data Platform\\.venv\\Scripts\\python.exe",
+        "metric": "dry-run: subprocess command resolvable",
+        "note": "",
+        "severity": "",
+        "verdict": "PASS"
+      }
+    ],
+    "script": "scripts/benchmarks/headtohead_dagster_duckdb.py",
+    "started_at": "2026-05-15T20:02:49+00:00"
+  },
+  "schema_version": 1,
+  "software": {
+    "dagster": "1.9.5",
+    "dlt": "1.26.0",
+    "duckdb": "1.1.3",
+    "fastapi": "0.136.1",
+    "litellm": "1.83.14",
+    "nucleus": "0.1.0",
+    "polars": "1.18.0",
+    "psutil": "7.2.2",
+    "psycopg": "3.2.3",
+    "pyarrow": "18.1.0",
+    "pyiceberg": "0.11.1",
+    "sqlalchemy": "2.0.36",
+    "uvicorn": "0.46.0"
+  }
+}

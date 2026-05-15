@@ -1,0 +1,76 @@
+{
+  "hardware": {
+    "logical_cores": 8,
+    "machine": "AMD64",
+    "physical_cores": 4,
+    "platform": "Windows-10-10.0.26100-SP0",
+    "python": "3.11.9",
+    "ram_available_gb": 1.3,
+    "ram_total_gb": 15.7
+  },
+  "result": {
+    "command": "C:\\Users\\GOT4HC\\Mordern Data Platform\\.venv\\Scripts\\python.exe -m scripts.benchmarks.headtohead_dbt_duckdb --dry-run",
+    "completed_at": "2026-05-15T20:02:29+00:00",
+    "elapsed_s": 0.001051700091920793,
+    "name": "head-to-head: Nucleus vs dbt-duckdb (DRY-RUN)",
+    "notes": [
+      "dry-run mode: no engines were exercised"
+    ],
+    "overall_verdict": "PASS",
+    "raw": {
+      "dbt_available": false,
+      "dbt_status": "ModuleNotFoundError: No module named 'dbt_duckdb'",
+      "dry_run": true
+    },
+    "rows": [
+      {
+        "claim": "dbt-duckdb installed",
+        "claim_ref": "prerequisite",
+        "delta": "",
+        "measured": "ModuleNotFoundError: No module named 'dbt_duckdb'",
+        "metric": "dry-run: dbt-duckdb importable",
+        "note": "`pip install dbt-duckdb` to enable the full run",
+        "severity": "MEDIUM",
+        "verdict": "SKIP-DEPS"
+      },
+      {
+        "claim": "nucleus + ctx.sql importable",
+        "claim_ref": "prerequisite",
+        "delta": "",
+        "measured": "ok",
+        "metric": "dry-run: Nucleus importable",
+        "note": "",
+        "severity": "",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "harness can render TPC-H Q1 + write dbt project",
+        "claim_ref": "self-test",
+        "delta": "",
+        "measured": "_TPCH_Q1_SQL_len=725 chars; runs=5; rows=100000",
+        "metric": "dry-run: harness wiring",
+        "note": "",
+        "severity": "",
+        "verdict": "PASS"
+      }
+    ],
+    "script": "scripts/benchmarks/headtohead_dbt_duckdb.py",
+    "started_at": "2026-05-15T20:02:29+00:00"
+  },
+  "schema_version": 1,
+  "software": {
+    "dagster": "1.9.5",
+    "dlt": "1.26.0",
+    "duckdb": "1.1.3",
+    "fastapi": "0.136.1",
+    "litellm": "1.83.14",
+    "nucleus": "0.1.0",
+    "polars": "1.18.0",
+    "psutil": "7.2.2",
+    "psycopg": "3.2.3",
+    "pyarrow": "18.1.0",
+    "pyiceberg": "0.11.1",
+    "sqlalchemy": "2.0.36",
+    "uvicorn": "0.46.0"
+  }
+}
