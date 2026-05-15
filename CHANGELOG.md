@@ -15,6 +15,17 @@ the full deprecation cycle that core data APIs receive.
 
 > Post-v0.2.0 GA work in flight. Move new bullets here as PRs land.
 
+### Fixed
+- **CI workflows now run on `nucleus-data/nucleus`** — three-fix bundle: (1)
+  `setup-uv@v3` `cache-dependency-glob` points at `pyproject.toml` (we don't
+  ship `uv.lock`; the default `**/uv.lock` glob was zero-matching and failing
+  all 5 jobs), (2) `pip-audit` bumped 2.7.3 → 2.10.0 so cyclonedx-bom 5.1.1's
+  `cyclonedx-python-lib>=8` requirement resolves (2.7.3 capped at `<8`), and
+  (3) `.gitignore` `site/` entries anchored to `/site/` so `docs/site/` source
+  (90 mkdocs pages from Wave 1C docs-site builder) is tracked instead of
+  silently excluded. Unblocks 13 of 14 failing checks; CodeQL still requires
+  founder repo-settings change (enable Code scanning).
+
 ---
 
 ## [0.2.0] — 2026-05-15
