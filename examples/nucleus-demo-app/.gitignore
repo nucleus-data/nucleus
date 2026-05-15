@@ -1,0 +1,15 @@
+# Local Nucleus state — recreated by `nucleus up` and `nucleus run`.
+.nucleus/
+data/warehouse/
+data/minio/
+data/postgres/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Secrets — NEVER commit
+.env
+.env.*
+!.env.example

@@ -1,0 +1,20 @@
+project:
+  name: nucleus_demo_app
+  profile: default
+  generated_at: "2026-05-15"
+
+# Local catalog — SQLite-backed Iceberg via PyIceberg's SqlCatalog.
+# Surfaced as `filesystem` to users per nucleus_cli_spec.md §10 NV #5.
+catalog:
+  type: filesystem
+  path: ./.nucleus/catalog.db
+
+# Local warehouse — Parquet files land under ./data/warehouse/<namespace>/<asset>.
+storage:
+  warehouse: ./data/warehouse
+
+# Lineage events — append-only JSONL on disk for v0.1.
+# v0.3+ flips to http (Marquez) per spec §7.
+lineage:
+  transport: file
+  path: ./.nucleus/lineage/events.jsonl
