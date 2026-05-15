@@ -30,6 +30,7 @@ MANIFEST
 
 # Virtual environments
 .venv/
+.venv-*/
 venv/
 ENV/
 env/
@@ -200,3 +201,6 @@ node_modules/
 result.txt
 test_results.txt
 workbench_snapshot.html
+
+# Local agent scratch directory (transient inter-worker artifacts)
+.scratch/
