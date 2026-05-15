@@ -1,8 +1,8 @@
 # ADR-017: Schedule Exposure via `@nucleus.asset(schedule=...)` (v0.1.1 / v0.2-preview)
 
-> **Status**: PROPOSED — pending founder ratification
-> **Date**: 2026-05-14 · **Decider**: Builder (to be ratified by solo founder)
-> **Tags**: scheduling, dagster, cron, sdk, cli, v0.1.1
+> **Status**: IMPLEMENTED (v0.2.1 — mini-scheduler path)
+> **Date**: 2026-05-14 · **Amended**: 2026-05-15 · **Decider**: Builder (ratified by solo founder)
+> **Tags**: scheduling, dagster, cron, sdk, cli, v0.1.1, v0.2.1, mini-scheduler
 > **Related**: ADR-001 (wrap-not-build precedent), ADR-005 (API freeze policy — Beta tier),
 > ADR-006 §Initial code assignment (NE5xxx allocations), ADR-012 (pin matrix),
 > `nucleus_architecture_v4.1.md` §6.3 (Coordination), §6.7 (yield-to-giants),
@@ -198,5 +198,50 @@ No data migration required (schedule metadata is in-process registry only, not p
 ---
 
 **Proposed**: 2026-05-14 — builder wave.
-**Ratification required from founder before merging.** Until ratified, `schedule=` kwarg is
-Tier B (Beta) and any breaking change requires only a CHANGELOG entry (ADR-005 §1).
+**Amended**: 2026-05-15 — Wave 2 P0-1 daemon builder.
+
+---
+
+## Amendment: v0.2.1 Mini-Scheduler Fallback
+
+**Status**: IMPLEMENTED
+
+Per `AGENTS.md` §4 (no custom scheduler; Dagster wrapped OR mini-scheduler fallback by v1.0),
+the active scheduling daemon lands via the **mini-scheduler path** in v0.2.1.
+
+### Why not Dagster SchedulerDaemon?
+
+Dagster's `SchedulerDaemon` (dagster==1.9.5) requires:
+- A full `DagsterInstance` with `DAGSTER_HOME` directory configured
+- A `workspace.yaml` / `Definitions` object with all jobs pre-registered
+- A persistent daemon process communicating with a DagsterInstance gRPC server
+
+This is too heavy for the beachhead (5-engineer startup team, `git clone` → running in <30min).
+The `SchedulerDaemon` is not importable as a standalone component in dagster==1.9.5
+(verified: no `dagster._daemon.run.SchedulerDaemon` public path).
+
+### Mini-scheduler design
+
+`coordination/daemon.py` implements:
+- `start_daemon(project_root, foreground, max_iters)` → spawns detached subprocess
+- `stop_daemon(project_root, timeout)` → SIGTERM via psutil (cross-platform)
+- `trigger_asset(asset_key, warehouse_dir)` → one-shot AMA call
+- `get_daemon_status(project_root)` → pid + schedule overview
+- `DaemonStatus` dataclass (no Dagster types)
+- `_daemon_main` loop: every 5s, `list_schedules()` + croniter + `materialize_asset`
+- Pidfile at `<project_root>/.nucleus/.daemon.pid`
+- Error codes: NE5012 (start), NE5013 (not running), NE5014 (already running)
+
+Zero Dagster types cross the outbound boundary. Enforced by `scripts/dagster_leak_check.py`.
+
+Dagster's role in Nucleus is PRESERVED for:
+- `coordination/asset_materialization.py` (data-write path)
+- `coordination/error_translation.py` (exception translation)
+- Future Dagster daemon scheduling (v0.5+) when `DagsterInstance` wiring is justified
+
+### CLI commands activated (v0.2.1)
+
+- `nucleus schedule on [--foreground]` — start daemon
+- `nucleus schedule off [--timeout SEC]` — stop daemon
+- `nucleus schedule trigger ASSET_KEY` — one-shot run
+- `nucleus schedule status` — Rich table of running state + schedules

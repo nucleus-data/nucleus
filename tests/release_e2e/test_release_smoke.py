@@ -37,11 +37,9 @@ Refs:
 from __future__ import annotations
 
 import inspect
-import os
 import shutil
 import subprocess
 import sys
-import tempfile
 import time
 from pathlib import Path
 
@@ -53,9 +51,9 @@ import pytest
 
 REPO_ROOT = Path(__file__).parent.parent.parent
 SCRIPTS_DIR = REPO_ROOT / "scripts"
-VERSION_THRESHOLD_S = 1.5   # nucleus_cli_spec.md §3.7; Suite A1/K1
-UP_THRESHOLD_S = 10.0       # nucleus_cli_spec.md §3.2; Suite A5
-LOC_CEILING = 8_000         # AGENTS.md §11.6 v0.1 ceiling
+VERSION_THRESHOLD_S = 1.5  # nucleus_cli_spec.md §3.7; Suite A1/K1
+UP_THRESHOLD_S = 10.0  # nucleus_cli_spec.md §3.2; Suite A5
+LOC_CEILING = 8_000  # AGENTS.md §11.6 v0.1 ceiling
 
 GOVERNANCE_SCRIPTS = [
     "check_vocabulary.py",
@@ -107,6 +105,7 @@ def _is_stub(stderr: str) -> bool:
 # Immediately runnable tests (no external deps, no Wave-1 features)
 # ---------------------------------------------------------------------------
 
+
 class TestA1VersionColdBoot:
     """A1: nucleus version cold boot < 1.5s.
 
@@ -131,8 +130,7 @@ class TestA1VersionColdBoot:
         output = (result.stdout + result.stderr).lower()
         for required in ("nucleus", "duckdb", "polars"):
             assert required in output, (
-                f"'{required}' not found in nucleus version output.\n"
-                f"Output: {output[:300]}"
+                f"'{required}' not found in nucleus version output.\nOutput: {output[:300]}"
             )
 
     def test_version_no_external_classnames(self) -> None:
@@ -143,12 +141,17 @@ class TestA1VersionColdBoot:
         nucleus = _nucleus_cmd()
         result = _run([*nucleus, "version"], REPO_ROOT)
         output = result.stdout + result.stderr
-        banned = ["dagster.", "DagsterInstance", "OpExecutionContext",
-                  "DuckDBPyConnection", "pyiceberg.", "polars.exceptions."]
+        banned = [
+            "dagster.",
+            "DagsterInstance",
+            "OpExecutionContext",
+            "DuckDBPyConnection",
+            "pyiceberg.",
+            "polars.exceptions.",
+        ]
         leaks = [b for b in banned if b in output]
         assert not leaks, (
-            f"External classnames in nucleus version output: {leaks}\n"
-            f"Output: {output[:300]}"
+            f"External classnames in nucleus version output: {leaks}\nOutput: {output[:300]}"
         )
 
     def test_version_cold_boot_speed(self) -> None:
@@ -230,9 +233,7 @@ class TestI2LocBudgetGreen:
         assert py_files, "No .py files found under src/nucleus/"
 
         # Verify the main package root exists
-        assert (src_dir / "__init__.py").exists(), (
-            "src/nucleus/__init__.py missing"
-        )
+        assert (src_dir / "__init__.py").exists(), "src/nucleus/__init__.py missing"
         assert (src_dir / "errors.py").exists(), (
             "src/nucleus/errors.py missing (NucleusError hierarchy)"
         )
@@ -272,10 +273,9 @@ class TestH1FixHintPresent:
             pytest.skip("NucleusError not found in nucleus.errors")
 
         subclasses = [
-            v for v in vars(errors_module).values()
-            if inspect.isclass(v)
-            and issubclass(v, base_class)
-            and v is not base_class
+            v
+            for v in vars(errors_module).values()
+            if inspect.isclass(v) and issubclass(v, base_class) and v is not base_class
         ]
         assert subclasses, "No NucleusError subclasses found"
 
@@ -330,6 +330,7 @@ class TestH1FixHintPresent:
 # Integration tests (require Wave-1 features; marked @pytest.mark.integration)
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.integration
 class TestA3InitScaffold:
     """A3: nucleus init creates valid 6-file scaffold.
@@ -346,15 +347,13 @@ class TestA3InitScaffold:
             pytest.skip("nucleus init is a v0.1 stub (not yet implemented)")
 
         assert result.returncode == 0, (
-            f"nucleus init failed (exit {result.returncode})\n"
-            f"stderr: {result.stderr[:200]}"
+            f"nucleus init failed (exit {result.returncode})\nstderr: {result.stderr[:200]}"
         )
 
         project_dir = tmp_path / "smoke-project"
         missing = [f for f in TEMPLATE_FILES if not (project_dir / f).exists()]
         assert not missing, (
-            f"Missing template files: {missing}\n"
-            f"Per nucleus_cli_spec.md §3.1 + beachhead_e2e.py:25"
+            f"Missing template files: {missing}\nPer nucleus_cli_spec.md §3.1 + beachhead_e2e.py:25"
         )
 
     def test_init_yaml_is_valid(self, tmp_path: Path) -> None:
@@ -371,6 +370,7 @@ class TestA3InitScaffold:
 
         try:
             import yaml  # type: ignore[import]
+
             config = yaml.safe_load(yaml_file.read_text(encoding="utf-8"))
         except ImportError:
             pytest.skip("pyyaml not available for YAML validation")
@@ -407,8 +407,7 @@ class TestA5UpBootsWithin10s:
             pytest.skip("nucleus up is a v0.1 stub")
 
         assert result.returncode == 0, (
-            f"nucleus up failed (exit {result.returncode})\n"
-            f"stderr: {result.stderr[:300]}"
+            f"nucleus up failed (exit {result.returncode})\nstderr: {result.stderr[:300]}"
         )
 
     def test_up_boots_within_threshold(self, tmp_path: Path) -> None:
@@ -458,9 +457,7 @@ class TestB5DryRunNoWrites:
         if _is_stub(result.stderr):
             pytest.skip("nucleus run --dry-run is a v0.1 stub")
 
-        assert result.returncode == 0, (
-            f"nucleus run --dry-run failed (exit {result.returncode})"
-        )
+        assert result.returncode == 0, f"nucleus run --dry-run failed (exit {result.returncode})"
 
     def test_dry_run_creates_no_snapshots(self, tmp_path: Path) -> None:
         nucleus = _nucleus_cmd()
@@ -517,9 +514,7 @@ class TestC1QuerySelect1:
         if _is_stub(result.stderr) or result.returncode != 0:
             pytest.skip("nucleus query not available or returned error")
 
-        assert "1" in result.stdout, (
-            f"Expected '1' in query result, got:\n{result.stdout[:200]}"
-        )
+        assert "1" in result.stdout, f"Expected '1' in query result, got:\n{result.stdout[:200]}"
 
 
 @pytest.mark.integration
@@ -540,18 +535,22 @@ class TestD2BadCredsCleanError:
             pytest.skip("nucleus init failed (stub)")
 
         result = _run(
-            [*nucleus, "ingest",
-             "postgres://baduser:badpass@localhost:5432/nonexistent",
-             "--table", "users", "--as", "raw.users"],
+            [
+                *nucleus,
+                "ingest",
+                "postgres://baduser:badpass@localhost:5432/nonexistent",
+                "--table",
+                "users",
+                "--as",
+                "raw.users",
+            ],
             project_dir,
         )
 
         if _is_stub(result.stderr):
             pytest.skip("nucleus ingest is a v0.1 stub")
 
-        assert result.returncode != 0, (
-            f"Expected failure for bad Postgres DSN but got exit 0"
-        )
+        assert result.returncode != 0, "Expected failure for bad Postgres DSN but got exit 0"
 
     def test_bad_creds_no_classname_leaks(self, tmp_path: Path) -> None:
         """Error message must not contain raw sqlalchemy/psycopg classnames."""
@@ -563,10 +562,17 @@ class TestD2BadCredsCleanError:
             pytest.skip("nucleus init failed (stub)")
 
         result = _run(
-            [*nucleus, "ingest",
-             "postgres://bad:creds@10.255.255.1:5432/db",
-             "--table", "t", "--as", "raw.t"],
-            project_dir, timeout=10,  # short timeout; unreachable host
+            [
+                *nucleus,
+                "ingest",
+                "postgres://bad:creds@10.255.255.1:5432/db",
+                "--table",
+                "t",
+                "--as",
+                "raw.t",
+            ],
+            project_dir,
+            timeout=10,  # short timeout; unreachable host
         )
 
         if _is_stub(result.stderr):
@@ -574,8 +580,12 @@ class TestD2BadCredsCleanError:
 
         output = result.stdout + result.stderr
         banned_patterns = [
-            "sqlalchemy.", "psycopg.", "OperationalError", "pg8000.",
-            "dagster.", "DagsterInstance",
+            "sqlalchemy.",
+            "psycopg.",
+            "OperationalError",
+            "pg8000.",
+            "dagster.",
+            "DagsterInstance",
         ]
         leaks = [p for p in banned_patterns if p in output]
         assert not leaks, (
@@ -594,10 +604,17 @@ class TestD2BadCredsCleanError:
             pytest.skip("nucleus init failed (stub)")
 
         result = _run(
-            [*nucleus, "ingest",
-             "postgres://bad:creds@10.255.255.1:5432/db",
-             "--table", "t", "--as", "raw.t"],
-            project_dir, timeout=10,
+            [
+                *nucleus,
+                "ingest",
+                "postgres://bad:creds@10.255.255.1:5432/db",
+                "--table",
+                "t",
+                "--as",
+                "raw.t",
+            ],
+            project_dir,
+            timeout=10,
         )
 
         if _is_stub(result.stderr):

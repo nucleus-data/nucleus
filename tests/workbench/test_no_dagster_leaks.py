@@ -28,18 +28,12 @@ def _iter_scannable_files(root: Path) -> list[Path]:
     return sorted(
         p
         for p in root.rglob("*")
-        if p.is_file()
-        and p.suffix.lower() in _SUFFIXES
-        and "__pycache__" not in p.parts
+        if p.is_file() and p.suffix.lower() in _SUFFIXES and "__pycache__" not in p.parts
     )
 
 
 def _find_violations(text: str, rel_posix: str) -> list[str]:
-    return [
-        f"{rel_posix}: matched {pat.pattern!r}"
-        for pat in _PATTERNS
-        if pat.search(text)
-    ]
+    return [f"{rel_posix}: matched {pat.pattern!r}" for pat in _PATTERNS if pat.search(text)]
 
 
 def test_workbench_tree_has_no_banned_tokens() -> None:

@@ -20,7 +20,6 @@ from typing import Any
 
 # Docs: https://fastapi.tiangolo.com/tutorial/body/
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import ORJSONResponse
 
 # Docs: https://docs.pydantic.dev/latest/concepts/models/  (pydantic v2)
 from pydantic import BaseModel, Field
@@ -74,7 +73,7 @@ def _resolve_warehouse(warehouse_dir: str) -> Path:
     return here / "warehouse"
 
 
-@router.post("/query", response_class=ORJSONResponse)
+@router.post("/query")
 def execute_query(req: QueryRequest) -> Any:
     """Execute SQL against the warehouse and return rows + schema.
 
@@ -123,11 +122,19 @@ def execute_query(req: QueryRequest) -> Any:
         status = 400 if "Syntax" in type(err).__name__ else 500
         raise HTTPException(
             status_code=status,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err
     except Exception as exc:
         err = translate(exc)
         raise HTTPException(
             status_code=500,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err

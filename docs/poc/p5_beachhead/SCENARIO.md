@@ -2,7 +2,7 @@
 
 **Time budget**: 30 minutes (hard cap, no extensions).
 **Goal**: A first-time tester reaches a BI-ready Iceberg table starting from `git clone`.
-**Persona**: 0-2 years data engineering experience, MacBook / Linux laptop, Python 3.11 installed.
+**Persona**: ≥3 years data engineering experience (per `RECRUITMENT.md` hard eligibility), MacBook / Linux laptop, Python 3.11 installed.
 
 > Success metric per [`AGENTS.md` §11.8](../../../AGENTS.md) + [`nucleus_architecture_v4.1.md` §1.5](../../../nucleus_architecture_v4.1.md): 5-engineer startup team, `git clone` → BI-ready Iceberg table in **<30 minutes**. PoC #5 tests a single-tester subset of that promise on the SQLite → filesystem-Iceberg path validated by PoC #3 (Postgres + S3 path is v0.3+ scope).
 
@@ -23,6 +23,8 @@
 2. Clone the repo and create a virtual environment:
 
    ```bash
+   # FOUNDER ACTION REQUIRED: github.com/nucleus-data/nucleus currently returns 404.
+   # Replace the URL below with the live public repo URL before recruitment opens.
    git clone https://github.com/nucleus-data/nucleus.git
    cd nucleus
    python3.11 -m venv .venv

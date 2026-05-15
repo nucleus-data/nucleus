@@ -1,4 +1,4 @@
-# ruff: noqa: E402, I001 -- importorskip("dagster") inside class is load-bearing.
+# ruff: noqa: E402 -- importorskip("dagster") inside class is load-bearing.
 """Tests for :mod:`nucleus.sdk.contracts` — schema-contracts runtime.
 
 Validates the v0.1 wire-up of ``@nucleus.check`` execution per

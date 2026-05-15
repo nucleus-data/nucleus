@@ -110,7 +110,11 @@ def main(argv: list[str] | None = None) -> int:
     hits = scan_all()
 
     if args.json:
-        print(json.dumps({"missing": [h.__dict__ for h in hits], "missing_count": len(hits)}, indent=2))
+        print(
+            json.dumps(
+                {"missing": [h.__dict__ for h in hits], "missing_count": len(hits)}, indent=2
+            )
+        )
         return 1 if hits else 0
 
     if not hits:

@@ -60,17 +60,17 @@ RESERVED_RE: Final[re.Pattern[str]] = re.compile(r"^NE[1-5]9\d{2}$")
 # the next free integer in the correct layer band per ADR-006 §Decision.
 BOOTSTRAP_CODES: Final[dict[str, str]] = {
     "NucleusSourceConnectionError": "NE1001",
-    "NucleusCommitConflictError":   "NE1002",
-    "NucleusCommitUnknownError":    "NE1003",
-    "NucleusSchemaEvolutionError":  "NE1004",
-    "NucleusIOError":               "NE1005",
-    "NucleusPermissionError":       "NE1006",
-    "NucleusSchemaError":           "NE2001",
-    "NucleusSQLSyntaxError":        "NE2002",
-    "NucleusResourceError":         "NE2003",
-    "NucleusInternalError":         "NE3001",
-    "NucleusAssetNotFound":         "NE3002",
-    "NucleusAssetNotMaterialized":  "NE3003",
+    "NucleusCommitConflictError": "NE1002",
+    "NucleusCommitUnknownError": "NE1003",
+    "NucleusSchemaEvolutionError": "NE1004",
+    "NucleusIOError": "NE1005",
+    "NucleusPermissionError": "NE1006",
+    "NucleusSchemaError": "NE2001",
+    "NucleusSQLSyntaxError": "NE2002",
+    "NucleusResourceError": "NE2003",
+    "NucleusInternalError": "NE3001",
+    "NucleusAssetNotFound": "NE3002",
+    "NucleusAssetNotMaterialized": "NE3003",
 }
 
 
@@ -79,7 +79,7 @@ class Finding:
     classname: str
     line: int
     code: str | None
-    kind: str   # "missing" | "invalid" | "duplicate" | "reserved" | "ok"
+    kind: str  # "missing" | "invalid" | "duplicate" | "reserved" | "ok"
     detail: str
 
 
@@ -131,21 +131,45 @@ def scan(errors_file: Path = ERRORS_FILE) -> list[Finding]:
                 code = _string_value(stmt.value)
                 break
         if code is None:
-            findings.append(Finding(cls.name, cls.lineno, None, "missing",
-                                    "no `error_code: ClassVar[str]` in class body"))
+            findings.append(
+                Finding(
+                    cls.name,
+                    cls.lineno,
+                    None,
+                    "missing",
+                    "no `error_code: ClassVar[str]` in class body",
+                )
+            )
             continue
         if not CODE_RE.match(code):
-            findings.append(Finding(cls.name, cls.lineno, code, "invalid",
-                                    f"code {code!r} does not match ^NE[1-5]\\d{{3}}$"))
+            findings.append(
+                Finding(
+                    cls.name,
+                    cls.lineno,
+                    code,
+                    "invalid",
+                    f"code {code!r} does not match ^NE[1-5]\\d{{3}}$",
+                )
+            )
             continue
         if RESERVED_RE.match(code):
-            findings.append(Finding(cls.name, cls.lineno, code, "reserved",
-                                    f"code {code} is in reserved internal range NEx900-NEx999"))
+            findings.append(
+                Finding(
+                    cls.name,
+                    cls.lineno,
+                    code,
+                    "reserved",
+                    f"code {code} is in reserved internal range NEx900-NEx999",
+                )
+            )
             continue
         prev = seen_codes.get(code)
         if prev and prev != cls.name:
-            findings.append(Finding(cls.name, cls.lineno, code, "duplicate",
-                                    f"code {code} already used by {prev}"))
+            findings.append(
+                Finding(
+                    cls.name, cls.lineno, code, "duplicate", f"code {code} already used by {prev}"
+                )
+            )
             continue
         seen_codes[code] = cls.name
         findings.append(Finding(cls.name, cls.lineno, code, "ok", "valid"))
@@ -159,10 +183,14 @@ def bootstrap_suggestions(findings: list[Finding]) -> list[tuple[str, str, str]]
         if f.kind not in ("missing", "invalid"):
             continue
         suggested = BOOTSTRAP_CODES.get(f.classname)
-        note = "per ADR-006 §Initial code assignment" if suggested else (
-            "NEEDS ASSIGNMENT — pick next free code in correct layer band "
-            "(NE1=physics, NE2=engines, NE3=coordination, NE4=intelligence, "
-            "NE5=experience) per ADR-006 §Decision"
+        note = (
+            "per ADR-006 §Initial code assignment"
+            if suggested
+            else (
+                "NEEDS ASSIGNMENT — pick next free code in correct layer band "
+                "(NE1=physics, NE2=engines, NE3=coordination, NE4=intelligence, "
+                "NE5=experience) per ADR-006 §Decision"
+            )
         )
         out.append((f.classname, suggested or "NE?xxx", note))
     return out
@@ -170,9 +198,13 @@ def bootstrap_suggestions(findings: list[Finding]) -> list[tuple[str, str, str]]
 
 def _render(findings: list[Finding], suggestions: list[tuple[str, str, str]] | None) -> str:
     bad = [f for f in findings if f.kind != "ok"]
-    lines = ["Error-code check (ADR-006)", "=" * 62,
-             f" subclasses found : {len(findings)}",
-             f" missing / invalid: {len(bad)}", ""]
+    lines = [
+        "Error-code check (ADR-006)",
+        "=" * 62,
+        f" subclasses found : {len(findings)}",
+        f" missing / invalid: {len(bad)}",
+        "",
+    ]
     for f in findings:
         tag = "OK" if f.kind == "ok" else f.kind.upper()
         codeval = f.code if f.code else "—"
@@ -181,19 +213,24 @@ def _render(findings: list[Finding], suggestions: list[tuple[str, str, str]] | N
         lines += ["", "Bootstrap suggestions (apply during PoC #1 promotion):"]
         for clsname, code, note in suggestions:
             lines.append(f"  class {clsname}(NucleusError):")
-            lines.append(f"      error_code: ClassVar[str] = \"{code}\"  # {note}")
+            lines.append(f'      error_code: ClassVar[str] = "{code}"  # {note}')
     if bad and not suggestions:
-        lines += ["",
-                  "Re-run with --bootstrap to print code suggestions per",
-                  "ADR-006 §Initial code assignment. Apply to src/nucleus/errors.py",
-                  "during PoC #1 promotion (AGENTS.md §11.1)."]
+        lines += [
+            "",
+            "Re-run with --bootstrap to print code suggestions per",
+            "ADR-006 §Initial code assignment. Apply to src/nucleus/errors.py",
+            "during PoC #1 promotion (AGENTS.md §11.1).",
+        ]
     return "\n".join(lines)
 
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="Error-code numbering check (ADR-006).")
-    p.add_argument("--bootstrap", action="store_true",
-                   help="Print suggested codes for missing/invalid subclasses, then exit 0.")
+    p.add_argument(
+        "--bootstrap",
+        action="store_true",
+        help="Print suggested codes for missing/invalid subclasses, then exit 0.",
+    )
     p.add_argument("--json", action="store_true", help="Machine-readable JSON output.")
     args = p.parse_args(argv)
 
@@ -211,14 +248,20 @@ def main(argv: list[str] | None = None) -> int:
     invalid = [f for f in findings if f.kind in ("invalid", "reserved")]
 
     if args.json:
-        print(json.dumps({
-            "ok": not missing and not invalid,
-            "findings": [asdict(f) for f in findings],
-            "missing_or_duplicate": [asdict(f) for f in missing],
-            "invalid_or_reserved": [asdict(f) for f in invalid],
-            "bootstrap": [{"classname": c, "code": k, "note": n}
-                          for c, k, n in (suggestions or [])],
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "ok": not missing and not invalid,
+                    "findings": [asdict(f) for f in findings],
+                    "missing_or_duplicate": [asdict(f) for f in missing],
+                    "invalid_or_reserved": [asdict(f) for f in invalid],
+                    "bootstrap": [
+                        {"classname": c, "code": k, "note": n} for c, k, n in (suggestions or [])
+                    ],
+                },
+                indent=2,
+            )
+        )
     else:
         print(_render(findings, suggestions))
 

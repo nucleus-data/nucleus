@@ -49,14 +49,14 @@ SRC_ROOT = REPO_ROOT / "src" / "nucleus"
 # Layer order: lower index = lower in the stack (foundational).
 # Higher layers may depend on lower; lower may NOT depend on higher.
 LAYERS: list[str] = [
-    "_internal",     # shared toolbox; sits below everything
-    "physics",       # L0
-    "engines",       # L1
+    "_internal",  # shared toolbox; sits below everything
+    "physics",  # L0
+    "engines",  # L1
     "coordination",  # L2
     "intelligence",  # L3
-    "ctx",           # L4 (SDK)
-    "cli",           # L4 (operator surface)
-    "workbench",     # L4 (GUI surface; ADR-016)
+    "ctx",  # L4 (SDK)
+    "cli",  # L4 (operator surface)
+    "workbench",  # L4 (GUI surface; ADR-016)
 ]
 
 
@@ -176,7 +176,11 @@ def _violations_for_imported_module(
                 else ""
             )
             imported_engine_dir = parts[2]
-            if importer_engine_dir and imported_engine_dir and importer_engine_dir != imported_engine_dir:
+            if (
+                importer_engine_dir
+                and imported_engine_dir
+                and importer_engine_dir != imported_engine_dir
+            ):
                 out.append(
                     Violation(
                         file=rel_str,
@@ -237,7 +241,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.json:
         print(
             json.dumps(
-                {"violations": [v.__dict__ for v in violations], "violation_count": len(violations)},
+                {
+                    "violations": [v.__dict__ for v in violations],
+                    "violation_count": len(violations),
+                },
                 indent=2,
             )
         )

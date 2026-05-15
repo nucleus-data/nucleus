@@ -279,10 +279,11 @@ class TestGetScheduledAssets:
             # Use a closure-capture variable to avoid name conflicts
             cron = f"0 {i} * * *"
 
-            def make_fn(n: int):  # noqa: PLW0108
+            def make_fn(n: int):
                 @nucleus.asset(f"staging.asset{n}", schedule=f"0 {n} * * *")
                 def fn(_ctx: object) -> None:
                     return None
+
                 return fn
 
             make_fn(i)

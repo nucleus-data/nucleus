@@ -1,6 +1,6 @@
-# ADR-020: Object-Storage + Filesystem Connectors via DuckDB (PROPOSED)
+# ADR-020: Object-Storage + Filesystem Connectors via DuckDB
 
-**Status**: PROPOSED — awaiting founder ratification
+**Status**: ACCEPTED
 **Date**: 2026-05-15
 **Author**: Builder (connector expansion wave)
 **Reviewers**: Founder (ratification gate)
@@ -25,7 +25,7 @@ These sources share a common pattern: read a file (or glob) → Arrow table → 
 
 DuckDB is already a core dep (`duckdb==1.1.3`). S3 support adds zero deps. GCS support requires one optional dep (`gcsfs==2026.5.0`).
 
----
+Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 ## OSS Options Considered
 

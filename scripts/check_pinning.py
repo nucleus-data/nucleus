@@ -29,7 +29,7 @@ dev/extras) are allowed ONLY when the same source line in
 ``pyproject.toml`` carries an inline ``# loose-allowed: <reason>``
 comment. Example::
 
-    "pytest>=8.0",  # loose-allowed: dev tool, plugin compat surface
+    ("pytest>=8.0",)  # loose-allowed: dev tool, plugin compat surface
 
 Each exemption is recorded in the human + JSON report. ``--strict``
 upgrades EVERY exemption (inline + the default dev ``~=`` allowance) to
@@ -91,12 +91,14 @@ COMPAT_DOC = REPO_ROOT / "docs" / "compatibility.md"
 # Add a group name here only when the extras row carries runtime semantics.
 # Linters / test runners / docs generators stay outside this set so their
 # `~=` flexibility (default mode) is preserved.
-RUNTIME_EXTRAS_GROUPS: frozenset[str] = frozenset({
-    "observability",
-    "lineage-advanced",
-    "snowflake",   # dlt[snowflake]==1.26.0 — ADR-019 connector expansion 2026-05-15
-    "gcs",         # gcsfs==2026.5.0 — ADR-020 connector expansion 2026-05-15
-})
+RUNTIME_EXTRAS_GROUPS: frozenset[str] = frozenset(
+    {
+        "observability",
+        "lineage-advanced",
+        "snowflake",  # dlt[snowflake]==1.26.0 — ADR-019 connector expansion 2026-05-15
+        "gcs",  # gcsfs==2026.5.0 — ADR-020 connector expansion 2026-05-15
+    }
+)
 
 # Regex for an exact-pin entry inside an array of strings:
 # matches:  "pkgname[extras]==X.Y.Z",
@@ -159,7 +161,9 @@ class PinningReport:
     runtime_extras_violations: list[str] = field(default_factory=list)
     dev_violations: list[str] = field(default_factory=list)
     matrix_missing: list[str] = field(default_factory=list)
-    matrix_mismatches: list[tuple[str, str, str]] = field(default_factory=list)  # (pkg, pyproj, doc)
+    matrix_mismatches: list[tuple[str, str, str]] = field(
+        default_factory=list
+    )  # (pkg, pyproj, doc)
     prerelease_warnings: list[str] = field(default_factory=list)
     exemptions_used: list[str] = field(default_factory=list)  # loose-allowed pins
     # Counts for the summary line; populated by check_pinning().
@@ -415,10 +419,12 @@ def _render(report: PinningReport) -> str:
     if report.matrix_missing:
         lines.append("Packages missing from docs/compatibility.md:")
         lines.extend(f"  - {pkg}" for pkg in report.matrix_missing)
-        lines.extend([
-            "  (add a row in the relevant Sec 1.x table of docs/compatibility.md)",
-            "",
-        ])
+        lines.extend(
+            [
+                "  (add a row in the relevant Sec 1.x table of docs/compatibility.md)",
+                "",
+            ]
+        )
 
     if report.matrix_mismatches:
         lines.append("Version mismatches between pyproject.toml and docs/compatibility.md:")
@@ -437,10 +443,12 @@ def _render(report: PinningReport) -> str:
     if report.exemptions_used:
         lines.append("Loose-pin exemptions accepted (`# loose-allowed:`):")
         lines.extend(f"  - {e}" for e in report.exemptions_used)
-        lines.extend([
-            "  (re-run with --strict to upgrade exemptions to violations)",
-            "",
-        ])
+        lines.extend(
+            [
+                "  (re-run with --strict to upgrade exemptions to violations)",
+                "",
+            ]
+        )
 
     return "\n".join(lines)
 
@@ -453,11 +461,13 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
-        "--json", action="store_true",
+        "--json",
+        action="store_true",
         help="Emit machine-readable JSON instead of the human report.",
     )
     parser.add_argument(
-        "--strict", action="store_true",
+        "--strict",
+        action="store_true",
         help=(
             "Disable every exemption: require == on EVERY dep "
             "(runtime + extras), reject the dev `~=` allowance, "

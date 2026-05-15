@@ -127,7 +127,7 @@ def per_subdir(file_counts: dict[str, int], root: Path) -> dict[str, int]:
     for path, count in file_counts.items():
         if not path.startswith(prefix):
             continue
-        tail = path[len(prefix):]
+        tail = path[len(prefix) :]
         bucket = tail.split("/", 1)[0] if "/" in tail else "(top-level)"
         summary[bucket] = summary.get(bucket, 0) + count
     return summary

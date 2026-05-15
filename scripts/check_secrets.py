@@ -33,15 +33,26 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SRC_ROOT = REPO_ROOT / "src"
 
 # Attribute / variable name prefixes that commonly hold secrets.
-_CRED_NAMES: frozenset[str] = frozenset({
-    "password", "passwd", "pwd",
-    "api_key", "apikey",
-    "token", "access_token", "refresh_token",
-    "secret", "client_secret",
-    "auth", "authorization",
-    "private_key", "privatekey",
-    "credential", "credentials",
-})
+_CRED_NAMES: frozenset[str] = frozenset(
+    {
+        "password",
+        "passwd",
+        "pwd",
+        "api_key",
+        "apikey",
+        "token",
+        "access_token",
+        "refresh_token",
+        "secret",
+        "client_secret",
+        "auth",
+        "authorization",
+        "private_key",
+        "privatekey",
+        "credential",
+        "credentials",
+    }
+)
 
 # Patterns that indicate safe usage (env-var or config reads).
 _SAFE_PATTERNS: list[re.Pattern[str]] = [
@@ -77,7 +88,13 @@ def _is_literal_string(node: ast.AST) -> bool:
     """Return True if ``node`` is a non-empty string literal of min length."""
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
         val = node.value.strip()
-        return len(val) >= _MIN_SECRET_LEN and val not in {"", "***", "secret", "changeme", "REDACTED"}
+        return len(val) >= _MIN_SECRET_LEN and val not in {
+            "",
+            "***",
+            "secret",
+            "changeme",
+            "REDACTED",
+        }
     return False
 
 
@@ -112,7 +129,14 @@ def _scan_file(path: Path, content: str) -> list[Hit]:
                 if name and _is_cred_name(name) and _is_literal_string(value):
                     line_text = lines[node.lineno - 1] if node.lineno <= len(lines) else ""
                     if not _check_line_safe(line_text):
-                        hits.append(Hit(file=rel, line=node.lineno, name=name, excerpt=line_text.strip()[:120]))
+                        hits.append(
+                            Hit(
+                                file=rel,
+                                line=node.lineno,
+                                name=name,
+                                excerpt=line_text.strip()[:120],
+                            )
+                        )
 
         # Keyword arg: ``connect(password="abc123")``
         if isinstance(node, ast.Call):
@@ -120,7 +144,14 @@ def _scan_file(path: Path, content: str) -> list[Hit]:
                 if kw.arg and _is_cred_name(kw.arg) and _is_literal_string(kw.value):
                     line_text = lines[node.lineno - 1] if node.lineno <= len(lines) else ""
                     if not _check_line_safe(line_text):
-                        hits.append(Hit(file=rel, line=node.lineno, name=kw.arg, excerpt=line_text.strip()[:120]))
+                        hits.append(
+                            Hit(
+                                file=rel,
+                                line=node.lineno,
+                                name=kw.arg,
+                                excerpt=line_text.strip()[:120],
+                            )
+                        )
     return hits
 
 

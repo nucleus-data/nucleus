@@ -290,3 +290,68 @@ So the swarm's WORKBENCH code edit was real, but EVERY documentation/governance 
 **Resolved**: The doc cites "Iceberg spec v2 branch/tag" (the spec-level feature) without asserting a specific pyiceberg API.  
 **Detection**: Pre-write self-audit during parity researcher run (2026-05-15).  
 **Verify at**: https://py.iceberg.apache.org/api/ (search for "branch" and "tag")
+
+---
+
+## 2026-05-15: Polars streaming API drift (`collect(streaming=True)` vs `collect(engine="streaming")`)
+
+**AI (and prior research doc `polars.md`) cited**: `lf.collect(streaming=True)` as the Polars streaming API.
+**Reality**: In Polars 1.40.x stable docs, the API is `lf.collect(engine="streaming")`. The `streaming=True` parameter was the older syntax and may be deprecated. Our pin `polars==1.18.0` may still use the old form.
+**Detection**: Live doc read at `https://docs.pola.rs/user-guide/concepts/streaming/` during distributed/streaming research (2026-05-15).
+**Fix**: Flagged as NEEDS VERIFICATION §11.2 in `peer_distributed_streaming.md`; both forms noted with pin-specific caveat.
+**Verify at**: `https://docs.pola.rs/api/python/version/1.18/reference/lazyframe/api/polars.LazyFrame.collect.html`
+
+---
+
+## 2026-05-15: `polars.DataFrame.sink_iceberg()` availability
+
+**AI suggested**: `sink_iceberg()` as a current Polars write path available in recent Polars versions.
+**Reality**: `sink_iceberg()` was merged in PR #26799 and landed in Polars **1.39.0** (March 2026). Our pin `polars==1.18.0` does NOT have this method — it will raise `AttributeError`.
+**Detection**: GitHub PR search during distributed/streaming research (2026-05-15).
+**Fix**: Flagged clearly in `peer_distributed_streaming.md` §4.4 — requires upgrade ADR before use.
+**Verify at**: `https://github.com/pola-rs/polars/pull/26799`
+
+---
+
+## 2026-05-15: `daft.DataFrame.collect(num_partitions=...)` distributed semantics
+
+**AI suggested**: `df.collect(num_partitions=N)` as the Daft API for controlling distributed partition count.
+**Reality**: No such parameter on `collect()` in Daft. Distributed execution is enabled by `daft.set_runner_ray(...)` or `daft.set_runner_native()`. Partition control is via `df.into_partitions(N)` or `df.repartition(...)`. The `collect()` method takes no `num_partitions` argument.
+**Detection**: Architecture doc cross-check at `https://docs.getdaft.io/en/stable/architecture/` (2026-05-15).
+**Fix**: Corrected in `peer_distributed_streaming.md` §2.6.
+
+---
+
+## 2026-05-15: Smallpond uses Ray Data (not Ray Core)
+
+**AI suggested**: Smallpond uses Ray Data (the high-level Dataset API) for distributed execution.
+**Reality**: Smallpond uses **Ray Core** directly — `ray.remote` task scheduling per partition, not the `ray.data.Dataset` API. This is confirmed by `https://deepseek-ai.github.io/smallpond/getstarted.html` which references Ray Dashboard (Core feature) and `ray.remote`.
+**Detection**: Official docs read (2026-05-15).
+**Fix**: Corrected in `peer_distributed_streaming.md` §3.2.
+
+---
+
+## 2026-05-15: Polars Cloud distributed engine to be open-sourced
+
+**AI (general pattern)**: Polars distributed engine "will be available in open source."
+**Reality**: Official FAQ explicitly states: "The distributed engine is only available in Polars Cloud. There are no plans to make it available in the open source project."
+**Detection**: `https://docs.pola.rs/polars-cloud/faq/` (2026-05-15).
+**Fix**: Hard no in `peer_distributed_streaming.md` §4.6.
+
+---
+
+## 2026-05-15: datafusion.substrait.SerializedPlan (class name)
+
+**AI suggested**: `datafusion.substrait.SerializedPlan` as the class for Substrait plan serialization in DataFusion Python.
+**Reality**: Specific class names in `datafusion.substrait` not confirmed from official docs during research session. Module exists but API not verified. Marked as NEEDS VERIFICATION in `docs/research/inspiration/modern_query_engines.md §2.3`.
+**Detection**: Research session docs check — class name not found in official DataFusion Python docs page or crate docs.
+**Fix**: Treat as NEEDS VERIFICATION; do not use this class name in production code without checking `https://datafusion.apache.org/python/index.html`.
+
+---
+
+## 2026-05-15: chDB Iceberg extension (similar to DuckDB's)
+
+**AI assumed**: chDB has an Iceberg read extension similar to DuckDB's `INSTALL iceberg; LOAD iceberg;`.
+**Reality**: No such extension found in chDB v4.1.6 docs or GitHub README. chDB supports 80+ formats but Iceberg was not listed. Marked as NEEDS VERIFICATION (NV-3) in `docs/research/inspiration/modern_query_engines.md §4.5`.
+**Detection**: chDB README and ClickHouse docs search — no "Iceberg" mention in chDB context.
+**Fix**: Do not assume chDB can read Iceberg tables. Verify at `https://github.com/chdb-io/chdb` before suggesting.

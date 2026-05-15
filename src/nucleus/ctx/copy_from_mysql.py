@@ -68,7 +68,9 @@ def _row_count_from_load_info(load_info: Any) -> int:
                 row_counts = getattr(job, "row_counts", None) or {}
                 if isinstance(row_counts, dict):
                     total += sum(row_counts.values())
-    except Exception:  # broad catch OK: _row_count is best-effort; real errors surface in pipeline.run
+    except (
+        Exception
+    ):  # broad catch OK: _row_count is best-effort; real errors surface in pipeline.run
         pass
     return total
 

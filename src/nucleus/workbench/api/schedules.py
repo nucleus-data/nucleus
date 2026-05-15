@@ -21,7 +21,6 @@ from typing import Any
 
 # Docs: https://fastapi.tiangolo.com/tutorial/bigger-applications/
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import ORJSONResponse
 
 from nucleus.coordination.error_translation import translate
 from nucleus.errors import NucleusError
@@ -35,14 +34,14 @@ _PREVIEW_MAX = 20
 def _schedule_entry_to_dict(entry: Any, next_runs: list[str] | None = None) -> dict[str, Any]:
     """Serialize a :class:`ScheduleEntry` to a JSON-safe dict."""
     return {
-        "asset_key":        entry.asset_key,
-        "cron_expression":  entry.cron_expression,
-        "description":      entry.description,
-        "next_runs":        next_runs or [],
+        "asset_key": entry.asset_key,
+        "cron_expression": entry.cron_expression,
+        "description": entry.description,
+        "next_runs": next_runs or [],
     }
 
 
-@router.get("", response_class=ORJSONResponse)
+@router.get("")
 def list_schedules_endpoint() -> Any:
     """Return all scheduled assets with their next 3 run times.
 
@@ -70,9 +69,9 @@ def list_schedules_endpoint() -> Any:
         raise HTTPException(
             status_code=500,
             detail={
-                "error_code":   err.error_code,          # type: ignore[attr-defined]
-                "user_message": err.user_message,        # type: ignore[attr-defined]
-                "fix_hint":     err.fix_hint,            # type: ignore[attr-defined]
+                "error_code": err.error_code,  # type: ignore[attr-defined]
+                "user_message": err.user_message,  # type: ignore[attr-defined]
+                "fix_hint": err.fix_hint,  # type: ignore[attr-defined]
             },
         ) from err
     except Exception as exc:
@@ -80,14 +79,14 @@ def list_schedules_endpoint() -> Any:
         raise HTTPException(
             status_code=500,
             detail={
-                "error_code":   err.error_code,          # type: ignore[attr-defined]
-                "user_message": err.user_message,        # type: ignore[attr-defined]
-                "fix_hint":     err.fix_hint,            # type: ignore[attr-defined]
+                "error_code": err.error_code,  # type: ignore[attr-defined]
+                "user_message": err.user_message,  # type: ignore[attr-defined]
+                "fix_hint": err.fix_hint,  # type: ignore[attr-defined]
             },
         ) from err
 
 
-@router.get("/{asset_key:path}/preview", response_class=ORJSONResponse)
+@router.get("/{asset_key:path}/preview")
 def preview_schedule_endpoint(asset_key: str, count: int = _PREVIEW_DEFAULT) -> Any:
     """Return the next ``count`` run times for a scheduled asset.
 
@@ -99,8 +98,8 @@ def preview_schedule_endpoint(asset_key: str, count: int = _PREVIEW_DEFAULT) -> 
 
     try:
         from nucleus.coordination.schedules import (
-            preview_schedule as _preview,
             list_schedules as _list,
+            preview_schedule as _preview,
         )
 
         # Find the entry first to validate it exists.
@@ -110,9 +109,9 @@ def preview_schedule_endpoint(asset_key: str, count: int = _PREVIEW_DEFAULT) -> 
             raise HTTPException(
                 status_code=404,
                 detail={
-                    "error_code":   "NE3001",
+                    "error_code": "NE3001",
                     "user_message": f"No schedule found for asset '{asset_key}'.",
-                    "fix_hint":     "Add schedule=... to @nucleus.asset to register a schedule.",
+                    "fix_hint": "Add schedule=... to @nucleus.asset to register a schedule.",
                 },
             )
 
@@ -125,9 +124,9 @@ def preview_schedule_endpoint(asset_key: str, count: int = _PREVIEW_DEFAULT) -> 
         raise HTTPException(
             status_code=500,
             detail={
-                "error_code":   err.error_code,          # type: ignore[attr-defined]
-                "user_message": err.user_message,        # type: ignore[attr-defined]
-                "fix_hint":     err.fix_hint,            # type: ignore[attr-defined]
+                "error_code": err.error_code,  # type: ignore[attr-defined]
+                "user_message": err.user_message,  # type: ignore[attr-defined]
+                "fix_hint": err.fix_hint,  # type: ignore[attr-defined]
             },
         ) from err
     except Exception as exc:
@@ -135,8 +134,8 @@ def preview_schedule_endpoint(asset_key: str, count: int = _PREVIEW_DEFAULT) -> 
         raise HTTPException(
             status_code=500,
             detail={
-                "error_code":   err.error_code,          # type: ignore[attr-defined]
-                "user_message": err.user_message,        # type: ignore[attr-defined]
-                "fix_hint":     err.fix_hint,            # type: ignore[attr-defined]
+                "error_code": err.error_code,  # type: ignore[attr-defined]
+                "user_message": err.user_message,  # type: ignore[attr-defined]
+                "fix_hint": err.fix_hint,  # type: ignore[attr-defined]
             },
         ) from err

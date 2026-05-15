@@ -21,12 +21,13 @@ import json
 import time
 import uuid
 from collections import deque
+from collections.abc import Generator
 from dataclasses import asdict, dataclass, field
-from typing import Any, Generator
+from typing import Any
 
 # Docs: https://fastapi.tiangolo.com/advanced/custom-response/
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import ORJSONResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from nucleus.coordination.error_translation import translate
@@ -39,6 +40,7 @@ class TriggerRunRequest(BaseModel):
     """Request body for POST /api/runs/trigger."""
 
     asset_key: str = Field(..., description="Key of the asset to materialize.")
+
 
 # ---------------------------------------------------------------------------
 # In-process run store (ring-buffer, max 200 runs)
@@ -118,7 +120,7 @@ def _run_to_dict(r: RunRecord) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-@router.get("", response_class=ORJSONResponse)
+@router.get("")
 def list_runs(limit: int = 50) -> Any:
     """Return recent runs (most-recent first).
 
@@ -133,7 +135,11 @@ def list_runs(limit: int = 50) -> Any:
 
         raise HTTPException(
             status_code=500,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err
     except Exception as exc:
         from fastapi import HTTPException
@@ -141,7 +147,11 @@ def list_runs(limit: int = 50) -> Any:
         err = translate(exc)
         raise HTTPException(
             status_code=500,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err
 
 
@@ -185,7 +195,7 @@ def stream_run_log(run_id: str) -> Any:
     )
 
 
-@router.post("/trigger", response_class=ORJSONResponse)
+@router.post("/trigger")
 def trigger_run(req: TriggerRunRequest) -> Any:
     """Trigger an immediate (non-scheduled) materialization of an asset.
 
@@ -209,9 +219,9 @@ def trigger_run(req: TriggerRunRequest) -> Any:
         raise HTTPException(
             status_code=404,
             detail={
-                "error_code":   "NE3001",
+                "error_code": "NE3001",
                 "user_message": f"Asset '{req.asset_key}' is not registered.",
-                "fix_hint":     "Check that the module defining this asset is imported.",
+                "fix_hint": "Check that the module defining this asset is imported.",
             },
         )
 
@@ -258,8 +268,8 @@ def trigger_run(req: TriggerRunRequest) -> Any:
     thread.start()
 
     return {
-        "run_id":     run_id,
-        "asset_key":  req.asset_key,
-        "status":     "running",
+        "run_id": run_id,
+        "asset_key": req.asset_key,
+        "status": "running",
         "started_at": started,
     }

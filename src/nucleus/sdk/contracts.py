@@ -204,8 +204,7 @@ def _execute_one_check(name: str, func: Callable[[], Any]) -> CheckResult:
             passed=False,
             metric=0.0,
             message=(
-                f"[{NucleusCheckExecutionError.error_code}] {name}: "
-                f"{type(exc).__name__}: {exc}"
+                f"[{NucleusCheckExecutionError.error_code}] {name}: {type(exc).__name__}: {exc}"
             ),
         )
 

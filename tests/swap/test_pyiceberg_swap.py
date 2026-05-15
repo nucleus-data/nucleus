@@ -6,6 +6,7 @@ methods consumed by ``coordination/asset_materialization.py`` and
 a gap (no install in CI — full swap on-demand only).
 Reference: ``docs/swap/pyiceberg.md`` · Docs: https://py.iceberg.apache.org/api/
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -25,7 +26,8 @@ def _open_fs_catalog(warehouse: Path):
     # Filesystem SQL catalog; Windows URI fix mirrors ctx/copy_from.py. Docs: https://py.iceberg.apache.org/api/catalog/ · /api/table/ · /configuration/#sql-catalog
     warehouse.mkdir(parents=True, exist_ok=True)
     return load_catalog(
-        "default", type="sql",
+        "default",
+        type="sql",
         uri=f"sqlite:///{(warehouse / 'catalog.db').resolve().as_posix()}",
         warehouse=f"file://{warehouse.resolve().as_posix()}",
     )
@@ -46,8 +48,10 @@ def test_live_namespace_create_drop(tmp_path: Path) -> None:
 def test_live_table_append_scan_roundtrip(tmp_path: Path) -> None:
     cat = _open_fs_catalog(tmp_path)
     cat.create_namespace("ns")
-    schema = Schema(NestedField(1, "id", LongType(), required=False),
-                    NestedField(2, "name", StringType(), required=False))
+    schema = Schema(
+        NestedField(1, "id", LongType(), required=False),
+        NestedField(2, "name", StringType(), required=False),
+    )
     tbl = cat.create_table(("ns", "t"), schema=schema)
     tbl.append(pa.table({"id": [1, 2, 3], "name": ["a", "b", "c"]}))
     out = tbl.scan().to_arrow()
@@ -66,15 +70,29 @@ def test_iceberg_rust_python_binding_findable() -> None:
 
 def test_pyiceberg_critical_surface_present() -> None:
     from pyiceberg.table import Table  # per docs/swap/pyiceberg.md §2
-    for m in ("append", "overwrite", "scan", "refresh", "update_schema", "snapshots", "transaction"):
+
+    for m in (
+        "append",
+        "overwrite",
+        "scan",
+        "refresh",
+        "update_schema",
+        "snapshots",
+        "transaction",
+    ):
         assert hasattr(Table, m), f"pyiceberg.table.Table.{m} missing — swap doc lies."
 
 
-@pytest.mark.skip(reason=_SKIP + "; trigger: pyiceberg dormant >12mo / commit_table p99 >500ms / spec-v3 lag >12mo / JVM dep")
+@pytest.mark.skip(
+    reason=_SKIP
+    + "; trigger: pyiceberg dormant >12mo / commit_table p99 >500ms / spec-v3 lag >12mo / JVM dep"
+)
 def test_full_swap_to_iceberg_rust_parity() -> None:
     """Port test_live_table_append_scan_roundtrip to iceberg-rust adapter when triggered."""
 
 
-@pytest.mark.skip(reason="REST catalog parity deferred per docs/swap/pyiceberg.md §3; filesystem is v0.1 baseline; re-enable when Lakekeeper lands in v0.3")
+@pytest.mark.skip(
+    reason="REST catalog parity deferred per docs/swap/pyiceberg.md §3; filesystem is v0.1 baseline; re-enable when Lakekeeper lands in v0.3"
+)
 def test_rest_catalog_parity_lakekeeper_polaris() -> None:
     """Verify create/load/drop/append parity over REST when Lakekeeper integration lands."""

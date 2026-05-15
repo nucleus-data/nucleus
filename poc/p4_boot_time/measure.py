@@ -31,7 +31,12 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 TARGET_COLD_BOOT_S, TARGET_WARM_BOOT_S, TARGET_IDLE_RAM_MB = 10.0, 3.0, 500.0
-PHASE_TARGETS = {"imports": 3.0, "minio_health": 0.5, "catalog_init": 0.5, "dagster_definitions": 1.5}
+PHASE_TARGETS = {
+    "imports": 3.0,
+    "minio_health": 0.5,
+    "catalog_init": 0.5,
+    "dagster_definitions": 1.5,
+}
 DEFAULT_MINIO_HEALTH_URL = "http://localhost:9000/minio/health/live"
 _HEAVY_IMPORTS = ("dagster", "pyiceberg", "pyiceberg.catalog", "polars", "duckdb")
 
@@ -50,7 +55,9 @@ class PhaseResult:
 
     @property
     def passed_target(self) -> bool:
-        return self.skipped or (self.ok and (self.target_s is None or self.duration_s <= self.target_s))
+        return self.skipped or (
+            self.ok and (self.target_s is None or self.duration_s <= self.target_s)
+        )
 
 
 @contextmanager
@@ -62,10 +69,15 @@ def phase(name: str, results: list[PhaseResult], target_s: float | None = None) 
         yield
         results.append(PhaseResult(name, time.perf_counter() - start, True, target_s))
     except Exception as exc:
-        results.append(PhaseResult(
-            name, time.perf_counter() - start, False, target_s,
-            detail=f"{type(exc).__name__}: {exc}",
-        ))
+        results.append(
+            PhaseResult(
+                name,
+                time.perf_counter() - start,
+                False,
+                target_s,
+                detail=f"{type(exc).__name__}: {exc}",
+            )
+        )
         raise
 
 
@@ -82,7 +94,8 @@ def measure_imports() -> tuple[float, list[str]]:
 
 
 def measure_minio_health(
-    url: str = DEFAULT_MINIO_HEALTH_URL, timeout_s: float = 2.0,
+    url: str = DEFAULT_MINIO_HEALTH_URL,
+    timeout_s: float = 2.0,
 ) -> tuple[float, bool, str]:
     """Probe MinIO. Returns ``(duration_s, healthy, detail)``. HTTP 200 + 403
     both count as healthy (different MinIO setups expose different paths)."""
@@ -112,7 +125,12 @@ def measure_catalog_init(warehouse_dir: Path) -> tuple[float, str]:
     warehouse_dir.mkdir(parents=True, exist_ok=True)
     db = warehouse_dir / "p4_catalog.db"
     start = time.perf_counter()
-    cat = load_catalog("p4_boot_time", type="sql", uri=f"sqlite:///{db.resolve().as_posix()}", warehouse=f"file:///{warehouse_dir.resolve().as_posix()}")
+    cat = load_catalog(
+        "p4_boot_time",
+        type="sql",
+        uri=f"sqlite:///{db.resolve().as_posix()}",
+        warehouse=f"file:///{warehouse_dir.resolve().as_posix()}",
+    )
     return time.perf_counter() - start, f"catalog={type(cat).__name__}"
 
 
@@ -139,18 +157,21 @@ def measure_idle_ram() -> tuple[float, str]:
     -1.0 with a clear message."""
     try:
         import psutil  # docs: https://psutil.readthedocs.io/
+
         return psutil.Process().memory_info().rss / 1024 / 1024, "psutil"
     except ImportError:
         pass
     if os.name == "posix":
         import resource  # ru_maxrss is KB on Linux, bytes on macOS.
+
         rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         return (rss / 1024 / 1024 if sys.platform == "darwin" else rss / 1024), "resource.getrusage"
     return -1.0, "no measurement available (pip install psutil)"
 
 
 def measure_total_cold_boot(
-    warehouse_dir: Path, minio_url: str = DEFAULT_MINIO_HEALTH_URL,
+    warehouse_dir: Path,
+    minio_url: str = DEFAULT_MINIO_HEALTH_URL,
 ) -> tuple[float, list[PhaseResult]]:
     """Run the 4 boot phases sequentially. Returns ``(total_s, results)``.
 
@@ -209,12 +230,20 @@ def main(argv: list[str] | None = None) -> int:
     ram_ok = 0 < ram_mb <= TARGET_IDLE_RAM_MB
     ram_status = "PASS" if ram_ok else ("UNKNOWN" if ram_mb < 0 else "FAIL")
     ram_target = f"<{int(TARGET_IDLE_RAM_MB)}MB"
-    print(f"{'idle_ram':<22} {ram_mb:>9.1f}MB {ram_target:>10} {ram_status:>8}  source={ram_source}")
+    print(
+        f"{'idle_ram':<22} {ram_mb:>9.1f}MB {ram_target:>10} {ram_status:>8}  source={ram_source}"
+    )
     cold_ok = total_s <= TARGET_COLD_BOOT_S
     print("=" * 78)
-    print(f"Total cold boot: {total_s:.2f}s (target <{TARGET_COLD_BOOT_S}s) "
-          f"{'PASS' if cold_ok else 'FAIL'}")
-    if any(not r.passed_target and not r.skipped for r in results) or not cold_ok or (ram_mb >= 0 and not ram_ok):
+    print(
+        f"Total cold boot: {total_s:.2f}s (target <{TARGET_COLD_BOOT_S}s) "
+        f"{'PASS' if cold_ok else 'FAIL'}"
+    )
+    if (
+        any(not r.passed_target and not r.skipped for r in results)
+        or not cold_ok
+        or (ram_mb >= 0 and not ram_ok)
+    ):
         print("VERDICT: FAIL")
         return 1
     if any(r.skipped for r in results) or ram_mb < 0:

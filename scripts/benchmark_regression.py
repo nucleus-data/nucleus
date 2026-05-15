@@ -67,7 +67,9 @@ def _load_metrics(path: Path) -> dict[str, dict[str, Any]]:
 
 
 def _compare(
-    baseline: dict[str, dict[str, Any]], current: dict[str, dict[str, Any]], tolerance_pct: float,
+    baseline: dict[str, dict[str, Any]],
+    current: dict[str, dict[str, Any]],
+    tolerance_pct: float,
 ) -> tuple[list[Regression], list[str]]:
     """Return ``(regressions, missing_or_malformed)`` for the two fixture sets."""
     regressions: list[Regression] = []
@@ -86,31 +88,48 @@ def _compare(
         if direction not in ("positive", "negative"):
             issues.append(f"{metric}: unknown direction '{direction}'")
             continue
-        delta_pct = 0.0 if base_v == 0 and cur_v == 0 else (
-            float("inf") if base_v == 0 else (cur_v - base_v) / base_v * 100.0
+        delta_pct = (
+            0.0
+            if base_v == 0 and cur_v == 0
+            else (float("inf") if base_v == 0 else (cur_v - base_v) / base_v * 100.0)
         )
-        regressed = (
-            (direction == "negative" and delta_pct > tolerance_pct)
-            or (direction == "positive" and delta_pct < -tolerance_pct)
+        regressed = (direction == "negative" and delta_pct > tolerance_pct) or (
+            direction == "positive" and delta_pct < -tolerance_pct
         )
         if regressed:
             verb = "grew" if direction == "negative" else "fell"
-            bound = f"+{tolerance_pct:.0f}%" if direction == "negative" else f"-{tolerance_pct:.0f}%"
-            regressions.append(Regression(
-                metric=metric, baseline=base_v, current=cur_v, delta_pct=delta_pct,
-                direction=direction,
-                reason=f"{direction}-direction metric {verb} {delta_pct:+.1f}% past {bound}",
-            ))
+            bound = (
+                f"+{tolerance_pct:.0f}%" if direction == "negative" else f"-{tolerance_pct:.0f}%"
+            )
+            regressions.append(
+                Regression(
+                    metric=metric,
+                    baseline=base_v,
+                    current=cur_v,
+                    delta_pct=delta_pct,
+                    direction=direction,
+                    reason=f"{direction}-direction metric {verb} {delta_pct:+.1f}% past {bound}",
+                )
+            )
     return regressions, issues
 
 
 def _render(
-    regressions: list[Regression], issues: list[str],
-    baseline_path: Path, current_path: Path, tolerance_pct: float,
+    regressions: list[Regression],
+    issues: list[str],
+    baseline_path: Path,
+    current_path: Path,
+    tolerance_pct: float,
 ) -> str:
-    lines = ["=" * 72, "Benchmark Regression Check", "=" * 72,
-             f" baseline : {baseline_path}", f" current  : {current_path}",
-             f" tolerance: \u00b1{tolerance_pct:.0f}%", ""]
+    lines = [
+        "=" * 72,
+        "Benchmark Regression Check",
+        "=" * 72,
+        f" baseline : {baseline_path}",
+        f" current  : {current_path}",
+        f" tolerance: \u00b1{tolerance_pct:.0f}%",
+        "",
+    ]
     if regressions:
         lines.append(f"REGRESSIONS ({len(regressions)}):")
         lines.extend(
@@ -138,8 +157,10 @@ def _emit_incomplete(reason: str, *, as_json: bool) -> int:
 
 def _print_skeleton(baseline: Path, current: Path, *, as_json: bool) -> int:
     payload: dict[str, Any] = {
-        "ok": True, "verdict": "SKELETON",
-        "baseline": str(baseline), "current": str(current),
+        "ok": True,
+        "verdict": "SKELETON",
+        "baseline": str(baseline),
+        "current": str(current),
         "hint": "no baseline yet; record one with `--record` once a real benchmark harness lands post-PoC #1",
     }
     if as_json:
@@ -159,30 +180,59 @@ def _print_skeleton(baseline: Path, current: Path, *, as_json: bool) -> int:
 
 def _cmd_record(baseline: Path, current: Path, *, as_json: bool) -> int:
     if not current.exists():
-        return _emit_incomplete(f"--record failed: current file missing ({current})", as_json=as_json)
+        return _emit_incomplete(
+            f"--record failed: current file missing ({current})", as_json=as_json
+        )
     baseline.parent.mkdir(parents=True, exist_ok=True)
     baseline.write_text(current.read_text(encoding="utf-8"), encoding="utf-8")
     if as_json:
-        print(json.dumps({"ok": True, "verdict": "RECORDED",
-                          "baseline": str(baseline), "from": str(current)}, indent=2))
+        print(
+            json.dumps(
+                {
+                    "ok": True,
+                    "verdict": "RECORDED",
+                    "baseline": str(baseline),
+                    "from": str(current),
+                },
+                indent=2,
+            )
+        )
     else:
         print(f"Recorded new baseline: {baseline} (overwrote previous if any).")
-        print("Per AGENTS.md §11.13: include changelog summary + rollback command in the upgrade PR.")
+        print(
+            "Per AGENTS.md §11.13: include changelog summary + rollback command in the upgrade PR."
+        )
     return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Benchmark regression check (AGENTS.md §11.13).")
-    parser.add_argument("--baseline", type=Path, default=DEFAULT_BASELINE,
-                        help=f"baseline metrics JSON (default: {DEFAULT_BASELINE.relative_to(REPO_ROOT)})")
-    parser.add_argument("--current", type=Path, default=DEFAULT_CURRENT,
-                        help=f"current-run metrics JSON (default: {DEFAULT_CURRENT.relative_to(REPO_ROOT)})")
-    parser.add_argument("--tolerance", type=float, default=DEFAULT_TOLERANCE_PCT,
-                        help="\u00b1%% allowed before flagging regression (default 10).")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Force skeleton output; never read fixtures.")
-    parser.add_argument("--record", action="store_true",
-                        help="Copy --current onto --baseline (intentional perf change).")
+    parser.add_argument(
+        "--baseline",
+        type=Path,
+        default=DEFAULT_BASELINE,
+        help=f"baseline metrics JSON (default: {DEFAULT_BASELINE.relative_to(REPO_ROOT)})",
+    )
+    parser.add_argument(
+        "--current",
+        type=Path,
+        default=DEFAULT_CURRENT,
+        help=f"current-run metrics JSON (default: {DEFAULT_CURRENT.relative_to(REPO_ROOT)})",
+    )
+    parser.add_argument(
+        "--tolerance",
+        type=float,
+        default=DEFAULT_TOLERANCE_PCT,
+        help="\u00b1%% allowed before flagging regression (default 10).",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Force skeleton output; never read fixtures."
+    )
+    parser.add_argument(
+        "--record",
+        action="store_true",
+        help="Copy --current onto --baseline (intentional perf change).",
+    )
     parser.add_argument("--json", action="store_true", help="Machine-readable JSON output.")
     args = parser.parse_args(argv)
 
@@ -200,11 +250,18 @@ def main(argv: list[str] | None = None) -> int:
 
     regressions, issues = _compare(base, cur, args.tolerance)
     if args.json:
-        print(json.dumps({
-            "ok": not regressions, "verdict": "FAIL" if regressions else "PASS",
-            "tolerance_pct": args.tolerance,
-            "regressions": [asdict(r) for r in regressions], "issues": issues,
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "ok": not regressions,
+                    "verdict": "FAIL" if regressions else "PASS",
+                    "tolerance_pct": args.tolerance,
+                    "regressions": [asdict(r) for r in regressions],
+                    "issues": issues,
+                },
+                indent=2,
+            )
+        )
     else:
         print(_render(regressions, issues, args.baseline, args.current, args.tolerance))
     return 1 if regressions else 0

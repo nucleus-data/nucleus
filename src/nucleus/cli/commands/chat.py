@@ -23,7 +23,7 @@ def chat(
     question: Annotated[
         str,
         typer.Argument(
-            help="The question to ask the Copilot, e.g. \"Why did my last run fail?\"",
+            help='The question to ask the Copilot, e.g. "Why did my last run fail?"',
         ),
     ],
     provider: Annotated[

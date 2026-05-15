@@ -22,16 +22,15 @@ from typing import Any
 
 # Docs: https://fastapi.tiangolo.com/tutorial/bigger-applications/
 from fastapi import APIRouter
-from fastapi.responses import ORJSONResponse
 
 from nucleus.coordination.error_translation import translate
 from nucleus.errors import NucleusError
-from nucleus.sdk.decorators import _registered_keys, get_asset, get_checks
+from nucleus.sdk.decorators import _registered_keys, get_checks
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
 
-@router.get("/summary", response_class=ORJSONResponse)
+@router.get("/summary")
 def dashboard_summary() -> Any:
     """Return aggregated summary for the hero stat chips and recent runs.
 
@@ -75,10 +74,10 @@ def dashboard_summary() -> Any:
             last_run_ago = time.time() - sorted_runs[0].started_at
             recent_run_list = [
                 {
-                    "run_id":      r.run_id,
-                    "asset_key":   r.asset_key,
-                    "status":      r.status,
-                    "started_at":  r.started_at,
+                    "run_id": r.run_id,
+                    "asset_key": r.asset_key,
+                    "status": r.status,
+                    "started_at": r.started_at,
                     "duration_ms": r.duration_ms,
                     "rows_written": r.rows_written,
                     "snapshot_id": r.snapshot_id,
@@ -87,21 +86,21 @@ def dashboard_summary() -> Any:
             ]
 
         return {
-            "total_assets":        total_assets,
-            "total_rows":          None,   # v0.3: Iceberg catalog row-count tracking
-            "checks_green":        checks_green,
-            "checks_total":        checks_total,
+            "total_assets": total_assets,
+            "total_rows": None,  # v0.3: Iceberg catalog row-count tracking
+            "checks_green": checks_green,
+            "checks_total": checks_total,
             "last_run_ago_seconds": last_run_ago,
-            "recent_runs":         recent_run_list,
+            "recent_runs": recent_run_list,
         }
 
     except NucleusError as err:
         raise HTTPException(
             status_code=500,
             detail={
-                "error_code":   err.error_code,          # type: ignore[attr-defined]
-                "user_message": err.user_message,        # type: ignore[attr-defined]
-                "fix_hint":     err.fix_hint,            # type: ignore[attr-defined]
+                "error_code": err.error_code,  # type: ignore[attr-defined]
+                "user_message": err.user_message,  # type: ignore[attr-defined]
+                "fix_hint": err.fix_hint,  # type: ignore[attr-defined]
             },
         ) from err
     except Exception as exc:
@@ -109,8 +108,8 @@ def dashboard_summary() -> Any:
         raise HTTPException(
             status_code=500,
             detail={
-                "error_code":   err.error_code,          # type: ignore[attr-defined]
-                "user_message": err.user_message,        # type: ignore[attr-defined]
-                "fix_hint":     err.fix_hint,            # type: ignore[attr-defined]
+                "error_code": err.error_code,  # type: ignore[attr-defined]
+                "user_message": err.user_message,  # type: ignore[attr-defined]
+                "fix_hint": err.fix_hint,  # type: ignore[attr-defined]
             },
         ) from err

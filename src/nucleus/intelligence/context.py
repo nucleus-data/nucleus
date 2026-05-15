@@ -64,8 +64,7 @@ def _safe_yaml_str(config: dict[str, Any], project_root: Path) -> str:
     """Serialize project config to a redacted YAML string ≤ 600 bytes."""
     # Remove any sensitive keys before serializing.
     safe: dict[str, Any] = {
-        k: v for k, v in config.items()
-        if k not in {"copilot", "secrets", "env"}
+        k: v for k, v in config.items() if k not in {"copilot", "secrets", "env"}
     }
     try:
         raw = yaml.dump(safe, default_flow_style=False, allow_unicode=True)
@@ -114,20 +113,24 @@ def _read_catalog_assets(project_root: Path, config: dict[str, Any]) -> list[dic
                     snap = ice_table.current_snapshot()
                     freshness = snap.timestamp_ms / 1000 if snap else None
                     import datetime
+
                     freshness_iso = (
-                        datetime.datetime.fromtimestamp(freshness, tz=datetime.UTC)
-                        .isoformat()
+                        datetime.datetime.fromtimestamp(freshness, tz=datetime.UTC).isoformat()
                         if freshness
                         else "never"
                     )
                     col_names = [f.name for f in ice_table.schema().fields][:10]
-                    assets.append({
-                        "key": f"{ns}.{tbl}",
-                        "column_names": col_names,
-                        "freshness_iso": freshness_iso,
-                    })
+                    assets.append(
+                        {
+                            "key": f"{ns}.{tbl}",
+                            "column_names": col_names,
+                            "freshness_iso": freshness_iso,
+                        }
+                    )
                 except Exception:
-                    assets.append({"key": f"{ns}.{tbl}", "column_names": [], "freshness_iso": "unknown"})
+                    assets.append(
+                        {"key": f"{ns}.{tbl}", "column_names": [], "freshness_iso": "unknown"}
+                    )
         return assets[:50]
     except Exception as exc:
         _logger.debug("gather_context: catalog scan skipped: %s", exc)
@@ -143,8 +146,12 @@ def _read_recent_errors(project_root: Path, limit: int = 3) -> list[dict[str, st
     if not lineage_dir.exists():
         return []
     errors: list[dict[str, str]] = []
-    ndjson_files = sorted(lineage_dir.glob("*.ndjson"), key=lambda p: p.stat().st_mtime, reverse=True)
-    ndjson_files += sorted(lineage_dir.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True)
+    ndjson_files = sorted(
+        lineage_dir.glob("*.ndjson"), key=lambda p: p.stat().st_mtime, reverse=True
+    )
+    ndjson_files += sorted(
+        lineage_dir.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True
+    )
     for fpath in ndjson_files:
         try:
             lines = fpath.read_text(encoding="utf-8", errors="replace").splitlines()
@@ -160,11 +167,7 @@ def _read_recent_errors(project_root: Path, limit: int = 3) -> list[dict[str, st
             if event.get("eventType") != "FAIL":
                 continue
             # Extract message from error facet — rule #5: message only.
-            error_facet = (
-                (event.get("run") or {})
-                .get("facets", {})
-                .get("errorMessage", {})
-            )
+            error_facet = (event.get("run") or {}).get("facets", {}).get("errorMessage", {})
             msg = error_facet.get("message") or str(event.get("run", {}).get("facets", ""))
             ts = event.get("eventTime", "")[:19]
             msg = _redact(msg[:200], project_root)

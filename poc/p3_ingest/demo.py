@@ -53,8 +53,11 @@ def main() -> int:
         print(f"\nSeeded SQLite with {len(_ROWS)} orders at {sqlite_path}")
 
         written = ingest_sqlite_to_iceberg(
-            sqlite_path, "orders",
-            warehouse_dir=warehouse, dest_namespace="raw", dest_table="orders",
+            sqlite_path,
+            "orders",
+            warehouse_dir=warehouse,
+            dest_namespace="raw",
+            dest_table="orders",
         )
         print(f"Ingest wrote {written} rows to raw.orders.")
 
@@ -68,7 +71,9 @@ def main() -> int:
         print("-" * 60)
 
         if arrow_table.num_rows != len(_ROWS) or written != len(_ROWS):
-            print(f"\nFAIL: expected {len(_ROWS)} rows; wrote {written}, read {arrow_table.num_rows}.")
+            print(
+                f"\nFAIL: expected {len(_ROWS)} rows; wrote {written}, read {arrow_table.num_rows}."
+            )
             return 1
         print(f"\n[OK] Round-trip clean ({len(_ROWS)} rows in, {arrow_table.num_rows} rows out).")
         return 0

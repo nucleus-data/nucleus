@@ -168,9 +168,7 @@ class TestJinja:
     """``{{ ref('schema.name') }}`` resolves against the registered catalog."""
 
     def test_jinja_ref_resolves(self, project_with_data: Path) -> None:
-        result = runner.invoke(
-            app, ["query", "SELECT * FROM {{ ref('raw.users') }}"]
-        )
+        result = runner.invoke(app, ["query", "SELECT * FROM {{ ref('raw.users') }}"])
         assert result.exit_code == 0, f"unexpected: {result.stderr}"
         assert "user1" in result.stdout
 
@@ -205,8 +203,6 @@ class TestErrorPaths:
         assert "nucleus init" in result.stderr
 
     def test_invalid_format(self, project_with_data: Path) -> None:
-        result = runner.invoke(
-            app, ["query", "SELECT * FROM raw.users", "--format", "xml"]
-        )
+        result = runner.invoke(app, ["query", "SELECT * FROM raw.users", "--format", "xml"])
         assert result.exit_code == 1
         assert "format" in result.stderr.lower()

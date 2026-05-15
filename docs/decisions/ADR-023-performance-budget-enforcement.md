@@ -1,6 +1,6 @@
 # ADR-023: Performance budget enforcement
 
-Status: PROPOSED
+Status: ACCEPTED
 Date: 2026-05-15
 Author: builder (v0.2.0 reconciliation pass)
 Source: `docs/research/performance_reliability_targets.md` §2
@@ -12,6 +12,8 @@ Nucleus v0.1.0 ships with qualitative performance targets from `nucleus_architec
 Wave-1H research (`docs/research/performance_reliability_targets.md`) formalised nine per-operation budget sections from v4.1 §5/§16 and beachhead empirical data. Those budgets now need to be a first-class CI signal, not just a narrative in a research doc.
 
 The anti-over-engineering directive (`.cursor/rules/nucleus.mdc`) explicitly prohibits building measurement infrastructure before the caller exists. A benchmark harness that nobody runs is speculative code. The minimal viable commitment is: (1) adopt the nine-section budget table as the authoritative v0.2 target; (2) stub a script for CI; (3) defer automation to v0.3 when a stable benchmark suite is available.
+
+Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 ## Decision
 

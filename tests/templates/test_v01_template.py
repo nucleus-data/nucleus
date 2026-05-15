@@ -1,4 +1,3 @@
-# ruff: noqa: ARG002
 """Regression tests for the bundled v0.1 ``default`` project template.
 
 The template is the on-disk skeleton ``nucleus init`` copies into a new
@@ -59,9 +58,7 @@ from nucleus.sdk.decorators import asset as _asset_decorator
 # ``}}`` escapes). When the template legitimately changes, recompute via
 # ``python -c "import hashlib; print(hashlib.sha256(open('src/nucleus/templates/v01/assets/example.py','rb').read()).hexdigest())"``
 # and update this constant in the SAME PR that edits the template.
-_EXAMPLE_PY_SHA256 = (
-    "2976a5f73065cb6515b5ce7a35f36edc7b763388185589ee999093a32f1f0a7d"
-)
+_EXAMPLE_PY_SHA256 = "2976a5f73065cb6515b5ce7a35f36edc7b763388185589ee999093a32f1f0a7d"
 
 # The 7 template files the spec promises (``nucleus_cli_spec.md`` §3.1) plus Compose.
 # Each tuple = (relative path under v01/, post-rename name on disk after init).
@@ -109,9 +106,7 @@ def _read_template_bytes(rel_path: str) -> bytes:
 class TestInventory:
     """Every file ``nucleus_cli_spec.md`` §3.1 promises ships in the wheel."""
 
-    @pytest.mark.parametrize(
-        "rel_path", [p for p, _ in _EXPECTED_TEMPLATE_FILES]
-    )
+    @pytest.mark.parametrize("rel_path", [p for p, _ in _EXPECTED_TEMPLATE_FILES])
     def test_template_file_exists(self, rel_path: str) -> None:
         parts = rel_path.split("/")
         node = _template_root()
@@ -122,12 +117,9 @@ class TestInventory:
     def test_no_extra_files_at_root(self) -> None:
         """Catch accidental siblings — every root-level file is accounted for."""
         root_files = sorted(p.name for p in _template_root().iterdir())
-        expected_root = sorted(
-            {p.split("/")[0] for p, _ in _EXPECTED_TEMPLATE_FILES}
-        )
+        expected_root = sorted({p.split("/")[0] for p, _ in _EXPECTED_TEMPLATE_FILES})
         assert root_files == expected_root, (
-            f"unexpected file(s) under templates/v01/: "
-            f"{set(root_files) - set(expected_root)}"
+            f"unexpected file(s) under templates/v01/: {set(root_files) - set(expected_root)}"
         )
 
 
@@ -334,9 +326,7 @@ class TestReadme:
         assert "{today}" in content
 
     def test_renders_to_full_text(self) -> None:
-        rendered = _read_template("README.md").format(
-            project_name="demo", today="2026-05-14"
-        )
+        rendered = _read_template("README.md").format(project_name="demo", today="2026-05-14")
         assert "{project_name}" not in rendered
         assert "{today}" not in rendered
         assert "demo" in rendered
@@ -353,9 +343,7 @@ class TestGitkeep:
 
     def test_gitkeep_is_empty(self) -> None:
         content = _read_template_bytes("data/gitkeep")
-        assert len(content) == 0, (
-            f"data/gitkeep must be empty; got {len(content)} bytes"
-        )
+        assert len(content) == 0, f"data/gitkeep must be empty; got {len(content)} bytes"
 
     def test_gitkeep_renames_to_dotted_form_after_init(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -390,9 +378,7 @@ class TestPostInitLayout:
         result = runner.invoke(app, ["init", "demo"])
         assert result.exit_code == 0, result.stdout
         target = tmp_path / "demo" / rel_post_init
-        assert target.is_file(), (
-            f"file {rel_post_init} missing after `nucleus init demo`"
-        )
+        assert target.is_file(), f"file {rel_post_init} missing after `nucleus init demo`"
 
     def test_today_isoformat_lands_in_readme(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch

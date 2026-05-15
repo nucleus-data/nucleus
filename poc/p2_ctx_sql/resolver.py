@@ -129,7 +129,8 @@ def resolve_sql(
             hint = "Check the asset name spelling, or register the asset first."
             if _available_list:
                 suggestions = (
-                    list(_available_list) if len(_available_list) <= 5
+                    list(_available_list)
+                    if len(_available_list) <= 5
                     else difflib.get_close_matches(name, _available_list, n=5, cutoff=0.0)
                 )
                 if suggestions:

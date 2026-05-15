@@ -102,10 +102,7 @@ def resolve_sql(
         # env.globals updates, this guard rejects the unsafe input up
         # front per v4.1 §6.4 translation discipline).
         raise NucleusSQLSyntaxError(
-            user_message=(
-                "Binding name 'ref' is reserved and cannot be used as a "
-                "Jinja variable."
-            ),
+            user_message=("Binding name 'ref' is reserved and cannot be used as a Jinja variable."),
             fix_hint=(
                 "Rename the binding. 'ref' is reserved for the asset "
                 "resolver in {{ ref('schema.name') }}; pick a different "
@@ -156,7 +153,8 @@ def resolve_sql(
             hint = "Check the asset name spelling, or register the asset first."
             if _available_list:
                 suggestions = (
-                    list(_available_list) if len(_available_list) <= 5
+                    list(_available_list)
+                    if len(_available_list) <= 5
                     else difflib.get_close_matches(name, _available_list, n=5, cutoff=0.0)
                 )
                 if suggestions:

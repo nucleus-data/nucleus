@@ -69,7 +69,9 @@ def _row_count_from_load_info(load_info: Any) -> int:
                 row_counts = getattr(job, "row_counts", None) or {}
                 if isinstance(row_counts, dict):
                     total += sum(row_counts.values())
-    except Exception:  # broad catch OK: _row_count is best-effort; real errors surface in pipeline.run
+    except (
+        Exception
+    ):  # broad catch OK: _row_count is best-effort; real errors surface in pipeline.run
         pass
     return total
 
@@ -152,9 +154,7 @@ def ingest_postgres_to_iceberg(
     # Docs: https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database/configuration
     from dlt.sources.sql_database import sql_table
 
-    schema, table = (
-        source_table.split(".", 1) if "." in source_table else ("public", source_table)
-    )
+    schema, table = source_table.split(".", 1) if "." in source_table else ("public", source_table)
 
     # Docs: https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database/setup
     # credentials= accepts a SQLAlchemy URL string (Stage 1 default per ADR-014 §13.5).
@@ -199,7 +199,7 @@ def ingest_postgres_to_iceberg(
         )
     except NucleusError:
         raise
-    except Exception as exc:  # noqa: BLE001 — broad catch intentional: translator classifies failures
+    except Exception as exc:
         raise _translate_dlt_postgres_exception(exc) from exc
 
     return _row_count_from_load_info(load_info)

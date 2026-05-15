@@ -1,6 +1,6 @@
 # ADR-025: Parity closure plan v0.2 → v1.0
 
-Status: PROPOSED
+Status: ACCEPTED
 Date: 2026-05-15
 Author: builder (v0.2.0 reconciliation pass)
 Sources:
@@ -8,6 +8,8 @@ Sources:
 - `docs/research/parity_vs_dbt_dagster_airflow.md` §5–6 (Wave 1G)
 - ADR-023, ADR-024 (this release)
 - `nucleus_architecture_v4.1.md` §17 (yield-to-giants), §20 (non-goals)
+
+Ratified 2026-05-15: roadmap adopted in commit a41a82c (v0.2.0 handover bundle).
 
 ## Context
 

@@ -72,7 +72,7 @@ def copy_from(
     target: str,
     warehouse_dir: str | Path,
     write_disposition: str = "append",
-    format: str = "auto",  # noqa: A002 — mirrors object-storage public API
+    format: str = "auto",
 ) -> int:
     """Ingest from a source into a filesystem Iceberg asset.
 
@@ -161,13 +161,9 @@ def copy_from(
     if not target or "." not in target or target.count(".") != 1:
         raise NucleusInvalidAssetDefinition(
             user_message=(
-                f"target={target!r} must be in '<namespace>.<name>' form "
-                "(e.g. 'raw.orders')."
+                f"target={target!r} must be in '<namespace>.<name>' form (e.g. 'raw.orders')."
             ),
-            fix_hint=(
-                "Pass a 2-level v0.1 asset key as target=. "
-                "Example: target='raw.orders'."
-            ),
+            fix_hint=("Pass a 2-level v0.1 asset key as target=. Example: target='raw.orders'."),
         )
 
     namespace, dest_table = target.split(".", 1)

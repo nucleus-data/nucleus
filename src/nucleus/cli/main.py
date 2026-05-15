@@ -384,7 +384,9 @@ def _open_iceberg_catalog(warehouse_dir: Path) -> Any:
     try:
         return load_catalog(
             "default",
-            type="sql", uri=f"sqlite:///{catalog_db.resolve().as_posix()}", warehouse=f"file://{warehouse_dir.resolve().as_posix()}",
+            type="sql",
+            uri=f"sqlite:///{catalog_db.resolve().as_posix()}",
+            warehouse=f"file://{warehouse_dir.resolve().as_posix()}",
         )
     except Exception as exc:
         raise translate(exc) from exc
@@ -427,14 +429,14 @@ def _register_catalog_in_duckdb(catalog: Any, conn: Any) -> dict[str, str]:
             arrow_t = ice_table.scan().to_arrow()
             arrow_view = f"_arrow_{ns}_{tbl}"
             conn.register(arrow_view, arrow_t)
-            conn.execute(
-                f'CREATE OR REPLACE VIEW "{ns}"."{tbl}" AS SELECT * FROM "{arrow_view}"'
-            )
+            conn.execute(f'CREATE OR REPLACE VIEW "{ns}"."{tbl}" AS SELECT * FROM "{arrow_view}"')
             refs[f"{ns}.{tbl}"] = f'"{ns}"."{tbl}"'
     return refs
 
 
-def _execute_sql(sql: str, warehouse_dir: Path, limit: int) -> tuple[list[str], list[tuple[Any, ...]]]:
+def _execute_sql(
+    sql: str, warehouse_dir: Path, limit: int
+) -> tuple[list[str], list[tuple[Any, ...]]]:
     """Run ``sql`` against the warehouse; return ``(columns, rows)``."""
     # Docs: https://duckdb.org/docs/api/python/dbapi  (duckdb==1.1.3)
     import duckdb
@@ -447,6 +449,7 @@ def _execute_sql(sql: str, warehouse_dir: Path, limit: int) -> tuple[list[str], 
         catalog = _open_iceberg_catalog(warehouse_dir)
         refs = _register_catalog_in_duckdb(catalog, conn)
         if _REF_RE.search(sql):
+
             def _resolver(name: str) -> str:
                 if name in refs:
                     return refs[name]
@@ -500,10 +503,7 @@ def _wait_local_storage_ready(
         time.sleep(poll_interval_s)
         elapsed += poll_interval_s
     raise NucleusTimeoutError(
-        user_message=(
-            "Local storage did not report ready within "
-            f"{int(deadline_s)} seconds."
-        ),
+        user_message=(f"Local storage did not report ready within {int(deadline_s)} seconds."),
         fix_hint=(
             "Check `docker compose ps` from your project root, verify host ports "
             "in docker-compose.yaml are free, and inspect container logs before "
@@ -526,7 +526,6 @@ def _rows_for_runtime_table(compose_file: Path) -> list[tuple[str, str]]:
             continue
         rows.append((name, "(see docker-compose.yaml)"))
     return rows
-
 
 
 # ==============================================================================
@@ -725,8 +724,24 @@ def up(
             base = minio_health_base_url(compose_file).rstrip("/")
             _wait_local_storage_ready(base + _MINIO_READY_PATH)
 
+        # Generate nucleus.db BI handshake (ADR-026) after storage is ready.
+        # Non-fatal: if the catalog has no materialised assets yet (first boot)
+        # the file is still created (empty metadata table); errors are warnings.
+        try:
+            catalog_instance = _open_iceberg_catalog(warehouse_dir)
+            from nucleus.coordination.bi_handshake import generate_nucleus_db
+
+            nucleus_db_path = generate_nucleus_db(project_root, catalog_instance)
+        except Exception as _bi_exc:  # noqa: BLE001
+            # BI handshake is best-effort at boot time — never block nucleus up.
+            nucleus_db_path = project_root / "nucleus.db"
+            import logging as _logging
+
+            _logging.getLogger(__name__).warning("nucleus.db generation skipped: %s", _bi_exc)
+
         typer.echo(f"Warehouse: {warehouse_dir}")
         typer.echo(f"Catalog:   filesystem (SQLite at {catalog_db})")
+        typer.echo(f"BI file:   {nucleus_db_path} (connect with DuckDB: open('{nucleus_db_path}'))")
 
         from nucleus.cli.rendering import render_runtime_endpoint_table
 
@@ -746,9 +761,7 @@ def down(
         bool,
         typer.Option(
             "--volumes",
-            help=(
-                "Remove Compose-managed anonymous volumes (default preserves them)."
-            ),
+            help=("Remove Compose-managed anonymous volumes (default preserves them)."),
         ),
     ] = False,
 ) -> None:
@@ -882,8 +895,7 @@ def run(
         if len(keys) != 1:
             raise NucleusInternalError(
                 user_message=(
-                    "v0.1 supports a single asset per invocation; "
-                    f"got {len(keys)} asset key(s)."
+                    f"v0.1 supports a single asset per invocation; got {len(keys)} asset key(s)."
                 ),
                 fix_hint="Run one asset at a time, e.g. `nucleus run example.greeting`.",
                 docs_url="https://nucleus.dev/errors/not-implemented",
@@ -1095,10 +1107,7 @@ def query(
         str | None,
         typer.Option(
             "--asset",
-            help=(
-                "Asset key to query — shorthand for "
-                "``SELECT * FROM <key> LIMIT <limit>``."
-            ),
+            help=("Asset key to query — shorthand for ``SELECT * FROM <key> LIMIT <limit>``."),
         ),
     ] = None,
     limit: Annotated[
@@ -1139,13 +1148,13 @@ def query(
         if file is not None:
             raise NucleusInternalError(
                 user_message="`nucleus query --file` is deferred to v0.3+.",
-                fix_hint="Pass the SQL as a positional argument: nucleus query \"SELECT ...\".",
+                fix_hint='Pass the SQL as a positional argument: nucleus query "SELECT ...".',
                 docs_url="https://nucleus.dev/errors/not-implemented",
             )
         if asset is not None:
             raise NucleusInternalError(
                 user_message="`nucleus query --asset` is deferred to v0.3+.",
-                fix_hint="Use a SQL string instead: nucleus query \"SELECT * FROM <asset>\".",
+                fix_hint='Use a SQL string instead: nucleus query "SELECT * FROM <asset>".',
                 docs_url="https://nucleus.dev/errors/not-implemented",
             )
         if format_ not in {"text", "json", "csv"}:
@@ -1156,7 +1165,7 @@ def query(
         if not sql or not sql.strip():
             raise NucleusInvalidAssetDefinition(
                 user_message="A SQL string is required.",
-                fix_hint="Pass the query as the positional argument: nucleus query \"SELECT 1\".",
+                fix_hint='Pass the query as the positional argument: nucleus query "SELECT 1".',
             )
         config_path = _locate_project_config()
         config = _load_project_config(config_path)
@@ -1288,7 +1297,10 @@ def version(
 
 from nucleus.cli.commands.chat import chat as _chat_cmd
 from nucleus.cli.commands.dagit import dagit as _dagit_cmd
+from nucleus.cli.commands.runs import runs_app as _runs_app
 from nucleus.cli.commands.schedule import schedule_app as _schedule_app
+from nucleus.cli.commands.snapshot import snapshot_app as _snapshot_app
+from nucleus.workbench.cli import app as _workbench_app
 
 app.command(name="chat", help="Ask the AI Copilot a question about your project (Beta).")(_chat_cmd)
 
@@ -1309,6 +1321,33 @@ app.add_typer(
     help=(
         "Inspect asset schedules declared with ``schedule=`` (Beta). "
         "Active scheduling ships in v0.2."
+    ),
+)
+
+# Runs command group (Beta, ADR-025 §P0-2). Durable NDJSON run ledger.
+app.add_typer(
+    _runs_app,
+    name="runs",
+    help=(
+        "Inspect asset run history from the durable ledger (Beta, ADR-025). "
+        "History persists at ``.nucleus/runs/runs.ndjson``."
+    ),
+)
+
+# Workbench command group (Beta, ADR-016 Fork B). FastAPI + React SPA / CDN-fallback.
+app.add_typer(
+    _workbench_app,
+    name="workbench",
+    help="Launch the Nucleus Workbench browser UI (FastAPI + React, ADR-016).",
+)
+
+# Snapshot command group (Beta, ADR-028). Iceberg branch + tag management.
+app.add_typer(
+    _snapshot_app,
+    name="snapshot",
+    help=(
+        "Manage Iceberg snapshot references (branches + tags) on assets (Beta, ADR-028). "
+        "Write-audit-publish branch writes require Lakekeeper — deferred to v0.3."
     ),
 )
 

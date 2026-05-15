@@ -54,9 +54,14 @@ venv:  ## Create a fresh virtual environment in .venv/
 	@echo "Activate with: $(ACTIVATE_HINT)"
 
 .PHONY: install
-install:  ## Install package + dev dependencies in editable mode
-	$(PYTHON) -m pip install --upgrade pip
-	$(PYTHON) -m pip install -e ".[dev]"
+install:  ## Install package + dev dependencies in editable mode (uses uv if available)
+	@if command -v uv >/dev/null 2>&1; then \
+		echo "Using uv (ADR-027)..."; \
+		uv pip install -e ".[dev]"; \
+	else \
+		$(PYTHON) -m pip install --upgrade pip; \
+		$(PYTHON) -m pip install -e ".[dev]"; \
+	fi
 	@echo "Done. Try: make test"
 
 .PHONY: install-hooks

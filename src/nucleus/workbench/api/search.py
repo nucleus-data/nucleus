@@ -21,9 +21,7 @@ from typing import Any
 
 # Docs: https://fastapi.tiangolo.com/tutorial/bigger-applications/
 from fastapi import APIRouter
-from fastapi.responses import ORJSONResponse
 
-from nucleus.coordination.error_translation import translate
 from nucleus.sdk.decorators import _registered_keys, get_asset
 
 router = APIRouter(prefix="/api/search", tags=["search"])
@@ -31,7 +29,7 @@ router = APIRouter(prefix="/api/search", tags=["search"])
 _MAX_RESULTS = 15
 
 
-@router.get("", response_class=ORJSONResponse)
+@router.get("")
 def global_search(q: str = "") -> Any:
     """Search assets, runs, and schedules by a query string.
 
@@ -41,14 +39,14 @@ def global_search(q: str = "") -> Any:
             "query": "orders",
             "items": [
                 {
-                    "kind":      "asset",
-                    "key":       "raw.orders",
-                    "label":     "raw.orders",
+                    "kind": "asset",
+                    "key": "raw.orders",
+                    "label": "raw.orders",
                     "secondary": "asset",
-                    "url":       "/assets/raw.orders"
+                    "url": "/assets/raw.orders",
                 },
-                ...
-            ]
+                ...,
+            ],
         }
 
     When ``q`` is empty or shorter than 2 chars, returns an empty list
@@ -68,13 +66,15 @@ def global_search(q: str = "") -> Any:
         for key in matched_assets[:8]:
             defn = get_asset(key)
             secondary = "scheduled" if (defn and defn.schedule) else "asset"
-            results.append({
-                "kind":      "asset",
-                "key":       key,
-                "label":     key,
-                "secondary": secondary,
-                "url":       f"/assets/{key}",
-            })
+            results.append(
+                {
+                    "kind": "asset",
+                    "key": key,
+                    "label": key,
+                    "secondary": secondary,
+                    "url": f"/assets/{key}",
+                }
+            )
     except Exception:
         pass  # graceful degradation; don't fail the whole search
 
@@ -83,17 +83,20 @@ def global_search(q: str = "") -> Any:
         from nucleus.workbench.api.runs import _runs
 
         matched_runs = [
-            r for r in _runs
+            r
+            for r in _runs
             if q_lower in r.asset_key.lower() or r.run_id.lower().startswith(q_lower)
         ]
         for run in matched_runs[:4]:
-            results.append({
-                "kind":      "run",
-                "key":       run.run_id,
-                "label":     run.asset_key,
-                "secondary": run.status,
-                "url":       f"/runs/{run.run_id}",
-            })
+            results.append(
+                {
+                    "kind": "run",
+                    "key": run.run_id,
+                    "label": run.asset_key,
+                    "secondary": run.status,
+                    "url": f"/runs/{run.run_id}",
+                }
+            )
     except Exception:
         pass
 
@@ -101,18 +104,17 @@ def global_search(q: str = "") -> Any:
     try:
         from nucleus.coordination.schedules import list_schedules as _ls
 
-        matched_schedules = [
-            e for e in _ls()
-            if q_lower in e.asset_key.lower()
-        ]
+        matched_schedules = [e for e in _ls() if q_lower in e.asset_key.lower()]
         for entry in matched_schedules[:3]:
-            results.append({
-                "kind":      "schedule",
-                "key":       entry.asset_key,
-                "label":     entry.asset_key,
-                "secondary": entry.cron_expression,
-                "url":       "/schedules",
-            })
+            results.append(
+                {
+                    "kind": "schedule",
+                    "key": entry.asset_key,
+                    "label": entry.asset_key,
+                    "secondary": entry.cron_expression,
+                    "url": "/schedules",
+                }
+            )
     except Exception:
         pass
 

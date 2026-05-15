@@ -75,7 +75,9 @@ def test_smoke_openai_provider(tmp_path):
     assert reply.provider == "openai"
     # model arg should not contain "anthropic"
     model_arg = mock_comp.call_args[1]["model"]
-    assert "anthropic" not in model_arg, f"OpenAI call should not use anthropic model: {model_arg!r}"
+    assert "anthropic" not in model_arg, (
+        f"OpenAI call should not use anthropic model: {model_arg!r}"
+    )
 
 
 def test_smoke_ollama_provider_cost_zero(tmp_path):
@@ -89,7 +91,9 @@ def test_smoke_ollama_provider_cost_zero(tmp_path):
 
     assert reply.cost_usd == 0.0
     model_arg = mock_comp.call_args[1]["model"]
-    assert model_arg.startswith("ollama/"), f"Ollama model should start with 'ollama/': {model_arg!r}"
+    assert model_arg.startswith("ollama/"), (
+        f"Ollama model should start with 'ollama/': {model_arg!r}"
+    )
 
 
 def test_smoke_provider_swap_via_kwarg(tmp_path):

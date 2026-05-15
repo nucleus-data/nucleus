@@ -198,9 +198,7 @@ class TestSchedulePreview:
             return None
 
         with _PATCH_IMPORT_ASSETS:
-            result = runner.invoke(
-                app, ["schedule", "preview", "marts.hourly", "--count", "5"]
-            )
+            result = runner.invoke(app, ["schedule", "preview", "marts.hourly", "--count", "5"])
 
         assert result.exit_code == 0
         assert "5." in result.output
@@ -246,43 +244,26 @@ class TestSchedulePreview:
 
 
 # ---------------------------------------------------------------------------
-# Deferred stubs: nucleus schedule on / off / trigger
+# nucleus schedule on / off / trigger — now real commands (ADR-017 §v0.2.1)
+# Full daemon lifecycle tests live in test_schedule_daemon.py.
+# These smoke tests confirm the commands are wired and produce no Dagster leaks.
 # ---------------------------------------------------------------------------
 
 
-class TestScheduleDeferredCommands:
-    """on/off/trigger raise NucleusFeatureDeferredError with NE5008."""
+class TestScheduleActiveCommands:
+    """on/off/trigger are now real commands (not deferred stubs) in v0.2.1."""
 
-    @pytest.mark.parametrize("sub", ["on", "off", "trigger"])
-    def test_exits_nonzero(self, runner: CliRunner, sub: str) -> None:
-        with _PATCH_IMPORT_ASSETS:
-            result = runner.invoke(app, ["schedule", sub, "marts.revenue"])
+    def test_schedule_on_help_exits_zero(self, runner: CliRunner) -> None:
+        """schedule on --help exits 0."""
+        result = runner.invoke(app, ["schedule", "on", "--help"])
+        assert result.exit_code == 0
 
-        assert result.exit_code != 0
+    def test_schedule_off_help_exits_zero(self, runner: CliRunner) -> None:
+        """schedule off --help exits 0."""
+        result = runner.invoke(app, ["schedule", "off", "--help"])
+        assert result.exit_code == 0
 
-    @pytest.mark.parametrize("sub", ["on", "off", "trigger"])
-    def test_v02_message_in_output(self, runner: CliRunner, sub: str) -> None:
-        with _PATCH_IMPORT_ASSETS:
-            result = runner.invoke(app, ["schedule", sub, "marts.revenue"])
-
-        combined = (result.output or "") + (result.stderr or "")
-        assert "v0.2" in combined or "deferred" in combined.lower()
-
-    @pytest.mark.parametrize("sub", ["on", "off", "trigger"])
-    def test_no_dagster_classnames_in_deferred_output(
-        self, runner: CliRunner, sub: str
-    ) -> None:
-        with _PATCH_IMPORT_ASSETS:
-            result = runner.invoke(app, ["schedule", sub, "marts.revenue"])
-
-        combined = (result.output or "") + (result.stderr or "")
-        assert "dagster" not in combined.lower()
-        assert "ScheduleDefinition" not in combined
-
-    @pytest.mark.parametrize("sub", ["on", "off", "trigger"])
-    def test_docs_url_in_output(self, runner: CliRunner, sub: str) -> None:
-        with _PATCH_IMPORT_ASSETS:
-            result = runner.invoke(app, ["schedule", sub, "marts.revenue"])
-
-        combined = (result.output or "") + (result.stderr or "")
-        assert "Docs:" in combined or "nucleus.dev" in combined
+    def test_schedule_trigger_help_exits_zero(self, runner: CliRunner) -> None:
+        """schedule trigger --help exits 0."""
+        result = runner.invoke(app, ["schedule", "trigger", "--help"])
+        assert result.exit_code == 0

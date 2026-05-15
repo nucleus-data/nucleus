@@ -51,7 +51,6 @@ from nucleus.errors import (
 from nucleus.sdk.decorators import _reset_registry_for_tests
 from nucleus.sdk.results import MaterializationResult
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -74,6 +73,7 @@ def trivial_asset_key() -> str:
     once Iceberg/ctx wiring lands; the AMA must still produce a clean
     MaterializationResult for them.
     """
+
     @nucleus.asset("staging.orders")
     def staging_orders() -> None:
         return None
@@ -84,6 +84,7 @@ def trivial_asset_key() -> str:
 @pytest.fixture()
 def value_returning_asset_key() -> str:
     """Register an asset whose body returns a concrete value."""
+
     @nucleus.asset("marts.row_count")
     def marts_row_count() -> int:
         return 42
@@ -184,7 +185,9 @@ class TestDryRun:
         assert result.asset_key == trivial_asset_key
 
     def test_dry_run_does_not_write_to_iceberg(
-        self, trivial_asset_key: str, tmp_path: Path,
+        self,
+        trivial_asset_key: str,
+        tmp_path: Path,
     ) -> None:
         # Even when warehouse_dir is provided, dry_run=True must not produce
         # an Iceberg snapshot.
@@ -192,12 +195,11 @@ class TestDryRun:
         result = materialize_asset(trivial_asset_key, dry_run=True, warehouse_dir=warehouse_dir)
         assert result.snapshot_id == ""
         assert result.row_count == 0
-        assert not (warehouse_dir / "catalog.db").exists(), (
-            "dry_run must not touch the warehouse"
-        )
+        assert not (warehouse_dir / "catalog.db").exists(), "dry_run must not touch the warehouse"
 
     def test_real_run_without_warehouse_dir_uses_sentinels(
-        self, trivial_asset_key: str,
+        self,
+        trivial_asset_key: str,
     ) -> None:
         # When warehouse_dir is None the AMA skips the Iceberg commit step
         # and returns sentinel values (v0.1 deferred-commit behaviour).
@@ -364,9 +366,7 @@ class TestIcebergCommit:
 
         return "test.tiny"
 
-    def test_polars_df_commits_real_snapshot(
-        self, df_asset_key: str, tmp_path: Path
-    ) -> None:
+    def test_polars_df_commits_real_snapshot(self, df_asset_key: str, tmp_path: Path) -> None:
         """Non-dry_run + warehouse_dir → real Iceberg snapshot_id + row_count."""
         warehouse_dir = tmp_path / "warehouse"
         result = materialize_asset(df_asset_key, warehouse_dir=warehouse_dir)
@@ -375,9 +375,7 @@ class TestIcebergCommit:
         assert result.row_count == 3, "row_count must equal the DataFrame length"
         assert result.snapshot_id.isdigit() or len(result.snapshot_id) > 0
 
-    def test_iceberg_table_written_to_warehouse(
-        self, df_asset_key: str, tmp_path: Path
-    ) -> None:
+    def test_iceberg_table_written_to_warehouse(self, df_asset_key: str, tmp_path: Path) -> None:
         """After commit the Iceberg metadata.json must exist under warehouse."""
         warehouse_dir = tmp_path / "warehouse"
         materialize_asset(df_asset_key, warehouse_dir=warehouse_dir)
@@ -394,9 +392,7 @@ class TestIcebergCommit:
         materialize_asset(df_asset_key, warehouse_dir=warehouse_dir)
         assert (warehouse_dir / "catalog.db").is_file()
 
-    def test_dry_run_with_df_asset_does_not_commit(
-        self, df_asset_key: str, tmp_path: Path
-    ) -> None:
+    def test_dry_run_with_df_asset_does_not_commit(self, df_asset_key: str, tmp_path: Path) -> None:
         """dry_run=True must not write to Iceberg even for DataFrame assets."""
         warehouse_dir = tmp_path / "warehouse"
         result = materialize_asset(df_asset_key, dry_run=True, warehouse_dir=warehouse_dir)
@@ -404,9 +400,7 @@ class TestIcebergCommit:
         assert result.row_count == 0
         assert not (warehouse_dir / "catalog.db").exists()
 
-    def test_no_dagster_classnames_in_result(
-        self, df_asset_key: str, tmp_path: Path
-    ) -> None:
+    def test_no_dagster_classnames_in_result(self, df_asset_key: str, tmp_path: Path) -> None:
         """v4.1 §6.4 regression: MaterializationResult must contain no Dagster strings."""
         warehouse_dir = tmp_path / "warehouse"
         result = materialize_asset(df_asset_key, warehouse_dir=warehouse_dir)

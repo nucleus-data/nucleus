@@ -17,11 +17,12 @@ enforced.  No bytes are sent to the LLM before the user has opted in.
 from __future__ import annotations
 
 import json
-from typing import Any, Generator
+from collections.abc import Generator
+from typing import Any
 
 # Docs: https://fastapi.tiangolo.com/tutorial/body/
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import ORJSONResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
 
 # Docs: https://docs.pydantic.dev/latest/concepts/models/  (pydantic v2)
 from pydantic import BaseModel, Field
@@ -61,7 +62,7 @@ def _resolve_project_dir(project_dir: str) -> Any:
     return here
 
 
-@router.post("/chat", response_class=ORJSONResponse)
+@router.post("/chat")
 def ask_copilot(req: ChatRequest) -> Any:
     """Forward a question to the Nucleus AI Copilot and return the reply.
 
@@ -92,15 +93,17 @@ def ask_copilot(req: ChatRequest) -> Any:
         if req.stream:
             # Emit the single reply as an SSE event then [DONE].
             def _stream() -> Generator[str, None, None]:
-                payload = json.dumps({
-                    "text": reply.text,
-                    "suggested_command": reply.suggested_command,
-                    "tokens_in": reply.tokens_in,
-                    "tokens_out": reply.tokens_out,
-                    "cost_usd": reply.cost_usd,
-                    "provider": reply.provider,
-                    "model": reply.model,
-                })
+                payload = json.dumps(
+                    {
+                        "text": reply.text,
+                        "suggested_command": reply.suggested_command,
+                        "tokens_in": reply.tokens_in,
+                        "tokens_out": reply.tokens_out,
+                        "cost_usd": reply.cost_usd,
+                        "provider": reply.provider,
+                        "model": reply.model,
+                    }
+                )
                 yield f"data: {payload}\n\n"
                 yield "data: [DONE]\n\n"
 
@@ -124,11 +127,19 @@ def ask_copilot(req: ChatRequest) -> Any:
         code = 402 if "Budget" in type(err).__name__ else 500
         raise HTTPException(
             status_code=code,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err
     except Exception as exc:
         err = translate(exc)
         raise HTTPException(
             status_code=500,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err

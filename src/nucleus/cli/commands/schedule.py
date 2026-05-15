@@ -1,18 +1,19 @@
-"""``nucleus schedule`` command group — ADR-017.
+"""``nucleus schedule`` command group — ADR-017 (v0.2.1 active scheduling).
 
-Exposes read-only schedule metadata from the in-process asset registry:
+Exposes schedule metadata and the mini-scheduler daemon lifecycle:
 
     nucleus schedule list               list all assets with a schedule
     nucleus schedule preview <key>      show next N run times for one asset
-    nucleus schedule on <key>           [deferred v0.2]
-    nucleus schedule off <key>          [deferred v0.2]
-    nucleus schedule trigger <key>      [deferred v0.2]
+    nucleus schedule on [--foreground]  start the mini-scheduler daemon
+    nucleus schedule off                stop the running daemon
+    nucleus schedule trigger <key>      one-shot materialization (no daemon)
+    nucleus schedule status             show daemon state + active schedules
 
 Per ``nucleus_architecture_v4.1.md`` §8 L4 (CLI layer delegates all
-business logic to the coordination / ctx layers). Active scheduling (Dagster
-daemon-driven execution) is deferred to v0.2 per ADR-017 §6.
+business logic to the coordination layer). Active scheduling now wires
+the mini-scheduler fallback per ADR-017 §v0.2.1 amendment.
 
-Stability tier: **Beta** — governed by ``nucleus_cli_spec.md`` §3 schedule section.
+Stability tier: **Beta** — governed by ``nucleus_cli_spec.md`` §3.
 """
 
 from __future__ import annotations
@@ -30,10 +31,7 @@ from nucleus.errors import NucleusError
 # Docs: https://typer.tiangolo.com/tutorial/subcommands/add-typer/
 schedule_app = typer.Typer(
     name="schedule",
-    help=(
-        "Inspect and manage asset schedules (Beta). "
-        "Active scheduling (daemon-driven execution) ships in v0.2."
-    ),
+    help="Inspect and manage asset schedules (Beta).",
     no_args_is_help=True,
     rich_markup_mode="rich",
 )
@@ -64,7 +62,11 @@ def _import_project_assets() -> None:
     ``nucleus schedule list`` still works when called programmatically from
     tests that register assets directly.
     """
-    from nucleus.cli.main import _import_assets_package, _load_project_config, _locate_project_config  # noqa: PLC0415
+    from nucleus.cli.main import (
+        _import_assets_package,
+        _load_project_config,
+        _locate_project_config,
+    )
 
     try:
         config_path = _locate_project_config()
@@ -75,6 +77,18 @@ def _import_project_assets() -> None:
         # by a programmatic caller.  Don't fail: return and let the command
         # surface an empty list if no assets are registered.
         pass
+
+
+def _locate_project_root() -> Path | None:
+    """Return the project root path, or None if no project config is found."""
+
+    from nucleus.cli.main import _locate_project_config
+
+    try:
+        config_path = _locate_project_config()
+        return config_path.parent
+    except NucleusError:
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -99,9 +113,6 @@ def schedule_list(
     Shows the asset key, cron expression, and the next scheduled run time.
     Assets without a ``schedule=`` kwarg are excluded from the list.
 
-    Active scheduling (automatic execution) requires v0.2; this command
-    reads the declared intent from ``@nucleus.asset(schedule=...)`` decorators.
-
     Per [bold]ADR-017 §3[/bold].
 
     [bold]Examples[/bold]
@@ -111,7 +122,7 @@ def schedule_list(
     """
     try:
         if format_ not in {"text", "json"}:
-            from nucleus.errors import NucleusInvalidAssetDefinition  # noqa: PLC0415
+            from nucleus.errors import NucleusInvalidAssetDefinition
 
             raise NucleusInvalidAssetDefinition(
                 user_message=f"--format {format_!r} is not supported for `nucleus schedule list`.",
@@ -120,7 +131,7 @@ def schedule_list(
 
         _import_project_assets()
 
-        from nucleus.coordination.schedules import list_schedules, preview_schedule  # noqa: PLC0415
+        from nucleus.coordination.schedules import list_schedules, preview_schedule
 
         entries = list_schedules()
 
@@ -143,7 +154,7 @@ def schedule_list(
             return
 
         # Text mode — Rich table via rendering helper.
-        from nucleus.cli.rendering import render_schedule_list  # noqa: PLC0415
+        from nucleus.cli.rendering import render_schedule_list
 
         render_schedule_list(entries)
     except NucleusError as err:
@@ -160,10 +171,7 @@ def schedule_preview(
     asset_key: Annotated[
         str,
         typer.Argument(
-            help=(
-                "Asset key to preview (``<schema>.<name>``), "
-                "e.g. ``marts.daily_revenue``."
-            ),
+            help=("Asset key to preview (``<schema>.<name>``), e.g. ``marts.daily_revenue``."),
         ),
     ],
     n: Annotated[
@@ -187,7 +195,7 @@ def schedule_preview(
     """Show the next N scheduled run times for one asset.
 
     Calculates future run times from the cron expression stored on the
-    ``@nucleus.asset(schedule=...)`` decorator; no Dagster daemon is required.
+    ``@nucleus.asset(schedule=...)`` decorator; no daemon is required.
 
     Per [bold]ADR-017 §3[/bold]. Uses croniter
     (Docs: https://pypi.org/project/croniter/) for time arithmetic.
@@ -200,7 +208,7 @@ def schedule_preview(
     """
     try:
         if format_ not in {"text", "json"}:
-            from nucleus.errors import NucleusInvalidAssetDefinition  # noqa: PLC0415
+            from nucleus.errors import NucleusInvalidAssetDefinition
 
             raise NucleusInvalidAssetDefinition(
                 user_message=f"--format {format_!r} is not supported for `nucleus schedule preview`.",
@@ -209,7 +217,7 @@ def schedule_preview(
 
         _import_project_assets()
 
-        from nucleus.coordination.schedules import preview_schedule  # noqa: PLC0415
+        from nucleus.coordination.schedules import preview_schedule
 
         run_times = preview_schedule(asset_key, n=n)
 
@@ -231,64 +239,205 @@ def schedule_preview(
 
 
 # ---------------------------------------------------------------------------
-# Deferred stubs: nucleus schedule on / off / trigger
-# Per ADR-017 §6: active scheduling deferred to v0.2.
+# nucleus schedule on
 # ---------------------------------------------------------------------------
 
 
 @schedule_app.command("on")
 def schedule_on(
-    asset_key: Annotated[
-        str,
-        typer.Argument(help="Asset key to enable the schedule for."),
-    ],
+    foreground: Annotated[
+        bool,
+        typer.Option(
+            "--foreground",
+            help="Run the daemon in the foreground (blocking). Default: background.",
+        ),
+    ] = False,
+    max_iters: Annotated[
+        int | None,
+        typer.Option(
+            "--max-iters",
+            hidden=True,
+            help="Debug: stop daemon after this many poll iterations.",
+        ),
+    ] = None,
 ) -> None:
-    """[dim][deferred v0.2][/dim] Enable automatic execution for a scheduled asset.
+    """Start the mini-scheduler daemon.
 
-    This command is reserved for v0.2 when the Dagster scheduler daemon
-    wiring lands. In v0.1.1 it raises a structured error so users understand
-    the roadmap.
+    The daemon polls declared asset schedules every 5 seconds and calls
+    ``materialize_asset`` for any cron expressions that fall due.  It runs
+    as a detached background process by default; use ``--foreground`` for
+    interactive debugging.
+
+    Per [bold]ADR-017 §v0.2.1[/bold] (mini-scheduler fallback).
+
+    [bold]Examples[/bold]
+
+        nucleus schedule on
+        nucleus schedule on --foreground
     """
-    _raise_deferred("on", asset_key)
+    try:
+        _import_project_assets()
+        project_root = _locate_project_root()
+        if project_root is None:
+            from pathlib import Path
+
+            project_root = Path.cwd()
+
+        from nucleus.coordination.daemon import start_daemon
+
+        pid = start_daemon(project_root, foreground=foreground, max_iters=max_iters)
+        if not foreground:
+            typer.echo(f"Nucleus scheduler daemon started (pid {pid}).")
+    except NucleusError as err:
+        _exit_schedule_error(err)
+
+
+# ---------------------------------------------------------------------------
+# nucleus schedule off
+# ---------------------------------------------------------------------------
 
 
 @schedule_app.command("off")
 def schedule_off(
-    asset_key: Annotated[
-        str,
-        typer.Argument(help="Asset key to disable the schedule for."),
-    ],
+    timeout: Annotated[
+        int,
+        typer.Option(
+            "--timeout",
+            help="Seconds to wait for graceful shutdown before escalating.",
+        ),
+    ] = 10,
 ) -> None:
-    """[dim][deferred v0.2][/dim] Disable automatic execution for a scheduled asset."""
-    _raise_deferred("off", asset_key)
+    """Stop the running mini-scheduler daemon.
+
+    Sends SIGTERM and waits for a clean exit.  Escalates to SIGKILL after
+    ``--timeout`` seconds if the daemon does not respond.
+
+    Per [bold]ADR-017 §v0.2.1[/bold].
+
+    [bold]Examples[/bold]
+
+        nucleus schedule off
+        nucleus schedule off --timeout 30
+    """
+    try:
+        project_root = _locate_project_root()
+        if project_root is None:
+            from pathlib import Path
+
+            project_root = Path.cwd()
+
+        from nucleus.coordination.daemon import stop_daemon
+
+        stop_daemon(project_root, timeout=timeout)
+        typer.echo("Nucleus scheduler daemon stopped.")
+    except NucleusError as err:
+        _exit_schedule_error(err)
+
+
+# ---------------------------------------------------------------------------
+# nucleus schedule trigger
+# ---------------------------------------------------------------------------
 
 
 @schedule_app.command("trigger")
 def schedule_trigger(
     asset_key: Annotated[
-        str,
-        typer.Argument(help="Asset key to trigger a one-off run for."),
+        str, typer.Argument(help="Asset key to trigger immediately (``<schema>.<name>``).")
     ],
 ) -> None:
-    """[dim][deferred v0.2][/dim] Trigger an immediate one-off materialization for a scheduled asset."""
-    _raise_deferred("trigger", asset_key)
+    """Trigger an immediate one-shot materialization for an asset.
 
+    Does NOT require the daemon to be running.  Materialises the asset right
+    now regardless of its cron schedule.  Prints the snapshot ID on success.
 
-def _raise_deferred(sub: str, asset_key: str) -> None:
-    """Common deferred-feature stub for schedule on/off/trigger."""
-    from nucleus.errors import NucleusFeatureDeferredError  # noqa: PLC0415
+    Per [bold]ADR-017 §v0.2.1[/bold].
 
-    _exit_schedule_error(
-        NucleusFeatureDeferredError(
-            user_message=(
-                f"`nucleus schedule {sub}` is deferred to v0.2. "
-                f"Declaring schedule= on @nucleus.asset('{asset_key}') stores the "
-                "expression; active daemon-driven scheduling ships in v0.2."
-            ),
-            fix_hint=(
-                "Use `nucleus run <key>` to materialise the asset manually now. "
-                "Track v0.2 progress at https://nucleus.dev/roadmap."
-            ),
-            asset=asset_key,
+    [bold]Examples[/bold]
+
+        nucleus schedule trigger marts.daily_revenue
+    """
+    try:
+        _import_project_assets()
+        project_root = _locate_project_root()
+        warehouse_dir = None
+        if project_root is not None:
+            from pathlib import Path
+
+            from nucleus.cli.main import (
+                _load_project_config,
+                _locate_project_config,
+            )
+
+            try:
+                cfg_path = _locate_project_config()
+                cfg = _load_project_config(cfg_path)
+                raw = cfg.get("storage", {}).get("warehouse", "")
+                if raw:
+                    warehouse_dir = Path(raw).expanduser()
+                    if not warehouse_dir.is_absolute():
+                        warehouse_dir = (project_root / warehouse_dir).resolve()
+            except NucleusError:
+                pass
+
+        from nucleus.coordination.daemon import trigger_asset
+
+        result = trigger_asset(asset_key, warehouse_dir=warehouse_dir)
+        snap = result.snapshot_id or "(no snapshot)"
+        typer.echo(
+            f"Triggered materialization of '{asset_key}': "
+            f"snapshot={snap}, rows={result.row_count}, "
+            f"duration={result.duration_ms}ms"
         )
-    )
+    except NucleusError as err:
+        _exit_schedule_error(err)
+
+
+# ---------------------------------------------------------------------------
+# nucleus schedule status
+# ---------------------------------------------------------------------------
+
+
+@schedule_app.command("status")
+def schedule_status() -> None:
+    """Show the daemon's running state and active schedule list.
+
+    Displays whether the mini-scheduler daemon is running (with its PID),
+    plus a table of all scheduled assets with their next run times.
+
+    Per [bold]ADR-017 §v0.2.1[/bold].
+
+    [bold]Examples[/bold]
+
+        nucleus schedule status
+    """
+    try:
+        _import_project_assets()
+        project_root = _locate_project_root()
+        if project_root is None:
+            from pathlib import Path
+
+            project_root = Path.cwd()
+
+        from nucleus.coordination.daemon import get_daemon_status
+
+        status = get_daemon_status(project_root)
+
+        if status.running:
+            typer.echo(f"Daemon: [running] pid={status.pid}")
+        else:
+            typer.echo("Daemon: [stopped]")
+
+        if not status.schedules:
+            typer.echo("No scheduled assets found.")
+            return
+
+        # Render a simple table; Rich not required for status.
+        typer.echo(f"\n{'Asset':<32} {'Cron':<15} {'Next run (UTC)'}")
+        typer.echo("-" * 72)
+        for entry in status.schedules:
+            next_run = status.next_runs.get(entry.asset_key, "-")
+            # Truncate next_run for readability (first 19 chars of ISO-8601).
+            next_run_short = next_run[:19] if len(next_run) > 19 else next_run
+            typer.echo(f"{entry.asset_key:<32} {entry.cron_expression:<15} {next_run_short}")
+    except NucleusError as err:
+        _exit_schedule_error(err)

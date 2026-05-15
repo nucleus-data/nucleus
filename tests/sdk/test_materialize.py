@@ -38,6 +38,7 @@ def _clean_registry() -> Iterator[None]:
 @pytest.fixture()
 def registered_asset() -> str:
     """Register a single asset and return its key."""
+
     @nucleus.asset("staging.orders")
     def staging_orders(_ctx: object) -> None:
         return None
@@ -53,6 +54,7 @@ def registered_asset() -> str:
 class TestPublicSurface:
     def test_materialize_is_re_exported_from_nucleus(self) -> None:
         from nucleus.sdk.materialize import materialize as direct
+
         assert nucleus.materialize is direct
 
     def test_materialize_present_in_nucleus_all(self) -> None:
@@ -87,6 +89,7 @@ class TestArgumentValidation:
         # MaterializationResult; the SDK boundary's responsibility here is
         # purely to unwrap AssetRef → str without losing identity.
         from nucleus.sdk.results import MaterializationResult
+
         ref = nucleus.AssetRef(registered_asset)
         result = nucleus.materialize(ref)
         assert isinstance(result, MaterializationResult)
@@ -103,6 +106,7 @@ class TestArgumentValidation:
         # The default upstream kwarg must reach the AMA without triggering
         # the "deferred to v0.3+" path that 'materialize' / 'validate' take.
         from nucleus.sdk.results import MaterializationResult
+
         result = nucleus.materialize(registered_asset)
         assert isinstance(result, MaterializationResult)
         assert result.asset_key == registered_asset
@@ -112,7 +116,10 @@ class TestArgumentValidation:
         with pytest.raises(NucleusInternalError) as exc_info:
             nucleus.materialize(registered_asset, upstream="materialize")
         assert "v0.3" in exc_info.value.user_message
-        assert "upstream='materialize'" in exc_info.value.user_message or "materialize" in exc_info.value.user_message
+        assert (
+            "upstream='materialize'" in exc_info.value.user_message
+            or "materialize" in exc_info.value.user_message
+        )
 
     def test_upstream_validate_deferred_to_v03(self, registered_asset: str) -> None:
         with pytest.raises(NucleusInternalError) as exc_info:
@@ -122,7 +129,9 @@ class TestArgumentValidation:
     def test_negative_timeout_raises_invalid(self, registered_asset: str) -> None:
         with pytest.raises(NucleusInvalidAssetDefinition) as exc_info:
             nucleus.materialize(registered_asset, timeout_seconds=-1)
-        assert "> 0" in exc_info.value.user_message or "timeout_seconds" in exc_info.value.user_message
+        assert (
+            "> 0" in exc_info.value.user_message or "timeout_seconds" in exc_info.value.user_message
+        )
 
     def test_zero_timeout_raises_invalid(self, registered_asset: str) -> None:
         with pytest.raises(NucleusInvalidAssetDefinition):
@@ -158,6 +167,7 @@ class TestArgumentValidation:
 class TestSDKDelegation:
     def test_delegation_returns_materialization_result(self, registered_asset: str) -> None:
         from nucleus.sdk.results import MaterializationResult
+
         result = nucleus.materialize(registered_asset)
         assert isinstance(result, MaterializationResult)
 

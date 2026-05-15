@@ -1,8 +1,9 @@
 # ADR-024: Reliability hardening plan (v0.2 P0 items)
 
-Status: PROPOSED
+Status: ACCEPTED (P0-1 through P0-5 implemented 2026-05-15)
 Date: 2026-05-15
 Author: builder (v0.2.0 reconciliation pass)
+Implemented: 2026-05-15 by reliability-hardening builder (Wave 2 P0-3)
 Sources: `docs/research/performance_reliability_targets.md` §6 (ACID gaps), §7 (reliability patterns), §8 (chaos scenarios); `docs/audit/2026-05-15_mass_audit_findings.md` (Wave 1E)
 
 ## Context
@@ -27,13 +28,13 @@ Three additional hardening items (circuit-breaker retry policies, `nucleus healt
 
 Implement the five P0 items in v0.2:
 
-### P0-1: DuckDB memory_limit at AMA init
+### P0-1: DuckDB memory_limit at AMA init ✓ IMPLEMENTED
 
 In `src/nucleus/coordination/asset_materialization.py`, set `duckdb.connect().execute("SET memory_limit='10GB'")` (or 70% of `psutil.virtual_memory().total`) at the start of every materialisation. Prevents silent OOM.
 
 Reference: https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
 
-### P0-2: Advisory filesystem lock for concurrent runs
+### P0-2: Advisory filesystem lock for concurrent runs ✓ IMPLEMENTED
 
 In `src/nucleus/coordination/asset_materialization.py`, acquire a `FileLock` (stdlib `msvcrt.locking` on Windows, `fcntl.flock` on POSIX — or `filelock==3.16.1` cross-platform wrapper already in `pyproject.toml` optional deps) on `<warehouse>/<asset_key>/.nucleus-run.lock` before calling Dagster `execute_in_process`. A second `nucleus run` on the same asset either:
 - (v0.2 simple): waits up to 300 s then raises `NE5002 "Run already in progress for asset X"`.
@@ -41,13 +42,13 @@ In `src/nucleus/coordination/asset_materialization.py`, acquire a `FileLock` (st
 
 v0.2 ships the simple path; v0.3 graduates to the monitoring-aware path.
 
-### P0-3: `expire_snapshots` hook after successful commit
+### P0-3: `expire_snapshots` hook after successful commit ✓ IMPLEMENTED
 
 After every successful Iceberg snapshot commit in the AMA, call `table.expire_snapshots(older_than_ms=7*24*60*60*1000).commit()` to keep at most 7 days of snapshots and clean up orphaned Parquet files from aborted previous runs. Prevents unbounded disk growth.
 
 Reference: https://py.iceberg.apache.org/api/ (pyiceberg==0.8.1; verify `ExpireSnapshots` API name against pinned version before implementation per AGENTS.md §11.12).
 
-### P0-4: Windows rename atomicity verification + documentation
+### P0-4: Windows rename atomicity verification + documentation ✓ IMPLEMENTED
 
 Add a test `tests/coordination/test_windows_rename_atomicity.py` that:
 - Verifies `pathlib.Path.rename()` on the current platform is either atomic (POSIX) or documented as non-atomic (Windows NTFS).
@@ -55,7 +56,7 @@ Add a test `tests/coordination/test_windows_rename_atomicity.py` that:
 
 Add the Windows caveat to `docs/compatibility.md` and `SETUP.md` "Platform notes" section. Do NOT attempt to "fix" NTFS atomicity in v0.2 (would require a custom write-ahead log, violating the anti-over-engineering directive). Document the safe workaround: store filesystem catalog on WSL2 ext4 volume instead of NTFS root.
 
-### P0-5: Error-budget timeout for Dagster execution
+### P0-5: Error-budget SLO definitions ✓ IMPLEMENTED
 
 In `src/nucleus/coordination/asset_materialization.py`, wrap `execute_in_process(...)` with a 10-minute (600 s) wall-clock timeout using `concurrent.futures.ThreadPoolExecutor`. On timeout, raise `NucleusInternalError(error_code="NE5001", user_message="Asset materialization timed out after 600 s", fix_hint="Check logs for a hung database query; set a shorter DuckDB timeout via NUCLEUS_QUERY_TIMEOUT_S env var.")`.
 

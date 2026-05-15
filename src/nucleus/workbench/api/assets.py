@@ -19,7 +19,6 @@ from typing import Any
 
 # Docs: https://fastapi.tiangolo.com/tutorial/bigger-applications/
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import ORJSONResponse
 
 from nucleus.coordination.error_translation import translate
 from nucleus.errors import NucleusError
@@ -40,14 +39,11 @@ def _asset_to_dict(key: str) -> dict[str, Any]:
         "schedule": defn.schedule,
         "compute": defn.compute,
         "has_contract": defn.contract is not None,
-        "checks": [
-            {"severity": c.severity, "fn_name": c.fn.__name__}
-            for c in checks
-        ],
+        "checks": [{"severity": c.severity, "fn_name": c.fn.__name__} for c in checks],
     }
 
 
-@router.get("", response_class=ORJSONResponse)
+@router.get("")
 def list_assets() -> Any:
     """Return all registered assets as a JSON array.
 
@@ -63,17 +59,25 @@ def list_assets() -> Any:
     except NucleusError as err:
         raise HTTPException(
             status_code=500,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err
     except Exception as exc:
         err = translate(exc)
         raise HTTPException(
             status_code=500,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err
 
 
-@router.get("/{asset_key:path}", response_class=ORJSONResponse)
+@router.get("/{asset_key:path}")
 def get_asset_detail(asset_key: str) -> Any:
     """Return detailed metadata for a single asset.
 
@@ -96,11 +100,19 @@ def get_asset_detail(asset_key: str) -> Any:
     except NucleusError as err:
         raise HTTPException(
             status_code=500,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err
     except Exception as exc:
         err = translate(exc)
         raise HTTPException(
             status_code=500,
-            detail={"error_code": err.error_code, "user_message": err.user_message, "fix_hint": err.fix_hint},  # type: ignore[attr-defined]
+            detail={
+                "error_code": err.error_code,
+                "user_message": err.user_message,
+                "fix_hint": err.fix_hint,
+            },  # type: ignore[attr-defined]
         ) from err

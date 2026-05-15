@@ -40,7 +40,8 @@ def _truncate(value: Any) -> str:
 
 def render_materialization_result(
     result: MaterializationResult,
-    *, status: str = "success",
+    *,
+    status: str = "success",
     format_: Literal["text", "json"] = "text",
     console: Console | None = None,
 ) -> None:
@@ -48,9 +49,13 @@ def render_materialization_result(
     out = console or Console(file=sys.stdout, soft_wrap=False)
     if format_ == "json":
         payload = {
-            "_schema_version": 1, "asset_key": result.asset_key, "status": status,
-            "snapshot_id": result.snapshot_id, "row_count": result.row_count,
-            "duration_ms": result.duration_ms, "lineage_event_id": result.lineage_event_id,
+            "_schema_version": 1,
+            "asset_key": result.asset_key,
+            "status": status,
+            "snapshot_id": result.snapshot_id,
+            "row_count": result.row_count,
+            "duration_ms": result.duration_ms,
+            "lineage_event_id": result.lineage_event_id,
             "partition": result.partition,
             "materialized_at": result.materialized_at.isoformat(),
         }
@@ -68,8 +73,11 @@ def render_materialization_result(
     _snap = result.snapshot_id
     snap_display = (_snap[:16] + "…" if len(_snap) > 16 else _snap) or "-"
     table.add_row(
-        result.asset_key, status, snap_display,
-        str(result.row_count), str(result.duration_ms),
+        result.asset_key,
+        status,
+        snap_display,
+        str(result.row_count),
+        str(result.duration_ms),
         _truncate(result.lineage_event_id) or "-",
     )
     out.print(table)
@@ -121,9 +129,13 @@ def render_query_rows(
 
 
 def render_ingest_summary(
-    asset_key: str, rows_written: int, snapshot_id: str,
-    preview_columns: list[str], preview_rows: list[tuple[Any, ...]],
-    *, console: Console | None = None,
+    asset_key: str,
+    rows_written: int,
+    snapshot_id: str,
+    preview_columns: list[str],
+    preview_rows: list[tuple[Any, ...]],
+    *,
+    console: Console | None = None,
 ) -> None:
     """Render the ``nucleus ingest`` summary + 10-row preview."""
     out_console = console or Console(file=sys.stdout, soft_wrap=False)
@@ -202,8 +214,8 @@ def render_schedule_list(
 
     Per ADR-017 §3 + ``nucleus_cli_spec.md`` §3 schedule section.
     """
-    from nucleus.coordination.schedules import preview_schedule  # noqa: PLC0415
-    from nucleus.errors import NucleusError  # noqa: PLC0415
+    from nucleus.coordination.schedules import preview_schedule
+    from nucleus.errors import NucleusError
 
     out = console or Console(file=sys.stdout, soft_wrap=False)
 

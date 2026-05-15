@@ -134,8 +134,7 @@ def _emit(
     """
     if not _OL_AVAILABLE:
         _LOG.warning(
-            "lineage: openlineage-python not installed; skipping %s event "
-            "for asset %r (run %s)",
+            "lineage: openlineage-python not installed; skipping %s event for asset %r (run %s)",
             state_label,
             asset_key,
             run_id,
@@ -173,10 +172,7 @@ def _emit(
         client.emit(event)
     except Exception as exc:
         translated = NucleusLineageEmissionError(
-            user_message=(
-                f"Lineage emission failed for asset {asset_key!r} "
-                f"(run {run_id})."
-            ),
+            user_message=(f"Lineage emission failed for asset {asset_key!r} (run {run_id})."),
             fix_hint=(
                 "Check that the lineage directory is writable "
                 "(NUCLEUS_LINEAGE_DIR or default .nucleus/lineage/). "

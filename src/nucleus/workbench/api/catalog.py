@@ -17,7 +17,6 @@ from typing import Any
 
 # Docs: https://fastapi.tiangolo.com/tutorial/bigger-applications/
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import ORJSONResponse
 
 from nucleus.coordination.error_translation import translate
 from nucleus.errors import NucleusError
@@ -36,19 +35,19 @@ def _catalog_row(key: str) -> dict[str, Any] | None:
         return None
     checks = get_checks(key)
     # Namespace = first segment of key (e.g. "raw" from "raw.orders").
-    namespace = key.split(".")[0] if "." in key else "default"
+    namespace = key.split(".", maxsplit=1)[0] if "." in key else "default"
     return {
-        "key":          defn.key,
-        "namespace":    namespace,
+        "key": defn.key,
+        "namespace": namespace,
         "has_schedule": defn.schedule is not None,
         "has_contract": defn.contract is not None,
-        "check_count":  len(checks),
-        "dep_count":    len(defn.deps),
-        "compute":      defn.compute,
+        "check_count": len(checks),
+        "dep_count": len(defn.deps),
+        "compute": defn.compute,
     }
 
 
-@router.get("", response_class=ORJSONResponse)
+@router.get("")
 def list_catalog(
     q: str = "",
     page: int = 1,
@@ -100,9 +99,9 @@ def list_catalog(
         raise HTTPException(
             status_code=500,
             detail={
-                "error_code":   err.error_code,          # type: ignore[attr-defined]
-                "user_message": err.user_message,        # type: ignore[attr-defined]
-                "fix_hint":     err.fix_hint,            # type: ignore[attr-defined]
+                "error_code": err.error_code,  # type: ignore[attr-defined]
+                "user_message": err.user_message,  # type: ignore[attr-defined]
+                "fix_hint": err.fix_hint,  # type: ignore[attr-defined]
             },
         ) from err
     except Exception as exc:
@@ -110,8 +109,8 @@ def list_catalog(
         raise HTTPException(
             status_code=500,
             detail={
-                "error_code":   err.error_code,          # type: ignore[attr-defined]
-                "user_message": err.user_message,        # type: ignore[attr-defined]
-                "fix_hint":     err.fix_hint,            # type: ignore[attr-defined]
+                "error_code": err.error_code,  # type: ignore[attr-defined]
+                "user_message": err.user_message,  # type: ignore[attr-defined]
+                "fix_hint": err.fix_hint,  # type: ignore[attr-defined]
             },
         ) from err

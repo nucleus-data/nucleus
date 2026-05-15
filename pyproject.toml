@@ -175,7 +175,7 @@ lineage-advanced = [
 # Development environment
 dev = [
   # Code quality
-  "ruff==0.8.4",                    # Docs: https://docs.astral.sh/ruff/
+  "ruff==0.15.13",                   # Docs: https://docs.astral.sh/ruff/ — Upgraded 2026-05-15 per ADR-027; rollback: pip install ruff==0.8.4
   "mypy==1.13.0",                   # Docs: https://mypy.readthedocs.io/
   "pre-commit==4.0.1",              # Docs: https://pre-commit.com/
   "psutil==7.2.2",                  # Boot-time + memory measurement (PoC #4). Docs: https://psutil.readthedocs.io/
@@ -266,6 +266,9 @@ exclude = [
 line-length = 100
 target-version = "py311"
 src = ["src", "tests", "poc", "scripts"]
+exclude = [
+  "src/nucleus/templates/",  # template files use str.format() escapes ({{}} not {}) — ruff must not touch
+]
 
 [tool.ruff.lint]
 select = [
@@ -291,11 +294,17 @@ ignore = [
   "E501",   # line too long (handled by formatter)
   "PLR0913", # too many arguments (we use kwargs heavily)
   "PLR2004", # magic value comparison (too noisy for SQL/data code)
+  "PLC0415", # import-outside-top-level (lazy imports are intentional for boot time per PoC #4)
+  "SIM105",  # use contextlib.suppress() — low-priority; existing try/except/pass patterns
+  "N818",    # exception-name-should-end-in-error — NucleusRunCancelled intentionally named as signal
+  "RUF022",  # unsorted-dunder-all — __all__ ordered by logical grouping (ADR-006 §1 layer bands)
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["PLR2004", "S101", "PLR0913"]  # tests can use magic values, assert, many args
 "poc/**/*.py" = ["PLR2004", "S101"]               # PoCs are exploratory
+"src/nucleus/cli/main.py" = ["E402"]              # intentional late imports for command registration
+"src/nucleus/coordination/asset_materialization.py" = ["E402"]  # SDK imports after logger init (circular-import safe)
 
 [tool.ruff.lint.isort]
 known-first-party = ["nucleus"]

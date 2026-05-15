@@ -1,6 +1,6 @@
 # ADR-021: MkDocs Material Documentation Stack
 
-**Status:** PROPOSED
+**Status:** ACCEPTED
 **Date:** 2026-05-15
 **Author:** Nucleus Team
 **Supersedes:** None (first docs stack ADR)
@@ -20,6 +20,8 @@ Requirements:
 5. Matches the editorial brand (Indigo/Deep Purple palette, Inter + JetBrains Mono fonts)
 6. Build artifact is a static site (deployable to GitHub Pages, Cloudflare Pages, Vercel)
 7. Must integrate with existing `pyproject.toml` extras pattern and CI workflow
+
+Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 ---
 

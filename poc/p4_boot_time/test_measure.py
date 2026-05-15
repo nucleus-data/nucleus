@@ -70,10 +70,15 @@ def test_idle_ram_reports_positive_mb_or_unavailable() -> None:
 
 def test_main_returns_nonzero_when_cold_boot_exceeds_target() -> None:
     fake = [PhaseResult(name="imports", duration_s=12.0, ok=True, target_s=3.0)]
-    with patch(
-        "poc.p4_boot_time.measure.measure_total_cold_boot", return_value=(15.0, fake),
-    ), patch(
-        "poc.p4_boot_time.measure.measure_idle_ram", return_value=(100.0, "patched"),
+    with (
+        patch(
+            "poc.p4_boot_time.measure.measure_total_cold_boot",
+            return_value=(15.0, fake),
+        ),
+        patch(
+            "poc.p4_boot_time.measure.measure_idle_ram",
+            return_value=(100.0, "patched"),
+        ),
     ):
         rc = main()
     assert rc == 1

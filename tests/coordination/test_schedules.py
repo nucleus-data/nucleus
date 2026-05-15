@@ -147,9 +147,7 @@ class TestListSchedules:
 class TestPreviewSchedule:
     """preview_schedule() returns ISO-8601 UTC strings via croniter."""
 
-    _ISO8601_RE = re.compile(
-        r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?\+\d{2}:\d{2}$"
-    )
+    _ISO8601_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?\+\d{2}:\d{2}$")
 
     def test_returns_three_run_times_by_default(self) -> None:
         @nucleus.asset("marts.revenue", schedule="0 2 * * *")

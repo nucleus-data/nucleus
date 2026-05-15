@@ -28,9 +28,7 @@ from pathlib import Path
 # Docs: https://fastapi.tiangolo.com/tutorial/bigger-applications/
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import ORJSONResponse
 
-# Docs: https://fastapi.tiangolo.com/advanced/custom-response/#use-orjsonresponse
 # Docs: https://fastapi.tiangolo.com/tutorial/static-files/
 from fastapi.staticfiles import StaticFiles
 
@@ -54,7 +52,6 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Nucleus Workbench",
         version="0.2.0",
-        default_response_class=ORJSONResponse,  # ~3x faster vs default JSONResponse
         docs_url="/api/docs",
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",

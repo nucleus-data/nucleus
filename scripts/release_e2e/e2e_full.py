@@ -23,7 +23,6 @@ Refs:
 from __future__ import annotations
 
 import argparse
-import contextlib
 import json
 import os
 import shutil
@@ -32,10 +31,10 @@ import subprocess
 import sys
 import tempfile
 import time
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Callable
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -62,21 +61,22 @@ TEMPLATE_FILES = (
     "assets/example.py",
     "data/.gitkeep",
 )
-COLD_BOOT_THRESHOLD_S = 1.5   # Suite A1 / K1
-UP_BOOT_THRESHOLD_S = 10.0    # Suite A5 per nucleus_cli_spec.md §3.2
-VERSION_THRESHOLD_S = 1.5     # Suite A2 / K1
+COLD_BOOT_THRESHOLD_S = 1.5  # Suite A1 / K1
+UP_BOOT_THRESHOLD_S = 10.0  # Suite A5 per nucleus_cli_spec.md §3.2
+VERSION_THRESHOLD_S = 1.5  # Suite A2 / K1
 
 
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class ScenarioResult:
     suite: str
     scenario_id: str
     name: str
-    status: str          # PASS | FAIL | SKIP | ERROR
+    status: str  # PASS | FAIL | SKIP | ERROR
     elapsed_s: float
     detail: str = ""
     skip_reason: str = ""
@@ -146,6 +146,7 @@ class E2EReport:
 # Utilities
 # ---------------------------------------------------------------------------
 
+
 def _nucleus_cmd() -> list[str]:
     """Docs: https://docs.python.org/3/library/shutil.html#shutil.which"""
     binary = shutil.which("nucleus")
@@ -189,7 +190,9 @@ def _seed_sqlite(db_path: Path) -> None:
     """
     conn = sqlite3.connect(str(db_path))
     try:
-        conn.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT NOT NULL)"
+        )
         conn.executemany(
             "INSERT OR REPLACE INTO users (id, name) VALUES (?, ?)",
             [(1, "alice"), (2, "bob"), (3, "carol")],
@@ -199,7 +202,9 @@ def _seed_sqlite(db_path: Path) -> None:
         conn.close()
 
 
-def _pass(name: str, suite: str, scenario_id: str, elapsed: float, detail: str = "") -> ScenarioResult:
+def _pass(
+    name: str, suite: str, scenario_id: str, elapsed: float, detail: str = ""
+) -> ScenarioResult:
     print(f"  [{scenario_id}] {name:<40} PASS  ({elapsed:.2f}s)")
     return ScenarioResult(suite, scenario_id, name, "PASS", elapsed, detail)
 
@@ -224,6 +229,7 @@ def _stub(name: str, suite: str, scenario_id: str) -> ScenarioResult:
 # Suite A — Boot + Lifecycle (FULLY IMPLEMENTED)
 # ---------------------------------------------------------------------------
 
+
 def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     """Suite A: Boot + Lifecycle (10 scenarios).
 
@@ -231,7 +237,7 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     Ref: nucleus_cli_spec.md §3.1–§3.3, §3.7; v4.1 §11.2.
     """
     suite = SuiteResult("A", "Boot + Lifecycle")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     project = "test-demo-a"
     project_dir = tmpdir / project
 
@@ -244,18 +250,33 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     if dry_run:
         suite.scenarios.append(_skip("A1 version cold boot", "A", "A1", "dry-run"))
     elif rc != 0:
-        suite.scenarios.append(_fail("A1 version cold boot", "A", "A1", elapsed,
-                                     f"exit {rc}: {err.strip()[:120]}"))
+        suite.scenarios.append(
+            _fail("A1 version cold boot", "A", "A1", elapsed, f"exit {rc}: {err.strip()[:120]}")
+        )
     elif elapsed > VERSION_THRESHOLD_S:
-        suite.scenarios.append(_fail("A1 version cold boot", "A", "A1", elapsed,
-                                     f"Too slow: {elapsed:.2f}s > {VERSION_THRESHOLD_S}s threshold"))
+        suite.scenarios.append(
+            _fail(
+                "A1 version cold boot",
+                "A",
+                "A1",
+                elapsed,
+                f"Too slow: {elapsed:.2f}s > {VERSION_THRESHOLD_S}s threshold",
+            )
+        )
     else:
         # Check for required version strings (no external classnames)
         required = ["nucleus", "duckdb", "polars"]
         missing = [tok for tok in required if tok.lower() not in out.lower()]
         if missing:
-            suite.scenarios.append(_fail("A1 version cold boot", "A", "A1", elapsed,
-                                         f"Missing version strings: {missing}"))
+            suite.scenarios.append(
+                _fail(
+                    "A1 version cold boot",
+                    "A",
+                    "A1",
+                    elapsed,
+                    f"Missing version strings: {missing}",
+                )
+            )
         else:
             suite.scenarios.append(_pass("A1 version cold boot", "A", "A1", elapsed))
 
@@ -264,11 +285,19 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     if dry_run:
         suite.scenarios.append(_skip("A2 --help response time", "A", "A2", "dry-run"))
     elif rc != 0:
-        suite.scenarios.append(_fail("A2 --help response time", "A", "A2", elapsed,
-                                     f"exit {rc}: {err.strip()[:120]}"))
+        suite.scenarios.append(
+            _fail("A2 --help response time", "A", "A2", elapsed, f"exit {rc}: {err.strip()[:120]}")
+        )
     elif elapsed > 0.5:
-        suite.scenarios.append(_fail("A2 --help response time", "A", "A2", elapsed,
-                                     f"Too slow: {elapsed:.2f}s > 0.5s threshold"))
+        suite.scenarios.append(
+            _fail(
+                "A2 --help response time",
+                "A",
+                "A2",
+                elapsed,
+                f"Too slow: {elapsed:.2f}s > 0.5s threshold",
+            )
+        )
     else:
         suite.scenarios.append(_pass("A2 --help response time", "A", "A2", elapsed))
 
@@ -277,18 +306,31 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     if dry_run:
         suite.scenarios.append(_skip("A3 init scaffold", "A", "A3", "dry-run"))
     elif rc != 0 and "not yet implemented" in err:
-        suite.scenarios.append(_skip("A3 init scaffold", "A", "A3", "v0.1 stub (not yet implemented)"))
+        suite.scenarios.append(
+            _skip("A3 init scaffold", "A", "A3", "v0.1 stub (not yet implemented)")
+        )
     elif rc != 0:
-        suite.scenarios.append(_fail("A3 init scaffold", "A", "A3", elapsed,
-                                     f"exit {rc}: {err.strip()[:120]}"))
+        suite.scenarios.append(
+            _fail("A3 init scaffold", "A", "A3", elapsed, f"exit {rc}: {err.strip()[:120]}")
+        )
     else:
         missing = [f for f in TEMPLATE_FILES if not (project_dir / f).exists()]
         if missing:
-            suite.scenarios.append(_fail("A3 init scaffold", "A", "A3", elapsed,
-                                         f"Missing scaffolded files: {missing}"))
+            suite.scenarios.append(
+                _fail(
+                    "A3 init scaffold", "A", "A3", elapsed, f"Missing scaffolded files: {missing}"
+                )
+            )
         else:
-            suite.scenarios.append(_pass("A3 init scaffold", "A", "A3", elapsed,
-                                         f"All {len(TEMPLATE_FILES)} template files present"))
+            suite.scenarios.append(
+                _pass(
+                    "A3 init scaffold",
+                    "A",
+                    "A3",
+                    elapsed,
+                    f"All {len(TEMPLATE_FILES)} template files present",
+                )
+            )
 
     # A4: idempotency (re-run in existing dir)
     if project_dir.exists():
@@ -296,15 +338,35 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         if dry_run:
             suite.scenarios.append(_skip("A4 init idempotency", "A", "A4", "dry-run"))
         elif rc == 0:
-            suite.scenarios.append(_fail("A4 init idempotency", "A", "A4", elapsed,
-                                         "Should have exited non-zero for existing non-empty dir"))
-        elif rc != 0 and ("NucleusIOError" in err or "non-empty" in err.lower()
-                          or "already exists" in err.lower() or "NE1005" in err):
-            suite.scenarios.append(_pass("A4 init idempotency", "A", "A4", elapsed,
-                                         f"Correctly rejected with exit {rc}"))
+            suite.scenarios.append(
+                _fail(
+                    "A4 init idempotency",
+                    "A",
+                    "A4",
+                    elapsed,
+                    "Should have exited non-zero for existing non-empty dir",
+                )
+            )
+        elif rc != 0 and (
+            "NucleusIOError" in err
+            or "non-empty" in err.lower()
+            or "already exists" in err.lower()
+            or "NE1005" in err
+        ):
+            suite.scenarios.append(
+                _pass(
+                    "A4 init idempotency", "A", "A4", elapsed, f"Correctly rejected with exit {rc}"
+                )
+            )
         else:
-            suite.scenarios.append(_skip("A4 init idempotency", "A", "A4",
-                                         f"exit {rc} but unclear error; details: {err.strip()[:80]}"))
+            suite.scenarios.append(
+                _skip(
+                    "A4 init idempotency",
+                    "A",
+                    "A4",
+                    f"exit {rc} but unclear error; details: {err.strip()[:80]}",
+                )
+            )
     else:
         suite.scenarios.append(_skip("A4 init idempotency", "A", "A4", "A3 must pass first"))
 
@@ -312,8 +374,12 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     docker_available = shutil.which("docker") is not None
     if not docker_available or dry_run:
         reason = "dry-run mode" if dry_run else "Docker not available in this environment"
-        for sid, name in [("A5", "up MinIO < 30s"), ("A6", "down < 5s"),
-                          ("A7", "up-down-up cycle"), ("A8", "malformed config rejected")]:
+        for sid, name in [
+            ("A5", "up MinIO < 30s"),
+            ("A6", "down < 5s"),
+            ("A7", "up-down-up cycle"),
+            ("A8", "malformed config rejected"),
+        ]:
             suite.scenarios.append(_skip(f"{sid} {name}", "A", sid, reason))
     else:
         # A5: nucleus up
@@ -321,11 +387,19 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         if rc != 0 and "not yet implemented" in err:
             suite.scenarios.append(_skip("A5 up MinIO < 30s", "A", "A5", "v0.1 stub"))
         elif rc != 0:
-            suite.scenarios.append(_fail("A5 up MinIO < 30s", "A", "A5", elapsed,
-                                         f"exit {rc}: {err.strip()[:120]}"))
+            suite.scenarios.append(
+                _fail("A5 up MinIO < 30s", "A", "A5", elapsed, f"exit {rc}: {err.strip()[:120]}")
+            )
         elif elapsed > UP_BOOT_THRESHOLD_S:
-            suite.scenarios.append(_fail("A5 up MinIO < 30s", "A", "A5", elapsed,
-                                         f"Too slow: {elapsed:.2f}s > {UP_BOOT_THRESHOLD_S}s"))
+            suite.scenarios.append(
+                _fail(
+                    "A5 up MinIO < 30s",
+                    "A",
+                    "A5",
+                    elapsed,
+                    f"Too slow: {elapsed:.2f}s > {UP_BOOT_THRESHOLD_S}s",
+                )
+            )
         else:
             suite.scenarios.append(_pass("A5 up MinIO < 30s", "A", "A5", elapsed))
 
@@ -334,11 +408,13 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         if rc != 0 and "not yet implemented" in err:
             suite.scenarios.append(_skip("A6 down < 5s", "A", "A6", "v0.1 stub"))
         elif rc != 0:
-            suite.scenarios.append(_fail("A6 down < 5s", "A", "A6", elapsed,
-                                         f"exit {rc}: {err.strip()[:120]}"))
+            suite.scenarios.append(
+                _fail("A6 down < 5s", "A", "A6", elapsed, f"exit {rc}: {err.strip()[:120]}")
+            )
         elif elapsed > 5.0:
-            suite.scenarios.append(_fail("A6 down < 5s", "A", "A6", elapsed,
-                                         f"Too slow: {elapsed:.2f}s > 5.0s"))
+            suite.scenarios.append(
+                _fail("A6 down < 5s", "A", "A6", elapsed, f"Too slow: {elapsed:.2f}s > 5.0s")
+            )
         else:
             suite.scenarios.append(_pass("A6 down < 5s", "A", "A6", elapsed))
 
@@ -352,8 +428,9 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         elif rc3 == 0:
             suite.scenarios.append(_pass("A7 up-down-up cycle", "A", "A7", elapsed))
         else:
-            suite.scenarios.append(_fail("A7 up-down-up cycle", "A", "A7", elapsed,
-                                         f"Second up failed: exit {rc3}"))
+            suite.scenarios.append(
+                _fail("A7 up-down-up cycle", "A", "A7", elapsed, f"Second up failed: exit {rc3}")
+            )
 
         # A8: malformed config
         malformed_yaml = project_dir / "nucleus_project.yaml"
@@ -363,13 +440,29 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
             rc, out, err, elapsed = _run([*nucleus, "run"], project_dir)
             malformed_yaml.write_text(orig, encoding="utf-8")
             if rc != 0:
-                suite.scenarios.append(_pass("A8 malformed config rejected", "A", "A8", elapsed,
-                                             f"Correctly rejected with exit {rc}"))
+                suite.scenarios.append(
+                    _pass(
+                        "A8 malformed config rejected",
+                        "A",
+                        "A8",
+                        elapsed,
+                        f"Correctly rejected with exit {rc}",
+                    )
+                )
             else:
-                suite.scenarios.append(_fail("A8 malformed config rejected", "A", "A8", elapsed,
-                                             "Should have failed on malformed config"))
+                suite.scenarios.append(
+                    _fail(
+                        "A8 malformed config rejected",
+                        "A",
+                        "A8",
+                        elapsed,
+                        "Should have failed on malformed config",
+                    )
+                )
         else:
-            suite.scenarios.append(_skip("A8 malformed config rejected", "A", "A8", "A3 must pass first"))
+            suite.scenarios.append(
+                _skip("A8 malformed config rejected", "A", "A8", "A3 must pass first")
+            )
 
     # A9: nucleus list — needs running project
     rc, out, err, elapsed = _run([*nucleus, "list"], project_dir)
@@ -389,20 +482,27 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     elif rc != 0 and "not yet implemented" in err:
         suite.scenarios.append(_skip("A10 describe asset", "A", "A10", "v0.1 stub"))
     elif rc != 0 and "NucleusAssetNotFound" in err:
-        suite.scenarios.append(_skip("A10 describe asset", "A", "A10",
-                                     "Asset not materialized yet (expected in integration)"))
+        suite.scenarios.append(
+            _skip(
+                "A10 describe asset",
+                "A",
+                "A10",
+                "Asset not materialized yet (expected in integration)",
+            )
+        )
     elif rc != 0:
         suite.scenarios.append(_fail("A10 describe asset", "A", "A10", elapsed, f"exit {rc}"))
     else:
         suite.scenarios.append(_pass("A10 describe asset", "A", "A10", elapsed))
 
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     return suite
 
 
 # ---------------------------------------------------------------------------
 # Suite I — Governance (FULLY IMPLEMENTED)
 # ---------------------------------------------------------------------------
+
 
 def run_suite_i(dry_run: bool) -> SuiteResult:
     """Suite I: Governance (8 scenarios).
@@ -411,7 +511,7 @@ def run_suite_i(dry_run: bool) -> SuiteResult:
     Ref: AGENTS.md §11.7; scripts/check_*.py.
     """
     suite = SuiteResult("I", "Governance")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
 
     print("\n[Suite I] Governance")
     print("-" * 60)
@@ -422,8 +522,9 @@ def run_suite_i(dry_run: bool) -> SuiteResult:
         scenario_name = f"{scenario_id} {script_name}"
 
         if not script_path.exists():
-            suite.scenarios.append(_skip(scenario_name, "I", scenario_id,
-                                         f"Script not found: {script_path}"))
+            suite.scenarios.append(
+                _skip(scenario_name, "I", scenario_id, f"Script not found: {script_path}")
+            )
             continue
 
         if dry_run:
@@ -436,10 +537,9 @@ def run_suite_i(dry_run: bool) -> SuiteResult:
             suite.scenarios.append(_pass(scenario_name, "I", scenario_id, elapsed))
         else:
             combined = (out + "\n" + err).strip()
-            suite.scenarios.append(_fail(scenario_name, "I", scenario_id, elapsed,
-                                         combined[:200]))
+            suite.scenarios.append(_fail(scenario_name, "I", scenario_id, elapsed, combined[:200]))
 
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     return suite
 
 
@@ -447,12 +547,13 @@ def run_suite_i(dry_run: bool) -> SuiteResult:
 # Suites B–H, J, K — STUBS (implement post-Wave-1)
 # ---------------------------------------------------------------------------
 
+
 def run_suite_b(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     """Suite B: Materialization (8 scenarios).
     TODO: implement post-Wave-1 (requires Wave-1B connector + Wave-1E test wiring).
     """
     suite = SuiteResult("B", "Materialization")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite B] Materialization — STUB (post-Wave-1)")
     for sid, name in [
         ("B1", "empty asset materialize"),
@@ -465,7 +566,7 @@ def run_suite_b(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         ("B8", "schema-contract violation NE2006"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "B", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     # TODO: implement post-Wave-1
     # B1: create temp @nucleus.asset returning empty DataFrame; nucleus run; verify snapshot
     # B2: create asset returning 1k-row pl.DataFrame; verify row_count
@@ -483,7 +584,7 @@ def run_suite_c(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     TODO: implement post-Wave-1 (requires materialized asset for C2–C6).
     """
     suite = SuiteResult("C", "Query")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite C] Query — STUB (post-Wave-1)")
     for sid, name in [
         ("C1", "SELECT 1 connectivity"),
@@ -494,7 +595,7 @@ def run_suite_c(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         ("C6", "1M rows no OOM"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "C", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     # TODO: implement post-Wave-1
     # C1: nucleus query "SELECT 1 AS one" -- nucleus up must be running
     # C2: nucleus query "SELECT count(*) FROM raw.users" after D1 ingest
@@ -511,7 +612,7 @@ def run_suite_d(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     D2 (bad creds) and D7 (filesystem CSV) can run without external infra.
     """
     suite = SuiteResult("D", "Ingest")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite D] Ingest — STUB (post-Wave-1)")
     for sid, name in [
         ("D1", "Postgres → Iceberg happy path"),
@@ -526,7 +627,7 @@ def run_suite_d(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         ("D10", "ingest --preview no commit"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "D", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     # TODO: implement post-Wave-1
     # D2 is high priority: nucleus ingest postgres://bad:creds@localhost/db --table t --as raw.t
     #   assert exit 1; assert "NucleusSourceConnectionError" or "NE1001" in stderr
@@ -541,7 +642,7 @@ def run_suite_e(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     E3 (invalid cron) can run without external infra — high priority.
     """
     suite = SuiteResult("E", "Scheduling")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite E] Scheduling — STUB (post-Wave-1)")
     for sid, name in [
         ("E1", "schedule list enumerates"),
@@ -551,7 +652,7 @@ def run_suite_e(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         ("E5", "timezone-aware schedules"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "E", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     # TODO: implement post-Wave-1
     # E3: python -c "import nucleus; @nucleus.asset(table='t', schedule='* * * * * *') def t(ctx): pass"
     #   assert NucleusScheduleParseError raised; see nucleus_ctx_sdk_spec.md §2.1
@@ -563,7 +664,7 @@ def run_suite_f(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     TODO: implement post-Wave-1A (workbench).
     """
     suite = SuiteResult("F", "Workbench UI")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite F] Workbench UI — STUB (post-Wave-1A)")
     for sid, name in [
         ("F1", "workbench up serves :8080"),
@@ -576,7 +677,7 @@ def run_suite_f(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         ("F8", "static fallback offline"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "F", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     # TODO: implement post-Wave-1A
     # F1: subprocess nucleus workbench up; wait; requests.get("http://localhost:8080/"); assert 200
     # F2: requests.get("http://localhost:8080/api/dashboard/summary"); assert 200 + valid JSON
@@ -590,7 +691,7 @@ def run_suite_g(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     G4 (missing API key fix_hint) can run without a real API key.
     """
     suite = SuiteResult("G", "AI Copilot")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite G] AI Copilot — STUB (post-Wave-1)")
     for sid, name in [
         ("G1", "mocked LLM response"),
@@ -599,7 +700,7 @@ def run_suite_g(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         ("G4", "missing API key fix_hint"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "G", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     # TODO: implement post-Wave-1
     # G4: env without ANTHROPIC_API_KEY; nucleus chat "test"; assert exit 1; assert NE4001
     #   assert "ANTHROPIC_API_KEY" in stderr (fix_hint); assert "AuthenticationError" NOT in stderr
@@ -611,7 +712,7 @@ def run_suite_h(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     TODO: H1 (fix_hint check) can run now via Python import.
     """
     suite = SuiteResult("H", "Error UX")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite H] Error UX — partial STUB")
 
     # H1: every NE-code has a fix_hint — runnable NOW via Python import
@@ -621,7 +722,10 @@ def run_suite_h(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         try:
             t0 = time.perf_counter()
             result = subprocess.run(
-                [_python(), "-c", """
+                [
+                    _python(),
+                    "-c",
+                    """
 import sys
 sys.path.insert(0, '.')
 from nucleus import errors as e
@@ -633,17 +737,27 @@ if missing:
     print(f'MISSING fix_hint: {missing}', file=sys.stderr)
     sys.exit(1)
 print(f'All {len(subclasses)} NucleusError subclasses have fix_hint')
-"""],
+""",
+                ],
                 cwd=str(REPO_ROOT),
-                capture_output=True, text=True, check=False, timeout=30,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=30,
             )
             elapsed = time.perf_counter() - t0
             if result.returncode == 0:
-                suite.scenarios.append(_pass("H1 every NE-code has fix_hint", "H", "H1", elapsed,
-                                             result.stdout.strip()))
+                suite.scenarios.append(
+                    _pass(
+                        "H1 every NE-code has fix_hint", "H", "H1", elapsed, result.stdout.strip()
+                    )
+                )
             else:
-                suite.scenarios.append(_fail("H1 every NE-code has fix_hint", "H", "H1", elapsed,
-                                             result.stderr.strip()))
+                suite.scenarios.append(
+                    _fail(
+                        "H1 every NE-code has fix_hint", "H", "H1", elapsed, result.stderr.strip()
+                    )
+                )
         except Exception as exc:
             suite.scenarios.append(_fail("H1 every NE-code has fix_hint", "H", "H1", 0.0, str(exc)))
 
@@ -655,7 +769,7 @@ print(f'All {len(subclasses)} NucleusError subclasses have fix_hint')
         ("H6", "--quiet suppresses output"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "H", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     # TODO: implement post-Wave-1
     # H2: covered by Suite I dagster_leak_check; additional: run full CLI and capture output
     # H3: nucleus ingest bad_dsn; assert "Traceback" NOT in stderr by default; with --verbose it IS
@@ -671,27 +785,35 @@ def run_suite_j(tmpdir: Path, dry_run: bool) -> SuiteResult:
     This suite delegates to run_chaos.py for those two.
     """
     suite = SuiteResult("J", "Chaos + Reliability")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite J] Chaos + Reliability — partial STUB")
 
     # J1 + J2: delegate to run_chaos.py
     chaos_script = SCRIPTS_DIR / "release_e2e" / "run_chaos.py"
     for sid, name in [("J1", "disk-full mid-write"), ("J2", "kill-9 mid-commit")]:
         if not chaos_script.exists():
-            suite.scenarios.append(_skip(f"{sid} {name}", "J", sid,
-                                         "run_chaos.py not found; run scripts/release_e2e/run_chaos.py"))
+            suite.scenarios.append(
+                _skip(
+                    f"{sid} {name}",
+                    "J",
+                    sid,
+                    "run_chaos.py not found; run scripts/release_e2e/run_chaos.py",
+                )
+            )
         elif dry_run:
             suite.scenarios.append(_skip(f"{sid} {name}", "J", sid, "dry-run"))
         else:
             rc, out, err, elapsed = _run(
                 [_python(), str(chaos_script), f"--scenario={sid.lower()}"],
-                REPO_ROOT, timeout=120,
+                REPO_ROOT,
+                timeout=120,
             )
             if rc == 0:
                 suite.scenarios.append(_pass(f"{sid} {name}", "J", sid, elapsed))
             else:
-                suite.scenarios.append(_fail(f"{sid} {name}", "J", sid, elapsed,
-                                             (out + err).strip()[:200]))
+                suite.scenarios.append(
+                    _fail(f"{sid} {name}", "J", sid, elapsed, (out + err).strip()[:200])
+                )
 
     for sid, name in [
         ("J3", "MinIO down retries + NE error"),
@@ -702,7 +824,7 @@ def run_suite_j(tmpdir: Path, dry_run: bool) -> SuiteResult:
         ("J8", "S3 multipart rollback"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "J", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     return suite
 
 
@@ -711,7 +833,7 @@ def run_suite_k(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     K1 (cold boot) is partially implemented (reuses A1 timing).
     """
     suite = SuiteResult("K", "Performance")
-    suite.started_at = datetime.now(timezone.utc).isoformat()
+    suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite K] Performance — partial STUB")
 
     # K1: cold boot < 1.5s — runnable now
@@ -723,16 +845,31 @@ def run_suite_k(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     if dry_run:
         suite.scenarios.append(_skip("K1 version cold boot < 1.5s", "K", "K1", "dry-run"))
     elif not times:
-        suite.scenarios.append(_fail("K1 version cold boot < 1.5s", "K", "K1", 0.0,
-                                     "nucleus version failed"))
+        suite.scenarios.append(
+            _fail("K1 version cold boot < 1.5s", "K", "K1", 0.0, "nucleus version failed")
+        )
     else:
         p95 = sorted(times)[int(len(times) * 0.95)] if len(times) > 1 else times[0]
         if p95 <= COLD_BOOT_THRESHOLD_S:
-            suite.scenarios.append(_pass("K1 version cold boot < 1.5s", "K", "K1", p95,
-                                         f"P95={p95:.2f}s (3 runs: {[round(t, 2) for t in times]})"))
+            suite.scenarios.append(
+                _pass(
+                    "K1 version cold boot < 1.5s",
+                    "K",
+                    "K1",
+                    p95,
+                    f"P95={p95:.2f}s (3 runs: {[round(t, 2) for t in times]})",
+                )
+            )
         else:
-            suite.scenarios.append(_fail("K1 version cold boot < 1.5s", "K", "K1", p95,
-                                         f"P95={p95:.2f}s > {COLD_BOOT_THRESHOLD_S}s threshold"))
+            suite.scenarios.append(
+                _fail(
+                    "K1 version cold boot < 1.5s",
+                    "K",
+                    "K1",
+                    p95,
+                    f"P95={p95:.2f}s > {COLD_BOOT_THRESHOLD_S}s threshold",
+                )
+            )
 
     for sid, name in [
         ("K2", "list < 2s for 100 assets"),
@@ -741,7 +878,7 @@ def run_suite_k(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         ("K5", "Workbench Lighthouse ≥ 90"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "K", sid))
-    suite.finished_at = datetime.now(timezone.utc).isoformat()
+    suite.finished_at = datetime.now(UTC).isoformat()
     return suite
 
 
@@ -749,17 +886,18 @@ def run_suite_k(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
 # Report generation
 # ---------------------------------------------------------------------------
 
+
 def _build_report(report: E2EReport) -> str:
     """Build a Markdown summary of the E2E report."""
     lines = [
         "# Nucleus v0.2 E2E Report",
-        f"",
+        "",
         f"**Generated**: {report.generated_at}",
         f"**Dry run**: {report.dry_run}",
         f"**Suites**: {', '.join(report.suites_requested)}",
         f"**Overall**: {report.overall_status} "
         f"({report.total_passed} passed / {report.total_failed} failed / {report.total_skipped} skipped)",
-        f"",
+        "",
         "## Suite Summary",
         "",
         "| Suite | Name | Pass | Fail | Skip | Rate |",
@@ -767,7 +905,9 @@ def _build_report(report: E2EReport) -> str:
     ]
     for s in report.suite_results:
         rate = f"{s.pass_rate * 100:.0f}%" if (s.passed + s.failed) > 0 else "N/A"
-        lines.append(f"| {s.suite_id} | {s.name} | {s.passed} | {s.failed} | {s.skipped} | {rate} |")
+        lines.append(
+            f"| {s.suite_id} | {s.name} | {s.passed} | {s.failed} | {s.skipped} | {rate} |"
+        )
 
     lines += ["", "## Scenario Details", ""]
     for s in report.suite_results:
@@ -777,14 +917,16 @@ def _build_report(report: E2EReport) -> str:
             emoji = {"PASS": "✅", "FAIL": "❌", "SKIP": "⏭", "ERROR": "⚠️"}.get(sc.status, "?")
             detail = sc.detail or sc.skip_reason
             detail_str = f" — {detail[:100]}" if detail else ""
-            lines.append(f"- {emoji} **{sc.scenario_id}** {sc.name} ({sc.elapsed_s:.2f}s){detail_str}")
+            lines.append(
+                f"- {emoji} **{sc.scenario_id}** {sc.name} ({sc.elapsed_s:.2f}s){detail_str}"
+            )
         lines.append("")
     return "\n".join(lines)
 
 
 def _save_results(report: E2EReport, output_path: Path | None) -> None:
     """Save JSON report and Markdown summary."""
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+    ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
 
     json_path = output_path or (DOCS_RELEASE_DIR / f"e2e_results_{ts}.json")
     md_path = json_path.with_suffix(".md")
@@ -813,15 +955,19 @@ def main(argv: list[str] | None = None) -> int:
         description="Nucleus v0.2 E2E orchestrator (docs/release/E2E_TEST_PLAN.md)."
     )
     parser.add_argument(
-        "--suite", default="all",
+        "--suite",
+        default="all",
         help="Comma-separated suite IDs (A,B,C...) or 'all'. Default: all",
     )
     parser.add_argument(
-        "--output", default=None, type=Path,
+        "--output",
+        default=None,
+        type=Path,
         help="JSON output path (default: docs/release/e2e_results_<ts>.json)",
     )
     parser.add_argument(
-        "--dry-run", action="store_true",
+        "--dry-run",
+        action="store_true",
         help="Skip all I/O-touching tests; only verify script structure compiles",
     )
     args = parser.parse_args(argv)
@@ -838,7 +984,7 @@ def main(argv: list[str] | None = None) -> int:
     print("=" * 60)
 
     report = E2EReport(
-        generated_at=datetime.now(timezone.utc).isoformat(),
+        generated_at=datetime.now(UTC).isoformat(),
         suites_requested=requested,
         dry_run=args.dry_run,
     )

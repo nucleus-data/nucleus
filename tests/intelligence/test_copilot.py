@@ -31,7 +31,9 @@ from nucleus.errors import (
 FIXTURE_ROOT = Path(__file__).parent / "fixtures" / "test_project"
 
 
-def _make_mock_response(content: str = "Hello from Copilot!", provider: str = "anthropic") -> MagicMock:
+def _make_mock_response(
+    content: str = "Hello from Copilot!", provider: str = "anthropic"
+) -> MagicMock:
     """Build a mock litellm completion response in OpenAI Chat Completions shape."""
     resp = MagicMock()
     resp.choices = [MagicMock()]
@@ -298,9 +300,7 @@ _BANNED = ["litellm", "anthropic", "openai", "ollama", "LiteLLM", "API_KEY"]
 
 def _assert_no_banned_strings(text: str) -> None:
     for banned in _BANNED:
-        assert banned not in text, (
-            f"Banned string {banned!r} found in user-facing text: {text!r}"
-        )
+        assert banned not in text, f"Banned string {banned!r} found in user-facing text: {text!r}"
 
 
 def _assert_context_privacy(ctx: dict, project_root: Path) -> None:
@@ -313,6 +313,7 @@ def _assert_context_privacy(ctx: dict, project_root: Path) -> None:
 
     # Rule 3: no OS username
     import getpass
+
     try:
         username = getpass.getuser()
         if username:

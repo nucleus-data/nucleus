@@ -32,6 +32,7 @@ if str(_SRC) not in sys.path:
 # Marker behavior — automatic skip when conditions not met
 # ============================================================================
 
+
 def pytest_collection_modifyitems(
     config: pytest.Config,  # noqa: ARG001 — reserved for future use
     items: list[pytest.Item],
@@ -47,7 +48,7 @@ def pytest_collection_modifyitems(
     skip_integration = pytest.mark.skip(
         reason="Integration env vars not set "
         f"(need: {', '.join(integration_required_env)}). "
-        "Set them or run with `pytest -m \"not integration\"`."
+        'Set them or run with `pytest -m "not integration"`.'
     )
     for item in items:
         if "integration" in item.keywords and not has_integration_env:

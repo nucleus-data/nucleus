@@ -184,8 +184,7 @@ def _validate_deps(deps: object, *, key: str) -> tuple[str, ...]:
                 f"keys; got {type(deps).__name__!r}."
             ),
             fix_hint=(
-                "Pass a list or tuple of strings, e.g. "
-                "deps=['raw.orders', 'dim.customers']."
+                "Pass a list or tuple of strings, e.g. deps=['raw.orders', 'dim.customers']."
             ),
         )
     out: list[str] = []
@@ -298,7 +297,7 @@ def _validate_schedule(schedule: object, *, key: str) -> str | None:
     # Docs: https://pypi.org/project/croniter/ (croniter==3.0.4)
     # croniter.is_valid() validates a 5-field cron expression.
     try:
-        from croniter import croniter  # noqa: PLC0415
+        from croniter import croniter
     except ImportError as exc:
         raise NucleusScheduleParseError(
             user_message=(
@@ -313,8 +312,7 @@ def _validate_schedule(schedule: object, *, key: str) -> str | None:
     if not croniter.is_valid(normalized):
         raise NucleusScheduleParseError(
             user_message=(
-                f"@nucleus.asset({key!r}, schedule={schedule!r}) is not a valid "
-                "cron expression."
+                f"@nucleus.asset({key!r}, schedule={schedule!r}) is not a valid cron expression."
             ),
             fix_hint=(
                 "Use a 5-field cron string (minute hour day month weekday), e.g. "
@@ -337,8 +335,7 @@ def _ensure_function(fn: object, *, role: str, key: str) -> Callable[..., Any]:
     if not callable(fn):
         raise NucleusInvalidAssetDefinition(
             user_message=(
-                f"@nucleus.{role}({key!r}) must decorate a callable; "
-                f"got {type(fn).__name__!r}."
+                f"@nucleus.{role}({key!r}) must decorate a callable; got {type(fn).__name__!r}."
             ),
             fix_hint="Apply the decorator directly above a `def` block.",
         )
@@ -437,8 +434,7 @@ def asset(
                 deps=["staging.orders", "dim.customers"],
                 contract=orders_contract,
             )
-            def marts_orders_clean(ctx):
-                ...
+            def marts_orders_clean(ctx): ...
     """
     validated_key = _validate_key(key, role="asset")
     validated_deps = _validate_deps(deps, key=validated_key)
@@ -521,8 +517,7 @@ def check(
         Soft check (warn-only)::
 
             @nucleus.check("sales.orders", severity="warn")
-            def check_freshness(ctx):
-                ...
+            def check_freshness(ctx): ...
     """
     validated_key = _validate_key(asset, role="check")
     if not isinstance(severity, str) or severity not in _VALID_SEVERITIES:
@@ -601,9 +596,7 @@ def get_scheduled_assets() -> tuple[_AssetDefinition, ...]:
     records for ``nucleus schedule list`` + ``nucleus schedule preview``.
     Returns the definitions in ascending key order for stable CLI output.
     """
-    return tuple(
-        defn for key in sorted(_ASSETS) if (defn := _ASSETS[key]).schedule is not None
-    )
+    return tuple(defn for key in sorted(_ASSETS) if (defn := _ASSETS[key]).schedule is not None)
 
 
 def _reset_registry_for_tests() -> None:

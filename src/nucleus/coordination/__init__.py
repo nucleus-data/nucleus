@@ -30,4 +30,27 @@ from __future__ import annotations
 # Stability: Beta.
 from nucleus.coordination.asset_materialization import materialize_asset
 
-__all__ = ["materialize_asset"]
+# Mini-scheduler daemon (ADR-017 v0.2.1).
+# Stability: Beta.
+from nucleus.coordination.daemon import (
+    DaemonStatus,
+    get_daemon_status,
+    start_daemon,
+    stop_daemon,
+    trigger_asset,
+)
+
+# Run ledger — durable NDJSON persistence (ADR-025 §P0-2).
+# Stability: Beta.
+from nucleus.coordination.run_ledger import RunLedger, RunRecord
+
+__all__ = [
+    "DaemonStatus",
+    "RunLedger",
+    "RunRecord",
+    "get_daemon_status",
+    "materialize_asset",
+    "start_daemon",
+    "stop_daemon",
+    "trigger_asset",
+]

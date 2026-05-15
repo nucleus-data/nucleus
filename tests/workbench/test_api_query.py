@@ -43,7 +43,9 @@ def test_query_missing_sql_field_returns_422(client) -> None:  # type: ignore[no
 
 def test_query_limit_validation(client, tmp_path) -> None:  # type: ignore[no-untyped-def]
     """Limit above 1000 is rejected by Pydantic."""
-    r = client.post("/api/query", json={"sql": "SELECT 1", "limit": 9999, "warehouse_dir": str(tmp_path)})
+    r = client.post(
+        "/api/query", json={"sql": "SELECT 1", "limit": 9999, "warehouse_dir": str(tmp_path)}
+    )
     # Pydantic v2 returns 422 for constraint violations
     assert r.status_code == 422
 

@@ -324,7 +324,7 @@ def dagit(
             # Docs: https://docs.python.org/3/library/subprocess.html#subprocess.Popen
             # We let the child inherit our stdio so the user can read the
             # webserver's startup banner directly. No shell=True (security).
-            proc: subprocess.Popen[bytes] = subprocess.Popen(  # noqa: S603
+            proc: subprocess.Popen[bytes] = subprocess.Popen(
                 argv,
                 stdout=sys.stdout,
                 stderr=sys.stderr,
@@ -345,9 +345,7 @@ def dagit(
         except OSError as exc:
             # Other OS-level failures (PermissionError on the binary, etc).
             raise NucleusDagitSubprocessError(
-                user_message=(
-                    "Failed to start the embedded orchestrator's web UI subprocess."
-                ),
+                user_message=("Failed to start the embedded orchestrator's web UI subprocess."),
                 fix_hint=(
                     f"Verify `dagster-webserver=={_DAGSTER_PIN}` is installed and "
                     "executable, then retry."
@@ -374,8 +372,7 @@ def dagit(
             _terminate_gracefully(proc)
             raise NucleusDagitSubprocessError(
                 user_message=(
-                    "The embedded orchestrator's web UI subprocess failed during "
-                    "execution."
+                    "The embedded orchestrator's web UI subprocess failed during execution."
                 ),
                 fix_hint=(
                     "Re-run with --port <new> to rule out a port collision, or "

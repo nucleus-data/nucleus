@@ -27,7 +27,6 @@ Refs:
 from __future__ import annotations
 
 import argparse
-import ctypes
 import os
 import platform
 import shutil
@@ -36,15 +35,15 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
-import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
 
 REPO_ROOT = Path(__file__).parent.parent.parent
 NUCLEUS_CMD = (
-    [shutil.which("nucleus")] if shutil.which("nucleus")
+    [shutil.which("nucleus")]
+    if shutil.which("nucleus")
     else [sys.executable, "-m", "nucleus.cli.main"]
 )
 IS_WINDOWS = platform.system() == "Windows"
@@ -55,11 +54,12 @@ IS_LINUX = platform.system() == "Linux"
 # Data structures
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class ChaosResult:
     scenario_id: str
     name: str
-    status: str          # PASS | FAIL | SKIP | ERROR
+    status: str  # PASS | FAIL | SKIP | ERROR
     elapsed_s: float
     detail: str = ""
     skip_reason: str = ""
@@ -86,6 +86,7 @@ class ChaosReport:
 # ---------------------------------------------------------------------------
 # Utilities
 # ---------------------------------------------------------------------------
+
 
 def _python() -> str:
     return sys.executable
@@ -120,6 +121,7 @@ def _result_stub(sid: str, name: str) -> ChaosResult:
 # J1: Disk-full mid-write → clean error + no orphan files  (FULLY IMPLEMENTED)
 # ---------------------------------------------------------------------------
 
+
 def run_j1_disk_full() -> ChaosResult:
     """J1: Disk-full mid-write → clean error + no orphan files.
 
@@ -149,13 +151,16 @@ def run_j1_disk_full() -> ChaosResult:
         rc = subprocess.run(
             [*NUCLEUS_CMD, "init", "j1_project"],
             cwd=str(tmpdir),
-            capture_output=True, check=False, timeout=30,
+            capture_output=True,
+            check=False,
+            timeout=30,
         ).returncode
 
         project_dir = tmpdir / "j1_project"
         if not project_dir.exists():
-            return _result_skip("J1", "disk-full mid-write",
-                                 "nucleus init not available (v0.1 stub or missing)")
+            return _result_skip(
+                "J1", "disk-full mid-write", "nucleus init not available (v0.1 stub or missing)"
+            )
 
         # Step 2: Seed SQLite source with 10k rows
         source_db = project_dir / "source.db"
@@ -183,10 +188,20 @@ def run_j1_disk_full() -> ChaosResult:
 
         # Step 4: Attempt ingest — expect failure (permission or IOError)
         result = subprocess.run(
-            [*NUCLEUS_CMD, "ingest", f"sqlite:///{source_db}",
-             "--table", "orders", "--as", "raw.orders"],
+            [
+                *NUCLEUS_CMD,
+                "ingest",
+                f"sqlite:///{source_db}",
+                "--table",
+                "orders",
+                "--as",
+                "raw.orders",
+            ],
             cwd=str(project_dir),
-            capture_output=True, text=True, check=False, timeout=60,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=60,
         )
 
         elapsed = time.perf_counter() - t0
@@ -200,8 +215,9 @@ def run_j1_disk_full() -> ChaosResult:
         # (c) ingest not yet implemented (SKIPPED stub)
 
         if "not yet implemented" in stderr:
-            return _result_skip("J1", "disk-full mid-write",
-                                 "nucleus ingest stub (not yet implemented)")
+            return _result_skip(
+                "J1", "disk-full mid-write", "nucleus ingest stub (not yet implemented)"
+            )
 
         # Check for orphan Parquet files if failure occurred
         orphan_partials = list(warehouse_dir.rglob("*.parquet.tmp"))
@@ -217,25 +233,45 @@ def run_j1_disk_full() -> ChaosResult:
                 or "Error:" in stderr  # nucleus error format
             )
             if has_traceback and not has_clean_error:
-                return _result_fail("J1", "disk-full mid-write", elapsed,
-                                     f"Raw Python traceback exposed: {stderr[:200]}")
+                return _result_fail(
+                    "J1",
+                    "disk-full mid-write",
+                    elapsed,
+                    f"Raw Python traceback exposed: {stderr[:200]}",
+                )
             if orphan_partials:
-                return _result_fail("J1", "disk-full mid-write", elapsed,
-                                     f"Orphan partial files found: {orphan_partials}")
-            return _result_pass("J1", "disk-full mid-write", elapsed,
-                                 f"Failed cleanly (exit {result.returncode}); no orphans")
-        else:
-            # Succeeded — just verify no orphan files were left
-            if orphan_partials:
-                return _result_fail("J1", "disk-full mid-write", elapsed,
-                                     f"Orphan partial files after success: {orphan_partials}")
-            return _result_pass("J1", "disk-full mid-write", elapsed,
-                                 "Ingest succeeded; no orphan partial files")
+                return _result_fail(
+                    "J1",
+                    "disk-full mid-write",
+                    elapsed,
+                    f"Orphan partial files found: {orphan_partials}",
+                )
+            return _result_pass(
+                "J1",
+                "disk-full mid-write",
+                elapsed,
+                f"Failed cleanly (exit {result.returncode}); no orphans",
+            )
+        # Succeeded — just verify no orphan files were left
+        if orphan_partials:
+            return _result_fail(
+                "J1",
+                "disk-full mid-write",
+                elapsed,
+                f"Orphan partial files after success: {orphan_partials}",
+            )
+        return _result_pass(
+            "J1", "disk-full mid-write", elapsed, "Ingest succeeded; no orphan partial files"
+        )
 
     except Exception as exc:
-        return ChaosResult("J1", "disk-full mid-write", "ERROR",
-                            time.perf_counter() - t0,
-                            detail=f"Test setup error: {exc}")
+        return ChaosResult(
+            "J1",
+            "disk-full mid-write",
+            "ERROR",
+            time.perf_counter() - t0,
+            detail=f"Test setup error: {exc}",
+        )
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -243,6 +279,7 @@ def run_j1_disk_full() -> ChaosResult:
 # ---------------------------------------------------------------------------
 # J2: Kill -9 mid-commit → Iceberg snapshot atomic  (FULLY IMPLEMENTED)
 # ---------------------------------------------------------------------------
+
 
 def run_j2_kill_mid_commit() -> ChaosResult:
     """J2: Kill -9 mid-commit → Iceberg snapshot is atomic.
@@ -271,13 +308,16 @@ def run_j2_kill_mid_commit() -> ChaosResult:
         rc = subprocess.run(
             [*NUCLEUS_CMD, "init", "j2_project"],
             cwd=str(tmpdir),
-            capture_output=True, check=False, timeout=30,
+            capture_output=True,
+            check=False,
+            timeout=30,
         ).returncode
 
         project_dir = tmpdir / "j2_project"
         if not project_dir.exists():
-            return _result_skip("J2", "kill-9 mid-commit",
-                                 "nucleus init not available (v0.1 stub or missing)")
+            return _result_skip(
+                "J2", "kill-9 mid-commit", "nucleus init not available (v0.1 stub or missing)"
+            )
 
         # Step 2: Seed SQLite with 50k rows (large enough to take time)
         source_db = project_dir / "big_source.db"
@@ -287,8 +327,10 @@ def run_j2_kill_mid_commit() -> ChaosResult:
         for batch_start in range(0, 50000, batch_size):
             conn.executemany(
                 "INSERT INTO orders VALUES (?, ?, ?)",
-                [(i, float(i) * 0.99, f"desc_{i}_" + "x" * 50)
-                 for i in range(batch_start, min(batch_start + batch_size, 50000))],
+                [
+                    (i, float(i) * 0.99, f"desc_{i}_" + "x" * 50)
+                    for i in range(batch_start, min(batch_start + batch_size, 50000))
+                ],
             )
         conn.commit()
         conn.close()
@@ -307,8 +349,15 @@ def run_j2_kill_mid_commit() -> ChaosResult:
 
         # Step 3: Start ingest as subprocess
         proc = subprocess.Popen(
-            [*NUCLEUS_CMD, "ingest", f"sqlite:///{source_db}",
-             "--table", "orders", "--as", "raw.orders"],
+            [
+                *NUCLEUS_CMD,
+                "ingest",
+                f"sqlite:///{source_db}",
+                "--table",
+                "orders",
+                "--as",
+                "raw.orders",
+            ],
             cwd=str(project_dir),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -323,7 +372,8 @@ def run_j2_kill_mid_commit() -> ChaosResult:
                 # Windows: use taskkill /F
                 subprocess.run(
                     ["taskkill", "/F", "/PID", str(proc.pid)],
-                    capture_output=True, check=False,
+                    capture_output=True,
+                    check=False,
                 )
             else:
                 # Unix: SIGKILL
@@ -336,20 +386,28 @@ def run_j2_kill_mid_commit() -> ChaosResult:
         elapsed = time.perf_counter() - t0
         stdout = proc.stdout.read().decode("utf-8", errors="replace") if proc.stdout else ""
 
-        if "not yet implemented" in (proc.stderr.read().decode("utf-8", errors="replace")
-                                      if proc.stderr else ""):
-            return _result_skip("J2", "kill-9 mid-commit",
-                                 "nucleus ingest stub (not yet implemented)")
+        if "not yet implemented" in (
+            proc.stderr.read().decode("utf-8", errors="replace") if proc.stderr else ""
+        ):
+            return _result_skip(
+                "J2", "kill-9 mid-commit", "nucleus ingest stub (not yet implemented)"
+            )
 
         # Step 5: Verify Iceberg atomicity
         # Check warehouse for partial Parquet files
         warehouse_dir = project_dir / ".nucleus" / "warehouse"
         partial_files = list(warehouse_dir.rglob("*.parquet.tmp")) if warehouse_dir.exists() else []
-        partial_files += list(warehouse_dir.rglob("*.parquet.part")) if warehouse_dir.exists() else []
+        partial_files += (
+            list(warehouse_dir.rglob("*.parquet.part")) if warehouse_dir.exists() else []
+        )
 
         if partial_files:
-            return _result_fail("J2", "kill-9 mid-commit", elapsed,
-                                 f"Orphan partial files after SIGKILL: {partial_files[:3]}")
+            return _result_fail(
+                "J2",
+                "kill-9 mid-commit",
+                elapsed,
+                f"Orphan partial files after SIGKILL: {partial_files[:3]}",
+            )
 
         # Check catalog — must have either 0 NEW snapshots or 1 COMPLETE snapshot
         snapshots_after: set[str] = set()
@@ -365,8 +423,12 @@ def run_j2_kill_mid_commit() -> ChaosResult:
         new_snapshots = snapshots_after - snapshots_before
 
         if len(new_snapshots) > 1:
-            return _result_fail("J2", "kill-9 mid-commit", elapsed,
-                                 f"Multiple partial snapshots created: {len(new_snapshots)}")
+            return _result_fail(
+                "J2",
+                "kill-9 mid-commit",
+                elapsed,
+                f"Multiple partial snapshots created: {len(new_snapshots)}",
+            )
 
         # Verify row count atomicity if a snapshot exists
         if new_snapshots and warehouse_dir.exists():
@@ -375,13 +437,20 @@ def run_j2_kill_mid_commit() -> ChaosResult:
                 # Try to count rows via DuckDB
                 try:
                     duckdb_check = subprocess.run(
-                        [_python(), "-c", f"""
+                        [
+                            _python(),
+                            "-c",
+                            f"""
 import duckdb
 # Docs: https://duckdb.org/docs/api/python/overview
 count = duckdb.execute("SELECT count(*) FROM read_parquet('{warehouse_dir}/**/*.parquet')").fetchone()[0]
 print(count)
-"""],
-                        capture_output=True, text=True, check=False, timeout=15,
+""",
+                        ],
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                        timeout=15,
                     )
                     if duckdb_check.returncode == 0:
                         row_count = int(duckdb_check.stdout.strip())
@@ -393,13 +462,21 @@ print(count)
                 except (ValueError, Exception):
                     pass
 
-        return _result_pass("J2", "kill-9 mid-commit", elapsed,
-                             f"No orphan partials; {len(new_snapshots)} snapshot(s) (atomic)")
+        return _result_pass(
+            "J2",
+            "kill-9 mid-commit",
+            elapsed,
+            f"No orphan partials; {len(new_snapshots)} snapshot(s) (atomic)",
+        )
 
     except Exception as exc:
-        return ChaosResult("J2", "kill-9 mid-commit", "ERROR",
-                            time.perf_counter() - t0,
-                            detail=f"Test setup error: {exc}")
+        return ChaosResult(
+            "J2",
+            "kill-9 mid-commit",
+            "ERROR",
+            time.perf_counter() - t0,
+            detail=f"Test setup error: {exc}",
+        )
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -407,6 +484,7 @@ print(count)
 # ---------------------------------------------------------------------------
 # J3–J8: STUBS (implement post-Wave-1)
 # ---------------------------------------------------------------------------
+
 
 def run_j3_minio_down() -> ChaosResult:
     """J3: MinIO down during materialize → retries + NE-coded final error.
@@ -522,11 +600,13 @@ def main(argv: list[str] | None = None) -> int:
         description="Nucleus chaos test runner (docs/release/E2E_TEST_PLAN.md §Suite J)."
     )
     parser.add_argument(
-        "--scenario", default="all",
+        "--scenario",
+        default="all",
         help="Scenario ID (J1, J2, ...) or 'all'. Can be lowercase j1. Default: all",
     )
     parser.add_argument(
-        "--list", action="store_true",
+        "--list",
+        action="store_true",
         help="List all scenarios and exit",
     )
     args = parser.parse_args(argv)
@@ -539,9 +619,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     requested = (
-        list(SCENARIOS.keys())
-        if args.scenario.lower() == "all"
-        else [args.scenario.upper()]
+        list(SCENARIOS.keys()) if args.scenario.lower() == "all" else [args.scenario.upper()]
     )
 
     print("=" * 60)
@@ -559,7 +637,9 @@ def main(argv: list[str] | None = None) -> int:
         report.scenarios.append(result)
 
     print("\n" + "=" * 60)
-    print(f"Chaos Suite Summary: {report.passed} PASS / {report.failed} FAIL / {report.skipped} SKIP")
+    print(
+        f"Chaos Suite Summary: {report.passed} PASS / {report.failed} FAIL / {report.skipped} SKIP"
+    )
     print("=" * 60)
 
     return 0 if report.failed == 0 else 1

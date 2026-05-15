@@ -131,7 +131,15 @@ class TestErrorPaths:
         or NucleusInternalError with a clean user-facing message.
         """
         result = runner.invoke(
-            app, ["ingest", "postgresql://u:p@badhost.invalid/db", "--table", "users", "--as", "raw.users"]
+            app,
+            [
+                "ingest",
+                "postgresql://u:p@badhost.invalid/db",
+                "--table",
+                "users",
+                "--as",
+                "raw.users",
+            ],
         )
         assert result.exit_code == 1
         # Must not leak internal library classnames per AGENTS.md §11.7
@@ -146,9 +154,7 @@ class TestErrorPaths:
     def test_missing_as_flag(self, project: Path) -> None:
         # When --as defaults to "" + no other validation passes, the body
         # rejects the empty string with NucleusInvalidAssetDefinition.
-        result = runner.invoke(
-            app, ["ingest", "sqlite:///source.db", "--table", "users"]
-        )
+        result = runner.invoke(app, ["ingest", "sqlite:///source.db", "--table", "users"])
         assert result.exit_code == 1
         assert "namespace" in result.stderr.lower()
 
@@ -169,8 +175,16 @@ class TestErrorPaths:
     def test_mode_overwrite_deferred(self, project: Path) -> None:
         result = runner.invoke(
             app,
-            ["ingest", "sqlite:///source.db", "--table", "users", "--as", "raw.users",
-             "--mode", "overwrite"],
+            [
+                "ingest",
+                "sqlite:///source.db",
+                "--table",
+                "users",
+                "--as",
+                "raw.users",
+                "--mode",
+                "overwrite",
+            ],
         )
         assert result.exit_code == 1
         assert "deferred to v0.3+" in result.stderr
@@ -178,16 +192,22 @@ class TestErrorPaths:
     def test_mode_merge_deferred(self, project: Path) -> None:
         result = runner.invoke(
             app,
-            ["ingest", "sqlite:///source.db", "--table", "users", "--as", "raw.users",
-             "--mode", "merge"],
+            [
+                "ingest",
+                "sqlite:///source.db",
+                "--table",
+                "users",
+                "--as",
+                "raw.users",
+                "--mode",
+                "merge",
+            ],
         )
         assert result.exit_code == 1
         assert "deferred to v0.3+" in result.stderr
 
     def test_missing_table_flag(self, project: Path) -> None:
-        result = runner.invoke(
-            app, ["ingest", "sqlite:///source.db", "--as", "raw.users"]
-        )
+        result = runner.invoke(app, ["ingest", "sqlite:///source.db", "--as", "raw.users"])
         assert result.exit_code == 1
         assert "--table" in result.stderr
 
@@ -202,8 +222,16 @@ class TestErrorPaths:
     def test_merge_on_without_merge_mode(self, project: Path) -> None:
         result = runner.invoke(
             app,
-            ["ingest", "sqlite:///source.db", "--table", "users", "--as", "raw.users",
-             "--merge-on", "id"],
+            [
+                "ingest",
+                "sqlite:///source.db",
+                "--table",
+                "users",
+                "--as",
+                "raw.users",
+                "--merge-on",
+                "id",
+            ],
         )
         assert result.exit_code == 1
         assert "deferred to v0.3+" in result.stderr

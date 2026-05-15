@@ -1,4 +1,4 @@
-# ruff: noqa: E402, I001 -- importorskip() drives soft-dep gating (matches
+
 # the pattern in tests/coordination/test_asset_materialization.py).
 """Tests for :mod:`nucleus.coordination.lineage` (the OL emitter).
 
@@ -72,7 +72,9 @@ def lineage_dir(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> path
 
 def _read_events(path: pathlib.Path) -> list[dict[str, Any]]:
     """Read an NDJSON file and return its events as parsed dicts."""
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return [
+        json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
 
 
 # UUID-format run_ids required by openlineage-python SDK (runid_check validates UUID format).
@@ -92,14 +94,17 @@ _RUN_ID_PARENT = "22222222-2222-2222-2222-222222222222"
 
 class TestLineageDir:
     def test_env_var_overrides_default(
-        self, tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+        self,
+        tmp_path: pathlib.Path,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         target = tmp_path / "custom"
         monkeypatch.setenv("NUCLEUS_LINEAGE_DIR", str(target))
         assert lineage._lineage_dir() == target
 
     def test_default_is_cwd_dot_nucleus_lineage(
-        self, monkeypatch: pytest.MonkeyPatch,
+        self,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         monkeypatch.delenv("NUCLEUS_LINEAGE_DIR", raising=False)
         resolved = lineage._lineage_dir()
@@ -151,7 +156,8 @@ class TestCompleteEvent:
 @requires_openlineage
 class TestFailEvent:
     def test_emit_fail_uses_standard_error_message_facet(
-        self, lineage_dir: pathlib.Path,
+        self,
+        lineage_dir: pathlib.Path,
     ) -> None:
         lineage.emit_fail(
             _RUN_ID_C,
@@ -208,7 +214,9 @@ class TestParentRunPropagation:
 @requires_openlineage
 class TestEmissionFailureHandling:
     def test_unwritable_directory_logs_warning_no_raise(
-        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture,
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         def boom_mkdir(*_: Any, **__: Any) -> None:
             raise PermissionError("no write here")
@@ -272,7 +280,9 @@ class TestMaterializationHooks:
         return "staging.orders_lineage"
 
     def test_dry_run_emits_start_then_complete(
-        self, trivial_asset_key: str, monkeypatch: pytest.MonkeyPatch,
+        self,
+        trivial_asset_key: str,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         calls: list[tuple[str, str, dict[str, Any]]] = []
 
@@ -326,14 +336,19 @@ class TestMaterializationHooks:
         assert "schema mismatch" in fail_kwargs["error_message"].lower()
 
     def test_unknown_asset_does_not_emit_lineage(
-        self, monkeypatch: pytest.MonkeyPatch,
+        self,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         calls: list[str] = []
         monkeypatch.setattr(
-            lineage, "emit_start", lambda *_a, **_kw: calls.append("start"),
+            lineage,
+            "emit_start",
+            lambda *_a, **_kw: calls.append("start"),
         )
         monkeypatch.setattr(
-            lineage, "emit_fail", lambda *_a, **_kw: calls.append("fail"),
+            lineage,
+            "emit_fail",
+            lambda *_a, **_kw: calls.append("fail"),
         )
         with pytest.raises(NucleusError):
             materialize_asset("nope.missing")

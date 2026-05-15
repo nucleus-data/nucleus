@@ -1,6 +1,6 @@
-# ADR-019: Snowflake Source Connector via dlt `sql_database` (PROPOSED)
+# ADR-019: Snowflake Source Connector via dlt `sql_database`
 
-**Status**: PROPOSED — awaiting founder ratification
+**Status**: ACCEPTED
 **Date**: 2026-05-15
 **Author**: Builder (connector expansion wave)
 **Reviewers**: Founder (ratification gate)
@@ -13,6 +13,8 @@
 Nucleus v0.1 ships Postgres, MySQL, and SQLite source connectors. Snowflake is the most-requested enterprise source in the beachhead persona (5-engineer startup on 100GB-5TB). Without a Snowflake connector, users who have data in Snowflake cannot onboard without a manual export step.
 
 The `dlt` library already wraps Snowflake via its `sql_database` verified source using SQLAlchemy + `snowflake-sqlalchemy`. The wrap cost is minimal (<150 LOC) and the error translation follows the established Postgres/MySQL pattern.
+
+Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 ---
 

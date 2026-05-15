@@ -68,7 +68,9 @@ def test_litellm_exception_timeout_class_name():
     assert hasattr(litellm, "Timeout"), (
         "litellm.Timeout class missing — update translate.py if the exception was renamed"
     )
-    assert not hasattr(litellm, "TimeoutError") or litellm.Timeout is not getattr(litellm, "TimeoutError", None), (
+    assert not hasattr(litellm, "TimeoutError") or litellm.Timeout is not getattr(
+        litellm, "TimeoutError", None
+    ), (
         "litellm.Timeout and litellm.TimeoutError now appear to be the same class — "
         "re-verify against https://docs.litellm.ai/docs/exception_mapping"
     )

@@ -111,8 +111,7 @@ def _dagster_step_handler(exc: BaseException) -> NucleusError:
     return NucleusInternalError(
         user_message=f"Asset execution failed ({inner_type}): {inner_msg}",
         fix_hint=(
-            "If this is unexpected, please file a bug. "
-            "Run with --debug to see the full traceback."
+            "If this is unexpected, please file a bug. Run with --debug to see the full traceback."
         ),
         cause=exc,
     )
@@ -143,8 +142,7 @@ def _value_error_handler(exc: BaseException) -> NucleusError:
     return NucleusInternalError(
         user_message=f"Asset execution failed (ValueError): {msg}",
         fix_hint=(
-            "If this is unexpected, please file a bug. "
-            "Run with --debug to see the full traceback."
+            "If this is unexpected, please file a bug. Run with --debug to see the full traceback."
         ),
         cause=exc,
     )
@@ -512,12 +510,10 @@ def _translate_dlt_postgres_exception(exc: BaseException) -> NucleusError:  # no
             ):
                 return NucleusSourceConnectionError(
                     user_message=(
-                        "Could not connect to the data source. "
-                        "Check host, port, and credentials."
+                        "Could not connect to the data source. Check host, port, and credentials."
                     ),
                     fix_hint=(
-                        "Verify the connection string. "
-                        "Form: postgresql://user:pass@host:5432/db"
+                        "Verify the connection string. Form: postgresql://user:pass@host:5432/db"
                     ),
                     cause=exc,
                 )
@@ -535,7 +531,7 @@ def _translate_dlt_postgres_exception(exc: BaseException) -> NucleusError:  # no
     )
 
 
-def _translate_dlt_mysql_exception(exc: BaseException) -> NucleusError:  # noqa: PLR0911, PLR0912
+def _translate_dlt_mysql_exception(exc: BaseException) -> NucleusError:  # noqa: PLR0911
     """Translate a dlt / pymysql / sqlalchemy MySQL-source exception to a NucleusError.
 
     Mirrors :func:`_translate_dlt_postgres_exception` per ADR-014
@@ -695,13 +691,9 @@ def _translate_dlt_mysql_exception(exc: BaseException) -> NucleusError:  # noqa:
             ):
                 return NucleusSourceConnectionError(
                     user_message=(
-                        "Could not connect to the data source. "
-                        "Check host, port, and credentials."
+                        "Could not connect to the data source. Check host, port, and credentials."
                     ),
-                    fix_hint=(
-                        "Verify the connection string. "
-                        "Form: mysql://user:pass@host:3306/db"
-                    ),
+                    fix_hint=("Verify the connection string. Form: mysql://user:pass@host:3306/db"),
                     cause=exc,
                 )
 

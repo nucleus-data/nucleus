@@ -114,15 +114,17 @@ def _find_litellm_imports(file: Path) -> list[tuple[int, str]]:
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
-                if alias.name in ("litellm", "anthropic", "openai", "ollama") or \
-                   any(alias.name.startswith(p + ".") for p in ("litellm", "anthropic", "openai")):
+                if alias.name in ("litellm", "anthropic", "openai", "ollama") or any(
+                    alias.name.startswith(p + ".") for p in ("litellm", "anthropic", "openai")
+                ):
                     line_no = node.lineno
                     src = source_lines[line_no - 1] if line_no - 1 < len(source_lines) else ""
                     hits.append((line_no, src.strip()))
         elif isinstance(node, ast.ImportFrom):
             mod = node.module or ""
-            if mod in ("litellm", "anthropic", "openai", "ollama") or \
-               any(mod.startswith(p + ".") for p in ("litellm", "anthropic", "openai")):
+            if mod in ("litellm", "anthropic", "openai", "ollama") or any(
+                mod.startswith(p + ".") for p in ("litellm", "anthropic", "openai")
+            ):
                 line_no = node.lineno
                 src = source_lines[line_no - 1] if line_no - 1 < len(source_lines) else ""
                 hits.append((line_no, src.strip()))
@@ -140,7 +142,9 @@ def scan_litellm_imports(roots: list[Path]) -> list[Leak]:
             if not hits:
                 continue
             rel_str = file.relative_to(REPO_ROOT).as_posix()
-            allowed = any(rel_str.startswith(d + "/") or rel_str == d for d in ALLOWED_LITELLM_IMPORT_DIRS)
+            allowed = any(
+                rel_str.startswith(d + "/") or rel_str == d for d in ALLOWED_LITELLM_IMPORT_DIRS
+            )
             if allowed:
                 continue
             for line_no, src in hits:
@@ -158,9 +162,7 @@ def scan_litellm_imports(roots: list[Path]) -> list[Leak]:
 def scan_provider_strings_in_nucleus_errors(roots: list[Path]) -> list[Leak]:
     """Scan NucleusError user_message= literals for banned provider class names + API_KEY patterns."""
     leaks: list[Leak] = []
-    banned_pat = re.compile(
-        r"\b(" + "|".join(re.escape(n) for n in BANNED_PROVIDER_NAMES) + r")\b"
-    )
+    banned_pat = re.compile(r"\b(" + "|".join(re.escape(n) for n in BANNED_PROVIDER_NAMES) + r")\b")
     for root in roots:
         if not root.exists():
             continue
@@ -268,7 +270,9 @@ def scan_output(file: Path) -> list[Leak]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Verify no Dagster types leak past ctx (v4.1 §6.4).")
+    parser = argparse.ArgumentParser(
+        description="Verify no Dagster types leak past ctx (v4.1 §6.4)."
+    )
     parser.add_argument(
         "--scan-output",
         type=Path,
@@ -285,9 +289,7 @@ def main(argv: list[str] | None = None) -> int:
     import_roots = [REPO_ROOT / "src", REPO_ROOT / "tests", REPO_ROOT / "poc"]
     import_leaks = scan_imports(import_roots)
     litellm_leaks = scan_litellm_imports(import_roots)
-    provider_string_leaks = scan_provider_strings_in_nucleus_errors(
-        [REPO_ROOT / "src" / "nucleus"]
-    )
+    provider_string_leaks = scan_provider_strings_in_nucleus_errors([REPO_ROOT / "src" / "nucleus"])
     output_leaks = scan_output(args.scan_output) if args.scan_output else []
     leaks = import_leaks + litellm_leaks + provider_string_leaks + output_leaks
 
@@ -313,7 +315,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"      {leak.code}")
             print(f"      reason: {leak.reason}\n")
         print("Move Dagster usage inside src/nucleus/coordination/ or remove it.")
-        print("See nucleus_architecture_v4.1.md §6.4 and docs/architecture/sequence_error_translation.md.")
+        print(
+            "See nucleus_architecture_v4.1.md §6.4 and docs/architecture/sequence_error_translation.md."
+        )
     return 1 if leaks else 0
 
 

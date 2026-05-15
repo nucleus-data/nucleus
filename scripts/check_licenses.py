@@ -62,19 +62,46 @@ LICENSE_LOCK = REPO_ROOT / "docs" / "license_lock.json"
 # Tier definitions per ADR-007 §Decision. Match the *normalised* license
 # string (lower-cased, punctuation stripped) against substrings.
 GREEN_PATTERNS: Final[tuple[str, ...]] = (
-    "apache-2.0", "apache 2.0", "apache license 2", "apache software",
-    "mit", "bsd-2-clause", "bsd-3-clause", "bsd 2", "bsd 3", "bsd license",
-    "isc", "psf", "python software foundation", "cc0", "public domain",
+    "apache-2.0",
+    "apache 2.0",
+    "apache license 2",
+    "apache software",
+    "mit",
+    "bsd-2-clause",
+    "bsd-3-clause",
+    "bsd 2",
+    "bsd 3",
+    "bsd license",
+    "isc",
+    "psf",
+    "python software foundation",
+    "cc0",
+    "public domain",
     "unlicense",
 )
 YELLOW_PATTERNS: Final[tuple[str, ...]] = (
-    "agpl", "affero", "gpl-2", "gpl-3", "gnu general public",
-    "lgpl", "lesser general public", "mpl", "mozilla public",
+    "agpl",
+    "affero",
+    "gpl-2",
+    "gpl-3",
+    "gnu general public",
+    "lgpl",
+    "lesser general public",
+    "mpl",
+    "mozilla public",
 )
 RED_PATTERNS: Final[tuple[str, ...]] = (
-    "elastic license", "elv2", "sspl", "server side public",
-    "busl", "business source", "commons clause",
-    "hippocratic", "anti-capitalist", "anti capitalist", "non-commercial",
+    "elastic license",
+    "elv2",
+    "sspl",
+    "server side public",
+    "busl",
+    "business source",
+    "commons clause",
+    "hippocratic",
+    "anti-capitalist",
+    "anti capitalist",
+    "non-commercial",
     "proprietary",
 )
 
@@ -210,13 +237,15 @@ def detect_shifts(entries: list[LicenseEntry], lock: Path = LICENSE_LOCK) -> lis
     for cur in entries:
         prev = by_pkg.get(cur.package)
         if prev and prev.get("tier") != cur.tier:
-            shifts.append(TierShift(
-                package=cur.package,
-                previous_tier=str(prev.get("tier", "?")),
-                current_tier=cur.tier,
-                previous_license=str(prev.get("license", "?")),
-                current_license=cur.license,
-            ))
+            shifts.append(
+                TierShift(
+                    package=cur.package,
+                    previous_tier=str(prev.get("tier", "?")),
+                    current_tier=cur.tier,
+                    previous_license=str(prev.get("license", "?")),
+                    current_license=cur.license,
+                )
+            )
     return shifts
 
 
@@ -227,13 +256,16 @@ def _record(entries: list[LicenseEntry], lock: Path = LICENSE_LOCK) -> None:
 
 
 def _render(entries: list[LicenseEntry], shifts: list[TierShift], reds: list[LicenseEntry]) -> str:
-    lines = ["License-tier report (ADR-007)", "=" * 62,
-             f" packages scanned : {len(entries)}",
-             f" RED detected     : {len(reds)}",
-             f" tier shifts      : {len(shifts)}", ""]
+    lines = [
+        "License-tier report (ADR-007)",
+        "=" * 62,
+        f" packages scanned : {len(entries)}",
+        f" RED detected     : {len(reds)}",
+        f" tier shifts      : {len(shifts)}",
+        "",
+    ]
     lines.extend(
-        f"  [{e.tier:<7}] {e.package}=={e.version}  {e.license}  ({e.source})"
-        for e in entries
+        f"  [{e.tier:<7}] {e.package}=={e.version}  {e.license}  ({e.source})" for e in entries
     )
     if reds:
         lines += ["", "BLOCKED (RED tier — ADR-007 §Tier 3):"]
@@ -241,8 +273,10 @@ def _render(entries: list[LicenseEntry], shifts: list[TierShift], reds: list[Lic
     if shifts:
         lines += ["", "Tier shifts vs docs/license_lock.json:"]
         for s in shifts:
-            lines.append(f"  - {s.package}: {s.previous_tier} -> {s.current_tier} "
-                         f"({s.previous_license} -> {s.current_license})")
+            lines.append(
+                f"  - {s.package}: {s.previous_tier} -> {s.current_tier} "
+                f"({s.previous_license} -> {s.current_license})"
+            )
         lines.append("  Open ADR-NNN-tier-shift-<pkg> per ADR-007 §Upgrade detection trigger.")
     return "\n".join(lines)
 
@@ -250,8 +284,11 @@ def _render(entries: list[LicenseEntry], shifts: list[TierShift], reds: list[Lic
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="License-tier check (ADR-007 §Verification plan).")
     p.add_argument("--format", choices=("text", "json"), default="text")
-    p.add_argument("--record", action="store_true",
-                   help="Write docs/license_lock.json from current state and exit 0.")
+    p.add_argument(
+        "--record",
+        action="store_true",
+        help="Write docs/license_lock.json from current state and exit 0.",
+    )
     args = p.parse_args(argv)
 
     if not PYPROJECT.exists():
@@ -265,19 +302,32 @@ def main(argv: list[str] | None = None) -> int:
     if args.record:
         _record(entries)
         if args.format == "json":
-            print(json.dumps({"ok": True, "recorded": str(LICENSE_LOCK),
-                              "entries": [asdict(e) for e in entries]}, indent=2))
+            print(
+                json.dumps(
+                    {
+                        "ok": True,
+                        "recorded": str(LICENSE_LOCK),
+                        "entries": [asdict(e) for e in entries],
+                    },
+                    indent=2,
+                )
+            )
         else:
             print(f"Recorded {len(entries)} entries to {LICENSE_LOCK.relative_to(REPO_ROOT)}.")
         return 0
 
     if args.format == "json":
-        print(json.dumps({
-            "ok": not reds and not shifts,
-            "entries": [asdict(e) for e in entries],
-            "red": [asdict(e) for e in reds],
-            "shifts": [asdict(s) for s in shifts],
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "ok": not reds and not shifts,
+                    "entries": [asdict(e) for e in entries],
+                    "red": [asdict(e) for e in reds],
+                    "shifts": [asdict(s) for s in shifts],
+                },
+                indent=2,
+            )
+        )
     else:
         print(_render(entries, shifts, reds))
 

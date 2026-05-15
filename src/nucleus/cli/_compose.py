@@ -114,9 +114,7 @@ def minio_health_base_url(
                     continue
                 candidate = isinstance(svc_name, str) and svc_name.lower() == "minio"
                 img = spec.get("image", "")
-                if candidate or (
-                    isinstance(img, str) and "minio/minio" in img.lower()
-                ):
+                if candidate or (isinstance(img, str) and "minio/minio" in img.lower()):
                     port = _host_port_for_target(spec.get("ports"), 9000)
                     return f"http://127.0.0.1:{port or default_port}"
     except (OSError, yaml.YAMLError):
@@ -135,9 +133,7 @@ def minio_console_url(compose_path: Path, *, default_port: int = 9001) -> str:
                     continue
                 candidate = isinstance(svc_name, str) and svc_name.lower() == "minio"
                 img = spec.get("image", "")
-                if candidate or (
-                    isinstance(img, str) and "minio/minio" in img.lower()
-                ):
+                if candidate or (isinstance(img, str) and "minio/minio" in img.lower()):
                     port = _host_port_for_target(spec.get("ports"), 9001)
                     return f"http://127.0.0.1:{port or default_port}"
     except (OSError, yaml.YAMLError):
@@ -192,8 +188,7 @@ def detect_compose_runner() -> ComposeRunner:
         raise NucleusEnvironmentError(
             user_message="Docker is not installed or not on your PATH.",
             fix_hint=(
-                "Install Docker Desktop or Docker Engine — see "
-                "https://docs.docker.com/get-docker/"
+                "Install Docker Desktop or Docker Engine — see https://docs.docker.com/get-docker/"
             ),
         )
 
@@ -267,9 +262,7 @@ def run_compose(
         )
     except subprocess.TimeoutExpired as exc:
         raise NucleusEnvironmentError(
-            user_message=(
-                "The container runtime stopped responding during a Compose command."
-            ),
+            user_message=("The container runtime stopped responding during a Compose command."),
             fix_hint=(
                 "Check that Docker is healthy (`docker ps`). If compose is wedged, "
                 "restart Docker and retry."
@@ -316,9 +309,7 @@ def translate_compose_process_failure(
     )
     if any(m in lowered for m in pull_markers):
         return NucleusNetworkError(
-            user_message=(
-                "Could not pull one or more container images for the local stack."
-            ),
+            user_message=("Could not pull one or more container images for the local stack."),
             fix_hint=(
                 "Check your network and registry access. If you are offline, fetch "
                 "images while connected."
@@ -337,8 +328,7 @@ def translate_compose_process_failure(
         if m:
             port_note = f"Port {m.group(1)} (TCP) may be occupied."
         um = (
-            "A TCP port needed by your compose services appears to be in use. "
-            + port_note
+            "A TCP port needed by your compose services appears to be in use. " + port_note
         ).strip()
 
         return NucleusEnvironmentError(
@@ -350,9 +340,8 @@ def translate_compose_process_failure(
         )
 
     body = snippet or ""
-    headline = (
-        "The container runtime reported an error when applying your compose stack."
-        + (f"\n{body}" if body else "")
+    headline = "The container runtime reported an error when applying your compose stack." + (
+        f"\n{body}" if body else ""
     )
     return NucleusEnvironmentError(
         user_message=headline.strip(),

@@ -83,8 +83,7 @@ class TestVersionFlag:
         result = runner.invoke(app, ["--version"])
         assert result.exit_code == 0
         assert __version__ in result.stdout, (
-            f"Expected version string '{__version__}' in output. "
-            f"Got: {result.stdout!r}"
+            f"Expected version string '{__version__}' in output. Got: {result.stdout!r}"
         )
 
     def test_contains_nucleus_name(self) -> None:
@@ -132,8 +131,7 @@ class TestVersionCommand:
     def test_exits_zero(self) -> None:
         result = runner.invoke(app, ["version"])
         assert result.exit_code == 0, (
-            f"'nucleus version' returned exit code {result.exit_code}.\n"
-            f"Output:\n{result.stdout}"
+            f"'nucleus version' returned exit code {result.exit_code}.\nOutput:\n{result.stdout}"
         )
 
     def test_includes_nucleus_version(self) -> None:
@@ -142,8 +140,7 @@ class TestVersionCommand:
         assert result.exit_code == 0
         assert "nucleus" in result.stdout
         assert __version__ in result.stdout, (
-            f"Expected '{__version__}' in 'nucleus version' output. "
-            f"Got:\n{result.stdout}"
+            f"Expected '{__version__}' in 'nucleus version' output. Got:\n{result.stdout}"
         )
 
     @pytest.mark.parametrize(
@@ -155,8 +152,7 @@ class TestVersionCommand:
         result = runner.invoke(app, ["version"])
         assert result.exit_code == 0
         assert pkg in result.stdout, (
-            f"Expected '{pkg}' in 'nucleus version' output.\n"
-            f"Full output:\n{result.stdout}"
+            f"Expected '{pkg}' in 'nucleus version' output.\nFull output:\n{result.stdout}"
         )
 
     def test_check_updates_flag_accepted(self) -> None:

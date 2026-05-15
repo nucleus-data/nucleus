@@ -91,8 +91,7 @@ def _validate_upstream(upstream: str) -> UpstreamMode:
     if upstream not in _VALID_UPSTREAMS:
         raise NucleusInvalidAssetDefinition(
             user_message=(
-                f"nucleus.materialize(..., upstream={upstream!r}) is not a "
-                "supported value."
+                f"nucleus.materialize(..., upstream={upstream!r}) is not a supported value."
             ),
             fix_hint=(
                 "upstream must be one of "
@@ -119,8 +118,7 @@ def _validate_timeout(timeout_seconds: int | None) -> int | None:
     if timeout_seconds <= 0:
         raise NucleusInvalidAssetDefinition(
             user_message=(
-                f"nucleus.materialize(..., timeout_seconds={timeout_seconds}) "
-                "must be > 0."
+                f"nucleus.materialize(..., timeout_seconds={timeout_seconds}) must be > 0."
             ),
             fix_hint="Pass None to disable the timeout, or a positive number of seconds.",
         )
@@ -207,8 +205,7 @@ def materialize(
     if partition is not None and not isinstance(partition, str):
         raise NucleusInvalidAssetDefinition(
             user_message=(
-                f"nucleus.materialize(..., partition={partition!r}) must be a "
-                "string or None."
+                f"nucleus.materialize(..., partition={partition!r}) must be a string or None."
             ),
             fix_hint=(
                 "Pass a single-string partition value, e.g. partition='2026-05-13'. "

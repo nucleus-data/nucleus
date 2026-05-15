@@ -80,3 +80,20 @@ def test_version_payload_string_free_of_orchestrator_surface_leaks(
 def test_health_includes_nucleus_version_string(workbench_client) -> None:
     r = workbench_client.get("/api/health")
     assert r.json()["version"] == nucleus_version
+
+
+def test_no_orjson_response_in_workbench() -> None:
+    """Regression guard: ORJSONResponse was removed (deprecated FastAPI API).
+
+    Ensures no router re-introduces the deprecated class.
+    Per fix applied during Wave 1L UI verification (2026-05-15).
+    """
+    from pathlib import Path
+
+    workbench_root = Path(__file__).resolve().parents[2] / "src" / "nucleus" / "workbench"
+    violations = [
+        str(p.relative_to(workbench_root.parents[2]))
+        for p in workbench_root.rglob("*.py")
+        if "ORJSONResponse" in p.read_text(encoding="utf-8")
+    ]
+    assert not violations, f"ORJSONResponse found in: {violations}"

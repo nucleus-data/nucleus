@@ -38,7 +38,6 @@ from nucleus.errors import (
     NucleusSourceAuthError,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -79,11 +78,10 @@ class TestSQLiteDispatch:
     def test_dispatches_via_correct_internal_function(self, tmp_path: Path) -> None:
         """copy_from calls ingest_sqlite_to_iceberg, not ingest_postgres_to_iceberg."""
         _seed_sqlite(tmp_path / "src.db", rows=1)
-        with patch(
-            "nucleus.ctx._dispatch.ingest_sqlite_to_iceberg", return_value=1
-        ) as mock_sqlite, patch(
-            "nucleus.ctx._dispatch.ingest_postgres_to_iceberg"
-        ) as mock_pg:
+        with (
+            patch("nucleus.ctx._dispatch.ingest_sqlite_to_iceberg", return_value=1) as mock_sqlite,
+            patch("nucleus.ctx._dispatch.ingest_postgres_to_iceberg") as mock_pg,
+        ):
             copy_from(
                 "sqlite:///some.db",
                 table="orders",
@@ -96,9 +94,7 @@ class TestSQLiteDispatch:
     def test_target_is_split_into_namespace_and_table(self, tmp_path: Path) -> None:
         """copy_from passes namespace + table_name to ingest_sqlite_to_iceberg."""
         _seed_sqlite(tmp_path / "src.db", rows=1)
-        with patch(
-            "nucleus.ctx._dispatch.ingest_sqlite_to_iceberg", return_value=1
-        ) as mock_sqlite:
+        with patch("nucleus.ctx._dispatch.ingest_sqlite_to_iceberg", return_value=1) as mock_sqlite:
             copy_from(
                 "sqlite:///some.db",
                 table="orders",
@@ -137,12 +133,11 @@ class TestSQLiteDispatch:
 class TestPostgresDispatch:
     """copy_from dispatches to ingest_postgres_to_iceberg for postgresql/postgres scheme."""
 
-    def test_postgresql_scheme_dispatches_to_postgres_function(
-        self, tmp_path: Path
-    ) -> None:
-        with patch(
-            "nucleus.ctx._dispatch.ingest_postgres_to_iceberg", return_value=10
-        ) as mock_pg, patch("nucleus.ctx._dispatch.ingest_sqlite_to_iceberg") as mock_sqlite:
+    def test_postgresql_scheme_dispatches_to_postgres_function(self, tmp_path: Path) -> None:
+        with (
+            patch("nucleus.ctx._dispatch.ingest_postgres_to_iceberg", return_value=10) as mock_pg,
+            patch("nucleus.ctx._dispatch.ingest_sqlite_to_iceberg") as mock_sqlite,
+        ):
             result = copy_from(
                 "postgresql://user:pass@localhost/db",
                 table="public.orders",
@@ -155,9 +150,7 @@ class TestPostgresDispatch:
 
     def test_postgres_scheme_alias_dispatches_correctly(self, tmp_path: Path) -> None:
         """``postgres://`` is equivalent to ``postgresql://``."""
-        with patch(
-            "nucleus.ctx._dispatch.ingest_postgres_to_iceberg", return_value=5
-        ) as mock_pg:
+        with patch("nucleus.ctx._dispatch.ingest_postgres_to_iceberg", return_value=5) as mock_pg:
             result = copy_from(
                 "postgres://user:pass@host/db",
                 table="orders",
@@ -168,9 +161,7 @@ class TestPostgresDispatch:
         mock_pg.assert_called_once()
 
     def test_write_disposition_forwarded_to_postgres(self, tmp_path: Path) -> None:
-        with patch(
-            "nucleus.ctx._dispatch.ingest_postgres_to_iceberg", return_value=3
-        ) as mock_pg:
+        with patch("nucleus.ctx._dispatch.ingest_postgres_to_iceberg", return_value=3) as mock_pg:
             copy_from(
                 "postgresql://user:pass@host/db",
                 table="orders",
@@ -181,9 +172,7 @@ class TestPostgresDispatch:
         call_kwargs = mock_pg.call_args[1]
         assert call_kwargs["write_disposition"] == "replace"
 
-    def test_postgres_error_propagates_as_nucleus_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_postgres_error_propagates_as_nucleus_error(self, tmp_path: Path) -> None:
         """copy_from propagates NucleusError from the underlying ingest function."""
         side = NucleusSourceAuthError(
             user_message="Authentication failed.",
@@ -215,9 +204,7 @@ class TestMySQLDispatch:
 
     def test_mysql_scheme_dispatches_to_mysql_function(self, tmp_path: Path) -> None:
         with (
-            patch(
-                "nucleus.ctx._dispatch.ingest_mysql_to_iceberg", return_value=12
-            ) as mock_my,
+            patch("nucleus.ctx._dispatch.ingest_mysql_to_iceberg", return_value=12) as mock_my,
             patch("nucleus.ctx._dispatch.ingest_postgres_to_iceberg") as mock_pg,
             patch("nucleus.ctx._dispatch.ingest_sqlite_to_iceberg") as mock_sqlite,
         ):
@@ -232,13 +219,9 @@ class TestMySQLDispatch:
         mock_pg.assert_not_called()
         mock_sqlite.assert_not_called()
 
-    def test_mysql_pymysql_driver_scheme_dispatches_to_mysql_function(
-        self, tmp_path: Path
-    ) -> None:
+    def test_mysql_pymysql_driver_scheme_dispatches_to_mysql_function(self, tmp_path: Path) -> None:
         """``mysql+pymysql://`` (driver-qualified) routes to the MySQL helper."""
-        with patch(
-            "nucleus.ctx._dispatch.ingest_mysql_to_iceberg", return_value=4
-        ) as mock_my:
+        with patch("nucleus.ctx._dispatch.ingest_mysql_to_iceberg", return_value=4) as mock_my:
             result = copy_from(
                 "mysql+pymysql://user:pass@host/db",
                 table="orders",
@@ -249,9 +232,7 @@ class TestMySQLDispatch:
         mock_my.assert_called_once()
 
     def test_mysql_write_disposition_forwarded(self, tmp_path: Path) -> None:
-        with patch(
-            "nucleus.ctx._dispatch.ingest_mysql_to_iceberg", return_value=2
-        ) as mock_my:
+        with patch("nucleus.ctx._dispatch.ingest_mysql_to_iceberg", return_value=2) as mock_my:
             copy_from(
                 "mysql://user:pass@host/db",
                 table="orders",
@@ -288,9 +269,7 @@ class TestValidationErrors:
         assert "oracle" in err.user_message
         assert err.fix_hint
 
-    def test_invalid_write_disposition_raises_config_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_invalid_write_disposition_raises_config_error(self, tmp_path: Path) -> None:
         with pytest.raises(NucleusConfigError) as exc_info:
             copy_from(
                 "sqlite:///some.db",
@@ -313,9 +292,7 @@ class TestValidationErrors:
             )
         assert exc_info.value.error_code == "NE3004"
 
-    def test_target_with_extra_dots_raises_invalid_asset(
-        self, tmp_path: Path
-    ) -> None:
+    def test_target_with_extra_dots_raises_invalid_asset(self, tmp_path: Path) -> None:
         with pytest.raises(NucleusInvalidAssetDefinition):
             copy_from(
                 "sqlite:///some.db",

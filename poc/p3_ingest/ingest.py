@@ -94,9 +94,7 @@ def _build_schemas(
         arrow_type, iceberg_type_cls = _SQLITE_TYPE_MAP[normalized]
         required = bool(notnull)
         # PRAGMA cid is 0-based; Iceberg field IDs must be ≥ 1.
-        iceberg_fields.append(
-            NestedField(cid + 1, name, iceberg_type_cls(), required=required)
-        )
+        iceberg_fields.append(NestedField(cid + 1, name, iceberg_type_cls(), required=required))
         arrow_fields.append(pa.field(name, arrow_type, nullable=not required))
     return Schema(*iceberg_fields), pa.schema(arrow_fields)
 
@@ -129,7 +127,9 @@ def _open_catalog(warehouse_dir: Path) -> Catalog:
     # Docs: https://py.iceberg.apache.org/configuration/#fileio
     return load_catalog(
         "default",
-        type="sql", uri=f"sqlite:///{catalog_db.resolve().as_posix()}", warehouse=f"file://{warehouse_dir.resolve().as_posix()}",
+        type="sql",
+        uri=f"sqlite:///{catalog_db.resolve().as_posix()}",
+        warehouse=f"file://{warehouse_dir.resolve().as_posix()}",
     )
 
 

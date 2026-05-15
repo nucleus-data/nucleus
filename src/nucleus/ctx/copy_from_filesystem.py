@@ -27,13 +27,12 @@ import contextlib
 from pathlib import Path, PurePosixPath
 from typing import Literal
 
+import duckdb
 from pyiceberg.exceptions import (
     CommitFailedException,
     NamespaceAlreadyExistsError,
     TableAlreadyExistsError,
 )
-
-import duckdb
 
 from nucleus.ctx.copy_from import _open_catalog
 from nucleus.errors import (
@@ -78,10 +77,15 @@ def _normalize_path(source: str) -> str:
     if source.startswith("file://"):
         # Strip file:// prefix and then remove the leading slash that
         # RFC 8089 adds: file:///C:/path → /C:/path → C:/path on Windows.
-        stripped = source[len("file://"):]
+        stripped = source[len("file://") :]
         # POSIX absolute path: file:///home/user → /home/user (keep leading /)
         # Windows RFC 8089: file:///C:/path → C:/path (strip /C: leading /)
-        if len(stripped) >= 2 and stripped[0] == "/" and stripped[1].isalpha() and stripped[2:3] == ":":
+        if (
+            len(stripped) >= 2
+            and stripped[0] == "/"
+            and stripped[1].isalpha()
+            and stripped[2:3] == ":"
+        ):
             stripped = stripped[1:]  # drop leading slash on Windows: /C: → C:
         return stripped
     return source
@@ -107,7 +111,7 @@ def _detect_format(source: str, explicit_format: str | None) -> str:
             )
         return explicit_format
 
-    path_part = source.split("?")[0].split("#")[0]
+    path_part = source.split("?", maxsplit=1)[0].split("#", maxsplit=1)[0]
     suffix = PurePosixPath(path_part).suffix.lower()
     if suffix in _EXTENSION_TO_FORMAT:
         return _EXTENSION_TO_FORMAT[suffix]
@@ -224,7 +228,7 @@ def ingest_filesystem_to_iceberg(
     warehouse_dir: str | Path,
     dest_namespace: str,
     dest_table: str,
-    format: Literal["auto", "parquet", "csv", "json"] = "auto",  # noqa: A002 — mirrors public API
+    format: Literal["auto", "parquet", "csv", "json"] = "auto",
 ) -> int:
     """Read a local file (or glob) and write to a filesystem Iceberg table.
 
@@ -279,7 +283,7 @@ def ingest_filesystem_to_iceberg(
 
     except NucleusError:
         raise
-    except Exception as exc:  # noqa: BLE001 — broad catch: translator classifies
+    except Exception as exc:
         raise _translate_duckdb_fs_exception(exc) from exc
 
     # Write to Iceberg catalog.
@@ -302,7 +306,7 @@ def ingest_filesystem_to_iceberg(
         ) from exc
     except NucleusError:
         raise
-    except Exception as exc:  # noqa: BLE001 — translate pyiceberg and stdlib errors
+    except Exception as exc:
         from nucleus.coordination.error_translation import translate
 
         raise translate(exc) from exc

@@ -81,9 +81,7 @@ _DEP_RE = re.compile(
 )
 
 # ADR-012 markdown row parser: matches `pkg[extras]==X.Y.Z` (with optional backticks).
-_ADR_PIN_RE = re.compile(
-    r"`?([a-zA-Z][a-zA-Z0-9_.\-]*)(?:\[[^\]]+\])?==([^`\s|]+)`?"
-)
+_ADR_PIN_RE = re.compile(r"`?([a-zA-Z][a-zA-Z0-9_.\-]*)(?:\[[^\]]+\])?==([^`\s|]+)`?")
 
 
 @dataclass
@@ -180,20 +178,25 @@ def gate_pin_validation() -> Gate:
         runtime, _dev, _rx = parse_pyproject_pins(PYPROJECT)
     except (OSError, tomllib.TOMLDecodeError) as exc:
         return Gate(
-            "pin_validation", False,
+            "pin_validation",
+            False,
             f"cannot read {PYPROJECT.name}: {exc}",
-            int((time.monotonic() - t0) * 1000), EXIT_PIN,
+            int((time.monotonic() - t0) * 1000),
+            EXIT_PIN,
         )
     violations = [f"{p}{s}" for p, s in runtime.items() if not s.startswith("==")]
     elapsed = int((time.monotonic() - t0) * 1000)
     if violations:
         return Gate(
-            "pin_validation", False,
+            "pin_validation",
+            False,
             f"{len(violations)} loose pin(s): " + ", ".join(violations[:5]),
-            elapsed, EXIT_PIN,
+            elapsed,
+            EXIT_PIN,
         )
     return Gate(
-        "pin_validation", True,
+        "pin_validation",
+        True,
         f"{len(runtime)} runtime deps exact-pinned",
         elapsed,
     )
@@ -209,7 +212,8 @@ def gate_adr_012_cross_check() -> Gate:
     t0 = time.monotonic()
     if not ADR_012.exists():
         return Gate(
-            "adr_012_cross_check", None,
+            "adr_012_cross_check",
+            None,
             f"{ADR_012.name} not present; skipping",
             int((time.monotonic() - t0) * 1000),
         )
@@ -217,9 +221,11 @@ def gate_adr_012_cross_check() -> Gate:
         runtime, _dev, runtime_extras = parse_pyproject_pins(PYPROJECT)
     except (OSError, tomllib.TOMLDecodeError) as exc:
         return Gate(
-            "adr_012_cross_check", False,
+            "adr_012_cross_check",
+            False,
             f"cannot read pyproject: {exc}",
-            int((time.monotonic() - t0) * 1000), EXIT_ADR_DRIFT,
+            int((time.monotonic() - t0) * 1000),
+            EXIT_ADR_DRIFT,
         )
     adr = parse_adr_012_pins(ADR_012)
     merged = {**runtime, **runtime_extras}
@@ -232,7 +238,8 @@ def gate_adr_012_cross_check() -> Gate:
 
     if not (missing_in_pyproject or missing_in_adr or mismatch):
         return Gate(
-            "adr_012_cross_check", True,
+            "adr_012_cross_check",
+            True,
             f"pyproject.toml matches ADR-012 ({len(pyp)} pins compared)",
             elapsed,
         )
@@ -242,13 +249,16 @@ def gate_adr_012_cross_check() -> Gate:
     if missing_in_adr:
         parts.append(f"in pyproject but not ADR-012: {', '.join(missing_in_adr)}")
     if mismatch:
-        parts.append("version mismatches: " + "; ".join(
-            f"{p} (pyproject={pp}, ADR={ap})" for p, pp, ap in mismatch
-        ))
+        parts.append(
+            "version mismatches: "
+            + "; ".join(f"{p} (pyproject={pp}, ADR={ap})" for p, pp, ap in mismatch)
+        )
     return Gate(
-        "adr_012_cross_check", False,
+        "adr_012_cross_check",
+        False,
         " | ".join(parts)[:_MAX_MSG_LEN],
-        elapsed, EXIT_ADR_DRIFT,
+        elapsed,
+        EXIT_ADR_DRIFT,
     )
 
 
@@ -273,9 +283,14 @@ def _run(args: list[str]) -> tuple[int, str]:
     """
     try:
         proc = subprocess.run(
-            args, cwd=str(REPO_ROOT),
-            capture_output=True, text=True, check=False,
-            encoding="utf-8", errors="replace", env=_utf8_env(),
+            args,
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            check=False,
+            encoding="utf-8",
+            errors="replace",
+            env=_utf8_env(),
         )
     except FileNotFoundError as exc:
         return 127, f"command not found: {exc}"
@@ -289,9 +304,11 @@ def gate_pytest() -> Gate:
     t0 = time.monotonic()
     exit_code, last = _run([sys.executable, "-m", "pytest", "-x", "--tb=short"])
     return Gate(
-        "pytest", exit_code == 0,
+        "pytest",
+        exit_code == 0,
         last or f"exit={exit_code}",
-        int((time.monotonic() - t0) * 1000), EXIT_PYTEST,
+        int((time.monotonic() - t0) * 1000),
+        EXIT_PYTEST,
     )
 
 
@@ -301,15 +318,18 @@ def gate_optional(name: str, filename: str, fail_code: int = EXIT_OTHER) -> Gate
     path = SCRIPTS_DIR / filename
     if not path.exists():
         return Gate(
-            name, None,
+            name,
+            None,
             f"scripts/{filename} not present; skipping",
             int((time.monotonic() - t0) * 1000),
         )
     exit_code, last = _run([sys.executable, str(path)])
     return Gate(
-        name, exit_code == 0,
+        name,
+        exit_code == 0,
         last or f"exit={exit_code}",
-        int((time.monotonic() - t0) * 1000), fail_code,
+        int((time.monotonic() - t0) * 1000),
+        fail_code,
     )
 
 
@@ -325,27 +345,38 @@ def gate_loc_budget() -> Gate:
     path = SCRIPTS_DIR / "loc_budget.py"
     if not path.exists():
         return Gate(
-            "loc_budget", None,
+            "loc_budget",
+            None,
             "scripts/loc_budget.py not present; skipping",
             int((time.monotonic() - t0) * 1000),
         )
     try:
         proc = subprocess.run(
-            [sys.executable, str(path), "--json"], cwd=str(REPO_ROOT),
-            capture_output=True, text=True, check=False,
-            encoding="utf-8", errors="replace", env=_utf8_env(),
+            [sys.executable, str(path), "--json"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            check=False,
+            encoding="utf-8",
+            errors="replace",
+            env=_utf8_env(),
         )
     except FileNotFoundError as exc:
         return Gate(
-            "loc_budget", False, f"cannot invoke: {exc}",
-            int((time.monotonic() - t0) * 1000), EXIT_OTHER,
+            "loc_budget",
+            False,
+            f"cannot invoke: {exc}",
+            int((time.monotonic() - t0) * 1000),
+            EXIT_OTHER,
         )
     elapsed = int((time.monotonic() - t0) * 1000)
     if proc.returncode != 0:
         return Gate(
-            "loc_budget", False,
+            "loc_budget",
+            False,
             f"loc_budget exit={proc.returncode}",
-            elapsed, EXIT_OTHER,
+            elapsed,
+            EXIT_OTHER,
         )
     try:
         payload = json.loads(proc.stdout)
@@ -368,16 +399,13 @@ def render_text(gates: list[Gate]) -> str:
     width = max((len(g.name) for g in gates), default=10)
     for g in gates:
         status = "SKIP" if g.passed is None else ("PASS" if g.passed else "FAIL")
-        lines.append(
-            f"  [{status}] {g.name:<{width}}   ({g.duration_ms:>7,} ms)  {g.message}"
-        )
+        lines.append(f"  [{status}] {g.name:<{width}}   ({g.duration_ms:>7,} ms)  {g.message}")
     lines.append("")
     fails = [g for g in gates if g.passed is False]
     skipped = [g for g in gates if g.passed is None]
     if not fails:
         lines.append(
-            f" Verdict: PASS  ({len(skipped)} gate(s) skipped, "
-            f"{len(gates) - len(skipped)} ran)"
+            f" Verdict: PASS  ({len(skipped)} gate(s) skipped, {len(gates) - len(skipped)} ran)"
         )
     else:
         first = fails[0]
@@ -399,23 +427,25 @@ def render_json(gates: list[Gate]) -> str:
             "failed_count": sum(1 for g in gates if g.passed is False),
             "skipped_count": sum(1 for g in gates if g.passed is None),
         },
-        indent=2, sort_keys=True,
+        indent=2,
+        sort_keys=True,
     )
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Run the dependency-upgrade smoke gate "
-            "(AGENTS.md Sec 11.13 / Hard Constraint #11)."
+            "Run the dependency-upgrade smoke gate (AGENTS.md Sec 11.13 / Hard Constraint #11)."
         ),
     )
     parser.add_argument(
-        "--json", action="store_true",
+        "--json",
+        action="store_true",
         help="Emit machine-readable JSON instead of the human report.",
     )
     parser.add_argument(
-        "--strict", action="store_true",
+        "--strict",
+        action="store_true",
         help="Treat skipped gates as failures (use this in upgrade-PR CI).",
     )
     args = parser.parse_args(argv)

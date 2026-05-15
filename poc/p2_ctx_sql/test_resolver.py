@@ -105,9 +105,7 @@ def test_renderer_does_not_leak_jinja_classnames_in_error_message() -> None:
     err = exc_info.value
     rendered = err.rendered()
     assert "jinja2" not in err.user_message.lower()
-    assert "jinja2" not in rendered.lower(), (
-        f"jinja2 type leaked into rendered output:\n{rendered}"
-    )
+    assert "jinja2" not in rendered.lower(), f"jinja2 type leaked into rendered output:\n{rendered}"
 
 
 # ---------------------------------------------------------------------------
@@ -167,18 +165,14 @@ def test_unknown_asset_lists_available_assets() -> None:
 
 def test_whitespace_in_ref_call_resolves_identically() -> None:
     """T5: whitespace inside ``{{ ... }}`` around the call is irrelevant."""
-    sql, refs = resolve_sql(
-        "SELECT * FROM {{   ref(  'staging.orders'  )   }}", _resolve
-    )
+    sql, refs = resolve_sql("SELECT * FROM {{   ref(  'staging.orders'  )   }}", _resolve)
     assert sql == "SELECT * FROM <<staging.orders>>"
     assert refs == ["staging.orders"]
 
 
 def test_jinja_block_comments_are_stripped() -> None:
     """T7: ``{# ... #}`` block comments are removed from the rendered SQL."""
-    sql, refs = resolve_sql(
-        "{# header note — internal use only #}\nSELECT 1 AS one", _resolve
-    )
+    sql, refs = resolve_sql("{# header note — internal use only #}\nSELECT 1 AS one", _resolve)
     assert "internal use only" not in sql
     assert "SELECT 1 AS one" in sql
     assert refs == []
@@ -193,9 +187,7 @@ def test_sql_injection_shape_rejected_at_validation() -> None:
         return f"<<{name}>>"
 
     with pytest.raises(NucleusSQLSyntaxError) as exc_info:
-        resolve_sql(
-            """SELECT * FROM {{ ref('\"; DROP TABLE x; --') }}""", _watching
-        )
+        resolve_sql("""SELECT * FROM {{ ref('\"; DROP TABLE x; --') }}""", _watching)
     assert called_with == [], "ref_resolver must NOT be invoked for invalid names"
     assert "valid asset name" in exc_info.value.user_message.lower()
 

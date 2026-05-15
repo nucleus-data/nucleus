@@ -152,7 +152,9 @@ def test_duckdb_parser_translates_to_sql_syntax_error() -> None:
 
 def test_pyiceberg_no_such_table_translates_to_not_materialized() -> None:
     pyiceberg_exc = pytest.importorskip("pyiceberg.exceptions")
-    captured = _run_failing_asset(pyiceberg_exc.NoSuchTableError("Table 'sales.fct_orders' not found"))
+    captured = _run_failing_asset(
+        pyiceberg_exc.NoSuchTableError("Table 'sales.fct_orders' not found")
+    )
     out = translate(captured)
 
     assert isinstance(out, NucleusAssetNotMaterialized)
@@ -274,7 +276,9 @@ def test_two_level_cause_chain_routes_to_innermost_handler() -> None:
     assert "dagster" not in out.rendered().lower()
 
 
-@pytest.mark.skip(reason="Dagster 1.9.5 do_raise overwrites wrapper.__context__ in re-raise path; test fights Python semantics. See poc/p1_error_translation/PROMOTION_PR_DRAFT.md §Known issues #1 for the Option A rewrite plan.")
+@pytest.mark.skip(
+    reason="Dagster 1.9.5 do_raise overwrites wrapper.__context__ in re-raise path; test fights Python semantics. See poc/p1_error_translation/PROMOTION_PR_DRAFT.md §Known issues #1 for the Option A rewrite plan."
+)
 def test_context_only_chain_falls_through_to_inner_handler() -> None:
     duckdb = pytest.importorskip("duckdb")
     inner = duckdb.CatalogException("Table 'orders' does not exist")

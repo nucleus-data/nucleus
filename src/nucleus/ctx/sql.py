@@ -76,9 +76,7 @@ def _build_catalog_views(
         raise
     except Exception as exc:
         raise NucleusCatalogError(
-            user_message=(
-                f"Failed to open warehouse catalog at '{warehouse_path}': {exc}"
-            ),
+            user_message=(f"Failed to open warehouse catalog at '{warehouse_path}': {exc}"),
             fix_hint=(
                 "Verify that warehouse_dir points to a valid Nucleus warehouse. "
                 "Run 'nucleus init <name>' to create one, or 'nucleus up' to "
@@ -110,8 +108,7 @@ def _build_catalog_views(
                 view_name = f"_arrow_{ns}_{tbl}"
                 conn.register(view_name, arrow_t)
                 conn.execute(
-                    f'CREATE OR REPLACE VIEW "{ns}"."{tbl}" '
-                    f'AS SELECT * FROM "{view_name}"'
+                    f'CREATE OR REPLACE VIEW "{ns}"."{tbl}" AS SELECT * FROM "{view_name}"'
                 )
                 refs[f"{ns}.{tbl}"] = f'"{ns}"."{tbl}"'
             except Exception as exc:
@@ -119,7 +116,7 @@ def _build_catalog_views(
                     "skipped asset %r during catalog view registration: %s. "
                     "queries that {{ ref(%r) }} this asset will raise "
                     "NucleusAssetNotFound; investigate via 'nucleus query "
-                    "\"SELECT * FROM %s.%s\"' or check warehouse_dir layout.",
+                    '"SELECT * FROM %s.%s"\' or check warehouse_dir layout.',
                     f"{ns}.{tbl}",
                     exc,
                     f"{ns}.{tbl}",

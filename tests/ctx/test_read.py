@@ -36,7 +36,6 @@ from nucleus.errors import (
 )
 from nucleus.sdk.results import AssetRef
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -63,7 +62,8 @@ def _seed_and_ingest(
     finally:
         conn.close()
     ingest_sqlite_to_iceberg(
-        db_path, table,
+        db_path,
+        table,
         warehouse_dir=wh,
         dest_namespace=ns,
         dest_table=table,
@@ -150,9 +150,7 @@ class TestAssetRefInput:
 class TestErrorPaths:
     """read() raises typed NucleusError for all failure modes."""
 
-    def test_missing_table_raises_asset_not_materialized(
-        self, tmp_path: Path
-    ) -> None:
+    def test_missing_table_raises_asset_not_materialized(self, tmp_path: Path) -> None:
         from nucleus.ctx.copy_from import _open_catalog
 
         # Create a warehouse with no tables.
@@ -180,18 +178,14 @@ class TestErrorPaths:
         with pytest.raises(NucleusInvalidAssetDefinition):
             read("no_dot_here", warehouse_dir=tmp_path / "wh")
 
-    def test_empty_asset_ref_raises_invalid_definition(
-        self, tmp_path: Path
-    ) -> None:
+    def test_empty_asset_ref_raises_invalid_definition(self, tmp_path: Path) -> None:
         from nucleus.ctx.copy_from import _open_catalog
 
         _open_catalog(tmp_path / "wh")
         with pytest.raises(NucleusInvalidAssetDefinition):
             read("", warehouse_dir=tmp_path / "wh")
 
-    def test_no_external_classnames_in_materialized_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_no_external_classnames_in_materialized_error(self, tmp_path: Path) -> None:
         """Error messages must not leak external library class names."""
         from nucleus.ctx.copy_from import _open_catalog
 

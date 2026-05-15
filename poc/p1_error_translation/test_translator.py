@@ -152,7 +152,9 @@ def test_duckdb_parser_translates_to_sql_syntax_error() -> None:
 
 def test_pyiceberg_no_such_table_translates_to_not_materialized() -> None:
     pyiceberg_exc = pytest.importorskip("pyiceberg.exceptions")
-    captured = _run_failing_asset(pyiceberg_exc.NoSuchTableError("Table 'sales.fct_orders' not found"))
+    captured = _run_failing_asset(
+        pyiceberg_exc.NoSuchTableError("Table 'sales.fct_orders' not found")
+    )
     out = translate(captured)
 
     assert isinstance(out, NucleusAssetNotMaterialized)

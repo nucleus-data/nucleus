@@ -24,11 +24,7 @@ def project_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     project = tmp_path / "demo"
     project.mkdir()
     (project / "nucleus_project.yaml").write_text(
-        "project:\n"
-        "  name: demo\n"
-        "  version: 0.1.0\n"
-        "storage:\n"
-        "  warehouse: ./data/warehouse\n",
+        "project:\n  name: demo\n  version: 0.1.0\nstorage:\n  warehouse: ./data/warehouse\n",
         encoding="utf-8",
     )
     monkeypatch.chdir(project)
@@ -63,13 +59,13 @@ def test_down_no_compose_raises(project_dir: Path, monkeypatch: pytest.MonkeyPat
     assert "docker-compose.yaml" in result.stderr
 
 
-def test_down_default_preserves_volume_flag(project_with_compose: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_down_default_preserves_volume_flag(
+    project_with_compose: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
     calls: list[list[str]] = []
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         calls.append(list(args))
         return SimpleNamespace(returncode=0, stdout="", stderr="")
@@ -86,9 +82,7 @@ def test_down_volumes_removes(project_with_compose: Path, monkeypatch: pytest.Mo
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
     calls: list[list[str]] = []
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         calls.append(list(args))
         return SimpleNamespace(returncode=0, stdout="", stderr="")
@@ -100,14 +94,10 @@ def test_down_volumes_removes(project_with_compose: Path, monkeypatch: pytest.Mo
     assert calls == [["down", "-v"]]
 
 
-def test_down_compose_failure(
-    project_with_compose: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_down_compose_failure(project_with_compose: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         return SimpleNamespace(returncode=1, stdout="", stderr="cannot stop container")
 
@@ -118,9 +108,7 @@ def test_down_compose_failure(
     assert "Error:" in result.stderr
 
 
-def test_down_docker_missing(
-    monkeypatch: pytest.MonkeyPatch, project_with_compose: Path
-) -> None:
+def test_down_docker_missing(monkeypatch: pytest.MonkeyPatch, project_with_compose: Path) -> None:
 
     def boom() -> ComposeRunner:
         from nucleus.errors import NucleusEnvironmentError
@@ -167,7 +155,9 @@ def test_volume_flag_with_success_message(
 ) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
     monkeypatch.setattr(
-        cli_mod, "run_compose", lambda *a, **k: SimpleNamespace(returncode=0)  # noqa: ARG005
+        cli_mod,
+        "run_compose",
+        lambda *a, **k: SimpleNamespace(returncode=0),  # noqa: ARG005
     )
 
     out = runner.invoke(app, ["down", "--volumes"])
@@ -181,7 +171,9 @@ def test_warehouse_file_survives_volumes_flag(
 
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
     monkeypatch.setattr(
-        cli_mod, "run_compose", lambda *a, **k: SimpleNamespace(returncode=0)  # noqa: ARG005
+        cli_mod,
+        "run_compose",
+        lambda *a, **k: SimpleNamespace(returncode=0),  # noqa: ARG005
     )
 
     warehouse = project_with_compose / "data" / "warehouse"
@@ -199,7 +191,9 @@ def test_down_prints_nucleus_footer(
 ) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
     monkeypatch.setattr(
-        cli_mod, "run_compose", lambda *a, **k: SimpleNamespace(returncode=0)  # noqa: ARG005
+        cli_mod,
+        "run_compose",
+        lambda *a, **k: SimpleNamespace(returncode=0),  # noqa: ARG005
     )
 
     out = runner.invoke(app, ["down"])
@@ -211,9 +205,7 @@ def test_down_network_error_on_pull_like_stderr(
 ) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         return SimpleNamespace(
             returncode=1,
@@ -232,9 +224,7 @@ def test_down_port_style_error_still_surfaces(
 ) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         return SimpleNamespace(
             returncode=1,
@@ -253,7 +243,9 @@ def test_down_idempotent_success_zero(
 ) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
     monkeypatch.setattr(
-        cli_mod, "run_compose", lambda *a, **k: SimpleNamespace(returncode=0)  # noqa: ARG005
+        cli_mod,
+        "run_compose",
+        lambda *a, **k: SimpleNamespace(returncode=0),  # noqa: ARG005
     )
 
     first = runner.invoke(app, ["down"])

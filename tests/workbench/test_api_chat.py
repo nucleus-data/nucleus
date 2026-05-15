@@ -101,8 +101,11 @@ def test_chat_response_no_dagster_leak(client, tmp_path) -> None:  # type: ignor
     mock_reply = CopilotReply(
         text="All good.",
         suggested_command=None,
-        tokens_in=1, tokens_out=1, cost_usd=0.0,
-        provider="openai", model="gpt-4o-mini",
+        tokens_in=1,
+        tokens_out=1,
+        cost_usd=0.0,
+        provider="openai",
+        model="gpt-4o-mini",
     )
 
     with patch("nucleus.intelligence.copilot.chat", return_value=mock_reply):

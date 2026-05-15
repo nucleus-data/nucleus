@@ -123,15 +123,14 @@ def preview_schedule(asset_key: str, *, n: int = 3) -> tuple[str, ...]:
     # Croniter docs: https://pypi.org/project/croniter/ (croniter==3.0.4)
     # croniter(expr, start_time).get_next(datetime) → next datetime after start_time.
     try:
-        from croniter import croniter  # noqa: PLC0415
+        from croniter import croniter
     except ImportError as exc:
         # Re-raise as a typed error so the CLI can render it cleanly.
         from nucleus.errors import NucleusInternalError
 
         raise NucleusInternalError(
             user_message=(
-                "The 'croniter' package is required for schedule preview "
-                "but is not installed."
+                "The 'croniter' package is required for schedule preview but is not installed."
             ),
             fix_hint="Run `pip install croniter==3.0.4`.",
             asset=asset_key,
@@ -141,10 +140,7 @@ def preview_schedule(asset_key: str, *, n: int = 3) -> tuple[str, ...]:
     count = max(1, min(n, 20))
     base = datetime.now(UTC)
     itr = croniter(defn.schedule, base)
-    return tuple(
-        itr.get_next(datetime).isoformat()
-        for _ in range(count)
-    )
+    return tuple(itr.get_next(datetime).isoformat() for _ in range(count))
 
 
 def to_dagster_schedule(defn: _AssetDefinition) -> Any:
@@ -190,7 +186,7 @@ def to_dagster_schedule(defn: _AssetDefinition) -> Any:
     #   description: str — human-readable description
     # Dagster is a HIDDEN implementation detail — ScheduleDefinition is
     # NOT exposed outside coordination/. Zero Dagster types reach user output.
-    import dagster  # noqa: PLC0415  # Docs: https://docs.dagster.io/api/
+    import dagster  # Docs: https://docs.dagster.io/api/
 
     schedule_name = defn.key.replace(".", "__") + "_schedule"
     job_name = defn.key.replace(".", "__") + "_job"

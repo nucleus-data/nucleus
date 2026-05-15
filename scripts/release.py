@@ -94,7 +94,7 @@ def _run_governance() -> None:
 def _run_pytest() -> None:
     print(
         '-> pytest tests/ poc/ (-m "not integration and not slow"; '
-            "release_e2e ignored here; use `make verify-all` for that suite)"
+        "release_e2e ignored here; use `make verify-all` for that suite)"
     )
     proc = subprocess.run(
         [

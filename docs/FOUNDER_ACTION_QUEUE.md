@@ -3,6 +3,68 @@
 > **Status**: Live. **Date**: 2026-05-15 — v0.2.0 bundle complete; handover commit staged; founder gates below.
 > **Purpose**: every decision the founder owes to unblock v0.2 launch. Complements (does NOT duplicate) `docs/NEEDS_VERIFICATION_INDEX.md` (empirical verifications) and each ADR's own §"Open Questions". Work top-to-bottom.
 
+## §0 — 2026-05-15 — 8-Lane Research Synthesis — Top-15 Adoption Shortlist + 11 ADR Stubs
+
+**Summary**: 8 research docs (R1–R8, all verified 2026-05-15) synthesised into a single prioritised adoption shortlist. 11 new ADR stubs created at `docs/decisions/ADR-026-*.md` through `docs/decisions/ADR-036-*.md`, all STATUS=PROPOSED awaiting founder ratification.
+
+**Deliverable**: `docs/research/inspiration/ADOPTION_SHORTLIST.md`
+
+### Top-15 Adoption Items
+
+1. **uv + ruff 0.15 toolchain** (ADR-027) — 8s vs 2m 15s CI; zero pyproject changes; ADOPT NOW (v0.2)
+2. **`nucleus.db` BI handshake + Rill metrics_view.yaml** (ADR-026) — 200 LOC closes BI connectivity gap; ADOPT NOW (v0.2)
+3. **Iceberg v3 read documentation** — 0 LOC; document in Wave 2 guide; PyIceberg 0.11.1 already reads v3 tables
+4. **Iceberg branch + tag CLI verbs** (ADR-028) — 50 LOC wraps `table.manage_snapshots()`; WAP workflow at v0.2
+5. **Lakekeeper v0.3 catalog swap** — confirmed by R1; no new ADR required; already in architecture
+6. **Marquez v0.54 Rust lineage viewer** (ADR-033) — ilum-cloud fork resolves JVM sidecar issue; v0.3
+7. **MetricFlow `nucleus_semantic.yaml`** (ADR-029) — design decorator kwargs at v0.2; emit YAML at v0.3; +17–23 pp AI accuracy
+8. **Iceberg v3 DV writes + migration helper** (ADR-031) — gated on pyiceberg DV write PR #2822 confirmation; v0.3
+9. **Asset description sidecar** — 200 LOC; no ADR; v0.3 (gate on usage telemetry)
+10. **Arrow Flight SQL Workbench endpoint** (ADR-034) — 500 LOC; additive; v0.3
+11. **sqlglot 26→30 upgrade** (ADR-032) — must complete before v0.5 column lineage; read changelog first
+12. **OpenLineage explicit lineage facets** — additive; no ADR; v0.5
+13. **`nucleus-mcp-server`** (ADR-030) — 500 LOC; v0.5; verify MCP SDK package name first (R3 NV-3)
+14. **`pyiceberg[pyiceberg-core]` Rust extra** — 1-line pin; no ADR; v0.3 contingent on slow-read reports
+15. **Iceberg WAP workflow docs** — docs only; v0.3 when branch-targeted writes land in PyIceberg
+
+### ADR stubs created at `docs/decisions/ADR-026-*.md` through `docs/decisions/ADR-036-*.md` — awaiting founder ratification
+
+| ADR | Title | P | Phase |
+|---|---|---|---|
+| ADR-026 | `nucleus.db` BI handshake + Rill metrics YAML | P0 | v0.2 |
+| ADR-027 | uv + ruff 0.15 toolchain | P0 | v0.2 |
+| ADR-028 | Iceberg branch + tag CLI verbs | P1 | v0.2 |
+| ADR-029 | MetricFlow-compatible `nucleus_semantic.yaml` | P0 | v0.3 |
+| ADR-030 | `nucleus-mcp-server` | P1 | v0.5 |
+| ADR-031 | Iceberg v3 format migration helper | P1 | v0.3 |
+| ADR-032 | sqlglot 26→30 upgrade for column lineage | P1 | v0.5 gate |
+| ADR-033 | Marquez v0.54 Rust lineage viewer | P1 | v0.3 |
+| ADR-034 | Arrow Flight SQL Workbench endpoint | P2 | v0.3 |
+| ADR-035 | MotherDuck Mode 2 dispatch reference | P2 | v1.5+ watch |
+| ADR-036 | Modal Mode 2 dispatch target | P2 | v1.5+ watch |
+
+### Recommended fire order
+
+**ADOPT NOW (zero architecture risk — fire in v0.2 wave):**
+→ ADR-027 (uv + ruff) — single-PR toolchain swap, ~90 min
+→ ADR-026 (nucleus.db + Rill YAML) — 200 LOC, pure additive
+→ ADR-028 (branch + tag CLI) — 50 LOC, well-scoped
+
+**GATE v0.3 wave on these before opening:**
+→ Verify pyiceberg DV write PR #2822 merge status (gates ADR-031)
+→ Confirm ilum-cloud Marquez Dockerfile base image has zero JVM (gates ADR-033)
+→ Verify dbt Core v1.12 GA date (gates ADR-029)
+→ Verify `adbc-driver-flight-sql` PyPI Python 3.11 compatibility (gates ADR-034)
+
+**GATE v0.5 wave:**
+→ Read sqlglot changelog 26→30 before writing ADR-032 decision
+→ Verify MCP Python SDK package name on PyPI before writing ADR-030 body
+
+**WATCH (no action until trigger fires):**
+→ ADR-035 (MotherDuck) + ADR-036 (Modal) — gate on Lakekeeper + empirical user demand
+
+---
+
 ## §0 — 2026-05-15 — v0.2.0 Public Launch handover (v0.2.0 reconciliation builder)
 
 ### Wave 1 summary (all 11 builders, autonomous loop 2026-05-14 → 2026-05-15)

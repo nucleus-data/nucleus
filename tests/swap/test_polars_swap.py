@@ -8,6 +8,7 @@ via ``find_spec`` (no install in CI — full swap on-demand only).
 Reference: ``docs/swap/polars.md``.
 Docs: https://docs.pola.rs/api/python/stable/reference/index.html
 """
+
 from __future__ import annotations
 
 import importlib.util

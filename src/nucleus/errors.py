@@ -434,6 +434,25 @@ class NucleusCheckExecutionError(NucleusError):
     DEFAULT_DOCS_URL = f"{_DOCS_BASE}/check-execution"
 
 
+class NucleusRunNotFoundError(NucleusError):
+    """A run ID was looked up but is not present in the run ledger.
+
+    Fired by ``nucleus runs show <id>`` and ``nucleus runs cancel <id>``
+    when the requested run ID does not appear in the NDJSON ledger at
+    ``<project_root>/.nucleus/runs/runs.ndjson``.
+
+    fix_hint: "Use ``nucleus runs list`` to see available run IDs."
+
+    Layer (ADR-006 §1): L2 Coordination — run ledger ownership.
+    See ADR-025 §P0-2 (run monitoring + persistence).
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE3011"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/run-not-found"
+
+
 # ============================================================================
 # Source / IO errors
 # ============================================================================
@@ -820,6 +839,74 @@ class NucleusInternalError(NucleusError):
 
 
 # ============================================================================
+# Reliability hardening (NE2007 + NE3008 + NE3009 per ADR-024 + ADR-006)
+# Appended 2026-05-15 by reliability-hardening builder (Wave 2 P0-3).
+# ============================================================================
+
+
+class NucleusMemoryLimitExceeded(NucleusError):
+    """DuckDB exhausted the configured memory budget during a query.
+
+    Fires when DuckDB raises ``OutOfMemoryException`` (or a similar
+    memory-pressure signal) after Nucleus has already applied the
+    ``SET memory_limit`` guard at AMA init.  Increase the project-level
+    ``memory_limit`` key in ``nucleus_project.yaml``, or split the
+    asset into smaller partitions.
+
+    The original ``duckdb.OutOfMemoryException`` is preserved as
+    ``cause`` for debug-mode inspection.
+
+    Layer (ADR-006 §1): L1 Engines — DuckDB memory-pressure boundary.
+    Per ADR-024 P0-1: triggered at ``coordination/asset_materialization.py``
+    after ``SET memory_limit`` is applied.
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE2007"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/memory-limit"
+
+
+class NucleusConcurrentRunError(NucleusError):
+    """A second ``nucleus run`` attempted to materialise the same asset concurrently.
+
+    Fires when the advisory filesystem lock (``coordination/locks.py``)
+    is already held by another process for this asset.  The conflicting
+    ``pid`` and start timestamp are included in ``user_message``.  Wait
+    for the first run to finish or kill the stale lock file at
+    ``<warehouse>/.nucleus/locks/<asset_key>.lock``.
+
+    Layer (ADR-006 §1): L2 Coordination — advisory-lock boundary.
+    Per ADR-024 P0-2.
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE3008"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/concurrent-run"
+
+
+class NucleusMaintenanceError(NucleusError):
+    """A post-commit maintenance operation (e.g. snapshot expiry) failed.
+
+    Fires when ``coordination/snapshot_maintenance.py``'s
+    ``expire_old_snapshots`` call raises an unexpected exception from
+    pyiceberg.  The materialisation itself succeeded; this error is
+    recorded but does NOT roll back the committed snapshot.
+
+    The original exception is preserved as ``cause``.
+
+    Layer (ADR-006 §1): L2 Coordination — post-commit maintenance boundary.
+    Per ADR-024 P0-3.
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE3009"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/maintenance"
+
+
+# ============================================================================
 # Dagit escape-hatch errors (NE5009-NE5011 per ADR-018 + ADR-006 §NE5xxx L4)
 # Appended 2026-05-15 by mass-audit builder — WAVE-AUDIT-MARKER
 # Wave 1B must NOT allocate NE5009/5010/5011; these are reserved here.
@@ -877,6 +964,106 @@ class NucleusDagitSubprocessError(NucleusError):
     DEFAULT_DOCS_URL = f"{_DOCS_BASE}/dagit-subprocess"
 
 
+# ============================================================================
+# Scheduler daemon errors (NE5012-NE5014 — ADR-017 v0.2.1 mini-scheduler)
+# Appended 2026-05-15 by Wave 2 P0-1 daemon builder.
+# ============================================================================
+
+
+class NucleusDaemonStartError(NucleusError):
+    """The Nucleus scheduler daemon could not be started.
+
+    Fired when :func:`nucleus.coordination.daemon.start_daemon` fails to
+    spawn the daemon subprocess or encounters a startup error. Check that
+    the project root is a valid Nucleus project and that no stale pidfile
+    is blocking the start path.
+
+    Layer (ADR-006 §1): L4 Experience — CLI + coordination boundary.
+    See ADR-017 §v0.2.1 (mini-scheduler fallback).
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE5012"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/daemon-start"
+
+
+class NucleusDaemonNotRunningError(NucleusError):
+    """No Nucleus scheduler daemon is currently running.
+
+    Fired by :func:`nucleus.coordination.daemon.stop_daemon` when the
+    daemon is expected to be running but no live process is found.
+    Run ``nucleus schedule on`` to start the daemon.
+
+    Layer (ADR-006 §1): L4 Experience — CLI + coordination boundary.
+    See ADR-017 §v0.2.1 (mini-scheduler fallback).
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE5013"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/daemon-not-running"
+
+
+class NucleusDaemonAlreadyRunningError(NucleusError):
+    """The Nucleus scheduler daemon is already running.
+
+    Fired by :func:`nucleus.coordination.daemon.start_daemon` when a
+    live daemon process is detected via the pidfile. Use
+    ``nucleus schedule off`` to stop it first, or
+    ``nucleus schedule status`` to inspect its current state.
+
+    Layer (ADR-006 §1): L4 Experience — CLI + coordination boundary.
+    See ADR-017 §v0.2.1 (mini-scheduler fallback).
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE5014"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/daemon-already-running"
+
+
+# ============================================================================
+# Iceberg snapshot management errors (NE5015-NE5016 per ADR-028 + ADR-006)
+# Appended 2026-05-15 by snapshot-cli builder.
+# ============================================================================
+
+
+class NucleusSnapshotNotFoundError(NucleusError):
+    """A snapshot ID or branch/tag name was not found in the Iceberg table.
+
+    Fired by ``nucleus snapshot branch/tag create`` when the supplied
+    ``--snapshot-id`` does not exist in the table's snapshot log, or by
+    ``nucleus snapshot branch/tag delete`` when the named ref does not exist.
+
+    Layer (ADR-006 §1): L0 Physics — Iceberg snapshot ref lookup.
+    See ADR-028 §2 (Iceberg branch + tag CLI verbs).
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE5015"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/snapshot-not-found"
+
+
+class NucleusBranchAlreadyExistsError(NucleusError):
+    """A branch or tag with the given name already exists on the asset.
+
+    Fired by ``nucleus snapshot branch/tag create`` when a ref with the
+    same name is already registered in the Iceberg table metadata.
+    Use ``nucleus snapshot branch/tag delete`` first, or choose a
+    different name.
+
+    Layer (ADR-006 §1): L0 Physics — Iceberg snapshot ref creation.
+    See ADR-028 §2 (Iceberg branch + tag CLI verbs).
+
+    # Stability: Beta
+    """
+
+    error_code: ClassVar[str] = "NE5016"
+    DEFAULT_DOCS_URL = f"{_DOCS_BASE}/branch-already-exists"
+
+
 __all__ = [
     "NucleusError",
     # Asset / catalog
@@ -910,6 +1097,8 @@ __all__ = [
     "NucleusTimeoutError",
     "NucleusNetworkError",
     "NucleusRunCancelled",
+    # Run ledger (NE3011 — ADR-025 §P0-2)
+    "NucleusRunNotFoundError",
     # Intelligence / AI Copilot (NE4xxx — ADR-015 + ADR-006)
     "NucleusCopilotAuthError",
     "NucleusCopilotRateLimitError",
@@ -925,6 +1114,17 @@ __all__ = [
     "NucleusDagitLaunchError",
     "NucleusPortUnavailableError",
     "NucleusDagitSubprocessError",
+    # Scheduler daemon (NE5012-NE5014 — ADR-017 v0.2.1 mini-scheduler)
+    "NucleusDaemonStartError",
+    "NucleusDaemonNotRunningError",
+    "NucleusDaemonAlreadyRunningError",
+    # Iceberg snapshot management (NE5015-NE5016 — ADR-028)
+    "NucleusSnapshotNotFoundError",
+    "NucleusBranchAlreadyExistsError",
+    # Reliability hardening (NE2007 + NE3008 + NE3009 — ADR-024)
+    "NucleusMemoryLimitExceeded",
+    "NucleusConcurrentRunError",
+    "NucleusMaintenanceError",
     # Catch-all
     "NucleusInternalError",
 ]

@@ -30,13 +30,12 @@ import contextlib
 from pathlib import Path, PurePosixPath
 from typing import Literal
 
+import duckdb
 from pyiceberg.exceptions import (
     CommitFailedException,
     NamespaceAlreadyExistsError,
     TableAlreadyExistsError,
 )
-
-import duckdb
 
 # gcsfs and pyarrow.fs are optional — activated by `pip install nucleus[gcs]`.
 # Docs: https://gcsfs.readthedocs.io/en/latest/
@@ -100,7 +99,7 @@ def _detect_format(uri: str, explicit_format: str | None) -> str:
             )
         return explicit_format
 
-    path_part = uri.split("?")[0].split("#")[0]
+    path_part = uri.split("?", maxsplit=1)[0].split("#", maxsplit=1)[0]
     suffix = PurePosixPath(path_part).suffix.lower()
     if suffix in _EXTENSION_TO_FORMAT:
         return _EXTENSION_TO_FORMAT[suffix]
@@ -152,8 +151,7 @@ def _translate_duckdb_gcs_exception(exc: BaseException) -> NucleusError:
     if "404" in msg or "not found" in msg or isinstance(exc, FileNotFoundError):
         return NucleusSourceNotFound(
             user_message=(
-                "The GCS object or bucket was not found. "
-                "Check the bucket name and object path."
+                "The GCS object or bucket was not found. Check the bucket name and object path."
             ),
             fix_hint=(
                 "Verify the gs:// URI is correct and the object exists. "
@@ -165,10 +163,7 @@ def _translate_duckdb_gcs_exception(exc: BaseException) -> NucleusError:
     # Network timeout / connectivity.
     if any(phrase in msg for phrase in ("timeout", "connection", "network", "dns")):
         return NucleusNetworkError(
-            user_message=(
-                "Could not reach Google Cloud Storage. "
-                "Check network connectivity."
-            ),
+            user_message=("Could not reach Google Cloud Storage. Check network connectivity."),
             fix_hint=(
                 "Verify outbound HTTPS (port 443) to storage.googleapis.com is allowed. "
                 "For service accounts, confirm the account has Storage access."
@@ -208,9 +203,7 @@ def _translate_duckdb_gcs_exception(exc: BaseException) -> NucleusError:
     if "duckdb" in mod and cls == "OutOfMemoryException":
         return NucleusResourceError(
             user_message="Reading GCS files exceeded the memory budget.",
-            fix_hint=(
-                "Reduce the file size or partition the ingest into smaller batches."
-            ),
+            fix_hint=("Reduce the file size or partition the ingest into smaller batches."),
             cause=exc,
         )
 
@@ -238,7 +231,7 @@ def ingest_gcs_to_iceberg(
     warehouse_dir: str | Path,
     dest_namespace: str,
     dest_table: str,
-    format: Literal["auto", "parquet", "csv", "json"] = "auto",  # noqa: A002 — mirrors public API
+    format: Literal["auto", "parquet", "csv", "json"] = "auto",
 ) -> int:
     """Read a file (or glob) from Google Cloud Storage; write to a filesystem Iceberg table.
 
@@ -311,7 +304,7 @@ def ingest_gcs_to_iceberg(
 
     except NucleusError:
         raise
-    except Exception as exc:  # noqa: BLE001 — broad catch: translator classifies
+    except Exception as exc:
         raise _translate_duckdb_gcs_exception(exc) from exc
 
     # Write to Iceberg catalog.
@@ -334,7 +327,7 @@ def ingest_gcs_to_iceberg(
         ) from exc
     except NucleusError:
         raise
-    except Exception as exc:  # noqa: BLE001 — translate pyiceberg and stdlib errors
+    except Exception as exc:
         from nucleus.coordination.error_translation import translate
 
         raise translate(exc) from exc

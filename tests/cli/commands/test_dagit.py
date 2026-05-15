@@ -29,7 +29,7 @@ Docs:
 - unittest.mock.patch: https://docs.python.org/3/library/unittest.mock.html
 """
 
-# ruff: noqa: ARG001, ARG002
+# ruff: noqa: ARG002
 
 from __future__ import annotations
 
@@ -41,7 +41,6 @@ import pytest
 from typer.testing import CliRunner
 
 from nucleus.cli.main import app
-
 
 _FORBIDDEN_CLASSNAMES = (
     # Stdlib internals that should never reach user-facing strings.

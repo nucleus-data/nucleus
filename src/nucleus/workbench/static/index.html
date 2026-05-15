@@ -6,52 +6,48 @@
   <title>Nucleus Workbench</title>
 
   <!--
-    Nucleus Workbench — CDN Fallback (Editorial Hero v0.2)
-    ───────────────────────────────────────────────────────
-    This file is the "demo mode" UI served when the full React/Vite build
-    has not been compiled (e.g. proxy-blocked npm install).
+    Nucleus Workbench — Offline-First Static SPA (Editorial Hero v0.3)
+    ──────────────────────────────────────────────────────────────────
+    Stack (fully offline — zero external CDN requests):
+      - React 18 + ReactDOM via local vendor/react.production.min.js (UMD)
+      - Tailwind CSS v3 via local vendor/tailwind.min.js (Play CDN runtime)
+      - Icons via inline SVG paths (lucide-react@0.469.0, MIT license)
+      - System font stack (replaces Google Fonts)
 
-    When `npm run build` succeeds in frontend/, its dist/ output is copied
-    here and replaces this file with the production bundle.
+    v0.3: Metallic-noise hero (feTurbulence overlay 0.40), 7 interactive pages:
+    Assets, Runs, Query, Schedules, DAG (clickable), ⌘K palette, Run log SSE.
 
-    Stack (CDN only, no npm required):
-      - React 18 + ReactDOM via esm.sh
-      - Tailwind CSS v3 via Play CDN
-      - Lucide icons via esm.sh
-
-    Design: Editorial Hero light theme per founder-picked v0.2 mockup.
-    Per ADR-016 §3 (Fork B) + nucleus_architecture_v4.1.md §8.1.
+    Per ADR-016 §3 (Fork B — CDN-fallback static SPA) +
+    nucleus_architecture_v4.1.md §8.1 (Experience Layer — Workbench UX).
   -->
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="vendor/tailwind.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+            sans: ['-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue','Arial','ui-sans-serif','system-ui','sans-serif'],
+            mono: ['ui-monospace','Cascadia Code','Source Code Pro','Menlo','Consolas','monospace'],
           },
         },
       },
     };
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, ui-sans-serif, system-ui, sans-serif;
       background: #ffffff;
       color: #0A0E1A;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Hero gradient — matches Editorial Hero v0.2 spec */
+    /* ── Hero + metallic film-grain noise (v0.3) ────────────────── */
+    /* Reference: duotone gradient + dense fractalNoise overlay at  */
+    /* opacity:0.40 with mix-blend-mode:overlay → visible grain.   */
     .hero {
       background: linear-gradient(160deg, #3A6FF8 0%, #2A5BFA 25%, #1A38BE 60%, #0F1E6E 100%);
       position: relative;
@@ -61,13 +57,36 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      opacity: 0.18;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px 300px;
+      opacity: 0.40;
+      mix-blend-mode: overlay;
       pointer-events: none;
     }
     .hero > * { position: relative; z-index: 1; }
 
-    /* Glass chip */
+    /* ── Card + very subtle grain on white ──────────────────────── */
+    .card {
+      background: #ffffff;
+      border: 1px solid #EEF0F4;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.06;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    /* ── Glass chip ─────────────────────────────────────────────── */
     .glass-chip {
       background: rgba(255,255,255,0.12);
       border: 1px solid rgba(255,255,255,0.20);
@@ -85,26 +104,26 @@
       white-space: nowrap;
     }
 
-    /* Card */
-    .card {
-      background: #ffffff;
-      border: 1px solid #EEF0F4;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
-    }
-
-    /* Status dot */
+    /* ── Status dot ─────────────────────────────────────────────── */
     .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
     .dot-green  { background: #10B981; }
     .dot-yellow { background: #F59E0B; }
     .dot-red    { background: #EF4444; }
     .dot-gray   { background: #94A3B8; }
 
-    /* Blob avatar */
-    @keyframes blobPulse {
-      0%,100% { transform: scale(1); }
-      50% { transform: scale(1.04); }
+    /* ── Badge ──────────────────────────────────────────────────── */
+    .badge {
+      font-size: 11px; font-weight: 600; padding: 2px 8px;
+      border-radius: 9999px; display: inline-flex; align-items: center;
     }
+    .badge-green  { background: rgba(16,185,129,0.12);  color: #059669; }
+    .badge-red    { background: rgba(239,68,68,0.12);   color: #DC2626; }
+    .badge-yellow { background: rgba(245,158,11,0.12);  color: #D97706; }
+    .badge-muted  { background: rgba(90,98,115,0.10);   color: #5A6273; }
+    .badge-blue   { background: rgba(42,91,250,0.10);   color: #2A5BFA; }
+
+    /* ── Blob avatar animation ──────────────────────────────────── */
+    @keyframes blobPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
     .blob-orb {
       width: 32px; height: 32px; border-radius: 50%;
       background: conic-gradient(from 200deg, #4F75FF, #7C3AED, #06B6D4, #10B981, #4F75FF);
@@ -113,105 +132,179 @@
       flex-shrink: 0;
     }
 
-    /* Suggestion chip */
+    /* ── Suggestion chip ────────────────────────────────────────── */
     .suggestion-chip {
-      background: rgba(42,91,250,0.06);
-      border: 1px solid rgba(42,91,250,0.15);
-      border-radius: 6px;
-      color: #2A5BFA;
-      font-size: 12px;
-      padding: 6px 10px;
-      cursor: pointer;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: inherit;
+      background: rgba(42,91,250,0.06); border: 1px solid rgba(42,91,250,0.15);
+      border-radius: 6px; color: #2A5BFA; font-size: 12px; padding: 6px 10px;
+      cursor: pointer; text-align: left; display: flex; align-items: center; gap: 6px; font-family: inherit;
     }
-    .suggestion-chip:hover {
-      background: rgba(42,91,250,0.12);
-    }
+    .suggestion-chip:hover { background: rgba(42,91,250,0.12); }
 
-    /* Run row */
+    /* ── Run row ────────────────────────────────────────────────── */
     .run-row {
       display: flex; align-items: center; gap: 10px;
-      padding: 7px 4px;
-      border-bottom: 1px solid #EEF0F4;
-      cursor: pointer;
-      transition: background 0.1s;
+      padding: 7px 4px; border-bottom: 1px solid #EEF0F4; cursor: pointer; transition: background 0.1s;
     }
     .run-row:last-child { border-bottom: none; }
-    .run-row:hover { background: rgba(0,0,0,0.02); border-radius: 4px; }
+    .run-row:hover { background: rgba(42,91,250,0.04); border-radius: 4px; }
 
-    /* Spin */
+    /* ── Spin ───────────────────────────────────────────────────── */
     @keyframes spin { to { transform: rotate(360deg); } }
     .spin { animation: spin 1s linear infinite; }
 
-    /* Responsive 3-col */
-    .grid-3 {
-      display: grid;
-      grid-template-columns: 1fr 1.1fr 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-    @media (max-width: 1024px) {
-      .grid-3 { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 768px) {
-      .grid-3 { grid-template-columns: 1fr; }
-    }
+    /* ── Slide-over animation ───────────────────────────────────── */
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .slide-panel { animation: slideIn 0.22s cubic-bezier(0.22,1,0.36,1); }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .fade-in { animation: fadeIn 0.15s ease; }
 
-    /* Nav link */
+    /* ── Filter chips ───────────────────────────────────────────── */
+    .filter-chip {
+      padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600;
+      border: 1px solid #EEF0F4; background: transparent; cursor: pointer;
+      color: #5A6273; transition: background 0.1s, color 0.1s; white-space: nowrap;
+    }
+    .filter-chip:hover { background: rgba(0,0,0,0.03); }
+    .filter-chip.active { background: #0A0E1A; color: #fff; border-color: #0A0E1A; }
+
+    /* ── Nav link ───────────────────────────────────────────────── */
     .nav-link {
-      color: rgba(255,255,255,0.65);
-      font-size: 13px;
-      text-decoration: none;
-      padding: 5px 10px;
-      border-radius: 6px;
-      transition: background 0.12s, color 0.12s;
+      color: rgba(255,255,255,0.65); font-size: 13px; text-decoration: none;
+      padding: 5px 10px; border-radius: 6px; transition: background 0.12s, color 0.12s;
     }
     .nav-link:hover, .nav-link.active {
-      background: rgba(255,255,255,0.10);
-      color: rgba(255,255,255,0.95);
+      background: rgba(255,255,255,0.10); color: rgba(255,255,255,0.95);
     }
 
-    /* Badge */
-    .badge {
-      font-size: 11px; font-weight: 600; padding: 2px 8px;
-      border-radius: 9999px; display: inline-flex; align-items: center;
+    /* ── Responsive 3-col ───────────────────────────────────────── */
+    .grid-3 { display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 1024px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    /* ── Log panel ──────────────────────────────────────────────── */
+    .log-panel {
+      background: #0A0E1A; border-radius: 8px; padding: 12px 16px;
+      max-height: 240px; overflow-y: auto; font-family: ui-monospace, Consolas, monospace;
+      font-size: 12px; line-height: 1.65; color: #94A3B8;
     }
-    .badge-green  { background: rgba(16,185,129,0.12); color: #059669; }
-    .badge-red    { background: rgba(239,68,68,0.12);  color: #DC2626; }
-    .badge-yellow { background: rgba(245,158,11,0.12); color: #D97706; }
-    .badge-muted  { background: rgba(90,98,115,0.10);  color: #5A6273; }
+    .log-line-error { color: #FC8181; }
+    .log-line-warn  { color: #F6AD55; }
+    .log-line-ok    { color: #68D391; }
+
+    /* ── Result table ───────────────────────────────────────────── */
+    .result-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .result-table th {
+      background: #FAFAFA; border-bottom: 2px solid #EEF0F4;
+      padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px;
+      color: #5A6273; white-space: nowrap; position: sticky; top: 0;
+    }
+    .result-table td {
+      padding: 7px 12px; border-bottom: 1px solid #EEF0F4;
+      max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .result-table tr:hover td { background: rgba(42,91,250,0.03); }
+    .result-table tr:last-child td { border-bottom: none; }
+    .null-val { color: #9BA3AF; font-style: italic; }
+
+    /* ── Error banner ───────────────────────────────────────────── */
+    .error-banner {
+      background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.20);
+      border-radius: 8px; padding: 12px 16px; color: #DC2626; font-size: 13px;
+    }
+    .error-banner-hint { color: #5A6273; font-size: 12px; margin-top: 4px; }
+
+    /* ── Asset card ─────────────────────────────────────────────── */
+    .asset-card {
+      cursor: pointer; transition: box-shadow 0.15s, transform 0.1s; user-select: none;
+    }
+    .asset-card:hover {
+      box-shadow: 0 4px 16px rgba(42,91,250,0.12), 0 1px 4px rgba(0,0,0,0.06);
+      transform: translateY(-1px);
+    }
+
+    /* ── Schedule timeline ──────────────────────────────────────── */
+    .sched-day {
+      flex: 1; text-align: center; padding: 6px 4px; font-size: 11px; color: #5A6273;
+    }
+    .sched-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #2A5BFA;
+      margin: 0 auto 2px;
+    }
+    .sched-dot-empty {
+      width: 8px; height: 8px; border-radius: 50%; background: #EEF0F4; margin: 0 auto 2px;
+    }
+
+    /* ── Page body wrapper ──────────────────────────────────────── */
+    .page-body { padding: 32px 48px 56px; min-height: calc(100vh - 56px); background: #fff; }
+    @media (max-width: 768px) { .page-body { padding: 20px 20px 40px; } }
+
+    /* ── Command palette ────────────────────────────────────────── */
+    .palette-result {
+      display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+      cursor: pointer; border-radius: 8px; transition: background 0.08s;
+    }
+    .palette-result:hover, .palette-result.focused {
+      background: rgba(42,91,250,0.07);
+    }
+
+    /* ── SQL textarea ───────────────────────────────────────────── */
+    .sql-editor {
+      width: 100%; min-height: 120px; resize: vertical;
+      font-family: ui-monospace, Consolas, monospace; font-size: 13px; line-height: 1.6;
+      border: 1px solid #EEF0F4; border-radius: 8px; padding: 12px 16px;
+      outline: none; background: #FAFAFA; color: #0A0E1A;
+      transition: border-color 0.15s;
+    }
+    .sql-editor:focus { border-color: #2A5BFA; background: #fff; }
   </style>
 
-  <script type="importmap">
-  {
-    "imports": {
-      "react":            "https://esm.sh/react@18.3.1",
-      "react-dom":        "https://esm.sh/react-dom@18.3.1",
-      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
-      "lucide-react":     "https://esm.sh/lucide-react@0.469.0"
-    }
-  }
-  </script>
+  <script src="vendor/react.production.min.js"></script>
+  <script src="vendor/react-dom.production.min.js"></script>
 </head>
 <body>
 <div id="root"></div>
 
-<script type="module">
-import {
-  createElement as h,
-  useState, useEffect, useRef
-} from 'react';
-import { createRoot } from 'react-dom/client';
-import {
-  Database, BarChart3, CheckCircle, Clock,
-  ArrowRight, Maximize2, MoreHorizontal,
-  Bell, Terminal, Search, Sparkles, Loader2,
-  Play, Code2, BookOpen
-} from 'lucide-react';
+<script>
+const { createElement: h, useState, useEffect, useRef, useCallback, useMemo } = window.React;
+const { createRoot } = window.ReactDOM;
+// Lucide icons replaced with inline SVG paths (lucide-react@0.469.0, MIT License).
+// Paths sourced from: https://github.com/lucide-icons/lucide/tree/main/icons
+
+/* ── Icon component ────────────────────────────────────────────── */
+function Icon({ name, size=16, color, style, className }) {
+  const paths = {
+    Database:      '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>',
+    BarChart3:     '<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+    CheckCircle:   '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    Clock:         '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    ArrowRight:    '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+    Maximize2:     '<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>',
+    MoreHorizontal:'<circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/><circle cx="5" cy="12" r="1" fill="currentColor"/>',
+    Bell:          '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+    Terminal:      '<polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>',
+    Search:        '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+    Sparkles:      '<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>',
+    Loader2:       '<path d="M21 12a9 9 0 1 1-6.219-8.56"/>',
+    Play:          '<polygon points="5 3 19 12 5 21 5 3" fill="currentColor" stroke="none"/>',
+    Code2:         '<path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/>',
+    BookOpen:      '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    X:             '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+    AlertCircle:   '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+    Calendar:      '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+    RefreshCw:     '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+    Filter:        '<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
+    Zap:           '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="currentColor" stroke="none"/>',
+    Check:         '<polyline points="20 6 9 17 4 12"/>',
+    ChevronRight:  '<polyline points="9 18 15 12 9 6"/>',
+    Package:       '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+    Hash:          '<line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>',
+  };
+  return h('svg', {
+    width: size, height: size, viewBox: '0 0 24 24', fill: 'none',
+    stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round',
+    className, style: { color: color||'inherit', display:'inline-block', verticalAlign:'middle', flexShrink:0, ...style },
+  }, h('g', { dangerouslySetInnerHTML: { __html: paths[name] || '' } }));
+}
 
 /* ── API helpers ───────────────────────────────────────────────── */
 async function apiFetch(path) {
@@ -221,292 +314,316 @@ async function apiFetch(path) {
     return await r.json();
   } catch { return null; }
 }
+async function apiCall(path, opts={}) {
+  try {
+    const r = await fetch(path, opts);
+    const body = await r.json().catch(() => ({}));
+    return { ok: r.ok, data: r.ok ? body : null, status: r.status,
+      error: !r.ok ? (body?.detail?.user_message || 'Request failed') : null,
+      hint:  !r.ok ? (body?.detail?.fix_hint  || null) : null };
+  } catch (e) {
+    return { ok: false, data: null, status: 0, error: e.message, hint: null };
+  }
+}
 
-/* ── Formatting ────────────────────────────────────────────────── */
+/* ── Formatters ────────────────────────────────────────────────── */
 function formatRows(n) {
   if (n == null) return '—';
-  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
-  if (n >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
   return String(n);
 }
-function relativeAgo(seconds) {
-  if (seconds == null) return 'never';
-  if (seconds < 60) return Math.round(seconds) + 's ago';
-  if (seconds < 3600) return Math.round(seconds/60) + 'm ago';
-  return Math.round(seconds/3600) + 'h ago';
+function relativeAgo(s) {
+  if (s == null) return 'never';
+  if (s < 60) return Math.round(s)+'s ago';
+  if (s < 3600) return Math.round(s/60)+'m ago';
+  return Math.round(s/3600)+'h ago';
 }
 function runAgo(epochSec) {
   const d = Math.max(0, Math.floor(Date.now()/1000 - epochSec));
-  if (d < 60) return d + 's ago';
-  if (d < 3600) return Math.floor(d/60) + 'm ago';
-  return Math.floor(d/3600) + 'h ago';
+  if (d < 60) return d+'s ago';
+  if (d < 3600) return Math.floor(d/60)+'m ago';
+  return Math.floor(d/3600)+'h ago';
 }
 function fmtDuration(ms) {
   if (ms == null) return '—';
-  return ms < 1000 ? ms + 'ms' : (ms/1000).toFixed(1) + 's';
+  return ms < 1000 ? ms+'ms' : (ms/1000).toFixed(1)+'s';
 }
 function statusDotClass(s) {
-  return s === 'success' ? 'dot-green' : s === 'failure' ? 'dot-red' : s === 'running' ? 'dot-yellow' : 'dot-gray';
+  return s==='success' ? 'dot-green' : s==='failure' ? 'dot-red' : s==='running' ? 'dot-yellow' : 'dot-gray';
+}
+function statusBadgeClass(s) {
+  return s==='success' ? 'badge-green' : s==='failure' ? 'badge-red' : s==='running' ? 'badge-yellow' : 'badge-muted';
+}
+function fmtCellVal(v) {
+  if (v === null || v === undefined) return null;
+  if (typeof v === 'object') return JSON.stringify(v);
+  return String(v);
 }
 
-/* ── TopNav ────────────────────────────────────────────────────── */
-function TopNav({ page, setPage }) {
-  const nav = [
-    { key: 'dashboard', label: 'Dashboard' },
-    { key: 'assets',    label: 'Assets' },
-    { key: 'runs',      label: 'Runs' },
-    { key: 'query',     label: 'Query' },
-    { key: 'schedules', label: 'Schedules' },
-    { key: 'catalog',   label: 'Catalog' },
-  ];
-  return h('nav', {
-    style: {
-      display: 'flex', alignItems: 'center', height: 56,
-      padding: '0 28px', gap: 8, flexShrink: 0,
-    }
-  },
-    /* Logo */
-    h('div', {
-      style: { display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' },
-      onClick: () => setPage('dashboard'),
-    },
-      h(Database, { size: 16, style: { color: '#fff' } }),
-      h('span', { style: { fontWeight: 700, fontSize: 14, color: '#fff', letterSpacing: '-0.01em', marginLeft: 4 } }, 'nucleus'),
-      h('span', { style: { color: 'rgba(255,255,255,0.45)', margin: '0 4px', fontSize: 16 } }, '/'),
-      h('span', { style: { fontSize: 14, fontWeight: 500, color: '#fff' } }, 'my_warehouse'),
+/* ── ErrorBanner ───────────────────────────────────────────────── */
+function ErrorBanner({ message, hint }) {
+  if (!message) return null;
+  return h('div', { className:'error-banner' },
+    h('div', { style:{ display:'flex', alignItems:'center', gap:8 } },
+      h(Icon,{ name:'AlertCircle', size:14 }), message,
     ),
-    /* Nav links */
-    h('div', { style: { display: 'flex', gap: 2, marginLeft: 16 } },
-      ...nav.map(({ key, label }) =>
-        h('button', {
-          key,
-          className: `nav-link${page === key ? ' active' : ''}`,
-          style: { background: page === key ? 'rgba(255,255,255,0.10)' : 'transparent', border: 'none', cursor: 'pointer' },
-          onClick: () => setPage(key),
-        }, label)
+    hint && h('div',{ className:'error-banner-hint' }, hint),
+  );
+}
+
+/* ── SlideOver ─────────────────────────────────────────────────── */
+function SlideOver({ isOpen, onClose, title, children, width=500 }) {
+  useEffect(() => {
+    function onKey(e) { if (e.key==='Escape') onClose(); }
+    if (isOpen) document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+  if (!isOpen) return null;
+  return h('div', { style:{ position:'fixed', inset:0, zIndex:50, display:'flex', justifyContent:'flex-end' } },
+    h('div', { style:{ position:'absolute', inset:0, background:'rgba(0,0,0,0.25)' }, onClick:onClose }),
+    h('div', { className:'slide-panel', style:{ position:'relative', zIndex:51, background:'#fff', width, maxWidth:'92vw', height:'100%', boxShadow:'-8px 0 40px rgba(0,0,0,0.12)', display:'flex', flexDirection:'column' } },
+      h('div', { style:{ display:'flex', alignItems:'center', padding:'20px 24px 18px', borderBottom:'1px solid #EEF0F4', flexShrink:0 } },
+        h('span', { style:{ fontSize:15, fontWeight:700, flex:1 } }, title),
+        h('button', { onClick:onClose, style:{ cursor:'pointer', border:'none', background:'transparent', padding:6, borderRadius:6, color:'#5A6273', display:'flex' } }, h(Icon,{ name:'X', size:16 })),
       ),
+      h('div', { style:{ flex:1, overflowY:'auto', padding:24 } }, children),
     ),
-    h('div', { style: { flex: 1 } }),
-    /* Search */
-    h('div', {
-      style: {
-        display: 'flex', alignItems: 'center', gap: 6,
-        padding: '5px 12px', borderRadius: 7,
-        border: '1px solid rgba(255,255,255,0.15)',
-        background: 'rgba(255,255,255,0.08)', cursor: 'pointer',
-        color: 'rgba(255,255,255,0.65)', fontSize: 12,
-      }
-    }, h(Search, { size: 13 }), 'Search…', h('kbd', { style: { fontSize: 10, padding: '1px 5px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.15)', marginLeft: 6 } }, '⌘K')),
-    /* Bell */
-    h('div', {
-      style: { width: 36, height: 36, borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.65)', cursor: 'pointer', marginLeft: 8 }
-    }, h(Bell, { size: 15 })),
-    /* Avatar */
-    h('div', {
-      style: { width: 34, height: 34, borderRadius: '50%', background: 'rgba(255,255,255,0.20)', border: '2px solid rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', marginLeft: 6 }
-    }, h(Terminal, { size: 14, style: { color: '#fff' } })),
   );
 }
 
-/* ── Stat chip ─────────────────────────────────────────────────── */
-function StatChip({ icon, label, sep }) {
-  return h('span', null,
-    h('span', { className: 'glass-chip' },
-      h('span', { style: { display: 'flex', alignItems: 'center', opacity: 0.85 } }, icon),
-      label,
-    ),
-    sep && h('span', { style: { color: 'rgba(255,255,255,0.35)', fontSize: 16, margin: '0 4px' } }, '•'),
-  );
-}
+/* ── Command Palette ───────────────────────────────────────────── */
+function CommandPalette({ isOpen, onClose, setPage }) {
+  const [q, setQ] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [focused, setFocused] = useState(0);
+  const inputRef = useRef(null);
 
-/* ── Recent Runs Card ──────────────────────────────────────────── */
-function RecentRunsCard({ runs, loading }) {
-  return h('div', { className: 'card', style: { display: 'flex', flexDirection: 'column', minHeight: 300 } },
-    h('div', { style: { display: 'flex', alignItems: 'center', padding: '16px 18px 12px', borderBottom: '1px solid #EEF0F4', flexShrink: 0 } },
-      h('span', { style: { fontSize: 14, fontWeight: 700, letterSpacing: '-0.01em' } }, 'Recent runs'),
-      h('a', { href: '#runs', style: { marginLeft: 'auto', fontSize: 12, fontWeight: 500, color: '#2A5BFA', textDecoration: 'none' } }, 'View all →'),
-    ),
-    h('div', { style: { padding: '4px 18px', flex: 1 } },
-      loading
-        ? h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: 160, color: '#5A6273', fontSize: 13 } }, h(Loader2, { size: 16, className: 'spin' }))
-        : runs.length === 0
-          ? h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 160, color: '#5A6273', gap: 8 } },
-              h('span', { style: { fontSize: 28, opacity: 0.3 } }, '▶'),
-              h('p', { style: { fontSize: 12, margin: 0 } }, 'No runs yet'),
+  useEffect(() => { if (isOpen) { setQ(''); setResults([]); setFocused(0); setTimeout(() => inputRef.current?.focus(), 50); } }, [isOpen]);
+  useEffect(() => {
+    if (!q || q.length < 2) { setResults([]); return; }
+    setLoading(true);
+    const t = setTimeout(async () => {
+      const res = await apiFetch(`/api/search?q=${encodeURIComponent(q)}`);
+      setResults(res?.items || []);
+      setFocused(0);
+      setLoading(false);
+    }, 120);
+    return () => clearTimeout(t);
+  }, [q]);
+
+  function handleKey(e) {
+    if (e.key==='Escape') { onClose(); return; }
+    if (e.key==='ArrowDown') { e.preventDefault(); setFocused(f => Math.min(f+1, results.length-1)); }
+    if (e.key==='ArrowUp') { e.preventDefault(); setFocused(f => Math.max(f-1, 0)); }
+    if (e.key==='Enter' && results[focused]) pick(results[focused]);
+  }
+  function pick(item) {
+    const pg = item.kind==='asset' ? 'assets' : item.kind==='run' ? 'runs' : item.kind==='schedule' ? 'schedules' : 'dashboard';
+    setPage(pg); onClose();
+  }
+  const kindColor = { asset:'#2A5BFA', run:'#10B981', schedule:'#F59E0B' };
+  const kindIcon = { asset:'Database', run:'Play', schedule:'Clock' };
+
+  if (!isOpen) return null;
+  return h('div', { style:{ position:'fixed', inset:0, zIndex:60, display:'flex', alignItems:'flex-start', justifyContent:'center', paddingTop:80, background:'rgba(0,0,0,0.35)' }, onClick:onClose },
+    h('div', { className:'fade-in card', style:{ width:560, maxWidth:'90vw', maxHeight:'70vh', display:'flex', flexDirection:'column', overflow:'hidden' }, onClick:e=>e.stopPropagation() },
+      h('div', { style:{ display:'flex', alignItems:'center', gap:10, padding:'12px 16px', borderBottom:'1px solid #EEF0F4' } },
+        h(Icon,{ name:'Search', size:15, style:{ color:'#5A6273' } }),
+        h('input', { ref:inputRef, type:'text', value:q, onChange:e=>setQ(e.target.value), onKeyDown:handleKey,
+          placeholder:'Search assets, runs, schedules…',
+          style:{ flex:1, border:'none', outline:'none', fontSize:14, background:'transparent', color:'#0A0E1A' } }),
+        loading && h(Icon,{ name:'Loader2', size:13, className:'spin', style:{ color:'#5A6273' } }),
+        h('kbd', { style:{ fontSize:11, padding:'2px 6px', border:'1px solid #EEF0F4', borderRadius:4, color:'#9BA3AF' } }, 'ESC'),
+      ),
+      h('div', { style:{ overflowY:'auto', padding:'8px 0' } },
+        results.length===0 && q.length>=2 && !loading && h('div', { style:{ padding:'20px 16px', color:'#9BA3AF', fontSize:13, textAlign:'center' } }, 'No results'),
+        results.length===0 && q.length<2 && h('div', { style:{ padding:'12px 16px' } },
+          ['Dashboard','Assets','Runs','Query','Schedules'].map(pg =>
+            h('div', { key:pg, className:'palette-result', onClick:()=>{ setPage(pg.toLowerCase()); onClose(); } },
+              h(Icon,{ name:pg==='Assets'?'Database':pg==='Runs'?'Play':pg==='Query'?'Code2':pg==='Schedules'?'Clock':'BarChart3', size:14, style:{ color:'#5A6273' } }),
+              h('span', { style:{ fontSize:13 } }, pg),
             )
-          : runs.slice(0, 8).map((r, i) => h('div', { key: r.run_id, className: 'run-row' },
-              h('span', { className: 'dot ' + statusDotClass(r.status) }),
-              h('span', { style: { fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, r.asset_key),
-              h('span', { style: { fontSize: 11, color: '#5A6273' } }, fmtDuration(r.duration_ms)),
-              h('span', { style: { fontSize: 11, color: '#9BA3AF', minWidth: 52, textAlign: 'right' } }, runAgo(r.started_at)),
-            )),
-    ),
-  );
-}
-
-/* ── Pipeline DAG Card ─────────────────────────────────────────── */
-function PipelineDAGCard({ assets, loading, setPage }) {
-  const mockNodes = assets.length > 0 ? assets : [
-    { key: 'orders_silver', x: 80, y: 20 },
-    { key: 'customers_dim', x: 260, y: 80 },
-    { key: 'revenue_daily', x: 170, y: 170, selected: true },
-    { key: 'bi_export',     x: 260, y: 260 },
-  ];
-
-  return h('div', { className: 'card', style: { display: 'flex', flexDirection: 'column', minHeight: 300, overflow: 'hidden' } },
-    h('div', { style: { display: 'flex', alignItems: 'center', padding: '16px 18px 12px', borderBottom: '1px solid #EEF0F4' } },
-      h('span', { style: { fontSize: 14, fontWeight: 700, letterSpacing: '-0.01em' } }, 'Pipeline DAG'),
-      h('button', {
-        onClick: () => setPage('assets'),
-        style: {
-          marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 5,
-          fontSize: 12, fontWeight: 500, color: '#5A6273',
-          border: '1px solid #EEF0F4', background: 'transparent', borderRadius: 6,
-          padding: '3px 8px', cursor: 'pointer',
-        }
-      }, h(Maximize2, { size: 11 }), 'Fit view'),
-    ),
-    /* SVG mini-DAG */
-    h('div', { style: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 } },
-      h('svg', { width: '100%', height: 220, viewBox: '0 0 400 240', fill: 'none', xmlns: 'http://www.w3.org/2000/svg' },
-        /* Edges */
-        h('line', { x1: 80, y1: 45, x2: 180, y2: 125, stroke: '#EEF0F4', strokeWidth: 1.5 }),
-        h('line', { x1: 260, y1: 105, x2: 220, y2: 135, stroke: '#EEF0F4', strokeWidth: 1.5 }),
-        h('line', { x1: 200, y1: 160, x2: 260, y2: 205, stroke: '#EEF0F4', strokeWidth: 1.5 }),
-        /* Nodes */
-        ...assets.slice(0, 6).map((a, i) => {
-          const cols = [
-            { x: 60, y: 20 }, { x: 60, y: 100 }, { x: 220, y: 20 },
-            { x: 220, y: 100 }, { x: 140, y: 160 }, { x: 220, y: 220 },
-          ];
-          const pos = cols[i] || { x: 60 + (i % 3) * 120, y: 20 + Math.floor(i/3)*80 };
-          return h('g', { key: a.key },
-            h('rect', { x: pos.x, y: pos.y, width: 120, height: 36, rx: 8, fill: '#FAFAFA', stroke: '#EEF0F4', strokeWidth: 1.5 }),
-            h('text', { x: pos.x + 12, y: pos.y + 22, fontSize: 10, fill: '#0A0E1A', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 },
-              a.key.length > 12 ? a.key.slice(0, 12) + '…' : a.key,
+          )
+        ),
+        results.map((item, i) =>
+          h('div', { key:item.key+item.kind, className:`palette-result${i===focused?' focused':''}`, onClick:()=>pick(item) },
+            h('div', { style:{ width:24, height:24, borderRadius:6, background:`${kindColor[item.kind]}18`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 } },
+              h(Icon,{ name:kindIcon[item.kind]||'Hash', size:12, style:{ color:kindColor[item.kind] } }),
             ),
-          );
-        }),
-        assets.length === 0 && h('g', null,
-          /* Demo nodes when no real assets */
-          h('rect', { x: 20, y: 20, width: 120, height: 36, rx: 8, fill: '#FAFAFA', stroke: '#EEF0F4', strokeWidth: 1.5 }),
-          h('text', { x: 32, y: 42, fontSize: 10, fill: '#5A6273', fontFamily: 'JetBrains Mono, monospace' }, 'orders_silver'),
-          h('rect', { x: 140, y: 80, width: 120, height: 36, rx: 8, fill: '#FAFAFA', stroke: '#EEF0F4', strokeWidth: 1.5 }),
-          h('text', { x: 152, y: 102, fontSize: 10, fill: '#5A6273', fontFamily: 'JetBrains Mono, monospace' }, 'customers_dim'),
-          h('rect', { x: 80, y: 150, width: 130, height: 36, rx: 8, fill: 'rgba(124,58,237,0.08)', stroke: '#7C3AED', strokeWidth: 2 }),
-          h('text', { x: 92, y: 172, fontSize: 10, fill: '#7C3AED', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }, 'revenue_daily'),
-          h('rect', { x: 250, y: 170, width: 100, height: 36, rx: 8, fill: '#FAFAFA', stroke: '#EEF0F4', strokeWidth: 1.5 }),
-          h('text', { x: 262, y: 192, fontSize: 10, fill: '#5A6273', fontFamily: 'JetBrains Mono, monospace' }, 'bi_export'),
+            h('div', { style:{ flex:1, minWidth:0 } },
+              h('div', { style:{ fontSize:13, fontWeight:500, fontFamily:'ui-monospace,Consolas,monospace', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' } }, item.label),
+            ),
+            h('span', { className:`badge badge-muted` }, item.secondary||item.kind),
+          )
         ),
       ),
     ),
-    /* Legend */
-    h('div', { style: { padding: '10px 18px', borderTop: '1px solid #EEF0F4', display: 'flex', gap: 16, fontSize: 11, color: '#5A6273' } },
-      ...['Success', 'Warning', 'Failed', 'Skipped'].map((label, i) => {
-        const colors = ['#10B981', '#F59E0B', '#EF4444', '#94A3B8'];
-        return h('span', { key: label, style: { display: 'flex', alignItems: 'center', gap: 4 } },
-          h('span', { style: { width: 7, height: 7, borderRadius: '50%', background: colors[i], display: 'inline-block' } }),
-          label,
-        );
-      }),
+  );
+}
+
+/* ── TopNav ────────────────────────────────────────────────────── */
+function TopNav({ page, setPage, onSearch }) {
+  const nav = [
+    { key:'dashboard', label:'Dashboard' },
+    { key:'assets',    label:'Assets' },
+    { key:'runs',      label:'Runs' },
+    { key:'query',     label:'Query' },
+    { key:'schedules', label:'Schedules' },
+  ];
+  return h('nav', { style:{ display:'flex', alignItems:'center', height:56, padding:'0 28px', gap:8, flexShrink:0 } },
+    h('div', { style:{ display:'flex', alignItems:'center', gap:4, cursor:'pointer' }, onClick:()=>setPage('dashboard') },
+      h(Icon,{ name:'Database', size:16, style:{ color:'#fff' } }),
+      h('span', { style:{ fontWeight:700, fontSize:14, color:'#fff', letterSpacing:'-0.01em', marginLeft:4 } }, 'nucleus'),
+      h('span', { style:{ color:'rgba(255,255,255,0.45)', margin:'0 4px', fontSize:16 } }, '/'),
+      h('span', { style:{ fontSize:14, fontWeight:500, color:'#fff' } }, 'my_warehouse'),
+    ),
+    h('div', { style:{ display:'flex', gap:2, marginLeft:16 } },
+      nav.map(({ key, label }) =>
+        h('button', { key, className:`nav-link${page===key?' active':''}`,
+          style:{ background:page===key?'rgba(255,255,255,0.10)':'transparent', border:'none', cursor:'pointer' },
+          onClick:()=>setPage(key) }, label)
+      ),
+    ),
+    h('div', { style:{ flex:1 } }),
+    h('div', {
+      onClick:onSearch, style:{ display:'flex', alignItems:'center', gap:6, padding:'5px 12px', borderRadius:7, border:'1px solid rgba(255,255,255,0.15)', background:'rgba(255,255,255,0.08)', cursor:'pointer', color:'rgba(255,255,255,0.65)', fontSize:12 }
+    }, h(Icon,{ name:'Search', size:13 }), 'Search…', h('kbd', { style:{ fontSize:10, padding:'1px 5px', borderRadius:4, border:'1px solid rgba(255,255,255,0.15)', marginLeft:6 } }, '⌘K')),
+    h('div', { style:{ width:36, height:36, borderRadius:8, border:'1px solid rgba(255,255,255,0.15)', background:'rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.65)', cursor:'pointer', marginLeft:8 } }, h(Icon,{ name:'Bell', size:15 })),
+    h('div', { style:{ width:34, height:34, borderRadius:'50%', background:'rgba(255,255,255,0.20)', border:'2px solid rgba(255,255,255,0.25)', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', marginLeft:6 } }, h(Icon,{ name:'Terminal', size:14, style:{ color:'#fff' } })),
+  );
+}
+
+/* ── StatChip ──────────────────────────────────────────────────── */
+function StatChip({ icon, label, sep }) {
+  return h('span', null,
+    h('span', { className:'glass-chip' }, h('span', { style:{ display:'flex', alignItems:'center', opacity:0.85 } }, icon), label),
+    sep && h('span', { style:{ color:'rgba(255,255,255,0.35)', fontSize:16, margin:'0 4px' } }, '•'),
+  );
+}
+
+/* ── RecentRunsCard ────────────────────────────────────────────── */
+function RecentRunsCard({ runs, loading, onRunClick }) {
+  return h('div', { className:'card', style:{ display:'flex', flexDirection:'column', minHeight:300 } },
+    h('div', { style:{ display:'flex', alignItems:'center', padding:'16px 18px 12px', borderBottom:'1px solid #EEF0F4', flexShrink:0 } },
+      h('span', { style:{ fontSize:14, fontWeight:700, letterSpacing:'-0.01em' } }, 'Recent materializations'),
+      h('button', { onClick:()=>onRunClick&&onRunClick('all'), style:{ marginLeft:'auto', fontSize:12, fontWeight:500, color:'#2A5BFA', background:'transparent', border:'none', cursor:'pointer' } }, 'View all →'),
+    ),
+    h('div', { style:{ padding:'4px 18px', flex:1 } },
+      loading
+        ? h('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', height:160, color:'#5A6273', fontSize:13 } }, h(Icon,{ name:'Loader2', size:16, className:'spin' }))
+        : runs.length===0
+          ? h('div', { style:{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', height:160, color:'#5A6273', gap:8 } },
+              h('span', { style:{ fontSize:28, opacity:0.3 } }, '▶'),
+              h('p', { style:{ fontSize:12, margin:0 } }, 'No materializations yet'),
+            )
+          : runs.slice(0,8).map(r =>
+              h('div', { key:r.run_id, className:'run-row', onClick:()=>onRunClick&&onRunClick(r) },
+                h('span', { className:'dot '+statusDotClass(r.status) }),
+                h('span', { style:{ fontFamily:'ui-monospace,Consolas,monospace', fontSize:12, fontWeight:500, flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' } }, r.asset_key),
+                h('span', { style:{ fontSize:11, color:'#5A6273' } }, fmtDuration(r.duration_ms)),
+                h('span', { style:{ fontSize:11, color:'#9BA3AF', minWidth:52, textAlign:'right' } }, runAgo(r.started_at)),
+              )
+            ),
     ),
   );
 }
 
-/* ── Copilot Card ──────────────────────────────────────────────── */
+/* ── PipelineDAGCard ───────────────────────────────────────────── */
+function PipelineDAGCard({ assets, loading, setPage, onAssetClick }) {
+  const positions = [
+    { x:20, y:20 }, { x:20, y:100 }, { x:200, y:20 },
+    { x:200, y:100 }, { x:120, y:160 }, { x:200, y:220 },
+  ];
+  const realNodes = assets.slice(0,6);
+  const demoMode = realNodes.length===0;
+
+  const demoNodes = [
+    { key:'orders_silver', x:20, y:20 },
+    { key:'customers_dim', x:200, y:70 },
+    { key:'revenue_daily', x:120, y:150, highlight:true },
+    { key:'bi_export', x:200, y:220 },
+  ];
+  const nodes = demoMode ? demoNodes : realNodes.map((a,i) => ({ ...a, ...positions[i] }));
+
+  return h('div', { className:'card', style:{ display:'flex', flexDirection:'column', minHeight:300, overflow:'hidden' } },
+    h('div', { style:{ display:'flex', alignItems:'center', padding:'16px 18px 12px', borderBottom:'1px solid #EEF0F4' } },
+      h('span', { style:{ fontSize:14, fontWeight:700, letterSpacing:'-0.01em' } }, 'Asset graph'),
+      h('button', { onClick:()=>setPage('assets'), style:{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5, fontSize:12, fontWeight:500, color:'#5A6273', border:'1px solid #EEF0F4', background:'transparent', borderRadius:6, padding:'3px 8px', cursor:'pointer' } },
+        h(Icon,{ name:'Maximize2', size:11 }), 'Explore all'),
+    ),
+    h('div', { style:{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', padding:16 } },
+      h('svg', { width:'100%', height:220, viewBox:'0 0 400 260', fill:'none' },
+        demoMode && h('g', null,
+          h('line', { x1:80, y1:38, x2:140, y2:145, stroke:'#EEF0F4', strokeWidth:1.5 }),
+          h('line', { x1:260, y1:88, x2:190, y2:145, stroke:'#EEF0F4', strokeWidth:1.5 }),
+          h('line', { x1:180, y1:168, x2:250, y2:215, stroke:'#EEF0F4', strokeWidth:1.5 }),
+        ),
+        ...nodes.map((node, i) =>
+          h('g', { key:node.key, style:{ cursor:'pointer' }, onClick:()=>onAssetClick&&onAssetClick(node.key) },
+            h('rect', { x:node.x, y:node.y, width:130, height:36, rx:8, fill:node.highlight?'rgba(124,58,237,0.08)':'#FAFAFA', stroke:node.highlight?'#7C3AED':'#EEF0F4', strokeWidth:node.highlight?2:1.5 }),
+            h('text', { x:node.x+10, y:node.y+22, fontSize:10, fill:node.highlight?'#7C3AED':'#5A6273', fontFamily:'ui-monospace,Consolas,monospace', fontWeight:600 },
+              node.key.length>14 ? node.key.slice(0,14)+'…' : node.key,
+            ),
+          )
+        ),
+      ),
+    ),
+    h('div', { style:{ padding:'10px 18px', borderTop:'1px solid #EEF0F4', display:'flex', gap:16, fontSize:11, color:'#5A6273' } },
+      ['Success','Warning','Failed','Skipped'].map((label, i) =>
+        h('span', { key:label, style:{ display:'flex', alignItems:'center', gap:4 } },
+          h('span', { style:{ width:7, height:7, borderRadius:'50%', background:['#10B981','#F59E0B','#EF4444','#94A3B8'][i], display:'inline-block' } }),
+          label,
+        )
+      ),
+    ),
+  );
+}
+
+/* ── CopilotCard ───────────────────────────────────────────────── */
 function CopilotCard() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
-  const SUGGESTIONS = [
-    'Why did revenue_daily run longer today?',
-    'Show me assets with the most failures',
-    'What changed in orders_silver?',
-  ];
+  const SUGGESTIONS = ['Why did revenue_daily run longer today?', 'Show me assets with the most failures', 'What changed in orders_silver?'];
 
   async function send(text) {
     const q = (text ?? input).trim();
     if (!q || loading) return;
     setInput('');
-    setMessages(m => [...m, { role: 'user', text: q }]);
+    setMessages(m => [...m, { role:'user', text:q }]);
     setLoading(true);
     try {
-      const r = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: q }),
-      });
+      const r = await fetch('/api/chat', { method:'POST', headers:{ 'Content-Type':'application/json' }, body:JSON.stringify({ question:q }) });
       const body = await r.json();
-      setMessages(m => [...m, { role: 'assistant', text: r.ok ? body.text : (body?.detail?.user_message || 'Copilot unavailable.') }]);
+      setMessages(m => [...m, { role:'assistant', text:r.ok ? body.text : (body?.detail?.user_message || 'Copilot unavailable.') }]);
     } catch (e) {
-      setMessages(m => [...m, { role: 'assistant', text: '⚠ ' + e.message }]);
-    } finally {
-      setLoading(false);
-    }
+      setMessages(m => [...m, { role:'assistant', text:'⚠ '+e.message }]);
+    } finally { setLoading(false); }
   }
-
-  const hasConv = messages.length > 0;
-
-  return h('div', { className: 'card', style: { display: 'flex', flexDirection: 'column', minHeight: 300 } },
-    /* Header */
-    h('div', { style: { display: 'flex', alignItems: 'center', gap: 10, padding: '16px 18px 14px', borderBottom: hasConv ? '1px solid #EEF0F4' : 'none' } },
-      h('div', { className: 'blob-orb' }),
-      h('span', { style: { fontSize: 14, fontWeight: 700, flex: 1, letterSpacing: '-0.01em' } }, 'AI Copilot'),
-      h(MoreHorizontal, { size: 15, style: { color: '#5A6273', cursor: 'pointer' } }),
+  const hasConv = messages.length>0;
+  return h('div', { className:'card', style:{ display:'flex', flexDirection:'column', minHeight:300 } },
+    h('div', { style:{ display:'flex', alignItems:'center', gap:10, padding:'16px 18px 14px', borderBottom:hasConv?'1px solid #EEF0F4':'none' } },
+      h('div', { className:'blob-orb' }),
+      h('span', { style:{ fontSize:14, fontWeight:700, flex:1, letterSpacing:'-0.01em' } }, 'AI Copilot'),
+      h(Icon,{ name:'MoreHorizontal', size:15, style:{ color:'#5A6273', cursor:'pointer' } }),
     ),
-    /* Messages */
-    hasConv && h('div', { style: { flex: 1, overflow: 'auto', padding: '12px 18px', display: 'flex', flexDirection: 'column', gap: 8 } },
-      ...messages.map((m, i) => h('div', {
-        key: i,
-        style: {
-          alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start',
-          maxWidth: '90%', padding: '8px 12px',
-          borderRadius: m.role === 'user' ? '12px 12px 3px 12px' : '12px 12px 12px 3px',
-          background: m.role === 'user' ? '#2A5BFA' : '#FAFAFA',
-          color: m.role === 'user' ? '#fff' : '#0A0E1A',
-          border: m.role === 'user' ? 'none' : '1px solid #EEF0F4',
-          fontSize: 13, lineHeight: 1.5,
-        }
-      }, m.text)),
-      loading && h('div', { style: { alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px', borderRadius: '12px 12px 12px 3px', background: '#FAFAFA', border: '1px solid #EEF0F4', fontSize: 13, color: '#5A6273' } },
-        h(Loader2, { size: 12, className: 'spin' }), 'Thinking…',
-      ),
+    hasConv && h('div', { style:{ flex:1, overflow:'auto', padding:'12px 18px', display:'flex', flexDirection:'column', gap:8 } },
+      ...messages.map((m, i) => h('div', { key:i, style:{ alignSelf:m.role==='user'?'flex-end':'flex-start', maxWidth:'90%', padding:'8px 12px', borderRadius:m.role==='user'?'12px 12px 3px 12px':'12px 12px 12px 3px', background:m.role==='user'?'#2A5BFA':'#FAFAFA', color:m.role==='user'?'#fff':'#0A0E1A', border:m.role==='user'?'none':'1px solid #EEF0F4', fontSize:13, lineHeight:1.5 } }, m.text)),
+      loading && h('div', { style:{ alignSelf:'flex-start', display:'flex', alignItems:'center', gap:6, padding:'8px 12px', borderRadius:'12px 12px 12px 3px', background:'#FAFAFA', border:'1px solid #EEF0F4', fontSize:13, color:'#5A6273' } }, h(Icon,{ name:'Loader2', size:12, className:'spin' }), 'Thinking…'),
     ),
-    /* Input */
-    h('div', { style: { padding: hasConv ? '12px 18px 16px' : '16px 18px', borderTop: hasConv ? '1px solid #EEF0F4' : 'none' } },
-      h('div', { style: { display: 'flex', alignItems: 'center', gap: 8, background: '#FAFAFA', border: '1px solid #EEF0F4', borderRadius: 10, padding: '8px 8px 8px 14px' } },
-        h('input', {
-          ref: inputRef,
-          type: 'text',
-          value: input,
-          onChange: e => setInput(e.target.value),
-          onKeyDown: e => { if (e.key === 'Enter') { e.preventDefault(); send(); } },
-          disabled: loading,
-          placeholder: 'Ask anything…',
-          style: { flex: 1, border: 'none', outline: 'none', background: 'transparent', fontSize: 13, color: '#0A0E1A', fontFamily: 'inherit' },
-        }),
-        h('button', {
-          onClick: () => send(),
-          disabled: loading || !input.trim(),
-          style: {
-            width: 30, height: 30, borderRadius: '50%', border: 'none',
-            background: loading || !input.trim() ? '#EEF0F4' : '#2A5BFA',
-            color: '#fff', cursor: loading || !input.trim() ? 'not-allowed' : 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          },
-        }, h(ArrowRight, { size: 14 })),
+    h('div', { style:{ padding:hasConv?'12px 18px 16px':'16px 18px', borderTop:hasConv?'1px solid #EEF0F4':'none' } },
+      h('div', { style:{ display:'flex', alignItems:'center', gap:8, background:'#FAFAFA', border:'1px solid #EEF0F4', borderRadius:10, padding:'8px 8px 8px 14px' } },
+        h('input', { ref:inputRef, type:'text', value:input, onChange:e=>setInput(e.target.value), onKeyDown:e=>{ if(e.key==='Enter'){e.preventDefault();send();} }, disabled:loading, placeholder:'Ask anything…', style:{ flex:1, border:'none', outline:'none', background:'transparent', fontSize:13, color:'#0A0E1A', fontFamily:'inherit' } }),
+        h('button', { onClick:()=>send(), disabled:loading||!input.trim(), style:{ width:30, height:30, borderRadius:'50%', border:'none', background:loading||!input.trim()?'#EEF0F4':'#2A5BFA', color:'#fff', cursor:loading||!input.trim()?'not-allowed':'pointer', display:'flex', alignItems:'center', justifyContent:'center' } }, h(Icon,{ name:'ArrowRight', size:14 })),
       ),
-      !hasConv && h('div', { style: { marginTop: 14 } },
-        h('p', { style: { fontSize: 11, fontWeight: 700, color: '#5A6273', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.06em' } }, 'Try asking'),
-        h('div', { style: { display: 'flex', flexDirection: 'column', gap: 5 } },
-          ...SUGGESTIONS.map(s => h('button', {
-            key: s,
-            className: 'suggestion-chip',
-            onClick: () => { setInput(s); inputRef.current?.focus(); send(s); },
-          },
-            h(Sparkles, { size: 11, style: { flexShrink: 0, color: '#2A5BFA', opacity: 0.7 } }),
-            s,
+      !hasConv && h('div', { style:{ marginTop:14 } },
+        h('p', { style:{ fontSize:11, fontWeight:700, color:'#5A6273', margin:'0 0 8px', textTransform:'uppercase', letterSpacing:'0.06em' } }, 'Try asking'),
+        h('div', { style:{ display:'flex', flexDirection:'column', gap:5 } },
+          SUGGESTIONS.map(s => h('button', { key:s, className:'suggestion-chip', onClick:()=>{ setInput(s); inputRef.current?.focus(); send(s); } },
+            h(Icon,{ name:'Sparkles', size:11, style:{ flexShrink:0, color:'#2A5BFA', opacity:0.7 } }), s,
           )),
         ),
       ),
@@ -514,13 +631,466 @@ function CopilotCard() {
   );
 }
 
-/* ── Simple placeholder pages ──────────────────────────────────── */
-function PlaceholderPage({ title, icon, desc }) {
-  return h('div', { style: { minHeight: '100vh', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12 } },
-    h('div', { style: { opacity: 0.3 } }, icon),
-    h('h1', { style: { fontSize: 22, fontWeight: 700, margin: 0, color: '#0A0E1A' } }, title),
-    h('p', { style: { fontSize: 13, color: '#5A6273', margin: 0 } }, desc),
-    h('p', { style: { fontSize: 12, color: '#94A3B8', marginTop: 8 } }, 'Run npm install + npm run build in frontend/ to unlock full UI.'),
+/* ── AssetDetailPanel ──────────────────────────────────────────── */
+function AssetDetailPanel({ assetKey }) {
+  const [detail, setDetail] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [trigLoading, setTrigLoading] = useState(false);
+  const [trigResult, setTrigResult] = useState(null);
+  const [logLines, setLogLines] = useState([]);
+  const logRef = useRef(null);
+
+  useEffect(() => {
+    setDetail(null); setLoading(true); setTrigResult(null); setLogLines([]);
+    apiFetch(`/api/assets/${encodeURIComponent(assetKey)}`).then(d => { setDetail(d); setLoading(false); });
+  }, [assetKey]);
+
+  useEffect(() => { if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight; }, [logLines]);
+
+  async function materialize() {
+    setTrigLoading(true); setLogLines([]); setTrigResult(null);
+    const res = await apiCall('/api/runs/trigger', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ asset_key:assetKey }) });
+    if (!res.ok) { setLogLines(['Error: '+(res.error||'Unknown')]); setTrigLoading(false); return; }
+    setTrigResult(res.data);
+    setLogLines([`[trigger] Materialization started — run ${res.data.run_id.slice(0,8)}…`]);
+    const es = new EventSource(`/api/runs/${res.data.run_id}/log`);
+    es.onmessage = e => {
+      if (e.data==='[DONE]') { es.close(); setTrigLoading(false); return; }
+      try { const d = JSON.parse(e.data); setLogLines(l => [...l, d.line]); } catch {}
+    };
+    es.onerror = () => { es.close(); setTrigLoading(false); };
+  }
+
+  if (loading) return h('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', height:200 } }, h(Icon,{ name:'Loader2', size:20, className:'spin', style:{ color:'#5A6273' } }));
+  if (!detail) return h(ErrorBanner, { message:`Asset '${assetKey}' not found.` });
+
+  const InfoRow = (label, value, mono=false) => h('div', { style:{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #F5F7FA', fontSize:13 } },
+    h('span', { style:{ color:'#5A6273', fontWeight:500 } }, label),
+    h('span', { style:{ fontFamily:mono?'ui-monospace,Consolas,monospace':'inherit', color:'#0A0E1A' } }, value||'—'),
+  );
+
+  return h('div', null,
+    h('div', { style:{ display:'flex', alignItems:'center', gap:8, marginBottom:20 } },
+      h('span', { className:'badge badge-blue', style:{ fontFamily:'ui-monospace,Consolas,monospace', padding:'4px 10px', fontSize:12 } }, detail.key),
+      detail.compute && h('span', { className:'badge badge-muted' }, detail.compute),
+    ),
+    h('div', null,
+      InfoRow('Dependencies', detail.deps?.length ? detail.deps.join(', ') : 'None', true),
+      InfoRow('Schedule', detail.schedule || 'Not scheduled', true),
+      InfoRow('Contract', detail.has_contract ? '✓ Defined' : 'None'),
+      InfoRow('Checks', detail.checks?.length ? `${detail.checks.length} check${detail.checks.length>1?'s':''}` : 'None'),
+    ),
+    detail.checks?.length > 0 && h('div', { style:{ marginTop:12 } },
+      detail.checks.map((c,i) => h('div', { key:i, style:{ display:'flex', alignItems:'center', gap:6, fontSize:12, padding:'4px 0' } },
+        h(Icon,{ name:'Check', size:12, style:{ color:'#10B981' } }),
+        h('span', { style:{ fontFamily:'ui-monospace,Consolas,monospace' } }, c.fn_name),
+        h('span', { className:`badge ${c.severity==='error'?'badge-red':'badge-yellow'}`, style:{ marginLeft:'auto' } }, c.severity),
+      )),
+    ),
+    h('div', { style:{ marginTop:24 } },
+      h('button', {
+        onClick: materialize,
+        disabled: trigLoading,
+        style:{ width:'100%', display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'10px 16px', borderRadius:8, border:'none', background:trigLoading?'#EEF0F4':'#2A5BFA', color:trigLoading?'#9BA3AF':'#fff', fontSize:13, fontWeight:600, cursor:trigLoading?'not-allowed':'pointer', transition:'background 0.15s' },
+      },
+        trigLoading ? h(Icon,{ name:'Loader2', size:14, className:'spin' }) : h(Icon,{ name:'Zap', size:14 }),
+        trigLoading ? 'Materializing…' : 'Materialize asset',
+      ),
+    ),
+    logLines.length>0 && h('div', { ref:logRef, className:'log-panel', style:{ marginTop:16 } },
+      logLines.map((line, i) => {
+        const cls = line.includes('[ERROR]')||line.includes('Error:') ? 'log-line-error' : line.includes('[WARN]') ? 'log-line-warn' : line.includes('Completed') ? 'log-line-ok' : '';
+        return h('div', { key:i, className:cls }, line);
+      }),
+    ),
+    trigResult && !trigLoading && h('div', { style:{ marginTop:12, display:'flex', alignItems:'center', gap:6, fontSize:12, color:'#059669' } },
+      h(Icon,{ name:'CheckCircle', size:13 }), 'Materialization queued — check Runs for status',
+    ),
+  );
+}
+
+/* ── RunDetailPanel ────────────────────────────────────────────── */
+function RunDetailPanel({ run }) {
+  const [logLines, setLogLines] = useState([]);
+  const [logLoading, setLogLoading] = useState(true);
+  const logRef = useRef(null);
+
+  useEffect(() => {
+    if (!run) return;
+    setLogLines([]); setLogLoading(true);
+    const es = new EventSource(`/api/runs/${run.run_id}/log`);
+    es.onmessage = e => {
+      if (e.data==='[DONE]') { es.close(); setLogLoading(false); return; }
+      try { const d = JSON.parse(e.data); setLogLines(l => [...l, d.line]); } catch {}
+    };
+    es.onerror = () => { es.close(); setLogLoading(false); };
+    return () => es.close();
+  }, [run?.run_id]);
+
+  useEffect(() => { if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight; }, [logLines]);
+
+  if (!run) return null;
+  return h('div', null,
+    h('div', { style:{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap', marginBottom:20 } },
+      h('span', { className:'badge badge-muted', style:{ fontFamily:'ui-monospace,Consolas,monospace', fontSize:11 } }, run.run_id.slice(0,12)+'…'),
+      h('span', { className:'badge '+statusBadgeClass(run.status) }, run.status),
+    ),
+    h('div', null,
+      ...[
+        ['Asset', run.asset_key, true],
+        ['Started', new Date(run.started_at*1000).toLocaleString()],
+        ['Duration', fmtDuration(run.duration_ms)],
+        ['Rows written', run.rows_written!=null?formatRows(run.rows_written):'—'],
+        ['Snapshot', run.snapshot_id||'—', true],
+      ].map(([k,v,mono]) => h('div', { key:k, style:{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid #F5F7FA', fontSize:13 } },
+        h('span', { style:{ color:'#5A6273', fontWeight:500 } }, k),
+        h('span', { style:{ fontFamily:mono?'ui-monospace,Consolas,monospace':'inherit', color:'#0A0E1A', overflow:'hidden', textOverflow:'ellipsis', maxWidth:260 } }, v),
+      )),
+    ),
+    h('div', { style:{ marginTop:20 } },
+      h('div', { style:{ display:'flex', alignItems:'center', gap:8, marginBottom:10 } },
+        h('span', { style:{ fontSize:12, fontWeight:700, color:'#5A6273', textTransform:'uppercase', letterSpacing:'0.06em' } }, 'Log output'),
+        logLoading && h(Icon,{ name:'Loader2', size:12, className:'spin', style:{ color:'#5A6273' } }),
+      ),
+      h('div', { ref:logRef, className:'log-panel' },
+        logLines.length===0 && !logLoading && h('span', { style:{ color:'#4A5568', fontStyle:'italic' } }, 'No log lines recorded.'),
+        logLines.map((line, i) => {
+          const cls = line.includes('[ERROR]')||line.includes('Failed') ? 'log-line-error' : line.includes('[WARN]') ? 'log-line-warn' : line.includes('Completed') ? 'log-line-ok' : '';
+          return h('div', { key:i, className:cls }, line);
+        }),
+      ),
+    ),
+  );
+}
+
+/* ── AssetsPage ────────────────────────────────────────────────── */
+function AssetsPage() {
+  const [assets, setAssets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('');
+  const [selected, setSelected] = useState(null);
+
+  useEffect(() => { apiFetch('/api/assets').then(d => { setAssets(d||[]); setLoading(false); }); }, []);
+
+  const filtered = useMemo(() =>
+    assets.filter(a => !filter || a.key.toLowerCase().includes(filter.toLowerCase())),
+    [assets, filter]
+  );
+
+  return h('div', { className:'page-body' },
+    h('div', { style:{ display:'flex', alignItems:'center', gap:16, marginBottom:28, flexWrap:'wrap' } },
+      h('div', null,
+        h('h2', { style:{ fontSize:22, fontWeight:800, margin:'0 0 2px', letterSpacing:'-0.02em' } }, 'Assets'),
+        h('p', { style:{ fontSize:13, color:'#5A6273', margin:0 } }, `${assets.length} registered`),
+      ),
+      h('div', { style:{ marginLeft:'auto', display:'flex', alignItems:'center', gap:8 } },
+        h('div', { style:{ display:'flex', alignItems:'center', gap:8, background:'#FAFAFA', border:'1px solid #EEF0F4', borderRadius:8, padding:'7px 12px' } },
+          h(Icon,{ name:'Search', size:13, style:{ color:'#9BA3AF' } }),
+          h('input', { type:'text', placeholder:'Filter assets…', value:filter, onChange:e=>setFilter(e.target.value), style:{ border:'none', outline:'none', background:'transparent', fontSize:13, width:220, color:'#0A0E1A' } }),
+          filter && h('button', { onClick:()=>setFilter(''), style:{ border:'none', background:'transparent', cursor:'pointer', padding:0, display:'flex', color:'#9BA3AF' } }, h(Icon,{ name:'X', size:12 })),
+        ),
+      ),
+    ),
+    loading
+      ? h('div', { style:{ display:'flex', alignItems:'center', justifyContent:'center', height:200 } }, h(Icon,{ name:'Loader2', size:24, className:'spin', style:{ color:'#5A6273' } }))
+      : filtered.length===0
+        ? h('div', { style:{ textAlign:'center', padding:60, color:'#9BA3AF', fontSize:14 } }, filter ? `No assets match "${filter}"` : 'No assets registered. Create your first @nucleus.asset.')
+        : h('div', { style:{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:16 } },
+            filtered.map(asset =>
+              h('div', { key:asset.key, className:'card asset-card', style:{ padding:20 }, onClick:()=>setSelected(asset.key) },
+                h('div', { style:{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:8, marginBottom:12 } },
+                  h('span', { style:{ fontFamily:'ui-monospace,Consolas,monospace', fontSize:13, fontWeight:700, color:'#0A0E1A', lineHeight:1.4, wordBreak:'break-all' } }, asset.key),
+                  h(Icon,{ name:'ChevronRight', size:14, style:{ color:'#9BA3AF', flexShrink:0, marginTop:1 } }),
+                ),
+                h('div', { style:{ display:'flex', flexWrap:'wrap', gap:4 } },
+                  asset.schedule && h('span', { className:'badge badge-blue' }, h(Icon,{ name:'Clock', size:9, style:{ marginRight:3 } }), 'Scheduled'),
+                  asset.has_contract && h('span', { className:'badge badge-green' }, h(Icon,{ name:'Check', size:9, style:{ marginRight:3 } }), 'Contract'),
+                  asset.checks?.length>0 && h('span', { className:'badge badge-muted' }, asset.checks.length+' check'+(asset.checks.length>1?'s':'')),
+                  asset.deps?.length>0 && h('span', { className:'badge badge-muted' }, asset.deps.length+' dep'+(asset.deps.length>1?'s':'')),
+                ),
+                asset.compute && h('div', { style:{ marginTop:8, fontSize:11, color:'#9BA3AF' } }, 'compute: '+asset.compute),
+              )
+            ),
+          ),
+    h(SlideOver, { isOpen:!!selected, onClose:()=>setSelected(null), title:selected||'Asset detail' },
+      selected && h(AssetDetailPanel, { assetKey:selected }),
+    ),
+  );
+}
+
+/* ── RunsPage ──────────────────────────────────────────────────── */
+function RunsPage() {
+  const [runs, setRuns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [search, setSearch] = useState('');
+  const [selected, setSelected] = useState(null);
+
+  useEffect(() => {
+    apiFetch('/api/runs?limit=100').then(d => { setRuns(d||[]); setLoading(false); });
+    const t = setInterval(() => apiFetch('/api/runs?limit=100').then(d => d && setRuns(d)), 6000);
+    return () => clearInterval(t);
+  }, []);
+
+  const filtered = useMemo(() =>
+    runs.filter(r => {
+      if (statusFilter!=='all' && r.status!==statusFilter) return false;
+      if (search && !r.asset_key.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    }),
+    [runs, statusFilter, search]
+  );
+
+  const counts = useMemo(() => ({
+    all: runs.length,
+    success: runs.filter(r=>r.status==='success').length,
+    failure: runs.filter(r=>r.status==='failure').length,
+    running: runs.filter(r=>r.status==='running').length,
+  }), [runs]);
+
+  return h('div', { className:'page-body' },
+    h('div', { style:{ display:'flex', alignItems:'center', gap:16, marginBottom:24, flexWrap:'wrap' } },
+      h('div', null,
+        h('h2', { style:{ fontSize:22, fontWeight:800, margin:'0 0 2px', letterSpacing:'-0.02em' } }, 'Runs'),
+        h('p', { style:{ fontSize:13, color:'#5A6273', margin:0 } }, `${runs.length} recorded`),
+      ),
+      h('div', { style:{ display:'flex', gap:6, flexWrap:'wrap' } },
+        ['all','success','failure','running'].map(s =>
+          h('button', { key:s, className:`filter-chip${statusFilter===s?' active':''}`, onClick:()=>setStatusFilter(s) },
+            s==='all'?`All (${counts.all})`: s.charAt(0).toUpperCase()+s.slice(1)+` (${counts[s]})`,
+          )
+        ),
+      ),
+      h('div', { style:{ marginLeft:'auto', display:'flex', alignItems:'center', gap:8, background:'#FAFAFA', border:'1px solid #EEF0F4', borderRadius:8, padding:'7px 12px' } },
+        h(Icon,{ name:'Search', size:13, style:{ color:'#9BA3AF' } }),
+        h('input', { type:'text', placeholder:'Filter by asset…', value:search, onChange:e=>setSearch(e.target.value), style:{ border:'none', outline:'none', background:'transparent', fontSize:13, width:180, color:'#0A0E1A' } }),
+        search && h('button', { onClick:()=>setSearch(''), style:{ border:'none', background:'transparent', cursor:'pointer', display:'flex', color:'#9BA3AF' } }, h(Icon,{ name:'X', size:12 })),
+      ),
+    ),
+    h('div', { className:'card', style:{ overflow:'hidden' } },
+      loading
+        ? h('div', { style:{ padding:40, display:'flex', alignItems:'center', justifyContent:'center' } }, h(Icon,{ name:'Loader2', size:24, className:'spin', style:{ color:'#5A6273' } }))
+        : filtered.length===0
+          ? h('div', { style:{ padding:48, textAlign:'center', color:'#9BA3AF', fontSize:14 } }, 'No runs match the current filter.')
+          : h('table', { style:{ width:'100%', borderCollapse:'collapse', fontSize:13 } },
+              h('thead', null,
+                h('tr', null,
+                  ...['Status','Asset','Duration','Started','Rows'].map(col =>
+                    h('th', { key:col, style:{ background:'#FAFAFA', borderBottom:'2px solid #EEF0F4', padding:'10px 14px', textAlign:'left', fontSize:12, fontWeight:600, color:'#5A6273', whiteSpace:'nowrap' } }, col)
+                  ),
+                ),
+              ),
+              h('tbody', null,
+                filtered.slice(0,80).map(r =>
+                  h('tr', { key:r.run_id, style:{ cursor:'pointer', borderBottom:'1px solid #EEF0F4' }, onClick:()=>setSelected(r),
+                    onMouseEnter:e=>e.currentTarget.style.background='rgba(42,91,250,0.03)',
+                    onMouseLeave:e=>e.currentTarget.style.background='transparent' },
+                    h('td', { style:{ padding:'10px 14px' } }, h('span', { className:`badge ${statusBadgeClass(r.status)}` }, r.status)),
+                    h('td', { style:{ padding:'10px 14px', fontFamily:'ui-monospace,Consolas,monospace', maxWidth:280, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' } }, r.asset_key),
+                    h('td', { style:{ padding:'10px 14px', color:'#5A6273' } }, fmtDuration(r.duration_ms)),
+                    h('td', { style:{ padding:'10px 14px', color:'#9BA3AF', whiteSpace:'nowrap' } }, runAgo(r.started_at)),
+                    h('td', { style:{ padding:'10px 14px', color:'#5A6273' } }, r.rows_written!=null?formatRows(r.rows_written):'—'),
+                  )
+                ),
+              ),
+            ),
+    ),
+    h(SlideOver, { isOpen:!!selected, onClose:()=>setSelected(null), title:'Run detail' },
+      selected && h(RunDetailPanel, { run:selected }),
+    ),
+  );
+}
+
+/* ── QueryPage ─────────────────────────────────────────────────── */
+function QueryPage() {
+  const [sql, setSql] = useState('-- Query your assets\nSELECT * FROM orders_silver\nLIMIT 20');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [hint, setHint] = useState(null);
+  const textareaRef = useRef(null);
+
+  async function execute() {
+    const q = sql.trim();
+    if (!q || loading) return;
+    setLoading(true); setError(null); setHint(null); setResult(null);
+    const res = await apiCall('/api/query', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ sql:q, limit:200 }) });
+    setLoading(false);
+    if (!res.ok) { setError(res.error); setHint(res.hint); }
+    else setResult(res.data);
+  }
+
+  function onKeyDown(e) { if ((e.ctrlKey||e.metaKey) && e.key==='Enter') { e.preventDefault(); execute(); } }
+
+  const EXAMPLES = ['SELECT * FROM orders_silver LIMIT 10', 'SELECT asset_key, COUNT(*) FROM runs GROUP BY 1', 'SHOW TABLES'];
+
+  return h('div', { className:'page-body' },
+    h('div', { style:{ marginBottom:24 } },
+      h('h2', { style:{ fontSize:22, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.02em' } }, 'Query'),
+      h('p', { style:{ fontSize:13, color:'#5A6273', margin:0 } }, 'Run SQL against your warehouse. Ctrl+Enter to execute.'),
+    ),
+    h('div', { className:'card', style:{ marginBottom:20, padding:0, overflow:'hidden' } },
+      h('div', { style:{ padding:'12px 16px 0', borderBottom:'1px solid #EEF0F4' } },
+        h('p', { style:{ fontSize:11, fontWeight:700, color:'#9BA3AF', textTransform:'uppercase', letterSpacing:'0.06em', margin:'0 0 8px' } }, 'Examples'),
+        h('div', { style:{ display:'flex', gap:8, flexWrap:'wrap', paddingBottom:12 } },
+          EXAMPLES.map(ex => h('button', { key:ex, onClick:()=>{ setSql(ex); setTimeout(()=>textareaRef.current?.focus(),50); }, style:{ background:'rgba(42,91,250,0.06)', border:'1px solid rgba(42,91,250,0.15)', borderRadius:6, color:'#2A5BFA', fontSize:11, padding:'4px 10px', cursor:'pointer', fontFamily:'ui-monospace,Consolas,monospace' } }, ex)),
+        ),
+      ),
+      h('div', { style:{ padding:16 } },
+        h('textarea', { ref:textareaRef, className:'sql-editor', value:sql, onChange:e=>setSql(e.target.value), onKeyDown, rows:6, spellCheck:false }),
+      ),
+      h('div', { style:{ padding:'0 16px 16px', display:'flex', alignItems:'center', gap:10 } },
+        h('button', { onClick:execute, disabled:loading, style:{ display:'flex', alignItems:'center', gap:7, padding:'9px 18px', borderRadius:8, border:'none', background:loading?'#EEF0F4':'#2A5BFA', color:loading?'#9BA3AF':'#fff', fontSize:13, fontWeight:600, cursor:loading?'not-allowed':'pointer', transition:'background 0.15s' } },
+          loading ? h(Icon,{ name:'Loader2', size:14, className:'spin' }) : h(Icon,{ name:'Play', size:14 }),
+          loading ? 'Running…' : 'Run query',
+        ),
+        h('span', { style:{ fontSize:12, color:'#9BA3AF' } }, 'Ctrl+Enter'),
+        result && h('span', { style:{ marginLeft:'auto', fontSize:12, color:'#5A6273' } },
+          result.row_count+' row'+(result.row_count!==1?'s':''),
+          result.truncated && ' (first 200)',
+        ),
+      ),
+    ),
+    error && h(ErrorBanner, { message:error, hint }),
+    result && result.columns?.length>0 && h('div', { className:'card', style:{ overflow:'hidden' } },
+      result.truncated && h('div', { style:{ padding:'8px 16px', background:'rgba(245,158,11,0.06)', borderBottom:'1px solid rgba(245,158,11,0.15)', fontSize:12, color:'#D97706' } },
+        h(Icon,{ name:'AlertCircle', size:12, style:{ marginRight:5 } }),
+        'Showing first 200 rows. Refine your query to see more specific results.',
+      ),
+      h('div', { style:{ overflowX:'auto', maxHeight:400, overflowY:'auto' } },
+        h('table', { className:'result-table' },
+          h('thead', null, h('tr', null, result.columns.map(col => h('th', { key:col }, col)))),
+          h('tbody', null, result.rows.map((row,i) =>
+            h('tr', { key:i }, row.map((val,j) => {
+              const display = fmtCellVal(val);
+              return h('td', { key:j }, display===null ? h('span', { className:'null-val' }, 'null') : display);
+            }))
+          )),
+        ),
+      ),
+    ),
+    result && result.columns?.length===0 && h('div', { style:{ padding:32, textAlign:'center', color:'#9BA3AF', fontSize:13 } }, 'Query returned 0 results.'),
+  );
+}
+
+/* ── SchedulesPage ─────────────────────────────────────────────── */
+function SchedulesPage() {
+  const [schedules, setSchedules] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => { apiFetch('/api/schedules').then(d => { setSchedules(d||[]); setLoading(false); }); }, []);
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const days = Array.from({ length:7 }, (_,i) => { const d = new Date(today); d.setDate(d.getDate()+i); return d; });
+
+  function dayLabel(d) { return d.toLocaleDateString('en', { weekday:'short', month:'numeric', day:'numeric' }); }
+  function isoToDay(iso) { return new Date(iso).toDateString(); }
+  function schedHasDayRun(sched, day) { return sched.next_runs?.some(r => isoToDay(r)===day.toDateString()); }
+
+  return h('div', { className:'page-body' },
+    h('div', { style:{ marginBottom:28 } },
+      h('h2', { style:{ fontSize:22, fontWeight:800, margin:'0 0 4px', letterSpacing:'-0.02em' } }, 'Schedules'),
+      h('p', { style:{ fontSize:13, color:'#5A6273', margin:0 } }, schedules.length+' scheduled asset'+(schedules.length!==1?'s':'')+' · Next 7 days'),
+    ),
+    loading
+      ? h('div', { style:{ padding:48, display:'flex', justifyContent:'center' } }, h(Icon,{ name:'Loader2', size:24, className:'spin', style:{ color:'#5A6273' } }))
+      : schedules.length===0
+        ? h('div', { style:{ textAlign:'center', padding:60, color:'#9BA3AF', fontSize:14 } }, 'No scheduled assets. Add schedule= to @nucleus.asset to register a schedule.')
+        : h('div', { style:{ display:'flex', flexDirection:'column', gap:16 } },
+            h('div', { className:'card', style:{ padding:0, overflow:'hidden' } },
+              h('div', { style:{ padding:'14px 20px', borderBottom:'1px solid #EEF0F4', fontSize:13, fontWeight:700 } }, '7-day run timeline'),
+              h('div', { style:{ overflowX:'auto' } },
+                h('table', { style:{ width:'100%', borderCollapse:'collapse', fontSize:12 } },
+                  h('thead', null,
+                    h('tr', null,
+                      h('th', { style:{ padding:'10px 20px', textAlign:'left', fontWeight:600, color:'#5A6273', background:'#FAFAFA', whiteSpace:'nowrap', minWidth:200, borderBottom:'1px solid #EEF0F4' } }, 'Asset'),
+                      h('th', { style:{ padding:'10px 14px', fontWeight:600, color:'#5A6273', background:'#FAFAFA', borderBottom:'1px solid #EEF0F4', textAlign:'center' } }, 'Cron'),
+                      ...days.map(d =>
+                        h('th', { key:d.toISOString(), style:{ padding:'10px 12px', fontWeight:600, color:'#5A6273', background:'#FAFAFA', borderBottom:'1px solid #EEF0F4', textAlign:'center', whiteSpace:'nowrap' } },
+                          h('div', { style:{ fontSize:10, opacity:0.7, marginBottom:2 } }, d.toLocaleDateString('en',{weekday:'short'})),
+                          h('div', null, d.getDate()),
+                        )
+                      ),
+                    ),
+                  ),
+                  h('tbody', null,
+                    schedules.map(sched =>
+                      h('tr', { key:sched.asset_key, style:{ borderBottom:'1px solid #EEF0F4' } },
+                        h('td', { style:{ padding:'12px 20px', fontFamily:'ui-monospace,Consolas,monospace', fontSize:12, fontWeight:600, whiteSpace:'nowrap' } }, sched.asset_key),
+                        h('td', { style:{ padding:'12px 14px', fontFamily:'ui-monospace,Consolas,monospace', fontSize:11, color:'#5A6273', textAlign:'center', whiteSpace:'nowrap' } }, sched.cron_expression||'—'),
+                        ...days.map(d => {
+                          const hasRun = schedHasDayRun(sched, d);
+                          const runsToday = sched.next_runs?.filter(r => isoToDay(r)===d.toDateString());
+                          return h('td', { key:d.toISOString(), style:{ padding:'12px 12px', textAlign:'center' } },
+                            hasRun
+                              ? h('div', { title:runsToday?.map(t=>new Date(t).toLocaleTimeString()).join(', '), style:{ width:24, height:24, borderRadius:'50%', background:'rgba(42,91,250,0.12)', border:'2px solid rgba(42,91,250,0.30)', margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'center', cursor:'default' } },
+                                  h('span', { style:{ width:6, height:6, borderRadius:'50%', background:'#2A5BFA', display:'inline-block' } }),
+                                )
+                              : h('div', { style:{ width:24, height:24, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'center' } },
+                                  h('span', { style:{ width:4, height:4, borderRadius:'50%', background:'#EEF0F4', display:'inline-block' } }),
+                                ),
+                          );
+                        }),
+                      )
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            ...schedules.map(sched =>
+              h('div', { key:sched.asset_key, className:'card', style:{ padding:18 } },
+                h('div', { style:{ display:'flex', alignItems:'center', gap:10, marginBottom:10 } },
+                  h('span', { style:{ fontFamily:'ui-monospace,Consolas,monospace', fontSize:13, fontWeight:700 } }, sched.asset_key),
+                  h('span', { className:'badge badge-blue', style:{ fontFamily:'ui-monospace,Consolas,monospace' } }, sched.cron_expression||'—'),
+                  sched.description && h('span', { style:{ fontSize:12, color:'#9BA3AF', marginLeft:'auto' } }, sched.description),
+                ),
+                h('div', { style:{ display:'flex', gap:6, flexWrap:'wrap' } },
+                  (sched.next_runs||[]).map(iso =>
+                    h('span', { key:iso, style:{ background:'rgba(42,91,250,0.06)', border:'1px solid rgba(42,91,250,0.12)', borderRadius:6, padding:'3px 9px', fontSize:11, fontFamily:'ui-monospace,Consolas,monospace', color:'#5A6273' } },
+                      new Date(iso).toLocaleString('en', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }),
+                    )
+                  ),
+                ),
+              )
+            ),
+          ),
+  );
+}
+
+/* ── DashboardPage ─────────────────────────────────────────────── */
+function DashboardPage({ summary, assets, loadingSummary, loadingAssets, setPage }) {
+  const [selectedRun, setSelectedRun] = useState(null);
+  const [selectedAsset, setSelectedAsset] = useState(null);
+  const recent = summary?.recent_runs || [];
+
+  return h('div', { style:{ minHeight:'100vh', display:'flex', flexDirection:'column', background:'#fff' } },
+    h('section', { style:{ flexShrink:0 } },
+      h('div', { style:{ padding:'32px 48px 0' } },
+        h('h1', { style:{ fontSize:'clamp(52px,7vw,96px)', fontWeight:900, color:'#fff', margin:0, lineHeight:1.02, letterSpacing:'-0.04em' } }, "Today's pipeline"),
+      ),
+      h('div', { style:{ padding:'24px 48px 40px', display:'flex', alignItems:'center', gap:0, flexWrap:'wrap' } },
+        h('div', { style:{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.15)', borderRadius:12, padding:'8px 6px', backdropFilter:'blur(10px)' } },
+          h(StatChip, { icon:h(Icon,{ name:'Database', size:14 }), label:(summary?.total_assets??'…')+' ASSETS', sep:true }),
+          h(StatChip, { icon:h(Icon,{ name:'BarChart3', size:14 }), label:formatRows(summary?.total_rows)+' ROWS', sep:true }),
+          h(StatChip, { icon:h(Icon,{ name:'CheckCircle', size:14 }), label:summary ? summary.checks_green+'/'+summary.checks_total+' GREEN' : '…', sep:true }),
+          h(StatChip, { icon:h(Icon,{ name:'Clock', size:14 }), label:relativeAgo(summary?.last_run_ago_seconds) }),
+        ),
+      ),
+    ),
+    h('section', { style:{ background:'#fff', padding:'28px 48px 48px', flex:1 } },
+      h('div', { className:'grid-3' },
+        h(RecentRunsCard, { runs:recent, loading:loadingSummary, onRunClick:r => { if(r==='all') setPage('runs'); else setSelectedRun(r); } }),
+        h(PipelineDAGCard, { assets, loading:loadingAssets, setPage, onAssetClick:key=>setSelectedAsset(key) }),
+        h(CopilotCard),
+      ),
+    ),
+    h(SlideOver, { isOpen:!!selectedRun, onClose:()=>setSelectedRun(null), title:'Run detail' },
+      selectedRun && h(RunDetailPanel, { run:selectedRun }),
+    ),
+    h(SlideOver, { isOpen:!!selectedAsset, onClose:()=>setSelectedAsset(null), title:'Asset detail' },
+      selectedAsset && h(AssetDetailPanel, { assetKey:selectedAsset }),
+    ),
   );
 }
 
@@ -531,66 +1101,37 @@ function App() {
   const [assets, setAssets] = useState([]);
   const [loadingSummary, setLoadingSummary] = useState(true);
   const [loadingAssets, setLoadingAssets] = useState(true);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   useEffect(() => {
-    apiFetch('/api/dashboard/summary').then(d => {
-      setSummary(d);
-      setLoadingSummary(false);
-    });
-    apiFetch('/api/assets').then(d => {
-      setAssets(d || []);
-      setLoadingAssets(false);
-    });
+    apiFetch('/api/dashboard/summary').then(d => { setSummary(d); setLoadingSummary(false); });
+    apiFetch('/api/assets').then(d => { setAssets(d||[]); setLoadingAssets(false); });
   }, []);
 
-  const recent = summary?.recent_runs || [];
+  useEffect(() => {
+    function onKey(e) { if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); setPaletteOpen(p=>!p); } }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
 
-  if (page !== 'dashboard') {
-    const icons = { assets: h(Database, { size: 40 }), runs: h(Play, { size: 40 }), query: h(Code2, { size: 40 }), schedules: h(Clock, { size: 40 }), catalog: h(BookOpen, { size: 40 }) };
-    const descs = {
-      assets: 'Full asset graph and detail views',
-      runs: 'Run history, logs, and status',
-      query: 'SQL query editor (Monaco)',
-      schedules: 'Cron schedule preview',
-      catalog: 'Browse all registered assets',
-    };
-    return h('div', { style: { minHeight: '100vh' } },
-      h('div', { className: 'hero' }, h(TopNav, { page, setPage })),
-      h(PlaceholderPage, { title: page.charAt(0).toUpperCase() + page.slice(1), icon: icons[page], desc: descs[page] }),
-    );
-  }
+  function navigateTo(pg) { setPage(pg); window.scrollTo(0,0); }
 
-  return h('div', { style: { minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#fff' } },
-    /* Hero */
-    h('section', { className: 'hero', style: { flexShrink: 0 } },
-      h(TopNav, { page, setPage }),
-      h('div', { style: { padding: '32px 48px 0' } },
-        h('h1', {
-          style: {
-            fontSize: 'clamp(52px, 7vw, 96px)',
-            fontWeight: 900, color: '#fff', margin: 0,
-            lineHeight: 1.02, letterSpacing: '-0.04em',
-          }
-        }, "Today's pipeline"),
-      ),
-      /* Stat chips */
-      h('div', { style: { padding: '24px 48px 40px', display: 'flex', alignItems: 'center', gap: 0, flexWrap: 'wrap' } },
-        h('div', { style: { display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 12, padding: '8px 6px', backdropFilter: 'blur(10px)' } },
-          h(StatChip, { icon: h(Database, { size: 14 }), label: (summary?.total_assets ?? '…') + ' ASSETS', sep: true }),
-          h(StatChip, { icon: h(BarChart3, { size: 14 }), label: formatRows(summary?.total_rows) + ' ROWS', sep: true }),
-          h(StatChip, { icon: h(CheckCircle, { size: 14 }), label: summary ? summary.checks_green + '/' + summary.checks_total + ' GREEN' : '…', sep: true }),
-          h(StatChip, { icon: h(Clock, { size: 14 }), label: relativeAgo(summary?.last_run_ago_seconds) }),
-        ),
-      ),
+  return h('div', { style:{ minHeight:'100vh' } },
+    h(CommandPalette, { isOpen:paletteOpen, onClose:()=>setPaletteOpen(false), setPage:navigateTo }),
+    h('div', { className:'hero' },
+      h(TopNav, { page, setPage:navigateTo, onSearch:()=>setPaletteOpen(true) }),
     ),
-    /* Body grid */
-    h('section', { style: { background: '#fff', padding: '28px 48px 48px' } },
-      h('div', { className: 'grid-3' },
-        h(RecentRunsCard, { runs: recent, loading: loadingSummary }),
-        h(PipelineDAGCard, { assets, loading: loadingAssets, setPage }),
-        h(CopilotCard),
-      ),
-    ),
+    page==='dashboard'
+      ? h(DashboardPage, { summary, assets, loadingSummary, loadingAssets, setPage:navigateTo })
+      : page==='assets'
+        ? h(AssetsPage)
+        : page==='runs'
+          ? h(RunsPage)
+          : page==='query'
+            ? h(QueryPage)
+            : page==='schedules'
+              ? h(SchedulesPage)
+              : null,
   );
 }
 

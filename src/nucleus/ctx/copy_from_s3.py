@@ -29,13 +29,12 @@ import contextlib
 from pathlib import Path, PurePosixPath
 from typing import Literal
 
+import duckdb
 from pyiceberg.exceptions import (
     CommitFailedException,
     NamespaceAlreadyExistsError,
     TableAlreadyExistsError,
 )
-
-import duckdb
 
 from nucleus.ctx.copy_from import _open_catalog
 from nucleus.errors import (
@@ -91,7 +90,7 @@ def _detect_format(uri: str, explicit_format: str | None) -> str:
         return explicit_format
 
     # Strip query string, then take the last path segment's suffix.
-    path_part = uri.split("?")[0].split("#")[0]
+    path_part = uri.split("?", maxsplit=1)[0].split("#", maxsplit=1)[0]
     suffix = PurePosixPath(path_part).suffix.lower()
     if suffix in _EXTENSION_TO_FORMAT:
         return _EXTENSION_TO_FORMAT[suffix]
@@ -143,8 +142,7 @@ def _translate_duckdb_s3_exception(exc: BaseException) -> NucleusError:
     if "404" in msg or "nosuchkey" in msg or "no such key" in msg:
         return NucleusSourceNotFound(
             user_message=(
-                "The S3 object was not found. "
-                "Check the bucket name, key path, and region."
+                "The S3 object was not found. Check the bucket name, key path, and region."
             ),
             fix_hint=(
                 "Verify the s3:// URI is correct and the object exists. "
@@ -157,8 +155,7 @@ def _translate_duckdb_s3_exception(exc: BaseException) -> NucleusError:
     if "nosuchbucket" in msg or "no such bucket" in msg:
         return NucleusSourceNotFound(
             user_message=(
-                "The S3 bucket was not found. "
-                "Check the bucket name and region in the URI."
+                "The S3 bucket was not found. Check the bucket name and region in the URI."
             ),
             fix_hint=(
                 "Verify the bucket name in the s3:// URI. "
@@ -188,8 +185,7 @@ def _translate_duckdb_s3_exception(exc: BaseException) -> NucleusError:
     ):
         return NucleusSourceNotFound(
             user_message=(
-                "Could not reach the S3 endpoint. "
-                "Check network connectivity and the bucket region."
+                "Could not reach the S3 endpoint. Check network connectivity and the bucket region."
             ),
             fix_hint=(
                 "Verify AWS_DEFAULT_REGION is set and network allows outbound HTTPS. "
@@ -264,7 +260,7 @@ def ingest_s3_to_iceberg(
     warehouse_dir: str | Path,
     dest_namespace: str,
     dest_table: str,
-    format: Literal["auto", "parquet", "csv", "json"] = "auto",  # noqa: A002 — mirrors public API
+    format: Literal["auto", "parquet", "csv", "json"] = "auto",
 ) -> int:
     """Read a file (or glob) from S3; write to a filesystem Iceberg table.
 
@@ -333,7 +329,7 @@ def ingest_s3_to_iceberg(
 
     except NucleusError:
         raise
-    except Exception as exc:  # noqa: BLE001 — broad catch: translator classifies
+    except Exception as exc:
         raise _translate_duckdb_s3_exception(exc) from exc
 
     # Write to Iceberg catalog.
@@ -356,7 +352,7 @@ def ingest_s3_to_iceberg(
         ) from exc
     except NucleusError:
         raise
-    except Exception as exc:  # noqa: BLE001 — translate pyiceberg and stdlib errors
+    except Exception as exc:
         from nucleus.coordination.error_translation import translate
 
         raise translate(exc) from exc

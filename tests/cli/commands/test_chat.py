@@ -173,9 +173,7 @@ class TestHappyPath:
     def test_model_flag_overrides_config(self, in_tmp_dir: Path) -> None:
         reply = _make_reply()
         with patch("nucleus.cli.commands.chat._chat", return_value=reply) as mock_chat:
-            result = runner.invoke(
-                app, ["chat", "anything", "--model", "gpt-4o-mini"]
-            )
+            result = runner.invoke(app, ["chat", "anything", "--model", "gpt-4o-mini"])
         assert result.exit_code == 0
         assert mock_chat.call_args.kwargs["model"] == "gpt-4o-mini"
 
@@ -199,9 +197,7 @@ class TestHappyPath:
         assert "nucleus run raw.orders" in result.stdout
         text_index = result.stdout.find("refresh data")
         cmd_index = result.stdout.find("nucleus run raw.orders")
-        assert 0 <= text_index < cmd_index, (
-            "suggested command must render AFTER reply text"
-        )
+        assert 0 <= text_index < cmd_index, "suggested command must render AFTER reply text"
 
     def test_no_suggested_command_when_none(self, in_tmp_dir: Path) -> None:
         reply = _make_reply(text="No action needed.", suggested_command=None)
@@ -301,16 +297,12 @@ class TestErrorPaths:
         assert "Set ANTHROPIC_API_KEY" in result.stderr
 
     def test_auth_error_docs_url_in_stderr(self, in_tmp_dir: Path) -> None:
-        err = NucleusCopilotAuthError(
-            user_message="Auth failed.", fix_hint=""
-        )
+        err = NucleusCopilotAuthError(user_message="Auth failed.", fix_hint="")
         with patch("nucleus.cli.commands.chat._chat", side_effect=err):
             result = runner.invoke(app, ["chat", "anything"])
         assert "nucleus.dev/errors" in result.stderr
 
-    def test_rate_limit_error_routes_through_same_handler(
-        self, in_tmp_dir: Path
-    ) -> None:
+    def test_rate_limit_error_routes_through_same_handler(self, in_tmp_dir: Path) -> None:
         err = NucleusCopilotRateLimitError(
             user_message="Rate limit exceeded.",
             fix_hint="Wait and retry, or switch to --provider ollama.",
@@ -347,24 +339,16 @@ class TestErrorPaths:
 
     def test_no_forbidden_classnames_in_error(self, in_tmp_dir: Path) -> None:
         """Error rendering must never leak external library identifiers."""
-        err = NucleusCopilotAuthError(
-            user_message="Auth failed.", fix_hint="Set the API key."
-        )
+        err = NucleusCopilotAuthError(user_message="Auth failed.", fix_hint="Set the API key.")
         with patch("nucleus.cli.commands.chat._chat", side_effect=err):
             result = runner.invoke(app, ["chat", "anything"])
         combined = result.stdout + result.stderr
         for term in _FORBIDDEN_CLASSNAMES:
-            assert term not in combined, (
-                f"forbidden term {term!r} leaked: {combined!r}"
-            )
+            assert term not in combined, f"forbidden term {term!r} leaked: {combined!r}"
 
-    def test_error_with_empty_fix_hint_omits_fix_line(
-        self, in_tmp_dir: Path
-    ) -> None:
+    def test_error_with_empty_fix_hint_omits_fix_line(self, in_tmp_dir: Path) -> None:
         """When fix_hint is empty, the rendered output must not show a stray 'Fix:' line."""
-        err = NucleusCopilotAuthError(
-            user_message="Auth failed.", fix_hint=""
-        )
+        err = NucleusCopilotAuthError(user_message="Auth failed.", fix_hint="")
         with patch("nucleus.cli.commands.chat._chat", side_effect=err):
             result = runner.invoke(app, ["chat", "anything"])
         assert result.exit_code == 1

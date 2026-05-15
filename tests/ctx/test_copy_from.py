@@ -22,8 +22,8 @@ pytest.importorskip("pyarrow")
 
 from pyiceberg.types import BinaryType, DoubleType, LongType, StringType
 
-from nucleus.errors import NucleusError, NucleusSourceNotFound, NucleusUnsupportedTypeError
 from nucleus.ctx.copy_from import _open_catalog, ingest_sqlite_to_iceberg
+from nucleus.errors import NucleusError, NucleusSourceNotFound, NucleusUnsupportedTypeError
 
 
 def _exec(sqlite_path: Path, *statements: str) -> None:
@@ -53,8 +53,11 @@ def _seed_orders(sqlite_path: Path, n_rows: int = 3) -> None:
 
 def _ingest_orders(sqlite_path: Path, warehouse: Path) -> int:
     return ingest_sqlite_to_iceberg(
-        sqlite_path, "orders",
-        warehouse_dir=warehouse, dest_namespace="raw", dest_table="orders",
+        sqlite_path,
+        "orders",
+        warehouse_dir=warehouse,
+        dest_namespace="raw",
+        dest_table="orders",
     )
 
 
@@ -75,8 +78,11 @@ def test_schema_auto_inferred(tmp_path: Path) -> None:
         "INSERT INTO typed VALUES (1, 1.5, 'foo', X'0102')",
     )
     ingest_sqlite_to_iceberg(
-        tmp_path / "src.db", "typed",
-        warehouse_dir=tmp_path / "wh", dest_namespace="raw", dest_table="typed",
+        tmp_path / "src.db",
+        "typed",
+        warehouse_dir=tmp_path / "wh",
+        dest_namespace="raw",
+        dest_table="typed",
     )
 
     schema = _open_catalog(tmp_path / "wh").load_table(("raw", "typed")).schema()
@@ -99,8 +105,11 @@ def test_missing_source_table_raises_source_not_found(tmp_path: Path) -> None:
 
     with pytest.raises(NucleusSourceNotFound) as exc_info:
         ingest_sqlite_to_iceberg(
-            tmp_path / "src.db", "nonexistent",
-            warehouse_dir=tmp_path / "wh", dest_namespace="raw", dest_table="x",
+            tmp_path / "src.db",
+            "nonexistent",
+            warehouse_dir=tmp_path / "wh",
+            dest_namespace="raw",
+            dest_table="x",
         )
     assert "nonexistent" in exc_info.value.user_message
     assert exc_info.value.fix_hint
@@ -112,8 +121,11 @@ def test_unsupported_type_raises_unsupported_type_error(tmp_path: Path) -> None:
 
     with pytest.raises(NucleusUnsupportedTypeError) as exc_info:
         ingest_sqlite_to_iceberg(
-            tmp_path / "src.db", "bad",
-            warehouse_dir=tmp_path / "wh", dest_namespace="raw", dest_table="bad",
+            tmp_path / "src.db",
+            "bad",
+            warehouse_dir=tmp_path / "wh",
+            dest_namespace="raw",
+            dest_table="bad",
         )
     assert "weird" in exc_info.value.user_message
     assert "NUMERIC" in exc_info.value.user_message
@@ -124,8 +136,11 @@ def test_rendered_error_has_no_pyiceberg_leak(tmp_path: Path) -> None:
 
     with pytest.raises(NucleusError) as exc_info:
         ingest_sqlite_to_iceberg(
-            tmp_path / "src.db", "missing",
-            warehouse_dir=tmp_path / "wh", dest_namespace="raw", dest_table="x",
+            tmp_path / "src.db",
+            "missing",
+            warehouse_dir=tmp_path / "wh",
+            dest_namespace="raw",
+            dest_table="x",
         )
     rendered = exc_info.value.rendered().lower()
     assert "pyiceberg" not in rendered, rendered

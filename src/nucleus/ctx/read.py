@@ -90,9 +90,7 @@ def _convert_arrow(arrow_table: Any, *, as_: str) -> Any:
         return arrow_table.to_pandas()
     except Exception as exc:
         raise NucleusConfigError(
-            user_message=(
-                "ctx.read(..., as_='pandas') requires pandas to be installed."
-            ),
+            user_message=("ctx.read(..., as_='pandas') requires pandas to be installed."),
             fix_hint=(
                 "Install pandas: pip install pandas. "
                 "Or use as_='polars' (default) or as_='arrow' instead."
@@ -156,27 +154,21 @@ def read(
                 f"ctx.read() requires a non-empty asset key (or AssetRef); "
                 f"got {type(asset_ref).__name__!r}."
             ),
-            fix_hint=(
-                "Pass a 2-level key string, e.g. ctx.read('raw.orders'), "
-                "or an AssetRef."
-            ),
+            fix_hint=("Pass a 2-level key string, e.g. ctx.read('raw.orders'), or an AssetRef."),
         )
 
     if as_ not in _SUPPORTED_FORMATS:
         raise NucleusConfigError(
             user_message=f"ctx.read(..., as_={as_!r}) is not a supported output format.",
             fix_hint=(
-                f"Pass one of {sorted(_SUPPORTED_FORMATS)!r}. "
-                "Default: 'polars' (polars.LazyFrame)."
+                f"Pass one of {sorted(_SUPPORTED_FORMATS)!r}. Default: 'polars' (polars.LazyFrame)."
             ),
         )
 
     # Parse asset_key → namespace, table_name.
     if "." not in asset_key or asset_key.count(".") != 1:
         raise NucleusInvalidAssetDefinition(
-            user_message=(
-                f"Asset key {asset_key!r} must be in '<namespace>.<name>' form."
-            ),
+            user_message=(f"Asset key {asset_key!r} must be in '<namespace>.<name>' form."),
             fix_hint=(
                 "v0.1 keys are 2-level (schema.name). "
                 "3-level (catalog.schema.name) is deferred to v0.3+."
@@ -198,9 +190,7 @@ def read(
         raise
     except Exception as exc:
         raise NucleusCatalogError(
-            user_message=(
-                f"Failed to open warehouse catalog at '{warehouse_path}': {exc}"
-            ),
+            user_message=(f"Failed to open warehouse catalog at '{warehouse_path}': {exc}"),
             fix_hint=(
                 "Verify that warehouse_dir points to a valid Nucleus warehouse. "
                 "Run 'nucleus init <name>' to create one."

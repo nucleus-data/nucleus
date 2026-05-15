@@ -27,7 +27,7 @@ import pytest
 
 def test_ctx_module_imports_cleanly() -> None:
     """``import nucleus.ctx`` must succeed without side effects."""
-    import nucleus.ctx as ctx
+    from nucleus import ctx
 
     assert ctx is not None
     assert hasattr(ctx, "__all__")
@@ -35,7 +35,7 @@ def test_ctx_module_imports_cleanly() -> None:
 
 def test_public_all_contains_required_v01_symbols() -> None:
     """``__all__`` must expose the v0.1 contract (copy_from, sql, read, NucleusError)."""
-    import nucleus.ctx as ctx
+    from nucleus import ctx
 
     expected = {"NucleusError", "copy_from", "sql", "read"}
     actual = set(ctx.__all__)
@@ -51,7 +51,7 @@ def test_copy_from_resolves_to_function_not_submodule() -> None:
     ``from nucleus.ctx._dispatch import copy_from``, the package-level
     attribute MUST resolve to the function (per spec), not the submodule.
     """
-    import nucleus.ctx as ctx
+    from nucleus import ctx
 
     assert callable(ctx.copy_from), (
         f"ctx.copy_from must be callable; got {type(ctx.copy_from).__name__}. "
@@ -60,14 +60,13 @@ def test_copy_from_resolves_to_function_not_submodule() -> None:
     # The function lives in nucleus.ctx._dispatch — confirm we got that one
     # (not a copy_from.py submodule export).
     assert ctx.copy_from.__module__ == "nucleus.ctx._dispatch", (
-        f"ctx.copy_from must be from nucleus.ctx._dispatch; "
-        f"got {ctx.copy_from.__module__}."
+        f"ctx.copy_from must be from nucleus.ctx._dispatch; got {ctx.copy_from.__module__}."
     )
 
 
 def test_sql_resolves_to_function() -> None:
     """``nucleus.ctx.sql`` MUST be the SQL execution function."""
-    import nucleus.ctx as ctx
+    from nucleus import ctx
 
     assert callable(ctx.sql)
     assert ctx.sql.__module__ == "nucleus.ctx.sql"
@@ -75,7 +74,7 @@ def test_sql_resolves_to_function() -> None:
 
 def test_read_resolves_to_function() -> None:
     """``nucleus.ctx.read`` MUST be the lazy reader function."""
-    import nucleus.ctx as ctx
+    from nucleus import ctx
 
     assert callable(ctx.read)
     assert ctx.read.__module__ == "nucleus.ctx.read"
@@ -84,7 +83,7 @@ def test_read_resolves_to_function() -> None:
 def test_nucleus_error_is_exception_class() -> None:
     """``nucleus.ctx.NucleusError`` MUST be the base exception class for
     ``except nucleus.ctx.NucleusError as exc:`` use."""
-    import nucleus.ctx as ctx
+    from nucleus import ctx
 
     assert isinstance(ctx.NucleusError, type)
     assert issubclass(ctx.NucleusError, Exception)
@@ -97,7 +96,7 @@ def test_deferred_v01_symbols_not_exported() -> None:
     v0.2+ with practical substitutes (asset body return, stdlib logging,
     CLI flags). The public surface MUST NOT advertise them.
     """
-    import nucleus.ctx as ctx
+    from nucleus import ctx
 
     deferred = {"write", "log", "params"}
     leaked = deferred & set(ctx.__all__)
@@ -109,7 +108,7 @@ def test_deferred_v01_symbols_not_exported() -> None:
 
 def test_copy_from_unsupported_scheme_via_public_surface() -> None:
     """End-to-end smoke through ``ctx.copy_from`` (not via submodule)."""
-    import nucleus.ctx as ctx
+    from nucleus import ctx
 
     with pytest.raises(ctx.NucleusError) as exc_info:
         ctx.copy_from(

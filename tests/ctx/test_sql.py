@@ -39,7 +39,6 @@ from nucleus.errors import (
     NucleusSQLSyntaxError,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -61,7 +60,8 @@ def _seed_sqlite_and_ingest(
     finally:
         conn.close()
     ingest_sqlite_to_iceberg(
-        db_path, table,
+        db_path,
+        table,
         warehouse_dir=tmp_path / "wh",
         dest_namespace=ns,
         dest_table=table,
@@ -81,7 +81,7 @@ class TestBasicSQLExecution:
 
         _seed_sqlite_and_ingest(tmp_path, rows=3)
         result = sql(
-            'SELECT 1 AS one, 2 AS two',
+            "SELECT 1 AS one, 2 AS two",
             warehouse_dir=tmp_path / "wh",
         )
         assert isinstance(result, pl.LazyFrame)
@@ -89,7 +89,7 @@ class TestBasicSQLExecution:
     def test_collect_materialises_rows(self, tmp_path: Path) -> None:
         _seed_sqlite_and_ingest(tmp_path, rows=3)
         result = sql(
-            'SELECT 42 AS answer',
+            "SELECT 42 AS answer",
             warehouse_dir=tmp_path / "wh",
         )
         df = result.collect()
@@ -100,7 +100,7 @@ class TestBasicSQLExecution:
         # Ensure the warehouse dir exists with a catalog.
         _open_catalog(tmp_path / "wh")
         result = sql(
-            'SELECT 99 AS value',
+            "SELECT 99 AS value",
             warehouse_dir=tmp_path / "wh",
         )
         df = result.collect()
@@ -195,9 +195,7 @@ class TestErrorTranslation:
         err = exc_info.value
         assert err.error_code == "NE2002"
 
-    def test_undefined_jinja_variable_raises_sql_syntax_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_undefined_jinja_variable_raises_sql_syntax_error(self, tmp_path: Path) -> None:
         """StrictUndefined raises for undeclared bindings."""
         _open_catalog(tmp_path / "wh")
         with pytest.raises(NucleusSQLSyntaxError) as exc_info:
@@ -208,9 +206,7 @@ class TestErrorTranslation:
             )
         assert exc_info.value.error_code == "NE2002"
 
-    def test_invalid_ref_name_raises_sql_syntax_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_invalid_ref_name_raises_sql_syntax_error(self, tmp_path: Path) -> None:
         """ref() names must match <lowercase>.<lowercase>."""
         _open_catalog(tmp_path / "wh")
         with pytest.raises(NucleusSQLSyntaxError) as exc_info:
@@ -220,9 +216,7 @@ class TestErrorTranslation:
             )
         assert exc_info.value.error_code == "NE2002"
 
-    def test_ref_with_bad_arity_raises_sql_syntax_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_ref_with_bad_arity_raises_sql_syntax_error(self, tmp_path: Path) -> None:
         """ref() must be called with exactly one argument."""
         _open_catalog(tmp_path / "wh")
         with pytest.raises(NucleusSQLSyntaxError) as exc_info:
@@ -232,9 +226,7 @@ class TestErrorTranslation:
             )
         assert exc_info.value.error_code == "NE2002"
 
-    def test_nonexistent_warehouse_raises_catalog_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_nonexistent_warehouse_raises_catalog_error(self, tmp_path: Path) -> None:
         # Passing a completely non-existent path that can't open a catalog.
         nonexistent = tmp_path / "does_not_exist" / "nested"
         # This should either create the catalog (mkdir) or raise catalog error.

@@ -62,7 +62,10 @@ All catalog ops cite docs URLs per AGENTS.md §11.12.
 ``CommitFailedException`` surfaces as ``NucleusCommitConflictError``;
 ``CommitStateUnknownException`` surfaces as ``NucleusCommitUnknownError``.
 No multi-table transactions (ADR-001: catalog handles per-table atomicity).
-All snapshots retained (no ``expire_snapshots`` in v0.1 per SKILL.md).
+v0.2 adds three reliability guards (ADR-024):
+* DuckDB ``SET memory_limit`` at connection init (P0-1, NE2007).
+* Advisory filesystem lock per asset (P0-2, NE3008).
+* ``expire_old_snapshots`` after successful commit (P0-3, NE3009).
 """
 
 from __future__ import annotations
@@ -70,6 +73,7 @@ from __future__ import annotations
 import contextlib
 import dataclasses
 import inspect
+import logging
 import time
 import uuid
 from datetime import UTC, datetime
@@ -82,7 +86,10 @@ from nucleus.errors import (
     NucleusAssetNotFound,
     NucleusError,
     NucleusInternalError,
+    NucleusMemoryLimitExceeded,
 )
+
+logger = logging.getLogger(__name__)
 from nucleus.sdk import contracts
 from nucleus.sdk.decorators import _AssetDefinition, get_asset
 from nucleus.sdk.results import MaterializationResult
@@ -101,6 +108,80 @@ _NO_ROW_COUNT_YET: Final[int] = 0
 # :mod:`nucleus.sdk.materialize` so direct callers (CLI, tests) hit the
 # same validation surface even when they bypass the SDK boundary.
 _UpstreamMode = Literal["skip", "materialize", "validate"]
+
+# ---------------------------------------------------------------------------
+# DuckDB memory_limit helper (ADR-024 P0-1)
+# ---------------------------------------------------------------------------
+
+# Fraction of total RAM to target for DuckDB's memory_limit.
+_DUCKDB_RAM_FRACTION: float = 0.80
+# Absolute floor (2 GB) and ceiling (32 GB) regardless of physical RAM.
+_DUCKDB_MEM_FLOOR_BYTES: int = 2 * 1024**3
+_DUCKDB_MEM_CEIL_BYTES: int = 32 * 1024**3
+
+
+def _compute_duckdb_memory_limit(override_str: str | None = None) -> str:
+    """Return the ``SET memory_limit`` string for this machine.
+
+    Priority:
+    1. *override_str* — caller-supplied value from ``nucleus_project.yaml``
+       ``memory_limit`` key (e.g. ``"8GB"``).
+    2. ``psutil``-derived 80 % of total RAM, clamped to [2 GB, 32 GB].
+    3. ``"10GB"`` fallback when ``psutil`` is unavailable.
+
+    Docs: https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
+    Per ``docs/decisions/ADR-024-reliability-hardening-plan.md`` P0-1.
+    """
+    if override_str:
+        return override_str
+
+    try:
+        import psutil  # Docs: https://psutil.readthedocs.io/en/latest/
+
+        total_bytes = psutil.virtual_memory().total
+        target_bytes = int(total_bytes * _DUCKDB_RAM_FRACTION)
+        limit_bytes = max(_DUCKDB_MEM_FLOOR_BYTES, min(_DUCKDB_MEM_CEIL_BYTES, target_bytes))
+        return f"{limit_bytes // (1024**3)}GB"
+    except ImportError:
+        logger.debug("psutil not available; using 10GB DuckDB memory_limit default")
+        return "10GB"
+
+
+def _apply_duckdb_memory_limit(conn: Any, memory_limit_str: str, spill_dir: Path) -> None:
+    """Apply ``SET memory_limit`` and ``SET temp_directory`` to *conn*.
+
+    Translates ``duckdb.OutOfMemoryException`` (and similar) into
+    :class:`~nucleus.errors.NucleusMemoryLimitExceeded` (NE2007).
+
+    Args:
+        conn: An open DuckDB connection.
+        memory_limit_str: Value for ``SET memory_limit``, e.g. ``"8GB"``.
+        spill_dir: Directory for DuckDB spill-to-disk files.  Created if absent.
+
+    Docs: https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
+    Per ADR-024 P0-1.
+    """
+    try:
+        spill_dir.mkdir(parents=True, exist_ok=True)
+        conn.execute(f"SET memory_limit = '{memory_limit_str}'")
+        conn.execute(f"SET temp_directory = '{spill_dir.resolve().as_posix()}'")
+        logger.debug("DuckDB memory_limit=%s, spill=%s", memory_limit_str, spill_dir)
+    except Exception as exc:
+        exc_name = type(exc).__name__.lower()
+        if "memory" in exc_name or "oom" in exc_name or "outofmemory" in exc_name:
+            raise NucleusMemoryLimitExceeded(
+                user_message=(
+                    f"DuckDB exceeded the {memory_limit_str} memory limit. "
+                    "Increase ``memory_limit`` in nucleus_project.yaml or split "
+                    "the asset into smaller partitions."
+                ),
+                fix_hint=(
+                    "Add ``memory_limit: '16GB'`` (or higher) under the "
+                    "``[storage]`` section of nucleus_project.yaml, then re-run."
+                ),
+                cause=exc,
+            ) from exc
+        raise translate(exc) from exc
 
 
 def _resolve_asset_from_registry(asset_key: str) -> _AssetDefinition:
@@ -173,12 +254,21 @@ def _commit_to_iceberg(
     value: Any,
     asset_key: str,
     warehouse_dir: Path,
+    *,
+    memory_limit_str: str | None = None,
+    snapshot_retain_days: int = 30,
+    snapshot_min_keep: int = 10,
 ) -> tuple[str, int]:
     """Commit a Polars DataFrame or PyArrow Table to a filesystem Iceberg table.
 
     Called by :func:`materialize_asset` for non-dry_run paths when
     ``warehouse_dir`` is provided. Per v4.1 §6.2 step 3 (catalog atomic commit)
     + ADR-001 (no custom commit service — catalog handles atomicity).
+
+    v0.2 additions (ADR-024):
+    * Applies ``SET memory_limit`` on the DuckDB connection (P0-1).
+    * Calls ``expire_old_snapshots`` after a successful commit when the table
+      has more than 100 snapshots (P0-3).
 
     Returns:
         ``(snapshot_id, row_count)`` — both sentinel-valued when ``value`` is
@@ -190,8 +280,17 @@ def _commit_to_iceberg(
     Docs: https://arrow.apache.org/docs/python/api.html (pyarrow==18.1.0)
     """
     # Lazy imports keep boot-time cost off the hot path per PoC #4.
-    import pyarrow as pa  # Docs: https://arrow.apache.org/docs/python/api.html
+    import duckdb  # Docs: https://duckdb.org/docs/api/python/overview (duckdb==1.2.2)
     import polars as pl  # Docs: https://docs.pola.rs/api/python/stable/
+    import pyarrow as pa  # Docs: https://arrow.apache.org/docs/python/api.html
+
+    # ADR-024 P0-1: apply memory_limit at AMA connection init before any query.
+    # Docs: https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html
+    warehouse_dir.mkdir(parents=True, exist_ok=True)
+    spill_dir = warehouse_dir.parent / ".nucleus" / "duckdb_spill"
+    mem_limit = _compute_duckdb_memory_limit(memory_limit_str)
+    _duckdb_conn = duckdb.connect()
+    _apply_duckdb_memory_limit(_duckdb_conn, mem_limit, spill_dir)
 
     # Docs: https://py.iceberg.apache.org/api/catalog/ (pyiceberg==0.11.1)
     from pyiceberg.catalog import load_catalog
@@ -200,6 +299,7 @@ def _commit_to_iceberg(
         NamespaceAlreadyExistsError,
         TableAlreadyExistsError,
     )
+
     # Iceberg schema types for manual schema construction from Arrow.
     # Docs: https://py.iceberg.apache.org/api/#schemas (pyiceberg==0.11.1)
     from pyiceberg.schema import Schema
@@ -229,7 +329,6 @@ def _commit_to_iceberg(
     row_count = pa_table.num_rows
     namespace, table_name = asset_key.split(".", 1)
 
-    warehouse_dir.mkdir(parents=True, exist_ok=True)
     catalog_db = warehouse_dir / "catalog.db"
 
     def _arrow_type_to_iceberg(t: pa.DataType) -> Any:
@@ -238,7 +337,13 @@ def _commit_to_iceberg(
             return BooleanType()
         if pa.types.is_int8(t) or pa.types.is_int16(t) or pa.types.is_int32(t):
             return IntegerType()
-        if pa.types.is_int64(t) or pa.types.is_uint32(t) or pa.types.is_uint64(t) or pa.types.is_uint16(t) or pa.types.is_uint8(t):
+        if (
+            pa.types.is_int64(t)
+            or pa.types.is_uint32(t)
+            or pa.types.is_uint64(t)
+            or pa.types.is_uint16(t)
+            or pa.types.is_uint8(t)
+        ):
             return LongType()
         if pa.types.is_float32(t):
             return FloatType()
@@ -286,9 +391,37 @@ def _commit_to_iceberg(
         ice_table.append(pa_table)
 
         snapshot = ice_table.current_snapshot()
-        snapshot_id = (
-            str(snapshot.snapshot_id) if snapshot is not None else _NO_SNAPSHOT_YET
-        )
+        snapshot_id = str(snapshot.snapshot_id) if snapshot is not None else _NO_SNAPSHOT_YET
+
+        # ADR-024 P0-3: expire old snapshots after successful commit when count
+        # exceeds the trigger threshold.  Failures are logged but do NOT roll
+        # back the committed snapshot (maintenance is best-effort).
+        # Docs: https://py.iceberg.apache.org/api/ (pyiceberg==0.11.1)
+        try:
+            from nucleus.coordination.snapshot_maintenance import (
+                _TRIGGER_THRESHOLD,
+                expire_old_snapshots,
+            )
+
+            if len(ice_table.snapshots()) > _TRIGGER_THRESHOLD:
+                expired = expire_old_snapshots(
+                    ice_table,
+                    retain_days=snapshot_retain_days,
+                    min_snapshots=snapshot_min_keep,
+                )
+                if expired:
+                    logger.debug(
+                        "snapshot_maintenance: expired %d snapshot(s) for %s",
+                        expired,
+                        asset_key,
+                    )
+        except Exception:
+            # Maintenance failures are non-fatal — the commit already succeeded.
+            logger.warning(
+                "snapshot_maintenance: failed for %s (commit succeeded)",
+                asset_key,
+                exc_info=True,
+            )
 
     except NucleusError:
         raise
@@ -308,6 +441,10 @@ def materialize_asset(
     timeout_seconds: int | None = None,  # noqa: ARG001 — accepted, not enforced (v0.1)
     dry_run: bool = False,
     warehouse_dir: Path | None = None,
+    memory_limit: str | None = None,
+    lock_timeout: float = 30.0,
+    snapshot_retain_days: int = 30,
+    snapshot_min_keep: int = 10,
 ) -> MaterializationResult:
     """Materialize a single Nucleus asset and return its outcome record.
 
@@ -346,6 +483,17 @@ def materialize_asset(
             sentinel values are returned. The CLI ``nucleus run`` always
             provides this; direct SDK callers that omit it get the
             v0.1 deferred-commit behaviour.
+        memory_limit: Override DuckDB ``SET memory_limit`` value, e.g.
+            ``"8GB"``. When ``None``, 80 % of total RAM is used (clamped
+            to [2 GB, 32 GB]).  Configurable via ``nucleus_project.yaml``
+            ``memory_limit`` key. (ADR-024 P0-1.)
+        lock_timeout: Seconds to wait for the advisory asset lock before
+            raising :class:`~nucleus.errors.NucleusConcurrentRunError`
+            (NE3008). Default 30 s.  (ADR-024 P0-2.)
+        snapshot_retain_days: Snapshots older than this many days are
+            eligible for expiry after a successful commit.  (ADR-024 P0-3.)
+        snapshot_min_keep: Minimum number of recent snapshots to keep
+            regardless of age.  (ADR-024 P0-3.)
 
     Returns:
         A frozen :class:`MaterializationResult` per ADR-013 §2.
@@ -353,6 +501,8 @@ def materialize_asset(
     Raises:
         NucleusAssetNotFound: ``asset_key`` is not in the in-process
             registry.
+        NucleusConcurrentRunError: Another run is already materialising
+            this asset and the lock was not obtained within ``lock_timeout``.
         NucleusInternalError: ``upstream`` is not ``"skip"`` (v0.1 scope
             limit), or the AMA itself hit an invariant violation.
         NucleusError: Any other typed error produced by the
@@ -376,6 +526,19 @@ def materialize_asset(
 
     entry = _resolve_asset_from_registry(asset_key)
 
+    # ADR-024 P0-2: acquire per-asset advisory lock before the commit path.
+    # When warehouse_dir is None (dry_run / deferred-commit) we skip the lock
+    # because there is nothing to race on.
+    # Docs: nucleus.coordination.locks (stdlib fcntl / msvcrt)
+    from nucleus.coordination.locks import asset_lock
+
+    project_root = warehouse_dir.parent if warehouse_dir is not None else Path.cwd()
+    lock_ctx = (
+        asset_lock(project_root, asset_key, timeout=lock_timeout)
+        if warehouse_dir is not None
+        else contextlib.nullcontext()
+    )
+
     # OpenLineage bookend hooks per v4.1 §6.2 step 4 + research/openlineage.md
     # §5.1. All emit calls are best-effort: lineage failure never fails
     # materialization.
@@ -383,16 +546,24 @@ def materialize_asset(
     lineage.emit_start(run_id, asset_key)
 
     try:
-        started_at = datetime.now(UTC)
-        t0 = time.perf_counter()
+        with lock_ctx:
+            started_at = datetime.now(UTC)
+            t0 = time.perf_counter()
 
-        value = _invoke_asset_body(entry)
+            value = _invoke_asset_body(entry)
 
-        if dry_run or warehouse_dir is None:
-            snapshot_id: str = _NO_SNAPSHOT_YET
-            row_count: int = _NO_ROW_COUNT_YET
-        else:
-            snapshot_id, row_count = _commit_to_iceberg(value, asset_key, warehouse_dir)
+            if dry_run or warehouse_dir is None:
+                snapshot_id: str = _NO_SNAPSHOT_YET
+                row_count: int = _NO_ROW_COUNT_YET
+            else:
+                snapshot_id, row_count = _commit_to_iceberg(
+                    value,
+                    asset_key,
+                    warehouse_dir,
+                    memory_limit_str=memory_limit,
+                    snapshot_retain_days=snapshot_retain_days,
+                    snapshot_min_keep=snapshot_min_keep,
+                )
 
         duration_ms = int((time.perf_counter() - t0) * 1000)
 

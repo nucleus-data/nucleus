@@ -53,7 +53,7 @@ PYPROJECT = REPO_ROOT / "pyproject.toml"
 
 DEFAULT_BANNED_TERMS: list[str] = [
     "metastore",
-    "data lake",            # we say "warehouse" or "lakehouse"
+    "data lake",  # we say "warehouse" or "lakehouse"
     "spark killer",
     "databricks killer",
     "data os",
@@ -77,15 +77,15 @@ SKIP_PATTERNS = [
     # Whole-file exemptions for retirement narratives + audit trails (per
     # ADR-002 §8.6.1 evening-pass follow-up). These documents legitimately
     # cite banned vocabulary as the subject of discussion.
-    "docs/archive/",                         # archived deprecated docs (moved 2026-05-15 REORG PR-A)
-    "architecture_design_conversation.md",   # superseded historical conversation (v4.1 line 17)
-    "docs/audits/",                          # audit trails MUST contain banned terms as evidence
-    "docs/audit/",                           # audit trails MUST contain banned terms as evidence (alt spelling)
-    "docs/decisions/",                       # ADRs MAY discuss what was decided NOT to do
-    "docs/research/",                        # research files cite competitor positioning narratives and ecosystem analysis
-    "docs/dev-guides/",                      # scaffolding guides reference banned comparator terms verbatim
-    "docs/roadmap/",                         # roadmap docs discuss positioning context and what we decided NOT to do
-    "pyproject.toml",                        # holds the ban-list itself; TOML can't carry HTML exemption markers
+    "docs/archive/",  # archived deprecated docs (moved 2026-05-15 REORG PR-A)
+    "architecture_design_conversation.md",  # superseded historical conversation (v4.1 line 17)
+    "docs/audits/",  # audit trails MUST contain banned terms as evidence
+    "docs/audit/",  # audit trails MUST contain banned terms as evidence (alt spelling)
+    "docs/decisions/",  # ADRs MAY discuss what was decided NOT to do
+    "docs/research/",  # research files cite competitor positioning narratives and ecosystem analysis
+    "docs/dev-guides/",  # scaffolding guides reference banned comparator terms verbatim
+    "docs/roadmap/",  # roadmap docs discuss positioning context and what we decided NOT to do
+    "pyproject.toml",  # holds the ban-list itself; TOML can't carry HTML exemption markers
 ]
 
 # Inline exemption marker.
@@ -105,9 +105,7 @@ def _load_terms_from_pyproject() -> list[str]:
         return list(DEFAULT_BANNED_TERMS)
     data = tomllib.loads(PYPROJECT.read_text(encoding="utf-8"))
     terms = (
-        data.get("tool", {})
-        .get("nucleus", {})
-        .get("forbidden_terms_in_docs", DEFAULT_BANNED_TERMS)
+        data.get("tool", {}).get("nucleus", {}).get("forbidden_terms_in_docs", DEFAULT_BANNED_TERMS)
     )
     return [str(t) for t in terms] or list(DEFAULT_BANNED_TERMS)
 
@@ -198,11 +196,11 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(f"Vocabulary check: FAIL — {len(hits)} occurrence(s) of banned term(s):\n")
         for h in hits:
-            print(f"  {h.file}:{h.line}  [\"{h.term}\"]")
+            print(f'  {h.file}:{h.line}  ["{h.term}"]')
             print(f"      {h.excerpt}")
         print("\nSee docs/conventions/engineering.md §15 for alternative vocabulary.")
         print("If a legitimate use is required, add an inline exemption:")
-        print('  <!-- banned-term: <term> -->  on the same line.')
+        print("  <!-- banned-term: <term> -->  on the same line.")
 
     return 1 if hits else 0
 

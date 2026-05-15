@@ -80,7 +80,8 @@ def cmd_finish(args: argparse.Namespace) -> int:
     log = Path(session.log_path)
     events: list[dict[str, Any]] = (
         [json.loads(ln) for ln in log.read_text(encoding="utf-8").splitlines() if ln.strip()]
-        if log.exists() else []
+        if log.exists()
+        else []
     )
     report = {
         "tester_id": session.tester_id,

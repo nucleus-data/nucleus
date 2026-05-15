@@ -87,8 +87,7 @@ def _dagster_step_handler(exc: BaseException) -> NucleusError:
     return NucleusInternalError(
         user_message=f"Asset execution failed ({inner_type}): {inner_msg}",
         fix_hint=(
-            "If this is unexpected, please file a bug. "
-            "Run with --debug to see the full traceback."
+            "If this is unexpected, please file a bug. Run with --debug to see the full traceback."
         ),
         cause=exc,
     )
@@ -119,8 +118,7 @@ def _value_error_handler(exc: BaseException) -> NucleusError:
     return NucleusInternalError(
         user_message=f"Asset execution failed (ValueError): {msg}",
         fix_hint=(
-            "If this is unexpected, please file a bug. "
-            "Run with --debug to see the full traceback."
+            "If this is unexpected, please file a bug. Run with --debug to see the full traceback."
         ),
         cause=exc,
     )

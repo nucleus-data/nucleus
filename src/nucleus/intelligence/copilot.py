@@ -38,8 +38,8 @@ from nucleus.intelligence.translate import translate_litellm_exception
 _DEFAULT_PROVIDER = "anthropic"
 _DEFAULT_MODELS: dict[str, str] = {
     "anthropic": "claude-3-5-haiku-20241022",  # NEEDS VERIFICATION: verify model ID at ratification
-    "openai": "gpt-4o-mini",                    # NEEDS VERIFICATION: verify model ID at ratification
-    "ollama": "llama3.1:8b",                    # NEEDS VERIFICATION: verify model + memory at ratification
+    "openai": "gpt-4o-mini",  # NEEDS VERIFICATION: verify model ID at ratification
+    "ollama": "llama3.1:8b",  # NEEDS VERIFICATION: verify model + memory at ratification
 }
 _DEFAULT_INPUT_TOKENS = 2000
 _DEFAULT_OUTPUT_TOKENS = 1000
@@ -48,9 +48,9 @@ _DEFAULT_COST_CEILING = 0.10
 # Rough per-token pricing in USD per 1M tokens (NEEDS VERIFICATION at ratification).
 # Baked here as defaults only; override via nucleus_project.yaml copilot.pricing.
 _PRICING_PER_MTOK: dict[str, dict[str, float]] = {
-    "anthropic": {"input": 0.80, "output": 4.00},     # claude-3-5-haiku approximate
-    "openai": {"input": 0.15, "output": 0.60},         # gpt-4o-mini approximate
-    "ollama": {"input": 0.0, "output": 0.0},            # local — always free
+    "anthropic": {"input": 0.80, "output": 4.00},  # claude-3-5-haiku approximate
+    "openai": {"input": 0.15, "output": 0.60},  # gpt-4o-mini approximate
+    "ollama": {"input": 0.0, "output": 0.0},  # local — always free
 }
 
 _OPT_IN_FILE = ".nucleus/copilot_opt_in"
@@ -127,8 +127,7 @@ def _estimate_cost(
     input_tokens = len(prompt) // 4  # 1 token ≈ 4 chars heuristic
     rates = pricing.get(provider, pricing.get("anthropic", {"input": 1.0, "output": 5.0}))
     return (
-        input_tokens * rates["input"] / 1_000_000
-        + max_output_tokens * rates["output"] / 1_000_000
+        input_tokens * rates["input"] / 1_000_000 + max_output_tokens * rates["output"] / 1_000_000
     )
 
 
@@ -150,7 +149,9 @@ def _build_prompt(question: str, ctx: dict[str, Any]) -> str:
 
     import jinja2
 
-    tmpl_bytes = (_res_files("nucleus.intelligence.prompts") / "system.j2").read_text(encoding="utf-8")
+    tmpl_bytes = (_res_files("nucleus.intelligence.prompts") / "system.j2").read_text(
+        encoding="utf-8"
+    )
     env = jinja2.Environment(autoescape=False, undefined=jinja2.Undefined)
     template = env.from_string(tmpl_bytes)
     return template.render(question=question, **ctx)
@@ -197,7 +198,9 @@ def chat(
     resolved_provider = provider or copilot_cfg.get("provider", _DEFAULT_PROVIDER)
     resolved_model = model or copilot_cfg.get("model", _DEFAULT_MODELS.get(resolved_provider, ""))
     if not resolved_model:
-        resolved_model = _DEFAULT_MODELS.get(resolved_provider, "anthropic/claude-3-5-haiku-20241022")
+        resolved_model = _DEFAULT_MODELS.get(
+            resolved_provider, "anthropic/claude-3-5-haiku-20241022"
+        )
 
     # For LiteLLM: prepend provider prefix when using Anthropic/OpenAI.
     # Ollama uses "ollama/<model>" format.

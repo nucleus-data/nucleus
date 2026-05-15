@@ -1,8 +1,17 @@
-# PoC #5 — External Data Engineer Tester Report
+# PoC #5 — Internal Simulation Report (NOT a blank template)
 
-> **Simulation date**: 2026-05-14  
-> **Tester persona**: External data engineer — no insider access, no prior Nucleus exposure  
+> **⚠️ THIS IS AN INTERNAL SIMULATION — NOT THE EXTERNAL TESTER FORM**
+>
+> This file was filled in by a Nucleus swarm-implementer on 2026-05-14, simulating an external data engineer with no prior Nucleus access. It demonstrates what a completed feedback form looks like and documents real friction found during the simulation run.
+>
+> **For the blank template external testers fill in**, see: [`FEEDBACK_FORM_TEMPLATE.md`](./FEEDBACK_FORM_TEMPLATE.md)
+>
+> ---
+>
+> **Simulation date**: 2026-05-14
+> **Tester persona**: External data engineer — no insider access, no prior Nucleus exposure
 > **Method**: Live execution on WSL2/Ubuntu-22.04 (Windows 11), working from README + quickstart only
+> **Status**: INTERNAL ONLY — do not send this file to external testers
 
 ---
 

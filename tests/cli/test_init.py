@@ -73,7 +73,9 @@ class TestHappyPath:
         runner.invoke(app, ["init", "my-demo"])
         config = (in_tmp_dir / "my-demo" / "nucleus_project.yaml").read_text(encoding="utf-8")
         readme = (in_tmp_dir / "my-demo" / "README.md").read_text(encoding="utf-8")
-        assets_init = (in_tmp_dir / "my-demo" / "assets" / "__init__.py").read_text(encoding="utf-8")
+        assets_init = (in_tmp_dir / "my-demo" / "assets" / "__init__.py").read_text(
+            encoding="utf-8"
+        )
         assert "my-demo" in config
         assert "my-demo" in readme
         assert "my-demo" in assets_init
@@ -235,13 +237,13 @@ class TestForbiddenBehaviours:
         """
         runner.invoke(app, ["init", "demo"])
         banned = [
-            "metastore",          # <!-- banned-term: metastore -->
-            "data lake",          # <!-- banned-term: data lake -->
-            "spark killer",       # <!-- banned-term: Spark killer -->
+            "metastore",  # <!-- banned-term: metastore -->
+            "data lake",  # <!-- banned-term: data lake -->
+            "spark killer",  # <!-- banned-term: Spark killer -->
             "databricks killer",  # <!-- banned-term: Databricks killer -->
-            "data os",            # <!-- banned-term: Data OS -->
-            "ai-native",          # <!-- banned-term: AI-native -->
-            "ai-first",           # <!-- banned-term: AI-first -->
+            "data os",  # <!-- banned-term: Data OS -->
+            "ai-native",  # <!-- banned-term: AI-native -->
+            "ai-first",  # <!-- banned-term: AI-first -->
         ]
         for path in (in_tmp_dir / "demo").rglob("*"):
             if not path.is_file():

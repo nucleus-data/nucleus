@@ -1,6 +1,6 @@
 # ADR-022: CI/CD, release automation, and community scaffolding
 
-Status: PROPOSED
+Status: ACCEPTED
 Date: 2026-05-15
 
 ## Context
@@ -8,6 +8,8 @@ Date: 2026-05-15
 Shipping Nucleus on a repeatable cadence needs automated checks that mirror founder intent (constraints in `AGENTS.md` implementation workflow and upgrade-safe design), predictable release choreography, and a minimal community onboarding pack that does not bloat proprietary code paths.
 
 Operating constraints cited: `AGENTS.md` §11 (implementation workflow) and §11.13 (pins, rollback, governance scripts, one-component upgrade PR discipline).
+
+Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 ## Decision
 

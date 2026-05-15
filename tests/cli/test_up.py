@@ -26,11 +26,7 @@ def project_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     project = tmp_path / "demo"
     project.mkdir()
     (project / "nucleus_project.yaml").write_text(
-        "project:\n"
-        "  name: demo\n"
-        "  version: 0.1.0\n"
-        "storage:\n"
-        "  warehouse: ./data/warehouse\n",
+        "project:\n  name: demo\n  version: 0.1.0\nstorage:\n  warehouse: ./data/warehouse\n",
         encoding="utf-8",
     )
     monkeypatch.chdir(project)
@@ -39,9 +35,7 @@ def project_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
 
 @pytest.fixture
 def project_with_compose(project_dir: Path) -> Path:
-    text = '\n'.join(
-        ("services:", "  minio:", "    image: minio/minio")
-    )
+    text = "\n".join(("services:", "  minio:", "    image: minio/minio"))
     (project_dir / "docker-compose.yaml").write_text(f"{text}\n", encoding="utf-8")
     return project_dir
 
@@ -80,14 +74,14 @@ def test_docker_missing_raises(monkeypatch: pytest.MonkeyPatch, project_with_com
     assert "Docker is not installed" in result.stderr
 
 
-def test_success_path_writes_warehouse(project_with_compose: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_success_path_writes_warehouse(
+    project_with_compose: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
     proc_calls: list[list[str]] = []
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         proc_calls.append(args)
         return SimpleNamespace(returncode=0, stdout="", stderr="")
@@ -162,9 +156,7 @@ def test_rebuild_issues_down_then_up(
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
     calls: list[list[str]] = []
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         calls.append(args)
         return SimpleNamespace(returncode=0, stdout="", stderr="")
@@ -182,9 +174,7 @@ def test_compose_failure_translates_environment(
 ) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         if args == ["up", "-d"]:
             return SimpleNamespace(
@@ -207,9 +197,7 @@ def test_image_pull_maps_to_network_error(
 ) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         return SimpleNamespace(
             returncode=1,
@@ -225,9 +213,7 @@ def test_image_pull_maps_to_network_error(
     assert "pull" in result.stderr.lower() or "image" in result.stderr.lower()
 
 
-def test_health_poll_timeout(
-    project_with_compose: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_health_poll_timeout(project_with_compose: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
     monkeypatch.setattr(cli_mod, "run_compose", lambda *a, **k: SimpleNamespace(returncode=0))  # noqa: ARG005
@@ -244,9 +230,7 @@ def test_health_poll_timeout(
     assert "Error:" in result.stderr
 
 
-def test_http_poll_uses_httpx(
-    project_with_compose: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_http_poll_uses_httpx(project_with_compose: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
     monkeypatch.setattr(cli_mod, "run_compose", lambda *a, **k: SimpleNamespace(returncode=0))  # noqa: ARG005
 
@@ -297,14 +281,13 @@ def test_health_ready_immediately(
 
 
 COMPOSE_WITHOUT_MINIO = (
-    'services:\n'
-    '  other:\n'
-    '    image: busybox:latest\n'
-    '    command: ["sleep","infinity"]\n'
+    'services:\n  other:\n    image: busybox:latest\n    command: ["sleep","infinity"]\n'
 )
 
 
-def test_skips_minio_poll_when_not_declared(project_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_skips_minio_poll_when_not_declared(
+    project_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     (project_dir / "docker-compose.yaml").write_text(COMPOSE_WITHOUT_MINIO)
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
@@ -326,9 +309,7 @@ def test_rebuild_down_failure_raises(
 ) -> None:
     monkeypatch.setattr(cli_mod, "detect_compose_runner", lambda: _V2_RUNNER)
 
-    def fake_run(
-        _runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any
-    ) -> Any:
+    def fake_run(_runner: Any, _cwd: Path, _compose: Path, args: list[str], **kw: Any) -> Any:
         _ = kw
         if args == ["down", "-v"]:
             return SimpleNamespace(returncode=1, stdout="", stderr="compose down exploded")
@@ -339,4 +320,3 @@ def test_rebuild_down_failure_raises(
     result = runner.invoke(app, ["up", "--rebuild"])
     assert result.exit_code == 1
     assert "Error:" in result.stderr
-

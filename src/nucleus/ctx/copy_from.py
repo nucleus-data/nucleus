@@ -92,9 +92,7 @@ def _build_schemas(
         arrow_type, iceberg_type_cls = _SQLITE_TYPE_MAP[normalized]
         required = bool(notnull)
         # PRAGMA cid is 0-based; Iceberg field IDs must be ≥ 1.
-        iceberg_fields.append(
-            NestedField(cid + 1, name, iceberg_type_cls(), required=required)
-        )
+        iceberg_fields.append(NestedField(cid + 1, name, iceberg_type_cls(), required=required))
         arrow_fields.append(pa.field(name, arrow_type, nullable=not required))
     return Schema(*iceberg_fields), pa.schema(arrow_fields)
 

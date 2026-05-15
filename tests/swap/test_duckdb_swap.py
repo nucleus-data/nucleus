@@ -7,6 +7,7 @@ surface) AND that DataFusion is reachable via ``find_spec`` (no install
 in CI — full swap on-demand only). Reference: ``docs/swap/duckdb.md``.
 Docs: https://duckdb.org/docs/stable/clients/python/overview
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -46,8 +47,13 @@ def test_duckdb_arrow_roundtrip_preserves_values() -> None:
 
 def test_duckdb_exception_classes_registered_today() -> None:
     """Per coordination/error_translation.py:326-330; docs /clients/python/dbapi."""
-    for name in ("BinderException", "CatalogException", "ParserException",
-                 "OutOfMemoryException", "TransactionException"):
+    for name in (
+        "BinderException",
+        "CatalogException",
+        "ParserException",
+        "OutOfMemoryException",
+        "TransactionException",
+    ):
         assert hasattr(duckdb, name), f"duckdb.{name} missing — translator breaks."
 
 

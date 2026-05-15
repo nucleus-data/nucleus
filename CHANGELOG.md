@@ -15,8 +15,46 @@ the full deprecation cycle that core data APIs receive.
 
 > Post-v0.2.0 work in flight. Move new bullets here as PRs land.
 
+### Changed
+- **ruff upgrade `0.8.4` → `0.15.13` (ADR-027)** — adopted ruff 2026 style guide; ran `ruff format .` (107 files reformatted). Added `astral-sh/setup-uv@v3` to all 5 CI jobs replacing `pip install` (~2m 15s → ~8s). Updated `.pre-commit-config.yaml` ruff hook. Added `PLC0415`/`SIM105`/`N818`/`RUF022` to ignore list (intentional patterns). Rollback: `pip install ruff==0.8.4`. Docs: https://docs.astral.sh/ruff/ (ADR-027)
+- **Makefile `install` target** — uses `uv pip install -e ".[dev]"` if `uv` is on PATH, falls back to pip.
+
 ### Added
-- _Wave 2 items pending (ADR-025 P0: active scheduling daemon, run monitoring)._
+- **`nucleus.db` BI handshake (`nucleus up`, ADR-026)** — `nucleus up` now generates `<project_root>/nucleus.db` containing one DuckDB table per materialised Iceberg asset (snapshot at boot time). Connect from any DuckDB-compatible BI tool (Superset, Evidence, Rill, Streamlit) via single file path. Superset: `duckdb:////<path>/nucleus.db`. Also writes `_nucleus_catalog_info` metadata table. Non-fatal: first boot with no assets produces valid empty metadata table. 7 tests in `tests/coordination/test_bi_handshake.py`. Cookbook: `docs/cookbook/bi-connectivity.md`. (ADR-026)
+- **`nucleus snapshot` CLI — Iceberg branch + tag management (ADR-028, Beta)** — `nucleus snapshot branch create/delete` and `nucleus snapshot tag create/delete` + `nucleus snapshot list` expose PyIceberg's `table.manage_snapshots()` API for snapshot isolation workflows. Useful for compliance archiving (EOW/EOM tags) and pre-commit audit branches. Full WAP (branch-targeted writes) deferred to v0.3 pending Lakekeeper. New error codes `NucleusSnapshotNotFoundError` (NE5015), `NucleusBranchAlreadyExistsError` (NE5016). 10 tests in `tests/cli/commands/test_snapshot.py`. PyIceberg API docs: https://py.iceberg.apache.org/api/#snapshot-management (ADR-028)
+- **`scripts/check_perf_budget.py` stub (ADR-023)** — placeholder script that prints the v0.2 performance budget table and exits 0. Full nightly benchmark automation deferred to v0.3.
+
+### Docs
+- **ADR-018..025 ratified** — all 8 Wave 1 ADRs flipped PROPOSED → ACCEPTED (ADR-018 was already ACCEPTED). Ratification date: 2026-05-15; shipped code: commit a41a82c (v0.2.0 handover bundle).
+- **ADR-026, ADR-027, ADR-028** flipped PROPOSED → ACCEPTED (code shipped in this bundle).
+- **`docs/cookbook/bi-connectivity.md`** — new cookbook page: "Connect Superset/Evidence/Rill/Streamlit to Nucleus via `nucleus.db`" with concrete connect-string examples for all 4 BI tools.
+- **`docs/compatibility.md`** — ruff row updated to `0.15.13`.
+
+### Fixed
+- **workbench:** Offline-first static index.html — embedded Tailwind/React via local `static/vendor/`, system font stack, inline SVG icons replacing `lucide-react`. Fixes blank page on corporate networks blocking `cdn.tailwindcss.com`/`fonts.googleapis.com`/`esm.sh`. (ADR-016 Fork B)
+
+### Added (Workbench v0.3 — Interactive Polish)
+- **Metallic-noise hero** — `feTurbulence` base frequency 0.75→0.65, rect opacity 0.03→1.0, `::before` CSS opacity 0.18→0.40 with `mix-blend-mode: overlay` and `feColorMatrix saturate=0`; cards gain 0.06-opacity multiply grain for consistent metallic texture across surfaces.
+- **Assets page** — full grid of clickable asset cards (filter input, schedule/contract/checks badges) replacing the "Coming soon" stub.
+- **Asset detail slide-over** — click any asset card → right-side panel showing deps, schedule, contract status, checks list, and a live **Materialize** button that triggers `/api/runs/trigger`, then streams SSE logs from `/api/runs/{run_id}/log` in a dark terminal panel.
+- **Runs page** — full table of materialization runs (status badge, asset, duration, started, rows) with status filter chips (All / Success / Failure / Running) and client-side asset search. Auto-refreshes every 6 seconds.
+- **Run detail slide-over** — click any run row → right-side panel with run metadata + SSE log stream via `EventSource`.
+- **Query page** — SQL textarea with Ctrl+Enter shortcut, example presets, and a scrollable tabular result preview consuming `/api/query`. Shows truncation banner when `truncated: true`.
+- **Schedules page** — 7-day visual timeline (dot matrix per asset × day) + per-schedule card listing next run times; consumes `/api/schedules`.
+- **⌘K Command Palette** — search bar now opens a full command palette (keyboard-navigable) that queries `/api/search` for assets, runs, and schedules and navigates to the matching page.
+- **Dashboard clickability** — Recent materializations rows → run detail slide-over; DAG asset nodes → asset detail slide-over; "View all" → Runs page.
+
+### Added
+- **Active scheduling daemon (Wave 2 P0-1, ADR-017 §v0.2.1 mini-scheduler)** — `@nucleus.asset(schedule=...)` now EXECUTES on schedule. `coordination/daemon.py` implements a lightweight cron-poll loop (5s interval, croniter==3.0.4) that materializes due assets via the AMA. Daemon lifecycle: `nucleus schedule on` (background subprocess, pidfile at `.nucleus/.daemon.pid`), `nucleus schedule off`, `nucleus schedule trigger <key>` (one-shot bypass), `nucleus schedule status` (table). Cross-platform (Windows: psutil TerminateProcess; POSIX: SIGTERM). Zero Dagster classnames in user-facing output. New error codes: NE5012 (DaemonStartError), NE5013 (DaemonNotRunningError), NE5014 (DaemonAlreadyRunningError). ADR-017 amended to IMPLEMENTED.
+- **Durable run ledger** (`coordination/run_ledger.py`) — append-only NDJSON persistence at `<project_root>/.nucleus/runs/runs.ndjson`. API: `RunLedger.record_start`, `record_finish`, `list`, `get`, `tail`, `cancel`. Thread-safe; in-memory LRU cache of last 1000 records; tolerates single-line corruption. ADR-025 §P0-2.
+- **`nucleus runs` CLI** (`cli/commands/runs.py`) — 4 subcommands: `list` (Rich table with status-dot/run-id/asset/duration/started/trigger), `show` (Rich panel + fix-hint banner), `cancel` (ledger marker), `tail` (live `--follow` mode). `--format json` emits NDJSON per run. Beta tier. ADR-025 §P0-2.
+- **`NucleusRunNotFoundError` (NE3011)** — raised by `runs show` / `runs cancel` when the requested run ID is absent from the ledger. fix_hint: "Use `nucleus runs list` to see available run IDs." ADR-006 §1 L2 Coordination.
+- **DuckDB memory_limit guard at AMA init (Wave 2 P0-3, ADR-024 P0-1)** — `coordination/asset_materialization.py` now applies `SET memory_limit` (80% of total RAM, clamped [2 GB, 32 GB]) and `SET temp_directory` on every DuckDB connection before the asset body runs. Overridable via `nucleus_project.yaml` `memory_limit` key. OOM conditions surface as `NucleusMemoryLimitExceeded` (NE2007) instead of opaque `NE5001`. 8 tests in `tests/coordination/test_memory_limit.py`.
+- **Advisory filesystem lock for concurrent runs (ADR-024 P0-2)** — `coordination/locks.py` cross-platform context manager (`fcntl.flock` on POSIX, `msvcrt.locking` on Windows) prevents two `nucleus run` invocations from racing on the same asset's Iceberg commit (chaos scenario J6). Stale locks (dead PID) auto-reclaimed. `NucleusConcurrentRunError` (NE3008) raised after 30 s timeout. 11 tests in `tests/coordination/test_locks.py`; 4 integration tests in `tests/coordination/test_concurrent_runs.py`.
+- **`expire_old_snapshots` post-commit maintenance (ADR-024 P0-3)** — `coordination/snapshot_maintenance.py` calls `table.maintenance.expire_snapshots().older_than(dt).commit()` (pyiceberg 0.11.1 verified API) after each successful commit when snapshot count exceeds 100. Keeps at least 10 recent snapshots regardless of age. Configurable `retain_days` / `min_snapshots`. Maintenance failures are non-fatal (logged; commit not rolled back). `NucleusMaintenanceError` (NE3009). 9 tests in `tests/coordination/test_snapshot_maintenance.py`.
+- **Windows `os.rename` → `os.replace` audit** — confirmed zero `os.rename()` calls in `coordination/` source (all paths use `os.replace()` which is atomic on both POSIX and Windows since Python 3.3). 4 tests in `tests/coordination/test_windows_rename.py` enforce this going forward.
+- **Error-budget SLO definitions (ADR-024 P0-5)** — `coordination/error_budget.py` defines per-operation `target_p95_ms` / `target_p95_s` and `max_failure_rate` thresholds for 6 operations: boot, materialize_empty, materialize_1gb, query_100mb, ingest_postgres_1m_rows, schedule_resolution. OTEL enforcement deferred to v0.3+. 11 tests in `tests/coordination/test_error_budget.py`.
+- **Three new error codes (ADR-024 + ADR-006)** — `NucleusMemoryLimitExceeded` (NE2007, L1 Engines), `NucleusConcurrentRunError` (NE3008, L2 Coordination), `NucleusMaintenanceError` (NE3009, L2 Coordination). All have docs URLs and fix hints.
 
 ---
 
