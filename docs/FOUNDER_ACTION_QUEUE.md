@@ -3,6 +3,38 @@
 > **Status**: Live. **Date**: 2026-05-15 — v0.2.0 bundle complete; handover commit staged; founder gates below.
 > **Purpose**: every decision the founder owes to unblock v0.2 launch. Complements (does NOT duplicate) `docs/NEEDS_VERIFICATION_INDEX.md` (empirical verifications) and each ADR's own §"Open Questions". Work top-to-bottom.
 
+## §0 (2026-05-15 PM) Ultimate sprint pre-launch consolidation
+
+**Status**: Live — single launch-day artifact. Supersedes prior §0 entries for time-of-launch sequencing (they remain canonical for per-decision history).
+
+**Master runbook**: See **`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`** — the sole artifact the founder reads on launch day. 7 phases, time-sequenced, every step has a copy-pasteable verification command.
+
+**Time budget**:
+- Pre-launch (Phases 0–4): **~2 h** founder hands-on time.
+- Launch day (Phases 5–6): **4–8 h** ongoing monitoring (windowed attention; can multitask).
+- Post-launch (Phase 7, T+24 h): ~1.5 h to close out.
+
+**Remaining founder-gated items at the time of consolidation**: **34** checkboxes in the runbook (0 AI-completable). These consolidate, do NOT duplicate, the detailed per-decision history in:
+- §0.2 (Dependabot triage) — items 1–11
+- §0.3 (IDE crash recovery) — items 12–15
+- §0 (8-Lane Research) — 11 ADR ratification decisions (ADR-026 to ADR-036)
+- §0 (v0.2.0 handover) — 6 founder gate items (tag push, ADR-018..025 ratification, PyPI OIDC, etc.)
+- `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` — pre-sprint blockers + ADR ratification + Dependabot + risk register
+
+**Hard prerequisite for tag push** (cannot be deferred): PyPI OIDC trusted publisher registered at `https://pypi.org/manage/account/publishing/` per `v0.2_FOUNDER_CLOSE_CHECKLIST.md` §4.6 + ADR-022.
+
+**Concurrent worker artifacts referenced** by the runbook (assume they land; runbook has inline fallback if missing):
+- `docs/release/v0.2.0_RELEASE_NOTES.md` (release notes worker)
+- `docs/release/v0.2.0_RELEASE_READINESS.md` (readiness checklist worker)
+- `docs/release/launch_kit/LAUNCH_DAY_TIMELINE.md` (timeline worker)
+- `docs/release/launch_kit/SOCIAL_POSTS.md` (already landed, exemption fixed during consolidation)
+- `docs/release/launch_kit/SHOW_HN_HEADLINES.md`, `HN_REDDIT_FAQ.md`, `60_SECOND_DEMO_SCRIPT.md`
+- `docs/research/benchmarks_v0.2.0.md` (current empirical truth at `docs/benchmarks/2026-05-15_baseline.md`)
+
+**Closeable now (zero blockers, founder-side)**: Phases 0, 1, 4, 5, 6, 7. **Hard-blocked on founder hands**: Phase 2 (PyPI account + OIDC trusted publisher) and Phase 3 (tag push) per AGENTS.md §3 — these CANNOT be performed by any agent.
+
+---
+
 ## §0.2 — 2026-05-15 — GitHub repo Dependabot setup audit
 
 ### What happened
