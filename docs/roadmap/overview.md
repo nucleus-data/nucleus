@@ -67,8 +67,8 @@ Every decision — a new feature, a dependency upgrade, an ADR — must serve �
 
 | Version | Codename | Shipped / Target | Theme | LOC budget | Persona served |
 |---|---|---|---|---|---|
-| **v0.1** | Foundation | ✅ 2026-05-14 (beta) | Beachhead CLI — `init/up/down/run/ingest/query/chat/version`, Error Translation, `ctx.sql`, `ctx.copy_from`, asset graph | ~4,200 / 8,000 ceiling | Startup data team 5-20 |
-| **v0.2** | Public Launch | 2026 Q3 (Mo 8-14) | Workbench MVP + Copilot chat in UI + docs site + scheduled assets + BigQuery/SFTP connectors | 8,000 / 12,000 ceiling | same beachhead |
+| **v0.1** | Foundation | ✅ 2026-05-14 (internal beta; no PyPI artifact) | Beachhead CLI — `init/up/down/run/ingest/query/chat/version`, Error Translation, `ctx.sql`, `ctx.copy_from`, asset graph | ~4,200 / 8,000 ceiling | Startup data team 5-20 |
+| **v0.2** | Public Launch | ✅ **CODE SHIPPED 2026-05-15** — founder-gated tag push pending | Workbench v0.3 + Copilot chat in UI + docs site + scheduled assets daemon + 7 connectors + Wave 2 P0 reliability hardening + Iceberg branch/tag CLI | ~8,300 / 12,000 ceiling | same beachhead |
 | **v0.3** | Hardening | 2026 Q4 (Mo 14-20) | Post-launch reliability + chaos tests + dlt 100+ connectors + Marimo notebooks + Lakekeeper catalog | 12,000 / 16,000 ceiling | same beachhead |
 | **v0.5** | Multimodal | 2027 Q1 (Mo 20-28) | Daft + Lance + AI Copilot lineage-aware + `ctx.agent` runtime + MCP server + column-level lineage | 16,000 / 20,000 ceiling | + ML engineer |
 | **v0.7** | Cloud Tier MVP | 2027 Q2 (Mo 28-36) | OSS Cloud edition (single-tenant managed) + OIDC federation + billing meter | 20,000 / 24,000 ceiling | + platform team |
@@ -133,7 +133,7 @@ Hard ceiling: **30,000 LOC** by v1.0. Tracked monthly via `scripts/loc_budget.py
 | v1.0 | 28,000 | + governance hardening + mini-scheduler |
 | v1.5 | 30,000 (ceiling) | + enterprise features |
 
-**Current state** (2026-05-14): `src/nucleus/` = ~4,200 LOC = **52% of v0.1 ceiling**. Per phase plan, 8,000 LOC is the v0.2 start cap. GREEN.
+**Current state** (2026-05-15 close-out): `src/nucleus/` ≈ **8,300 LOC = 69 % of v0.2 ceiling**, well under the 12,000 LOC v0.2 cap. Re-verify with `python scripts/loc_budget.py`. GREEN.
 
 ---
 

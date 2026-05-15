@@ -161,6 +161,7 @@ extra:
 
 nav:
   - Home: index.md
+  - Start Here: start-here.md
   - Why Nucleus: why-nucleus.md
   - Getting Started:
       - getting-started/index.md
@@ -251,6 +252,10 @@ nav:
       - Security: community/security.md
       - Support: community/support.md
       - Roadmap: community/roadmap.md
+      - Developer Guides: community/dev-guides.md
+      - Research Notes: community/research.md
+      - Release Artifacts: community/release.md
+      - Solo-Founder Handover: community/handover.md
   - Changelog: changelog.md
   - About:
       - about/index.md
