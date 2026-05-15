@@ -76,7 +76,7 @@ dmypy.json
 # ----------------------------------------------------------------------------
 docs/_build/
 docs/.cache/
-site/
+/site/
 .readthedocs.yaml
 
 # ----------------------------------------------------------------------------
@@ -183,9 +183,10 @@ temp/
 
 # ----------------------------------------------------------------------------
 # Documentation build artifacts (MkDocs — ADR-021)
-# Source lives in docs/site/; build output is gitignored
+# Source lives in docs/site/ (TRACKED); build output (/site/) is gitignored.
+# Pattern anchored to repo root so it does NOT match docs/site/ source tree.
 # ----------------------------------------------------------------------------
-site/
+/site/
 _site_test/
 _build_verify/
 

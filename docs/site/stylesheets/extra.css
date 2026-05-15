@@ -1,0 +1,227 @@
+/* ============================================================================
+   Nucleus docs site — custom stylesheet
+   Brand: Indigo (#5C6BC0) primary / Deep Purple (#7C4DFF) accent
+   Fonts: Inter (body) / JetBrains Mono (code)
+   ============================================================================ */
+
+/* Google Fonts import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Root overrides ─────────────────────────────────────────────────────── */
+:root {
+  --nucleus-indigo: #5c6bc0;
+  --nucleus-deep-purple: #7c4dff;
+  --nucleus-gradient: linear-gradient(135deg, #5c6bc0 0%, #7c4dff 100%);
+  --nucleus-gradient-subtle: linear-gradient(135deg, rgba(92,107,192,0.08) 0%, rgba(124,77,255,0.08) 100%);
+
+  --md-primary-fg-color: #5c6bc0;
+  --md-primary-fg-color--light: #8e99d5;
+  --md-primary-fg-color--dark: #3949ab;
+  --md-accent-fg-color: #7c4dff;
+}
+
+/* ── Hero section (landing page) ────────────────────────────────────────── */
+.nucleus-hero {
+  background: var(--nucleus-gradient);
+  color: white;
+  padding: 4rem 2rem 3rem;
+  margin: -1.6rem -1.6rem 2.4rem;
+  border-radius: 0 0 1.2rem 1.2rem;
+  text-align: center;
+}
+
+.nucleus-hero h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  color: white !important;
+}
+
+.nucleus-hero .hero-tagline {
+  font-size: 1.25rem;
+  font-weight: 400;
+  opacity: 0.92;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.nucleus-hero .hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.nucleus-hero .md-button {
+  background: white;
+  color: var(--nucleus-indigo);
+  border: 2px solid white;
+  border-radius: 6px;
+  padding: 0.75rem 1.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nucleus-hero .md-button:hover {
+  background: rgba(255,255,255,0.9);
+  transform: translateY(-1px);
+}
+
+.nucleus-hero .md-button--secondary {
+  background: transparent;
+  color: white;
+  border-color: rgba(255,255,255,0.7);
+}
+
+.nucleus-hero .md-button--secondary:hover {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+/* ── Feature cards ───────────────────────────────────────────────────────── */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.feature-card {
+  background: var(--nucleus-gradient-subtle);
+  border: 1px solid rgba(92, 107, 192, 0.2);
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.feature-card:hover {
+  border-color: var(--nucleus-indigo);
+  transform: translateY(-2px);
+}
+
+.feature-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--nucleus-indigo);
+}
+
+.feature-card .feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* ── Code blocks ─────────────────────────────────────────────────────────── */
+.md-typeset code {
+  font-family: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+  font-size: 0.88em;
+}
+
+/* ── Admonitions ─────────────────────────────────────────────────────────── */
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  border-color: var(--nucleus-deep-purple);
+}
+
+.md-typeset .tip > .admonition-title,
+.md-typeset .tip > summary {
+  background-color: rgba(124, 77, 255, 0.1);
+}
+
+/* ── Badges / chips ──────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.2em 0.6em;
+  font-size: 0.78em;
+  font-weight: 600;
+  border-radius: 4px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.badge-stable   { background: #e8f5e9; color: #388e3c; }
+.badge-beta     { background: #fff8e1; color: #f57f17; }
+.badge-frozen   { background: #e3f2fd; color: #1565c0; }
+.badge-deferred { background: #fce4ec; color: #b71c1c; }
+.badge-v01      { background: rgba(92,107,192,0.12); color: #3949ab; }
+.badge-v05      { background: rgba(124,77,255,0.12); color: #6200ea; }
+
+/* ── Stability chip helper ────────────────────────────────────────────────── */
+.stability {
+  font-size: 0.8em;
+  font-weight: 600;
+  padding: 0.15em 0.5em;
+  border-radius: 3px;
+  margin-left: 0.5em;
+}
+
+/* ── CLI output blocks ────────────────────────────────────────────────────── */
+.cli-output {
+  background: #1a1a2e;
+  color: #e8e8e8;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.cli-output .prompt {
+  color: #7c4dff;
+  font-weight: 600;
+}
+
+.cli-output .success {
+  color: #69f0ae;
+}
+
+.cli-output .warning {
+  color: #ffab40;
+}
+
+/* ── Navigation tweaks ────────────────────────────────────────────────────── */
+.md-nav__title {
+  font-weight: 600;
+}
+
+[data-md-color-scheme="default"] .md-header {
+  background: var(--nucleus-gradient);
+}
+
+/* ── Tables ──────────────────────────────────────────────────────────────── */
+.md-typeset table:not([class]) {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background: rgba(92, 107, 192, 0.1);
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.md-footer {
+  border-top: 1px solid rgba(92, 107, 192, 0.15);
+}
+
+/* ── Responsive: mobile ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nucleus-hero h1 {
+    font-size: 2rem;
+  }
+
+  .nucleus-hero .hero-tagline {
+    font-size: 1.05rem;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}
