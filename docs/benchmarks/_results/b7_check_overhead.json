@@ -1,0 +1,79 @@
+{
+  "hardware": {
+    "logical_cores": 8,
+    "machine": "AMD64",
+    "physical_cores": 4,
+    "platform": "Windows-10-10.0.26100-SP0",
+    "python": "3.11.9",
+    "ram_available_gb": 2.3,
+    "ram_total_gb": 15.7
+  },
+  "result": {
+    "command": "C:\\Users\\GOT4HC\\Mordern Data Platform\\.venv\\Scripts\\python.exe -m scripts.benchmarks.b7_check_overhead --scale 1m",
+    "completed_at": "2026-05-15T16:48:54+00:00",
+    "elapsed_s": 7.946005199919455,
+    "name": "B7: Schema check overhead",
+    "notes": [],
+    "overall_verdict": "FAIL",
+    "raw": {
+      "scale_1m": {
+        "baseline_wall_s": 0.5217772999312729,
+        "checked_wall_s": 0.9408547000493854,
+        "overhead_pct": 80.3172924872953,
+        "overhead_s": 0.41907740011811256,
+        "rows": 1000000,
+        "scale": "1m"
+      }
+    },
+    "rows": [
+      {
+        "claim": "bounded by per-asset compute",
+        "claim_ref": "informational",
+        "delta": "",
+        "measured": "521.8ms",
+        "metric": "1M rows \u2014 baseline materialize wall (no checks)",
+        "note": "row_count=1,000,000",
+        "severity": "",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "baseline + check cost",
+        "claim_ref": "informational",
+        "delta": "",
+        "measured": "940.9ms",
+        "metric": "1M rows \u2014 checked materialize wall (3 checks)",
+        "note": "row_count=1,000,000",
+        "severity": "",
+        "verdict": "PASS"
+      },
+      {
+        "claim": "<50% of baseline materialize wall (low cost)",
+        "claim_ref": "user expectation",
+        "delta": "+80.3%",
+        "measured": "419.1ms (80.3%)",
+        "metric": "1M rows \u2014 check overhead",
+        "note": "3 representative checks: not_null + unique + range",
+        "severity": "LOW",
+        "verdict": "FAIL"
+      }
+    ],
+    "script": "scripts/benchmarks/b7_check_overhead.py",
+    "started_at": "2026-05-15T16:48:46+00:00"
+  },
+  "schema_version": 1,
+  "software": {
+    "dagster": "1.9.5",
+    "dlt": "1.26.0",
+    "duckdb": "1.1.3",
+    "fastapi": "0.136.1",
+    "litellm": "1.83.14",
+    "nucleus": "0.1.0",
+    "polars": "1.18.0",
+    "psutil": "7.2.2",
+    "psycopg": "3.2.3",
+    "pyarrow": "18.1.0",
+    "pyiceberg": "0.11.1",
+    "sqlalchemy": "2.0.36",
+    "uvicorn": "0.46.0"
+  }
+}

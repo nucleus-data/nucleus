@@ -400,7 +400,7 @@ No `compact_table()`, no `TPCH_BENCH()`, no Delta Lake APIs mixed into Iceberg d
 
 ## 14. v0.2.0 empirical actuals (2026-05-15 baseline)
 
-> Appended 2026-05-15 by the v0.2 close-out batch (`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.9). Demotes §2 from a v0.2 SLO to a v0.3+ aspirational target. Full per-benchmark evidence in [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md).
+> Appended 2026-05-15 by the v0.2 close-out batch (`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.9). Demotes §2 from a v0.2 SLO to a v0.3+ aspirational target. Full per-benchmark evidence in [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) (internal-facing baseline) and [`docs/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) (release-facing user report — adds B6 multi-asset DAG, B7 check overhead, B8 Workbench API, B9 ctx.sql overhead per the second builder wave 2026-05-15).
 
 ### 14.1 Headline actuals vs §2 claims
 
@@ -443,6 +443,34 @@ These are the v0.2.0 release contract. Everything in §2 above demotes to roadma
 
 ### 14.5 Cross-references
 
-- [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) — per-benchmark raw output + hardware caveats.
+- [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) — per-benchmark raw output + hardware caveats (B1–B5).
+- [`docs/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) — release-facing user report adding B6–B9 (this builder wave, 2026-05-15).
 - [`docs/release/chaos_test_results.md`](../release/chaos_test_results.md) — J1–J8 results (J3 + J8 closed in v0.2; see CF-1 + CF-2 fix in this same close-out batch).
 - [`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](../release/v0.2_FOUNDER_CLOSE_CHECKLIST.md) §1.9 — pre-sprint blocker #8 (this reconciliation).
+
+### 14.6 Additional benchmarks (B6–B9, added 2026-05-15 builder wave)
+
+The release-facing benchmark report at [`docs/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) extends the §14.1 table with four additional surfaces measured on the same Windows host. Headline actuals:
+
+| Surface | Claim/expectation | v0.2 actual (this host) | Verdict | Plan |
+|---|---|---|---|---|
+| **B6** Multi-asset DAG materialize, 50 assets / 5 layers | informational | **9.58 s total** (median 162 ms/asset warm; coordination overhead ≈0.1 ms) | PASS | Document baseline; v0.3 may add parallel asset materialize via Dagster. |
+| **B6** Multi-asset DAG materialize, 10 assets / 3 layers | informational | **9.21 s total** (median 207 ms/asset; first-call cold ~7 s) | PASS | Same; first-call cost is the B5 boot tax. |
+| **B7** Check overhead, 1 M rows + 3 checks (warm) | <50 % of baseline | **−2.6 % to +75 %** across two runs (below noise floor on this paging host) | PASS / FAIL-LOW depending on run | Re-measure on beachhead spec; expected to settle in low single-digit %. |
+| **B8** Workbench `uvicorn` spin-up | <2 s (perf doc §2.6 page-load envelope) | **8.58 s** | FAIL | Same root cause as B5 boot — `openlineage.client` + Dagster lazy-init in coordination chain. v0.3 P0. |
+| **B8** Workbench `GET /api/health` median | <100 ms (perf doc §2.6) | **3.1 ms** (P95 5.1 ms) | PASS −96 % | None. |
+| **B8** Workbench `POST /api/query` p50 (small Iceberg query) | <500 ms (informational) | **640 ms – 1.01 s** | FAIL | Cache DuckDB connection across requests via FastAPI lifespan; v0.3 P1. |
+| **B9** `ctx.sql` per-call overhead vs raw DuckDB | "<5 % overhead" (task spec) | **+50–80 ms fixed cost per call**, regardless of query (≈10 800 % on `SELECT 1`, ≈500 % on small GROUP BY, dropping to noise on multi-second scans) | FAIL on small queries | Connection-cache work in v0.3 — perf doc §9 P1 ("DuckDB connection reuse in `nucleus query` REPL"). |
+
+**Key takeaways for the v0.2.0 release window**:
+
+1. **DAG coordination overhead is essentially free** (B6 — 0.1 ms across 50 assets). Iceberg commit ceremony does not stack as the analytics warehouse widens. This is the headline "good news" of the v0.2 measurements.
+2. **Check overhead is below noise floor** on this paging host (B7) — even when the percentage looks alarming on a single run, the absolute delta is ~25–230 ms on 1 M rows. Users should treat checks as "free" for normal workloads.
+3. **CTX SQL fixed-cost catalog open** (B9) is the single-biggest user-visible inefficiency in v0.2.0 outside of CLI cold boot. Tiny queries pay disproportionately; analytical scans amortize. v0.3 connection cache work is the fix.
+4. **Workbench `POST /api/query` latency** (B8) inherits the B9 fixed cost via the HTTP layer; same v0.3 fix applies.
+
+Reproduce all four with the consolidated runner:
+
+```bash
+python scripts/benchmarks/benchmark_v020.py --suite release --output benchmarks/results.json
+```

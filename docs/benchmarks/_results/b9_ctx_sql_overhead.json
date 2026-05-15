@@ -1,0 +1,109 @@
+{
+  "hardware": {
+    "logical_cores": 8,
+    "machine": "AMD64",
+    "physical_cores": 4,
+    "platform": "Windows-10-10.0.26100-SP0",
+    "python": "3.11.9",
+    "ram_available_gb": 2.2,
+    "ram_total_gb": 15.7
+  },
+  "result": {
+    "command": "C:\\Users\\GOT4HC\\Mordern Data Platform\\.venv\\Scripts\\python.exe -m scripts.benchmarks.b9_ctx_sql_overhead --runs 3 --rows 10000",
+    "completed_at": "2026-05-15T16:48:51+00:00",
+    "elapsed_s": 5.926033199997619,
+    "name": "B9: ctx.sql overhead",
+    "notes": [
+      "seed asset=bench.sql_overhead; parquet=00000-0-8a1b5fa7-9234-4843-82cd-2b0b5e6d4ecf.parquet (34679 bytes)"
+    ],
+    "overall_verdict": "FAIL",
+    "raw": {
+      "Q1: SELECT 1 (pure framework overhead)": {
+        "ctx_samples_s": [
+          0.05415809992700815,
+          0.03912910004146397,
+          0.0538857999490574
+        ],
+        "raw_samples_s": [
+          0.0005156000843271613,
+          0.0004518000641837716,
+          0.0004588000010699034
+        ]
+      },
+      "Q2: COUNT(*) FROM bench.sql_overhead": {
+        "ctx_samples_s": [
+          0.07968859991524369,
+          0.049421200063079596,
+          0.04492819996085018
+        ],
+        "raw_samples_s": [
+          0.0020230000372976065,
+          0.0015084999613463879,
+          0.0018893000669777393
+        ]
+      },
+      "Q3: GROUP BY over bench.sql_overhead": {
+        "ctx_samples_s": [
+          0.051727699930779636,
+          0.0617799999890849,
+          0.07807839999441057
+        ],
+        "raw_samples_s": [
+          0.009153799968771636,
+          0.006259899935685098,
+          0.005248500034213066
+        ]
+      }
+    },
+    "rows": [
+      {
+        "claim": "<50% overhead vs raw DuckDB",
+        "claim_ref": "user expectation (informational)",
+        "delta": "+11644.9%",
+        "measured": "ctx=53.9ms raw=0.5ms delta=53.4ms",
+        "metric": "Q1: SELECT 1 (pure framework overhead)",
+        "note": "n_ctx=3 n_raw=3",
+        "severity": "LOW",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<50% overhead vs raw DuckDB",
+        "claim_ref": "user expectation (informational)",
+        "delta": "+2515.8%",
+        "measured": "ctx=49.4ms raw=1.9ms delta=47.5ms",
+        "metric": "Q2: COUNT(*) FROM bench.sql_overhead",
+        "note": "n_ctx=3 n_raw=3",
+        "severity": "LOW",
+        "verdict": "FAIL"
+      },
+      {
+        "claim": "<50% overhead vs raw DuckDB",
+        "claim_ref": "user expectation (informational)",
+        "delta": "+886.9%",
+        "measured": "ctx=61.8ms raw=6.3ms delta=55.5ms",
+        "metric": "Q3: GROUP BY over bench.sql_overhead",
+        "note": "n_ctx=3 n_raw=3",
+        "severity": "LOW",
+        "verdict": "FAIL"
+      }
+    ],
+    "script": "scripts/benchmarks/b9_ctx_sql_overhead.py",
+    "started_at": "2026-05-15T16:48:45+00:00"
+  },
+  "schema_version": 1,
+  "software": {
+    "dagster": "1.9.5",
+    "dlt": "1.26.0",
+    "duckdb": "1.1.3",
+    "fastapi": "0.136.1",
+    "litellm": "1.83.14",
+    "nucleus": "0.1.0",
+    "polars": "1.18.0",
+    "psutil": "7.2.2",
+    "psycopg": "3.2.3",
+    "pyarrow": "18.1.0",
+    "pyiceberg": "0.11.1",
+    "sqlalchemy": "2.0.36",
+    "uvicorn": "0.46.0"
+  }
+}
