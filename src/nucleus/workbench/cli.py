@@ -9,6 +9,20 @@ Sub-commands:
 Wired into ``nucleus.cli.main`` via:
     app.add_typer(workbench_app, name="workbench", ...)
 
+Lazy import discipline (perf doc §10 #4 + Worker B2 audit 2026-05-15)
+---------------------------------------------------------------------
+``uvicorn`` is loaded inside ``workbench_up`` (not at module top) so
+``nucleus --help`` / ``nucleus --version`` stay under the 500 ms cold
+boot target. ``uvicorn`` plus its asyncio + h11 + starlette transitive
+chain costs ~150-300 ms at import time on the beachhead hardware.
+
+The ``nucleus.coordination.error_translation`` import is also deferred
+to inside the ``workbench_up`` body — the coordination package's
+``__init__.py`` transitively pulls in ``openlineage.client`` which
+costs ~2.9 s at first import. Worker B1 owns the structural fix
+(lazy openlineage inside ``coordination/lineage.py``); until then this
+import-site fix keeps the CLI hot-path under budget.
+
 # Stability: Internal @ v0.2
 """
 
@@ -17,9 +31,6 @@ from __future__ import annotations
 import webbrowser
 
 import typer
-import uvicorn  # Docs: https://www.uvicorn.org/
-
-from nucleus.coordination.error_translation import translate
 
 app = typer.Typer(
     help="Run the Nucleus Workbench (FastAPI + React SPA).",
@@ -93,6 +104,8 @@ def workbench_up(
             pass  # Non-fatal; user sees the URL in the panel above.
 
     try:
+        import uvicorn  # Docs: https://www.uvicorn.org/  (lazy — perf doc §10 #4)
+
         uvicorn.run(
             "nucleus.workbench.app:create_app",
             host=host,
@@ -101,6 +114,10 @@ def workbench_up(
             factory=True,
         )
     except Exception as exc:
+        # Lazy import — see module-level docstring: coordination chain pulls
+        # openlineage at ~2.9 s, so we keep it off the cli.main hot path.
+        from nucleus.coordination.error_translation import translate
+
         err = translate(exc)
         typer.secho(err.rendered(), fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1) from err
