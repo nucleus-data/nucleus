@@ -88,6 +88,71 @@ rg "get_notebook_data|jupyter" src/                                         # ex
 
 ---
 
+
+## 0.3 - 2026-05-15 PM - IDE crash recovery (this session)
+
+### What happened
+
+~6:00 PM local time, Cursor IDE shut down unexpectedly mid-session. The parent agent was about to commit a batch of post-Wave-2 worker artifacts. 6 workers were re-fired (RETRY) after a Bosch APAC proxy socket error at 8:32 AM; all returned successfully but the parent missed their completion notifications when the IDE crashed.
+
+### Audit result (`docs/audit/2026-05-15_frozen_worker_audit.md`)
+
+- 78 transcripts modified today (13 top-level + 65 inline subagents)
+- **0 FROZEN workers** - every worker reached final_summary or wrote complete artifacts before crash
+- 5 DONE_UNCOMMITTED + 4 housekeeping bundles to commit
+- Audit verdict: pure sequenced commit pass, no worker re-fire needed
+
+### Auto-applied (6 commits landed; 4 sections empty)
+
+The recovery plan called for 10 commits but 4 sections (3.6, 3.7, 3.9, 3.10) had no real diff vs HEAD - those files were already committed in earlier work and the IDE crash left only stat-cache mismatches that resolved on `git add`. The 6 commits that landed:
+
+1. `b26a363` feat(bench): empirical benchmark suite B1-B5 + baseline (Worker A1) [16 files; +4001]
+2. `1de00db` test(chaos): J3-J8 smoke harness (Worker A2) [3 files; +439]
+3. `88628cb` perf(cli): lazy-import audit + governance (Worker B2) [2 files; +669]
+4. `3fcd273` feat(packaging): install-size split [core]/[ai]/[all] (Worker B4, ADR-039) [3 files; +691 -66]
+5. `d8fee0f` docs(research): scale-out audit reject-Rust-rewrite (Worker F1) [1 file; +462]
+6. `aebe6b7` chore(exports): workbench typer registration polish (Wave 1A follow-up) [2 files; +67 -4]
+
+Skipped sections (already in HEAD):
+
+- 3.6 ADR-017 schedule exposure draft (Worker 3) - ADR file in HEAD; stat-cache only
+- 3.7 Postgres error translation polish (Worker 4) - PoC files + errors.py in HEAD; stat-cache only
+- 3.9 governance bundle (CI / pre-commit / loc_budget / scripts) - all in HEAD; stat-cache only
+- 3.10 CHANGELOG + README + nucleus.png delete - CHANGELOG/README in HEAD; nucleus.png delete swept into 3.1 (already staged-for-delete from prior session)
+
+### Verification
+
+- **Dagster leak check**: PASS after every commit (4/4 runs)
+- **Pinning check**: PASS after 3.4 (install-split)
+- **Vocabulary check**: 6 pre-existing hits, no new from any commit
+  - 5 false positives in `.venv-adr039/` (gitignored Worker B4 test venv; `check_vocabulary.py` lacks `.venv-*` exclusion)
+  - 1 real hit in `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (untracked file uses banned "data OS"; not in any commit's tree)
+- **pytest tests/cli (excluding lazy_imports)**: 233 passed in 51s, 0 failures (exit 1 from coverage gate 47.59% vs 70% required - pre-existing)
+- **LOC budget**: 8,229/8,000 = **102.9% of v0.1 ceiling RED**. Under v0.2 ceiling (18,000) this is **46% GREEN**, but `scripts/loc_budget.py` was not bumped because 3.9 was skipped (script in HEAD already at v0.1 reference; no diff to apply). Founder action 12 below.
+- **Push**: SUCCESS, `029ef0d..aebe6b7  main -> main`
+
+### Untracked files left in tree (intentional)
+
+- `docs/audit/2026-05-15_frozen_worker_audit.md` (this audit) - meta-doc, may stay or be moved to `.scratch/`
+- `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (the close checklist) - has 1 banned-term violation; founder fix or commit-as-is choice
+
+### Founder decisions required (added to queue)
+
+| # | Action | Why | Command |
+|---|---|---|---|
+| 12 | Bump `scripts/loc_budget.py` reference phase v0.1 -> v0.2 (8,000 -> 18,000 ceiling) | Per AGENTS.md 1, v0.2.0 already bundled 2026-05-15; the script's reference phase wasn't bumped because the audit-planned 3.9 commit had no actual diff to apply | Edit `Reference phase: v0.1` -> `v0.2` and ceiling `8,000` -> `18,000` in `loc_budget.py`; commit with `chore(governance): loc budget phase v0.1->v0.2 per audit recommendation` |
+| 13 | Decide fate of untracked `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` | Has 1 banned-term hit ("data OS"); also a useful close-checklist artifact | Either fix the line + commit, or move to `.scratch/`, or accept-as-is with `<!-- banned-term: Data OS -->` exemption |
+| 14 | Decide fate of untracked `docs/audit/2026-05-15_frozen_worker_audit.md` | Meta-audit document of this session | Either commit under `docs/audit/` for the trail, or move to `.scratch/` |
+| 15 | Add `.venv-*` exclusion to `scripts/check_vocabulary.py` | 5 false-positive hits today from Worker B4 test venv pollute the gate | One-line walk-skip pattern; commit with `fix(governance): exclude .venv-* dirs from vocabulary scan` |
+
+### Still founder-gated
+
+- ADR-017 ratification (PROPOSED)
+- ADR-039 install-split ratification (PROPOSED)
+- Branch protection ruleset (`.scratch/main_ruleset.json`) - apply after GitHub Pro upgrade
+- v0.1.0 + v0.2.0 git tag push (queued in `v0.2_FOUNDER_CLOSE_CHECKLIST.md`)
+
+---
 ## §0 — 2026-05-15 — 8-Lane Research Synthesis — Top-15 Adoption Shortlist + 11 ADR Stubs
 
 **Summary**: 8 research docs (R1–R8, all verified 2026-05-15) synthesised into a single prioritised adoption shortlist. 11 new ADR stubs created at `docs/decisions/ADR-026-*.md` through `docs/decisions/ADR-036-*.md`, all STATUS=PROPOSED awaiting founder ratification.
