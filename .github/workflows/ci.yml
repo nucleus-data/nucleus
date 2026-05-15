@@ -49,6 +49,9 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
+          # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
+          # Docs: https://github.com/astral-sh/setup-uv#enable-caching
+          cache-dependency-glob: "pyproject.toml"
 
       - uses: actions/setup-python@v5
         with:
@@ -80,6 +83,9 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
+          # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
+          # Docs: https://github.com/astral-sh/setup-uv#enable-caching
+          cache-dependency-glob: "pyproject.toml"
 
       - uses: actions/setup-python@v5
         with:
@@ -131,6 +137,9 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
+          # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
+          # Docs: https://github.com/astral-sh/setup-uv#enable-caching
+          cache-dependency-glob: "pyproject.toml"
 
       - uses: actions/setup-python@v5
         with:
@@ -168,6 +177,9 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
+          # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
+          # Docs: https://github.com/astral-sh/setup-uv#enable-caching
+          cache-dependency-glob: "pyproject.toml"
 
       - uses: actions/setup-python@v5
         with:
@@ -197,6 +209,9 @@ jobs:
       - uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
+          # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
+          # Docs: https://github.com/astral-sh/setup-uv#enable-caching
+          cache-dependency-glob: "pyproject.toml"
 
       - uses: actions/setup-python@v5
         with:
