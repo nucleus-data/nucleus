@@ -264,7 +264,7 @@ def main() -> int:
     else:
         print("=" * 78)
         print(" Nucleus CLI cold-boot benchmark")
-        print(f" Source: docs/research/performance_reliability_targets.md §2.1 / §10 #4")
+        print(" Source: docs/research/performance_reliability_targets.md §2.1 / §10 #4")
         print(f" Runs per command: {args.runs}    Threshold: {args.threshold_ms}ms cold")
         print("=" * 78)
         for label in (_argv_label(a) for a in _COMMANDS):

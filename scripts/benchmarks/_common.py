@@ -226,21 +226,20 @@ class RSSWatcher:
             import psutil
 
             proc = psutil.Process(self.target_pid)
-        except (ImportError, Exception):  # noqa: BLE001 — psutil missing OR pid race
+        except (ImportError, Exception):
             return
         # Sample once immediately so even a sub-millisecond span produces a number.
         try:
             self._peak_bytes = max(self._peak_bytes, int(proc.memory_info().rss))
             self._sample_count += 1
-        except Exception:  # noqa: BLE001 — process may have exited
+        except Exception:
             return
         while not self._stop_event.wait(self.interval_s):
             try:
                 rss = int(proc.memory_info().rss)
-            except Exception:  # noqa: BLE001 — pid gone is OK; final sample stands
+            except Exception:
                 break
-            if rss > self._peak_bytes:
-                self._peak_bytes = rss
+            self._peak_bytes = max(self._peak_bytes, rss)
             self._sample_count += 1
 
     def start(self) -> RSSWatcher:
@@ -289,7 +288,7 @@ def write_result(result: BenchResult) -> Path:
 
 def fmt_seconds(s: float) -> str:
     """Human-readable seconds with units appropriate to magnitude."""
-    if s != s:  # NaN
+    if s != s:  # noqa: PLR0124  # intentional NaN check (nan != nan == True)
         return "n/a"
     if s < 1.0:
         return f"{s * 1000:.1f}ms"
@@ -300,7 +299,7 @@ def fmt_seconds(s: float) -> str:
 
 def fmt_bytes(b: float) -> str:
     """Human-readable bytes with units (KB/MB/GB)."""
-    if b != b:  # NaN
+    if b != b:  # noqa: PLR0124  # intentional NaN check (nan != nan == True)
         return "n/a"
     if b < 1024:
         return f"{b:.0f}B"
@@ -313,7 +312,7 @@ def fmt_bytes(b: float) -> str:
 
 def delta_pct(measured: float, claim_value: float) -> float | None:
     """Percentage delta vs claim. Returns None when claim is zero/NaN."""
-    if claim_value is None or claim_value != claim_value or claim_value == 0:
+    if claim_value is None or claim_value != claim_value or claim_value == 0:  # noqa: PLR0124  # intentional NaN check (nan != nan == True)
         return None
     return (measured - claim_value) / claim_value * 100.0
 
@@ -333,7 +332,7 @@ def classify(measured: float, claim_value: float, *, lower_is_better: bool = Tru
     ``lower_is_better=True`` for latency / RAM (FAIL when measured > claim).
     ``lower_is_better=False`` for throughput (FAIL when measured < claim).
     """
-    if claim_value is None or claim_value != claim_value:
+    if claim_value is None or claim_value != claim_value:  # noqa: PLR0124  # intentional NaN check (nan != nan == True)
         return NEEDS_INVESTIGATION
     if lower_is_better:
         return PASS if measured <= claim_value else FAIL
