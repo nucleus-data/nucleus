@@ -1,7 +1,7 @@
-"""Optional-extras install matrix smoke test — `pyproject.toml` Option α-split.
+"""Optional-extras install matrix smoke test — `pyproject.toml` Option a-split.
 
 Validates the disposition landed 2026-05-14 per
-``docs/research/otel_day1_decision.md`` Option α-split:
+``docs/research/otel_day1_decision.md`` Option a-split:
 
 1. `pip install nucleus` (no extras) imports cleanly — the four core
    modules (``nucleus``, ``nucleus.ctx``, ``nucleus.errors``,
@@ -162,7 +162,7 @@ def test_runtime_extras_groups_declared_with_expected_pins() -> None:
 def test_msgspec_absent_from_all_dependency_groups() -> None:
     """``msgspec`` is REMOVED from core and every extras group.
 
-    Per ``docs/research/otel_day1_decision.md`` §D3 (Option α-split,
+    Per ``docs/research/otel_day1_decision.md`` §D3 (Option a-split,
     founder-approved 2026-05-14): zero callers under ``src/``, ``tests/``,
     ``poc/``, ``scripts/``; planned ``NucleusError + configs`` use never
     materialized; pure-stdlib substitutes (``json``, ``dataclasses``,
