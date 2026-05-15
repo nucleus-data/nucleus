@@ -7,82 +7,84 @@
 
 **Quickstart:** [`docs/onboarding/quickstart.md`](docs/onboarding/quickstart.md) · **Examples:** [`examples/01-ecommerce-elt/`](examples/01-ecommerce-elt/) · **Roadmap anchor:** [`nucleus_architecture_v4.1.md` section 18 — Roadmap](nucleus_architecture_v4.1.md#18-roadmap)
 
-[![Status: v0.1 beta](https://img.shields.io/badge/status-v0.1%20beta-yellow)]()
+[![PyPI version](https://img.shields.io/pypi/v/nucleus.svg)](https://pypi.org/project/nucleus/)
+[![Status: v0.2 beta](https://img.shields.io/badge/status-v0.2%20beta-yellow)]()
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11-blue)]()
+[![Docs](https://img.shields.io/badge/docs-mkdocs--material-blue)](https://nucleus-data.github.io/nucleus/)
 
 > # Ship data products from a laptop.
 >
-> **What:** A local-first Python SDK (`ctx`) and CLI (`nucleus`) for Iceberg-native pipelines and analytics stacks on open Apache foundations, **AI-ready by design** (Copilot and agents are optional layers — not the product headline).
->
-> **Who:** Teams matching **[`nucleus_architecture_v4.1.md` section 1.5](nucleus_architecture_v4.1.md#15-the-beachhead-v01-through-v10)** — think **~5 engineers**, **~100GB–5TB** greenfield data, building net-new analytics on laptops before they graduate to a cloud warehouse.
->
-> **Why:** One coherent surface over DuckDB, Polars, Iceberg, and embedded orchestration — **no JVM** in the default path, Apache-2.0 core, and Iceberg snapshots you can take to Databricks, Snowflake, or REST catalogs when you outgrow a single node.
+> **Nucleus is a local-first Python SDK and CLI for building Iceberg-native pipelines and analytics stacks.** Wraps DuckDB, Polars, Apache Iceberg, and embedded orchestration into one coherent product. AI-ready by design. Apache 2.0. **No JVM** in the default path. Graduates cleanly to **any Iceberg catalog** (Polaris, Lakekeeper, Unity, R2, Snowflake-Iceberg-compat) — including Databricks and Snowflake — the day a single laptop stops being enough.
 
 ---
 
-## v0.1 beta — what works vs. what waits
+## 60-second demo
 
-| Works today (stabilization) | Still ahead |
-|-----------------------------|------------|
-| `nucleus init`, `up`, `down`, `run`, `ingest`, `query`, `version` | First-class PyPI packaging polish (install today via editable git checkout) |
-| `ctx.copy_from` (SQLite / Postgres / MySQL), `ctx.sql` + Jinja `ref`, `ctx.read` | Hosted Iceberg REST catalog co-defaults (Lakekeeper / Polaris) |
-| `@nucleus.asset`, `@nucleus.check`, `nucleus materialize` path via the AMA | Workbench web IDE, lineage-aware Copilot, broad connector marketplace |
-| Filesystem Iceberg catalog + local warehouse | Enterprise IAM — Nucleus delegates identity to OIDC when that layer ships |
+<p align="center">
+  <a href="https://github.com/nucleus-data/nucleus/raw/main/assets/demos/v0.2/launch_60s.mp4">
+    <img src="assets/demos/v0.2/launch_60s_poster.png" alt="60-second Nucleus demo — pip install nucleus, init, up, run, query, Workbench" width="720" />
+  </a>
+</p>
 
-This is **beta** software: expect rough edges; pin versions and read [`docs/compatibility.md`](docs/compatibility.md) before upgrading anything.
+*Click to play (60 s, no audio, captions burned in). From `pip install nucleus` to a queried Iceberg snapshot with the Workbench dashboard on `localhost:8765`. Source script: [`docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`](docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md). The MP4 + poster image land alongside the launch tag; if the link is dark in your mirror, the script is the source of truth.*
 
 ---
 
-## Install
+## 3-command quickstart
 
 **Python 3.11** is the primary supported interpreter (3.12 may work; follow `pyproject.toml`).
 
 ```bash
-git clone https://github.com/nucleus-data/nucleus.git
-cd nucleus
-python3.11 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\Activate.ps1
-pip install -e ".[dev]"
+pip install nucleus                                  # ~16 deps, <60 s on warm pip cache
+nucleus init my-stack && cd my-stack && nucleus up   # scaffold + boot local stack (~6 s)
+nucleus run example.greeting                         # materialize your first Iceberg snapshot
 ```
 
-When publishing completes, **`pip install nucleus`** becomes the default path; until then the editable install above is the supported developer workflow.
-
----
-
-## 30-second demo (condensed beachhead path)
-
-**A — Zero external data (uses the `nucleus init` greeting asset):**
+Optional extras when you need real data sources or the Workbench web IDE:
 
 ```bash
-nucleus init beachhead-demo && cd beachhead-demo
-nucleus up
-nucleus run example.greeting
-nucleus query "SELECT * FROM {{ ref('example.greeting') }} LIMIT 5"
-nucleus down
-```
-
-**B — Same flow with one SQLite ingest** (create `./data/orders.db` with an `orders` table first — see [`docs/recipes/sqlite_to_iceberg.md`](docs/recipes/sqlite_to_iceberg.md)):
-
-```bash
-nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders
+pip install "nucleus[postgres,workbench]"
+nucleus ingest postgres://localhost/app --table public.orders --as raw.orders
 nucleus query "SELECT count(*) FROM {{ ref('raw.orders') }}"
+nucleus workbench up                                 # http://localhost:8765
 ```
 
-The **under 30 minutes** onboarding target (postgres + object storage + BI-ready mart) is spelled out in **architecture section 1.5**; the guided walkthrough lives in [`docs/onboarding/quickstart.md`](docs/onboarding/quickstart.md), with **`examples/01-ecommerce-elt/`** as the next “real project” step.
+Full quickstart with Postgres + S3 + a BI-ready mart in <30 min: [`docs/onboarding/quickstart.md`](docs/onboarding/quickstart.md).
 
 ---
 
-## Comparison (startup team lens — honest)
+## Why Nucleus
 
-| Dimension | dbt-core | Dagster | Airflow | Databricks | Nucleus |
-|-----------|----------|---------|---------|--------------|---------|
-| **SQL-centric transforms** | Excellent | Good via libs | DIY | Excellent | Strong via `ctx.sql` + Jinja; **smaller macro ecosystem than dbt** |
-| **Asset graph + orchestration** | Needs a runner | Excellent | Excellent | Excellent | **v0.1 uses explicit `nucleus run`**; embedded orchestration stays hidden per architecture |
-| **Iceberg-first laptop story** | Adapter-dependent | DIY wiring | DIY | Cloud-first | **Filesystem catalog + Iceberg writes are the default path** |
-| **Operational maturity** | High | High | Very high | Very high | **Beta** — fewer integrations, less production mileage |
-| **Team you optimize for** | Analytics engineering | Platform-adjacent eng | Batch ops | Enterprise + SQL devs | **Small product teams shipping from git + laptop** |
+- **Graduates to giants, not away from them.** Nucleus writes plain Apache Iceberg snapshots to your own S3 (or filesystem) — no Nucleus-proprietary byte format, ever. The day you outgrow a laptop, you point Databricks, Snowflake, or any Iceberg catalog at the same bucket. Zero migration. The yield-to-giants strategy is a first-class architectural principle, not a fallback ([`nucleus_architecture_v4.1.md` §10](nucleus_architecture_v4.1.md#10-yield-to-giants-strategy)).
+- **Local-first by construction.** Cold boot ~6 s (`nucleus up`). Idle RAM ~117 MB. Iceberg snapshots, scheduling daemon, run ledger, and Workbench all run from a single `pip install` on a laptop. No cluster. No JVM. Local-identical-to-prod ([`docs/benchmarks/2026-05-15_baseline.md`](docs/benchmarks/2026-05-15_baseline.md)).
+- **AI-assisted, not AI-gated.** `nucleus chat` routes through `litellm` to your provider of choice (Anthropic / OpenAI / Ollama / 100+ more), with opt-in consent, no Nucleus servers, no key logging. The Copilot is a feature; the data path is the product. Lineage-aware refactoring arrives in v0.5 ([ADR-015](docs/decisions/ADR-015-ai-chat-mvp.md)). <!-- banned-term: AI-native -->
 
-We are **not** claiming to beat Databricks on breadth or Airflow on install base — we **are** optimizing for **local Iceberg + small-team velocity**, with a clean **graduation path** when laptops stop being enough.
+---
+
+## What's not in v0.2 (yet)
+
+We are honest about scope. v0.2.0 is the first publicly available release; treat it as beta. The following are **deferred** to v0.3 / v0.5 / v1.0 per the roadmap at [`nucleus_architecture_v4.1.md` §18](nucleus_architecture_v4.1.md#18-roadmap):
+
+- **Lakekeeper REST catalog** — v0.3+ (v0.2 stays on filesystem catalog; bytes are still valid Iceberg).
+- **`dbt-duckdb` adapter** — v0.3+ optional. v0.2 ships native `ctx.sql` + Jinja `{{ ref() }}` (~180 LOC, hard 2,500 LOC scope ceiling).
+- **Marimo notebooks** — v0.3+. v0.2 ships no notebook runtime.
+- **Column-level lineage** — v0.5+ for SQL; v1.0 for Python. v0.2 ships asset-level OpenLineage NDJSON.
+- **Lineage-aware AI Copilot** — v0.5+. v0.2 ships single-turn chat only.
+- **Hybrid compute dispatch** (`@nucleus.sql_asset(compute="databricks")`) — v1.5+.
+- **Nucleus Cloud** (managed catalog, managed S3, managed deploy) — v1.0+. The OSS core is and will remain free forever.
+
+If your problem requires any of these today, Nucleus is not yet for you. The full disclosure of empirical numbers (including 11 measured failures vs aspirational targets) lives at [`docs/benchmarks/2026-05-15_baseline.md`](docs/benchmarks/2026-05-15_baseline.md).
+
+---
+
+## Honest 1-row comparison
+
+| | **Nucleus v0.2** | dbt-core | Airflow | Databricks |
+|---|---|---|---|---|
+| **Best for** | 5–20 engineer team, 100 GB–5 TB, greenfield Iceberg + laptop-first | SQL-centric transforms on a warehouse you already have | Batch orchestration at scale, mature on-call patterns | 200+ engineer central platform, 100+ TB, distributed compute |
+
+This is not a feature matrix — feature matrices favour whoever picks the features. It is a **persona matrix**. If you are not a 5–20 engineer team building greenfield Iceberg-native analytics on laptops, one of the other three columns is probably the right tool for you, and we will gladly help you graduate ([`docs/release/launch_kit/comparison_vs_databricks_snowflake.md`](docs/release/launch_kit/comparison_vs_databricks_snowflake.md) holds the full capability matrix with honest deltas).
 
 ---
 
