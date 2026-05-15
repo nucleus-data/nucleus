@@ -1,0 +1,86 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "_comment_purpose": "Vercel config for the static Workbench SPA (frontend ONLY). Vercel cannot host the FastAPI + DuckDB + Polars backend — serverless functions hit Python cold-start + memory caps on Polars. Pair this config with deploy/fly.toml OR deploy/render.yaml for the backend. See docs/release/public_demo_deploy_plan.md §2 hosting comparison and §3 recommended split-architecture.",
+
+  "version": 2,
+
+  "_comment_build": "Build the React SPA bundle in-place. We run the Vite build that ships with src/nucleus/workbench/ui/ (verified in src/nucleus/workbench/app.py line 37). Vercel auto-detects npm but we declare it explicitly for traceability.",
+  "buildCommand": "cd src/nucleus/workbench/ui && npm ci && npm run build",
+  "outputDirectory": "src/nucleus/workbench/static",
+  "installCommand": "echo 'skipping root install — buildCommand handles ui/'",
+
+  "_comment_framework": "null — we are not using a Vercel framework preset; the SPA is plain Vite-built static assets.",
+  "framework": null,
+
+  "_comment_rewrites": "All /api/* requests proxy to the Fly.io (recommended) or Render backend. Set NUCLEUS_DEMO_BACKEND_URL in Vercel Project Settings → Environment Variables before the first deploy. Default placeholder below MUST be replaced — Vercel substitutes $NUCLEUS_DEMO_BACKEND_URL at build time only if the variable is set.",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://nucleus-demo.fly.dev/api/:path*"
+    }
+  ],
+
+  "_comment_headers": "Security + caching headers. CSP locks asset loading to self + the backend origin so a compromised CDN cannot inject scripts. Cache-Control for static assets is 1 year (hashed filenames); index.html is no-cache so users always see the latest deploy.",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), microphone=(), camera=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://nucleus-demo.fly.dev; font-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
+
+  "_comment_redirects": "Bare-domain root resolves to the SPA. www subdomain redirects to apex for consistency with demo.nucleus-data.dev convention (plan §8).",
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
+
+  "_comment_regions": "Edge-deploy to two regions close to majority of traffic. Vercel free includes unlimited regions for static assets so cost is unaffected.",
+  "regions": ["iad1", "fra1"],
+
+  "_comment_cleanUrls": "Strip .html so /docs serves /docs.html. Pretty URLs are friendlier in HN/Reddit links.",
+  "cleanUrls": true,
+  "trailingSlash": false
+}

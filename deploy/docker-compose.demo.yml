@@ -1,0 +1,67 @@
+# Local equivalent of the public demo deployment.
+#
+# Build + run the same image that ships to ``demo.nucleus-data.dev``:
+#
+#   docker compose -f deploy/docker-compose.demo.yml up --build
+#
+# Then open http://127.0.0.1:8080 — should serve the Workbench against the
+# seeded e-commerce dataset (10K orders / 1K customers / 500 products).
+#
+# Differences vs production:
+#   - No SeaweedFS / MinIO sidecar — the warehouse is baked into the image
+#     (deploy/Dockerfile.demo §"Generate seed CSVs").
+#   - No Caddy / TLS — the parent reverse proxy (Fly.io / Render / Cloudflare)
+#     terminates TLS in production.  Local runs use plain HTTP on 8080.
+#   - Image is built read-only — see Dockerfile chmod step.  Local writes
+#     are blocked the same way as production (so dev sees identical UX).
+#
+# Stop:
+#   docker compose -f deploy/docker-compose.demo.yml down
+
+name: nucleus-public-demo
+
+services:
+  demo:
+    build:
+      context: ..
+      # Path is relative to context (repo root), not to this compose file.
+      dockerfile: deploy/Dockerfile.demo
+    image: nucleus-demo:latest
+    ports:
+      - "8080:8080"
+    environment:
+      # Mirrors the values baked into Dockerfile.demo so the runtime contract
+      # is visible in the compose file too.
+      NUCLEUS_DEMO_MODE: "true"
+      NUCLEUS_DISABLE_TELEMETRY: "true"
+      NUCLEUS_LOG_FORMAT: json
+      # Demo runs single-tenant; cap log volume.
+      NUCLEUS_LOG_LEVEL: info
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          # 512 MB matches the smallest viable Fly.io / Render free-tier slot
+          # (256 MB is too tight — Polars + DuckDB peak ~300 MB on the seed
+          # query set).  See public_demo_deploy_plan.md §2 cost table.
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    healthcheck:
+      # Mirrors HEALTHCHECK in Dockerfile.demo + production compose §83.
+      test:
+        - CMD-SHELL
+        - >-
+          python -c "import urllib.request;
+          urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=4)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - demo_net
+
+networks:
+  demo_net: {}

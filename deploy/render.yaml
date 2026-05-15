@@ -1,0 +1,76 @@
+# Render.com blueprint for the Nucleus public demo backend.
+#
+# Alternative to Fly.io (the recommended host — see deploy/fly.toml).
+# Use Render when:
+#   - You prefer Render's PR-preview environments over Fly's image-tag flow.
+#   - You don't need offline operation (Render free tier requires an outbound
+#     connection during build).
+#   - You can tolerate ~30 s cold-start sleep on the free tier OR are willing
+#     to pay $7/mo for the Starter plan to keep the service warm.
+#
+# Docs: https://render.com/docs/blueprint-spec
+# Docs: https://render.com/docs/free
+# Docs: https://render.com/docs/web-services
+#
+# Founder runbook: see docs/release/public_demo_deploy_plan.md §9 step 5.
+
+services:
+  # -------------------------------------------------------------------------
+  # Web service — Workbench + seeded warehouse, single container.
+  # -------------------------------------------------------------------------
+  - type: web
+    name: nucleus-demo
+    # Switch to ``runtime: docker`` so Render builds from deploy/Dockerfile.demo
+    # rather than its native Python buildpack.  The buildpack would skip the
+    # multi-stage build and miss the seed-data baking step.
+    runtime: docker
+    dockerfilePath: ./deploy/Dockerfile.demo
+    dockerContext: .  # repo root — same as docker-compose.demo.yml context.
+
+    # Plan choice — see public_demo_deploy_plan.md §2 cost table.
+    #   ``free``     — 512 MB, 0.1 CPU, sleeps after 15 min idle.
+    #                  First request after sleep takes ~30 s.  $0/mo.
+    #   ``starter``  — 512 MB, 0.5 CPU, always-on.  $7/mo.
+    # Default to free for the first launch.  Upgrade to ``starter`` once HN
+    # / Reddit traffic justifies the spend.
+    plan: free
+    region: oregon  # Closest to majority of US-East / US-West free-tier users.
+    # Alternative regions:
+    #   region: frankfurt   # EU
+    #   region: singapore   # APAC
+
+    # Branch + autoDeploy = continuous delivery on every push to main.
+    # For a slower release cadence, change to autoDeploy: false and trigger
+    # via the GitHub Action in deploy/.github/workflows/deploy_demo.yml.
+    branch: main
+    autoDeploy: true
+
+    healthCheckPath: /api/health
+
+    # Demo container listens on 8080.  Render auto-maps to public 443.
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: NUCLEUS_DEMO_MODE
+        value: "true"
+      - key: NUCLEUS_DISABLE_TELEMETRY
+        value: "true"
+      - key: NUCLEUS_LOG_FORMAT
+        value: json
+      - key: NUCLEUS_LOG_LEVEL
+        value: info
+      # Render's free-tier scratch disk is wiped on every deploy — fine
+      # because the demo warehouse is baked into the image (Dockerfile.demo
+      # §"Generate seed CSVs").
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+    # Render does not expose Fly-style concurrency caps; rate limiting must
+    # live in Cloudflare in front (see plan §5).  Setting num instances to 1
+    # keeps free-tier cost predictable.
+    numInstances: 1
+
+    # Custom domain — Render binds demo.nucleus-data.dev when the founder
+    # adds it under Settings → Custom Domains in the dashboard.  Free tier
+    # supports custom domains + automatic Let's Encrypt certs.
+    # No CLI knob; founder action listed in plan §9 step 8.

@@ -1,0 +1,31 @@
+# Nucleus project config for the public demo image (demo.nucleus-data.dev).
+# Built into ``deploy/Dockerfile.demo`` at /opt/nucleus-demo/nucleus_project.yaml.
+#
+# Per ``src/nucleus/templates/v01/nucleus_project.yaml`` shape; values tuned
+# for a single-container, in-image, read-only deployment (Iceberg warehouse
+# baked into the image; no S3, no MinIO, no external catalog).
+
+project:
+  name: nucleus-public-demo
+  profile: demo
+  generated_at: "2026-05-15"
+
+# Filesystem-backed Iceberg catalog (SqlCatalog SQLite under the warehouse
+# root).  Per nucleus_cli_spec.md §10 NV #5: surfaced as `filesystem` to
+# users.  Read-only at runtime via image chmod 0444/0555.
+catalog:
+  type: filesystem
+  path: ./.nucleus/catalog.db
+
+# Local warehouse — Iceberg metadata + Parquet land here.  The demo image
+# ships this directory pre-populated with raw.products / raw.customers /
+# raw.orders by the Dockerfile.demo `nucleus ingest` build steps.
+storage:
+  warehouse: ./data/warehouse
+
+# Lineage transport — file-based for the demo.  Each visitor query writes a
+# line to events.jsonl which is wiped by the daily reset cron (see
+# deploy/RESET_POLICY.md §2).  No Marquez/Postgres dependency.
+lineage:
+  transport: file
+  path: ./.nucleus/lineage/events.jsonl

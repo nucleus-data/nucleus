@@ -1,0 +1,118 @@
+# Fly.io app config for the Nucleus public demo (demo.nucleus-data.dev).
+#
+# **Recommended host** per docs/release/public_demo_deploy_plan.md §3.
+# Reasons (summarized):
+#   - Single Docker container (matches deploy/Dockerfile.demo exactly).
+#   - Free tier: 3 shared-cpu-1x VMs + 3 GB persistent volumes + 160 GB
+#     egress/month.  The demo is stateless (warehouse baked into image) so
+#     no persistent volumes are needed — keeps cost under $5/mo even past
+#     free-tier headroom.
+#   - Auto-stop / auto-suspend keeps idle cost at $0 outside US business
+#     hours; suspend wake is ~250 ms (much faster than Render free's ~30 s
+#     cold-start sleep behaviour).
+#   - Custom domain via ``fly certs create demo.nucleus-data.dev`` (ACME).
+#   - No outbound network required for the seed dataset — passes the Bosch
+#     offline-proxy constraint.
+#
+# Founder runbook: see docs/release/public_demo_deploy_plan.md §9 step 4.
+# Cost cap: see same doc §7.  This file's [[vm]] block IS the cost cap.
+#
+# Docs: https://fly.io/docs/reference/configuration/
+# Docs: https://fly.io/docs/launch/autostop-autostart/
+
+app = "nucleus-demo"
+primary_region = "iad"  # US East — closest to majority of GitHub OSS traffic.
+
+# Swap to a region closer to Bosch / EU testers by editing this line, e.g.:
+#   primary_region = "fra"  # Frankfurt
+#   primary_region = "lhr"  # London
+
+# ---------------------------------------------------------------------------
+# Build — point Fly at the demo Dockerfile (NOT docker/Dockerfile.production).
+# The build context is the repo root so the COPY paths in Dockerfile.demo
+# resolve against ``src/``, ``deploy/``, ``pyproject.toml`` at the top level.
+# ---------------------------------------------------------------------------
+[build]
+  dockerfile = "deploy/Dockerfile.demo"
+  # No build args — the demo image is fully self-contained.
+
+# ---------------------------------------------------------------------------
+# HTTP service — Workbench listens on :8080 inside the container.
+# ---------------------------------------------------------------------------
+[http_service]
+  internal_port = 8080
+  force_https = true
+  # auto_stop_machines = "suspend" pauses the VM to disk after the idle window
+  # and wakes it in ~250 ms on the next request — vastly better UX than
+  # Render free's ~30 s cold-start sleep.  Trade-off: a small amount of
+  # billable storage while suspended (still pennies/month for one VM).
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  # Concurrency cap doubles as a cheap rate-limit.  With 50 hard + 25 soft
+  # per machine and min_machines_running = 0, a single hostile actor cannot
+  # cost more than one machine's worth of CPU.  Pair with Cloudflare in
+  # front for IP-level rate limiting (60 req/min/IP — see plan §5).
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 25
+    hard_limit = 50
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/api/health"
+
+# ---------------------------------------------------------------------------
+# Machine spec — 512 MB / 1 shared CPU is the smallest viable footprint for
+# the Workbench + DuckDB + Polars peak working set on the seed dataset.
+# 256 MB causes Polars to OOM on the 10K-order analytical queries; verified
+# empirically against the same image locally.
+# ---------------------------------------------------------------------------
+[[vm]]
+  size = "shared-cpu-1x"
+  cpu_kind = "shared"
+  cpus = 1
+  memory = "512mb"
+
+# ---------------------------------------------------------------------------
+# Environment — mirrors deploy/Dockerfile.demo defaults so an operator can
+# read this file alone and know what knobs are active.
+# ---------------------------------------------------------------------------
+[env]
+  NUCLEUS_DEMO_MODE = "true"
+  NUCLEUS_DISABLE_TELEMETRY = "true"
+  NUCLEUS_LOG_FORMAT = "json"
+  NUCLEUS_LOG_LEVEL = "info"
+  PORT = "8080"  # Fly convention; Workbench reads this in --port resolution.
+
+# ---------------------------------------------------------------------------
+# Deploy strategy — rolling (single machine, but rolling means health check
+# must pass before old machine retires).  release_command runs before the new
+# machine accepts traffic — we use it to confirm the seed warehouse is
+# readable.  No DB migrations apply here.
+# ---------------------------------------------------------------------------
+[deploy]
+  strategy = "rolling"
+  release_command = "nucleus version"
+
+# ---------------------------------------------------------------------------
+# Kill switch — see plan §5.  To kill the demo:
+#     fly secrets set NUCLEUS_DEMO_KILL_SWITCH=true --app nucleus-demo
+# Workbench (v0.2.1) is expected to return 503 to /api/health when this is
+# truthy, causing Fly to drain traffic.  Until v0.2.1 ships the read-only
+# layer, founder uses:
+#     fly scale count 0 --app nucleus-demo
+# to drain to zero machines (also stops billing).
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Secrets the founder must set before the first deploy (no values here):
+#   fly secrets set CLOUDFLARE_ZONE_ID=<id>      --app nucleus-demo  # optional
+#   fly secrets set SENTRY_DSN=<dsn>             --app nucleus-demo  # optional
+# Never paste real values in this file; secrets live in Fly's vault.
+# ---------------------------------------------------------------------------

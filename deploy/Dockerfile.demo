@@ -1,0 +1,146 @@
+# syntax=docker/dockerfile:1
+#
+# Nucleus public demo image — single-container, seed-data-baked, read-only.
+#
+# Used by ``demo.nucleus-data.dev`` (Fly.io recommended; see
+# ``docs/release/public_demo_deploy_plan.md`` §3).  Differs from
+# ``docker/Dockerfile.production`` in three ways:
+#
+#   1. Demo seed data (10K orders, 1K customers, 500 products) is generated at
+#      build time via ``deploy/seed_demo_data.py`` and ingested into Iceberg
+#      via ``nucleus ingest``.  The resulting warehouse ships INSIDE the image
+#      so cold start serves a working dataset without any S3/MinIO sidecar.
+#
+#   2. The image exports ``NUCLEUS_DEMO_MODE=true`` — a read-only sentinel the
+#      Workbench is expected to honor by disabling materialize / chat / ingest
+#      endpoints (see ``deploy/README.md`` §"Read-only mode (v0.2.1 ask)";
+#      Workbench wiring is RECOMMENDED for v0.2.1 — until then, the demo
+#      relies on filesystem permissions + network egress lockdown).
+#
+#   3. The seed warehouse is chmod 0555 (read-only) inside the image so even
+#      if a write endpoint slips through, the underlying filesystem rejects it.
+#
+# Build (locally):
+#   docker build -f deploy/Dockerfile.demo -t nucleus-demo:latest .
+#
+# Run (locally; ~512 MB RAM is the smallest viable footprint):
+#   docker run --rm -p 8080:8080 nucleus-demo:latest
+#
+# Then open http://127.0.0.1:8080 — see ``deploy/README.md`` for full local
+# verification flow.
+#
+# Docs: https://docs.docker.com/reference/dockerfile/
+# Docs: https://docs.docker.com/build/building/multi-stage/
+
+# ---------------------------------------------------------------------------
+# Stage 1 — Builder: install Nucleus + Workbench extras + generate seed data.
+# ---------------------------------------------------------------------------
+FROM python:3.11-slim AS builder
+
+WORKDIR /build
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+
+COPY pyproject.toml README.md LICENSE CHANGELOG.md ./
+COPY src ./src
+
+# Build the wheel (same path as docker/Dockerfile.production).
+RUN python -m pip install --upgrade pip wheel \
+    && pip wheel . -w /wheels
+
+# Install nucleus[workbench] into a venv we can copy into the runtime layer.
+# Using a venv keeps the runtime image smaller because we leave behind pip's
+# internal caches.
+RUN python -m venv /opt/nucleus-venv \
+    && /opt/nucleus-venv/bin/pip install --upgrade pip \
+    && /opt/nucleus-venv/bin/pip install --no-cache-dir /wheels/*.whl \
+    && /opt/nucleus-venv/bin/pip install --no-cache-dir \
+        "fastapi==0.136.1" \
+        "uvicorn[standard]==0.46.0" \
+        "orjson==3.11.9"
+
+# Generate seed CSVs + bootstrap an Iceberg warehouse.
+COPY deploy/seed_demo_data.py /build/deploy/seed_demo_data.py
+COPY deploy/nucleus_project.demo.yaml /build/demo/nucleus_project.yaml
+
+RUN mkdir -p /build/demo/data/raw \
+    && python /build/deploy/seed_demo_data.py \
+        --output-dir /build/demo/data/raw
+
+# Ingest CSVs into Iceberg via `nucleus ingest` so the runtime image ships a
+# ready-to-query warehouse (no on-boot materialization).  We chdir into the
+# demo project so nucleus_project.yaml is auto-discovered.
+WORKDIR /build/demo
+RUN /opt/nucleus-venv/bin/nucleus init --quiet || true \
+    && /opt/nucleus-venv/bin/nucleus ingest \
+        --source ./data/raw/products.csv \
+        --asset raw.products \
+    && /opt/nucleus-venv/bin/nucleus ingest \
+        --source ./data/raw/customers.csv \
+        --asset raw.customers \
+    && /opt/nucleus-venv/bin/nucleus ingest \
+        --source ./data/raw/orders.csv \
+        --asset raw.orders
+
+# Strip the raw CSVs — the Iceberg warehouse is the demo's single source of
+# truth from here on.  Keeps the runtime image lean.
+RUN rm -rf /build/demo/data/raw
+
+
+# ---------------------------------------------------------------------------
+# Stage 2 — Runtime: slim, non-root, read-only warehouse, demo-mode env.
+# ---------------------------------------------------------------------------
+FROM python:3.11-slim
+
+WORKDIR /app
+
+LABEL org.opencontainers.image.title="Nucleus public demo" \
+      org.opencontainers.image.description="Read-only e-commerce demo dataset + Workbench for demo.nucleus-data.dev" \
+      org.opencontainers.image.licenses="Apache-2.0" \
+      org.opencontainers.image.source="https://github.com/nucleus-data/nucleus"
+
+# Install the prebuilt venv (Python + all deps) and the seeded demo project.
+COPY --from=builder /opt/nucleus-venv /opt/nucleus-venv
+COPY --from=builder /build/demo /opt/nucleus-demo
+
+# Non-root user (matches docker/Dockerfile.production).
+RUN adduser --system --disabled-password --home /home/nucleus nucleus \
+    && chown -R nucleus:nucleus /opt/nucleus-demo \
+    && find /opt/nucleus-demo -type d -exec chmod 0555 {} + \
+    && find /opt/nucleus-demo -type f -exec chmod 0444 {} +
+
+# ---------------------------------------------------------------------------
+# Demo-mode environment variables.
+#
+# NUCLEUS_DEMO_MODE — recommended sentinel for v0.2.1 Workbench to disable
+#   write endpoints (POST /api/runs/trigger, POST /api/chat, POST /api/query
+#   with mutating SQL).  Implementation flagged for v0.2.1 — see
+#   docs/release/public_demo_deploy_plan.md §5.  Until shipped, this env var
+#   is purely advisory; safety is enforced via the read-only filesystem
+#   layer above and (for /api/chat) the absence of an LLM key in this image.
+#
+# NUCLEUS_PROJECT_DIR — pre-baked project root so ``nucleus workbench up``
+#   discovers the seeded warehouse without any user action.
+#
+# NUCLEUS_DISABLE_TELEMETRY — visitors never opt into telemetry (see
+#   deploy/RESET_POLICY.md §"Opt-out for visitor query logs").
+# ---------------------------------------------------------------------------
+ENV NUCLEUS_DEMO_MODE=true \
+    NUCLEUS_PROJECT_DIR=/opt/nucleus-demo \
+    NUCLEUS_DISABLE_TELEMETRY=true \
+    NUCLEUS_LOG_FORMAT=json \
+    PATH="/opt/nucleus-venv/bin:${PATH}"
+
+USER nucleus
+WORKDIR /opt/nucleus-demo
+
+# Bind to all interfaces on :8080 (Fly.io + Render free tier convention).
+EXPOSE 8080
+
+# Healthcheck mirrors docker-compose.production.yaml line 84.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=4)" || exit 1
+
+ENTRYPOINT ["nucleus"]
+CMD ["workbench", "up", "--host", "0.0.0.0", "--port", "8080", "--no-browser"]
