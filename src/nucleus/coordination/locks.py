@@ -38,6 +38,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from nucleus.errors import NucleusConcurrentRunError
 
@@ -66,11 +67,12 @@ def _lock_path(project_root: Path, asset_key: str) -> Path:
     return _locks_dir(project_root) / f"{safe_key}.lock"
 
 
-def _read_lock_info(lock_file: Path) -> dict | None:
+def _read_lock_info(lock_file: Path) -> dict[str, Any] | None:
     """Return the JSON payload written by the lock owner, or None on any error."""
     try:
         text = lock_file.read_text(encoding="utf-8")
-        return json.loads(text)
+        payload: dict[str, Any] = json.loads(text)
+        return payload
     except (OSError, json.JSONDecodeError):
         return None
 
@@ -92,7 +94,7 @@ def _pid_alive(pid: int) -> bool:
         try:
             import psutil  # Docs: https://psutil.readthedocs.io/en/latest/
 
-            return psutil.pid_exists(pid)
+            return bool(psutil.pid_exists(pid))
         except ImportError:
             # psutil unavailable — fall back to OpenProcess via ctypes.
             # Docs: https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess

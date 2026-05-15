@@ -99,7 +99,7 @@ def _is_alive(pid: int) -> bool:
     import psutil  # Docs: https://psutil.readthedocs.io/ (psutil==7.2.2)
 
     try:
-        return psutil.pid_exists(pid)
+        return bool(psutil.pid_exists(pid))
     except Exception:
         return False
 

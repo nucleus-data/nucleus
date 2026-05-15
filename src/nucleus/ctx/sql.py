@@ -213,7 +213,10 @@ def sql(
             # v0.1 Beta: spec §6.1 targets duckdb.DuckDBPyRelation at Stable;
             # deferred due to connection lifetime semantics across caller scope.
             arrow_result = rel.arrow()
-            return pl.from_arrow(arrow_result).lazy()
+            df = pl.from_arrow(arrow_result)
+            # pl.from_arrow returns DataFrame | Series; narrow for the public typed surface.
+            assert isinstance(df, pl.DataFrame)
+            return df.lazy()
         except NucleusError:
             raise
         except Exception as exc:

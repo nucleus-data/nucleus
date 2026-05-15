@@ -28,7 +28,10 @@ import threading
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import builtins  # used only to disambiguate RunLedger.list method shadow
 
 _CACHE_MAX = 1000
 
@@ -233,7 +236,10 @@ class RunLedger:
             self._load()
             return self._by_id.get(run_id)
 
-    def tail(self, n: int = 20) -> list[RunRecord]:
+    # mypy resolves bare ``list`` in this class body to the ``list`` method
+    # defined above (shadowing the builtin); fully-qualify via ``builtins``
+    # to keep the public method name without renaming.
+    def tail(self, n: int = 20) -> "builtins.list[RunRecord]":
         """Return the ``n`` most-recent runs (newest first)."""
         with self._lock:
             self._load()

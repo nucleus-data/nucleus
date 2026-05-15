@@ -610,7 +610,9 @@ def materialize_asset(
     if not _via_mini_scheduler and os.environ.get("NUCLEUS_USE_MINI_SCHEDULER") == "1":
         from nucleus.coordination.daemon import run_asset as _mini_run
 
-        return _mini_run(
+        # _mini_run is annotated -> Any (alternative scheduler entry point); at
+        # runtime it always returns a MaterializationResult shape.
+        result: MaterializationResult = _mini_run(
             asset_key,
             partition=partition,
             dry_run=dry_run,
@@ -620,6 +622,7 @@ def materialize_asset(
             snapshot_retain_days=snapshot_retain_days,
             snapshot_min_keep=snapshot_min_keep,
         )
+        return result
 
     entry = _resolve_asset_from_registry(asset_key)
 

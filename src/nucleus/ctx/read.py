@@ -72,7 +72,13 @@ def _convert_arrow(arrow_table: Any, *, as_: str) -> Any:
         # Docs: https://docs.pola.rs/api/python/stable/reference/lazyframe/  (polars==1.18.0)
         import polars as pl  # pin: 1.18.0
 
-        return pl.from_arrow(arrow_table).lazy()
+        # pl.from_arrow returns DataFrame | Series; an arrow Table always
+        # converts to DataFrame at runtime (Series is only returned for
+        # ChunkedArray inputs).  Cast to keep the public typed surface.
+        df = pl.from_arrow(arrow_table)
+        # pl.from_arrow returns DataFrame | Series; narrow for the public typed surface.
+        assert isinstance(df, pl.DataFrame)
+        return df.lazy()
 
     if as_ == "duckdb":
         # Eagerly load into DuckDB via Arrow to avoid connection-lifetime issues.

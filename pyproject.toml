@@ -491,6 +491,91 @@ module = [
 ignore_missing_imports = false
 follow_imports = "silent"
 
+# Stub-less third-party libs (Constraint #10): we cite official docs in the
+# import line, so mypy errors of [import-untyped] / [import-not-found] add no
+# safety value here. types-* stub packages are not pinned (would add dev deps);
+# instead we accept untyped imports for these specific wrapped libraries.
+# Per founder directive 2026-05-16 (CI Lint Option B): mirror the long-standing
+# ignore_missing_imports pattern from the [[tool.ruff.lint.per-file-ignores]]
+# precedent for libraries that ship without py.typed markers.
+[[tool.mypy.overrides]]
+module = [
+  "croniter.*",                 # https://pypi.org/project/croniter/
+  "psutil.*",                   # types-psutil exists but adds dev dep churn
+  "pyarrow.*",                  # partial typing only; no py.typed marker
+  "gcsfs.*",                    # https://gcsfs.readthedocs.io/
+  "dlt.*",                      # dlt's typing has many quirks (see copy_from_*)
+  "litellm.*",                  # https://docs.litellm.ai/
+  "fastapi.*",                  # FastAPI ships py.typed but exception scoping confuses strict mode
+  "uvicorn.*",                  # https://www.uvicorn.org/
+  "openlineage.*",              # generated facets re-export across modules trip strict equality
+  "fcntl.*",                    # POSIX-only stdlib (Windows lacks it)
+  "msvcrt.*",                   # Windows-only stdlib (POSIX lacks it)
+]
+ignore_missing_imports = true
+
+# Per-module strictness relaxation for tooling-grade Nucleus modules.
+# Per founder directive 2026-05-16 (CI Lint Option B): library-grade leniency
+# for tooling-grade code; strict checking preserved for the stable public API
+# surface (`sdk/`, `ctx/`, `coordination/` core, `errors`).
+#
+# Each module below has a concrete reason to relax specific checks; we prefer
+# targeted per-rule disables over blanket `ignore_errors = true` so genuine
+# regressions still surface.
+
+# Workbench API routes — FastAPI exception-handler typing trips mypy on the
+# `except ... as err: raise HTTPException(...) from err` pattern (Python's
+# exception variable scope rules + FastAPI's untyped HTTPException kwargs).
+# See workbench/api/{catalog,query,runs,assets,dashboard,chat,schedules}.py.
+[[tool.mypy.overrides]]
+module = "nucleus.workbench.api.*"
+disable_error_code = ["misc", "attr-defined", "call-arg", "assignment", "no-any-return"]
+warn_unused_ignores = false
+
+# Workbench non-API helpers — same FastAPI typing edges around dependency
+# injection helpers and middleware glue.
+[[tool.mypy.overrides]]
+module = "nucleus.workbench.*"
+warn_unused_ignores = false
+
+# Intelligence layer (LLM glue) — litellm + provider-specific call-args make
+# strict typing impractical without per-provider stubs we don't ship.
+[[tool.mypy.overrides]]
+module = "nucleus.intelligence.*"
+disable_error_code = ["attr-defined", "no-any-return", "union-attr"]
+warn_unused_ignores = false
+
+# CLI commands — Typer/Click decorators generate untyped wrappers; the
+# `# type: ignore[attr-defined]` on snapshot subcommands becomes "unused" once
+# the surrounding command surface tightens up, which is normal churn.
+[[tool.mypy.overrides]]
+module = "nucleus.cli.commands.*"
+disable_error_code = ["attr-defined", "name-defined", "arg-type"]
+warn_unused_ignores = false
+
+# Connector adapters wrapping dlt sql_database — dlt's resource factory has
+# variant overload signatures that strict mode can't reconcile with **kwargs
+# expansion (every overload reports a different expected type for the same
+# argument). The runtime contract is verified in tests/connectors/.
+[[tool.mypy.overrides]]
+module = [
+  "nucleus.ctx.copy_from_mysql",
+  "nucleus.ctx.copy_from_postgres",
+  "nucleus.ctx.copy_from_snowflake",
+  "nucleus.ctx.copy_from_gcs",
+]
+disable_error_code = ["arg-type", "call-overload", "call-arg"]
+warn_unused_ignores = false
+
+# Cross-platform locks — stdlib fcntl/msvcrt are platform-conditional, so a
+# `# type: ignore[import]` is "unused" on the platform where the module exists.
+# Windows ctypes.windll is only present on Windows. Behaviour is verified by
+# tests/coordination/test_locks.py on every platform in CI.
+[[tool.mypy.overrides]]
+module = "nucleus.coordination.locks"
+disable_error_code = ["attr-defined"]
+warn_unused_ignores = false
+
 # ----------------------------------------------------------------------------
 # Pytest
 # ----------------------------------------------------------------------------

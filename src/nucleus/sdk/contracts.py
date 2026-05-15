@@ -113,8 +113,10 @@ def run_checks_for_asset(asset_key: str) -> tuple[CheckResult, ...]:
         return ()
     out: list[CheckResult] = []
     for record in records:
-        name = getattr(record.fn, "__qualname__", None) or getattr(
-            record.fn, "__name__", repr(record.fn)
+        name: str = (
+            getattr(record.fn, "__qualname__", None)
+            or getattr(record.fn, "__name__", None)
+            or repr(record.fn)
         )
         out.append(_execute_one_check(name, record.fn))
     return tuple(out)
@@ -140,10 +142,15 @@ def list_registered_checks(asset_key: str) -> tuple[str, ...]:
     records = get_checks(asset_key)
     if not records:
         return ()
-    return tuple(
-        getattr(record.fn, "__qualname__", None) or getattr(record.fn, "__name__", repr(record.fn))
+    names: list[str] = [
+        (
+            getattr(record.fn, "__qualname__", None)
+            or getattr(record.fn, "__name__", None)
+            or repr(record.fn)
+        )
         for record in records
-    )
+    ]
+    return tuple(names)
 
 
 def _execute_one_check(name: str, func: Callable[[], Any]) -> CheckResult:
@@ -194,10 +201,13 @@ def _execute_one_check(name: str, func: Callable[[], Any]) -> CheckResult:
     try:
         result = func()
     except NucleusError as exc:
+        # error_code is declared as ClassVar[str] on every NucleusError subclass
+        # (see nucleus/errors.py); base NucleusError omits it so static analysis
+        # can't see the attribute on the bound instance type.
         return CheckResult(
             passed=False,
             metric=0.0,
-            message=f"[{exc.error_code}] {name}: {exc.user_message}",
+            message=f"[{exc.error_code}] {name}: {exc.user_message}",  # type: ignore[attr-defined]
         )
     except Exception as exc:
         return CheckResult(

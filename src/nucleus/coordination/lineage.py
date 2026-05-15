@@ -71,7 +71,11 @@ try:
     from openlineage.client.event_v2 import Job, Run, RunEvent, RunState
     from openlineage.client.facet_v2 import RunFacet
     from openlineage.client.generated.error_message_run import ErrorMessageRunFacet
-    from openlineage.client.generated.parent_run import ParentRunFacet
+    from openlineage.client.generated.parent_run import (
+        Job as ParentJob,
+        ParentRunFacet,
+        Run as ParentRun,
+    )
     from openlineage.client.transport.file import FileConfig, FileTransport
 
     _OL_AVAILABLE = True
@@ -84,6 +88,7 @@ except ImportError:
     RunFacet = None  # type: ignore[assignment,misc]
     ErrorMessageRunFacet = None  # type: ignore[assignment,misc]
     ParentRunFacet = None  # type: ignore[assignment,misc]
+    ParentJob = ParentRun = None  # type: ignore[assignment,misc]
     FileConfig = FileTransport = None  # type: ignore[assignment,misc]
 
 
@@ -150,9 +155,11 @@ def _emit(
         if parent_run_id is not None:
             # Docs: https://openlineage.io/docs/spec/facets/run-facets/parent_run/
             # ParentRunFacet.create() is deprecated since openlineage-python 1.x; use constructor.
+            # The parent_run facet has its own nested Run/Job types — distinct from
+            # event_v2.Run / event_v2.Job — per the generated module surface.
             facets["parent"] = ParentRunFacet(
-                run=Run(runId=parent_run_id),
-                job=Job(namespace=JOB_NAMESPACE, name=asset_key),
+                run=ParentRun(runId=parent_run_id),
+                job=ParentJob(namespace=JOB_NAMESPACE, name=asset_key),
             )
 
         run = Run(runId=run_id, facets=facets or None)
