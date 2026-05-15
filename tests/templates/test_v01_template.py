@@ -254,8 +254,8 @@ class TestExampleAsset:
         decorator_args = rendered[start : cursor - 1]
 
         valid_kwargs = set(inspect.signature(_asset_decorator).parameters)
-        for chunk in decorator_args.split(","):
-            chunk = chunk.strip()
+        for raw_chunk in decorator_args.split(","):
+            chunk = raw_chunk.strip()
             if "=" not in chunk:
                 continue  # positional argument, e.g. the asset key
             kwarg_name = chunk.split("=", 1)[0].strip()
