@@ -1,0 +1,5 @@
+# Placeholder so git tracks this directory.
+# mkdocs.yml `theme.custom_dir: docs/site/overrides` requires the directory
+# to exist at build time even when no override templates are present.
+# Add HTML/Jinja override partials here per
+# https://squidfunk.github.io/mkdocs-material/customization/#extending-the-theme
