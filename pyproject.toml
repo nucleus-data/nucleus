@@ -55,7 +55,7 @@ dependencies = [
   # Tier 1 engines
   "duckdb==1.1.3",                  # Docs: https://duckdb.org/docs/api/python/overview
   "polars==1.18.0",                 # Docs: https://docs.pola.rs/api/python/stable/
-  "pyarrow==18.1.0",                # Docs: https://arrow.apache.org/docs/python/
+  "pyarrow==24.0.0",                # Docs: https://arrow.apache.org/docs/python/
 
   # Tier 1 storage / table format
   "pyiceberg[sql-sqlite,s3fs,duckdb]==0.11.1",  # Docs: https://py.iceberg.apache.org/
@@ -69,8 +69,8 @@ dependencies = [
   # Schedule cron parsing + preview (ADR-017 schedule exposure).
   # croniter is also pulled transitively by dagster; this line makes it
   # a direct dep for explicit version governance.
-  # Docs: https://pypi.org/project/croniter/ (croniter==3.0.4, MIT)
-  "croniter==3.0.4",                # Docs: https://pypi.org/project/croniter/
+  # Docs: https://pypi.org/project/croniter/ (croniter==6.2.2, MIT)
+  "croniter==6.2.2",                # Docs: https://pypi.org/project/croniter/
 
   # SQL transformation (native ctx.sql + Jinja resolver, ≤2500 LOC).
   # sqlglot lives in [project.optional-dependencies] lineage-advanced
@@ -80,9 +80,9 @@ dependencies = [
   # Core infrastructure.
   # msgspec removed entirely 2026-05-14 per docs/research/otel_day1_decision.md §D3.
   "click==8.1.8",                   # CLI framework. Docs: https://click.palletsprojects.com/
-  "structlog==24.4.0",              # Structured logging. Docs: https://www.structlog.org/
+  "structlog==25.5.0",              # Structured logging. Docs: https://www.structlog.org/
   "typer==0.15.1",                  # CLI ergonomics on top of Click. Docs: https://typer.tiangolo.com/
-  "rich==13.9.4",                   # Terminal UI. Docs: https://rich.readthedocs.io/
+  "rich==15.0.0",                   # Terminal UI. Docs: https://rich.readthedocs.io/
   "pyyaml==6.0.3",                  # nucleus.yaml + .copilot_opt_in sentinel. Docs: https://pyyaml.org/wiki/PyYAMLDocumentation
 
   # Observability protocol (Tier 0 immortal per v4.1 §4.1).
@@ -245,23 +245,23 @@ observability = [
 # Install: `pip install nucleus[lineage-advanced]`
 # Docs: https://sqlglot.com/sqlglot.html
 lineage-advanced = [
-  "sqlglot==26.0.0",
+  "sqlglot==30.8.0",
 ]
 
 # Development environment
 dev = [
   # Code quality
   "ruff==0.15.13",                   # Docs: https://docs.astral.sh/ruff/ — Upgraded 2026-05-15 per ADR-027; rollback: pip install ruff==0.8.4
-  "mypy==1.13.0",                   # Docs: https://mypy.readthedocs.io/
+  "mypy==2.1.0",                   # Docs: https://mypy.readthedocs.io/
   "pre-commit==4.0.1",              # Docs: https://pre-commit.com/
   "psutil==7.2.2",                  # Boot-time + memory measurement (PoC #4). Docs: https://psutil.readthedocs.io/
   # Verified 2026-05-13: v7.2.2 current on PyPI; BSD-3-Clause; Python >=3.6 (includes 3.11).
 
   # Testing
-  "pytest==8.3.4",                  # Docs: https://docs.pytest.org/
-  "pytest-cov==6.0.0",              # Docs: https://pytest-cov.readthedocs.io/
+  "pytest==9.0.3",                  # Docs: https://docs.pytest.org/
+  "pytest-cov==7.1.0",              # Docs: https://pytest-cov.readthedocs.io/
   "pytest-xdist==3.6.1",            # Parallel test execution
-  "pytest-asyncio==0.25.0",         # For any async surface tests
+  "pytest-asyncio==1.3.0",         # For any async surface tests
   "hypothesis==6.123.7",            # Property-based testing for type mappings
 
   # Local infrastructure for tests
@@ -280,7 +280,7 @@ dev = [
 docs = [
   "mkdocs==1.6.1",                               # Docs: https://www.mkdocs.org/
   "mkdocs-material==9.5.49",                     # Docs: https://squidfunk.github.io/mkdocs-material/
-  "mkdocstrings[python]==0.27.0",                # Docs: https://mkdocstrings.github.io/
+  "mkdocstrings[python]==1.0.4",                # Docs: https://mkdocstrings.github.io/
   "mkdocs-include-markdown-plugin==7.2.2",       # Docs: https://github.com/mondeja/mkdocs-include-markdown-plugin
   "mkdocs-glightbox==0.5.2",                     # Docs: https://github.com/blueswen/mkdocs-glightbox
   "pymdown-extensions==10.21.3",                 # Docs: https://facelessuser.github.io/pymdown-extensions/
