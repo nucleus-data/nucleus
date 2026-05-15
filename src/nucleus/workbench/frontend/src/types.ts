@@ -104,6 +104,13 @@ export interface CatalogRowDTO {
   check_count: number;
   dep_count: number;
   compute: string | null;
+  /**
+   * ISO 8601 UTC timestamp of the last successful materialization, or null
+   * when the asset has never been materialised. UX audit Rec #6
+   * (2026-05-15) — matches Unity Catalog "Updated" + Snowsight "Last
+   * Modified" columns.
+   */
+  last_materialized: string | null;
 }
 
 /** GET /api/catalog (paged) */

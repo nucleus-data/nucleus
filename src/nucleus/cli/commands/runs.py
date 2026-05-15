@@ -48,8 +48,14 @@ runs_app = typer.Typer(
 
 
 def _exit_runs_error(err: NucleusError, code: int = 1) -> None:
-    """Render NucleusError to stderr and exit — mirrors ``schedule.py`` pattern."""
-    typer.echo(f"Error: {err.user_message}", err=True)
+    """Render NucleusError to stderr and exit — mirrors ``schedule.py`` pattern.
+
+    UX audit Rec #3 (2026-05-15): bracket-prefix the NE-code so users can
+    grep ``NE3011`` from terminal output like ``[ERROR_CONDITION]`` in
+    Databricks or ``nnnnnn (sqlstate):`` in Snowflake.
+    """
+    code_tag = getattr(err, "error_code", "") or "NE3001"
+    typer.echo(f"Error [{code_tag}]: {err.user_message}", err=True)
     if err.fix_hint:
         typer.echo(f"Fix:   {err.fix_hint}", err=True)
     typer.echo(f"Docs:  {err.docs_url}", err=True)
@@ -80,9 +86,26 @@ _STATUS_DOT: dict[str, str] = {
     "cancelled": "[dim]●[/dim]",
 }
 
+# UX audit Rec #1 (2026-05-15): Title-Case status words next to the dot so
+# Databricks Lakeflow / Snowflake Task users see the same vocabulary they
+# already memorised. Databricks ships `Succeeded / Failed / Running /
+# Cancelled`; Snowflake ships the same set; we render Title-Case "success"
+# → "Succeeded" so the visible word matches both giants.
+_STATUS_DISPLAY: dict[str, str] = {
+    "success": "Succeeded",
+    "failed": "Failed",
+    "running": "Running",
+    "cancelled": "Cancelled",
+}
+
 
 def _dot(status: str) -> str:
     return _STATUS_DOT.get(status, "●")
+
+
+def _status_label(status: str) -> str:
+    """Return Title-Case status label per UX audit Rec #1."""
+    return _STATUS_DISPLAY.get(status, status.title() if status else "Unknown")
 
 
 def _fmt_duration(ms: int | None) -> str:
@@ -138,7 +161,7 @@ def runs_list(
             "--format",
             "-f",
             envvar="NUCLEUS_FORMAT",
-            help="Output format: [bold]text[/bold] | json.",
+            help="Output format: [bold]text[/bold] | json (NDJSON) | jsonl (alias).",
         ),
     ] = "text",
 ) -> None:
@@ -154,12 +177,14 @@ def runs_list(
         nucleus runs list --status failed --format json
     """
     try:
-        if format_ not in {"text", "json"}:
+        # UX audit Rec #8 (2026-05-15): accept ``jsonl`` as a synonym of ``json``
+        # — `nucleus runs list` already emits NDJSON, jq's ecosystem uses .jsonl.
+        if format_ not in {"text", "json", "jsonl"}:
             from nucleus.errors import NucleusInvalidAssetDefinition
 
             raise NucleusInvalidAssetDefinition(
                 user_message=f"--format {format_!r} is not supported for `nucleus runs list`.",
-                fix_hint="Pass --format text (default) or --format json.",
+                fix_hint="Pass --format text (default), --format json (NDJSON), or --format jsonl (alias).",
             )
 
         ledger = _get_ledger()
@@ -170,7 +195,7 @@ def runs_list(
             since=since,
         )
 
-        if format_ == "json":
+        if format_ in {"json", "jsonl"}:
             for r in records:
                 sys.stdout.write(json.dumps(r.to_dict()) + "\n")
             return
@@ -184,7 +209,10 @@ def runs_list(
 
         console = Console()
         table = Table(show_lines=False, pad_edge=False)
-        table.add_column("")  # status dot — no header
+        # UX audit Rec #1: status dot + Title-Case word so DB/SF users see
+        # the same vocabulary they memorised.
+        table.add_column("")  # status dot
+        table.add_column("status", no_wrap=True)
         table.add_column("run id", no_wrap=True)
         table.add_column("asset", no_wrap=True)
         table.add_column("duration", justify="right")
@@ -194,6 +222,7 @@ def runs_list(
         for r in records:
             table.add_row(
                 _dot(r.status),
+                _status_label(r.status),
                 r.run_id[:8],
                 r.asset_key,
                 _fmt_duration(r.duration_ms),
@@ -222,7 +251,7 @@ def runs_show(
             "--format",
             "-f",
             envvar="NUCLEUS_FORMAT",
-            help="Output format: [bold]text[/bold] | json.",
+            help="Output format: [bold]text[/bold] | json | jsonl (alias).",
         ),
     ] = "text",
 ) -> None:
@@ -237,12 +266,13 @@ def runs_show(
         nucleus runs show 01HXX1234 --format json
     """
     try:
-        if format_ not in {"text", "json"}:
+        # UX audit Rec #8 (2026-05-15): accept ``jsonl`` as a synonym.
+        if format_ not in {"text", "json", "jsonl"}:
             from nucleus.errors import NucleusInvalidAssetDefinition
 
             raise NucleusInvalidAssetDefinition(
                 user_message=f"--format {format_!r} is not supported for `nucleus runs show`.",
-                fix_hint="Pass --format text (default) or --format json.",
+                fix_hint="Pass --format text (default), --format json, or --format jsonl (alias).",
             )
 
         ledger = _get_ledger()
@@ -256,7 +286,7 @@ def runs_show(
                 fix_hint="Use `nucleus runs list` to see available run IDs.",
             )
 
-        if format_ == "json":
+        if format_ in {"json", "jsonl"}:
             sys.stdout.write(json.dumps(record.to_dict()) + "\n")
             return
 
@@ -384,8 +414,12 @@ def runs_tail(
         ledger = _get_ledger()
 
         def _print_record(r: object) -> None:
+            # UX audit Rec #1 (2026-05-15): include the Title-Case status
+            # word next to the dot so non-TTY tails (CI logs, piped output)
+            # carry the status without ANSI dot interpretation.
             typer.echo(
-                f"{_dot(r.status)} {r.run_id[:8]}  "  # type: ignore[attr-defined]
+                f"{_dot(r.status)} {_status_label(r.status):<10}  "  # type: ignore[attr-defined]
+                f"{r.run_id[:8]}  "  # type: ignore[attr-defined]
                 f"{r.asset_key:<28}  "  # type: ignore[attr-defined]
                 f"{_fmt_duration(r.duration_ms):>8}  "  # type: ignore[attr-defined]
                 f"{_fmt_ts(r.started_at)}"  # type: ignore[attr-defined]

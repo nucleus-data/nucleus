@@ -120,7 +120,7 @@ class TestExistingDirectory:
         (existing / "user_file.txt").write_text("important")
         result = runner.invoke(app, ["init", "demo"])
         assert result.exit_code == 1
-        assert "Error:" in result.stdout
+        assert "Error" in result.stdout
         assert (existing / "user_file.txt").read_text() == "important"
 
     def test_empty_dir_accepted(self, in_tmp_dir: Path) -> None:
@@ -134,7 +134,7 @@ class TestExistingDirectory:
         (in_tmp_dir / "demo").write_text("not a directory")
         result = runner.invoke(app, ["init", "demo"])
         assert result.exit_code == 1
-        assert "Error:" in result.stdout
+        assert "Error" in result.stdout
 
 
 # ============================================================================
@@ -161,14 +161,14 @@ class TestInvalidNames:
     def test_invalid_names_rejected(self, bad: str) -> None:
         result = runner.invoke(app, ["init", bad])
         assert result.exit_code == 1, f"expected reject for {bad!r}: {result.stdout}"
-        assert "Error:" in result.stdout
+        assert "Error" in result.stdout
 
     @pytest.mark.usefixtures("in_tmp_dir")
     def test_missing_name_rejected(self) -> None:
         """Calling ``init`` with no positional arg surfaces a typed error."""
         result = runner.invoke(app, ["init"])
         assert result.exit_code == 1
-        assert "Error:" in result.stdout
+        assert "Error" in result.stdout
         assert "project name" in result.stdout.lower()
 
 
@@ -186,7 +186,7 @@ class TestTemplateFlag:
     def test_unknown_template_rejected(self, in_tmp_dir: Path) -> None:
         result = runner.invoke(app, ["init", "demo", "--template", "nonexistent"])
         assert result.exit_code == 1
-        assert "Error:" in result.stdout
+        assert "Error" in result.stdout
         assert "default" in result.stdout
         assert not (in_tmp_dir / "demo").exists()
 

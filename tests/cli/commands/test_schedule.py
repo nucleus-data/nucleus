@@ -150,7 +150,7 @@ class TestScheduleList:
         assert result.exit_code != 0
         # Error rendered to stderr; combine both streams for the assertion.
         combined = (result.output or "") + (result.stderr or "")
-        assert "Error:" in combined or "csv" in combined
+        assert "Error" in combined or "csv" in combined
 
     def test_no_dagster_classnames_in_output(self, runner: CliRunner) -> None:
         import nucleus
@@ -227,7 +227,7 @@ class TestSchedulePreview:
             result = runner.invoke(app, ["schedule", "preview", "marts.nonexistent"])
 
         assert result.exit_code != 0
-        assert "Error:" in result.output or "Error:" in result.stderr
+        assert "Error" in result.output or "Error" in result.stderr
 
     def test_no_dagster_classnames_in_preview_output(self, runner: CliRunner) -> None:
         import nucleus

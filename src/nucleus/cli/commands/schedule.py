@@ -43,8 +43,14 @@ schedule_app = typer.Typer(
 
 
 def _exit_schedule_error(err: NucleusError, code: int = 1) -> None:
-    """Render a NucleusError to stderr and exit — mirrors ``cli/main.py`` pattern."""
-    typer.echo(f"Error: {err.user_message}", err=True)
+    """Render a NucleusError to stderr and exit — mirrors ``cli/main.py`` pattern.
+
+    UX audit Rec #3 (2026-05-15): bracket-prefix the NE-code so users can
+    grep ``NE5005`` from terminal output like ``[ERROR_CONDITION]`` in
+    Databricks or ``nnnnnn (sqlstate):`` in Snowflake.
+    """
+    code_tag = getattr(err, "error_code", "") or "NE3001"
+    typer.echo(f"Error [{code_tag}]: {err.user_message}", err=True)
     if err.fix_hint:
         typer.echo(f"Fix:   {err.fix_hint}", err=True)
     typer.echo(f"Docs:  {err.docs_url}", err=True)

@@ -100,14 +100,19 @@ def _exit_nucleus_error(err: NucleusError, code: int = 1) -> NoReturn:
 
     Output format (stderr only):
 
-        Error: <user_message>
-        Fix:   <fix_hint>       (line omitted when fix_hint is empty)
-        Docs:  <docs_url>
+        Error [NE3002]: <user_message>
+        Fix:            <fix_hint>       (line omitted when fix_hint is empty)
+        Docs:           <docs_url>
+
+    The bracket-prefix NE-code mirrors Databricks ``[ERROR_CONDITION]`` and
+    Snowflake ``nnnnnn (sqlstate):`` so DB/SF converts can grep the code
+    directly from terminal output (UX audit Rec #3, 2026-05-15).
 
     Per §12 forbidden patterns: no Typer, Click, Dagster, or DuckDB class names
     may appear in this output — only user-language strings from NucleusError.
     """
-    typer.echo(f"Error: {err.user_message}", err=True)
+    code_tag = getattr(err, "error_code", "") or "NE3001"
+    typer.echo(f"Error [{code_tag}]: {err.user_message}", err=True)
     if err.fix_hint:
         typer.echo(f"Fix:   {err.fix_hint}", err=True)
     typer.echo(f"Docs:  {err.docs_url}", err=True)
@@ -446,8 +451,18 @@ def _execute_sql(
 
     conn = duckdb.connect(":memory:")
     try:
-        catalog = _open_iceberg_catalog(warehouse_dir)
-        refs = _register_catalog_in_duckdb(catalog, conn)
+        # Catalog open + DuckDB-view registration both call pyiceberg internals
+        # (load_catalog / load_table) which can raise pydantic.ValidationError
+        # on corrupt *.metadata.json — chaos J8 / CF-2.  Wrap in translate() so
+        # those leaks become NucleusCatalogError (NE1007) per CF-3 handler.
+        # Docs: https://py.iceberg.apache.org/api/  (pyiceberg==0.11.1)
+        try:
+            catalog = _open_iceberg_catalog(warehouse_dir)
+            refs = _register_catalog_in_duckdb(catalog, conn)
+        except NucleusError:
+            raise
+        except Exception as exc:  # noqa: BLE001 - boundary; translate() routes typed errors.
+            raise translate(exc) from exc
         if _REF_RE.search(sql):
 
             def _resolver(name: str) -> str:
@@ -900,11 +915,18 @@ def run(
                 fix_hint="Run one asset at a time, e.g. `nucleus run example.greeting`.",
                 docs_url="https://nucleus.dev/errors/not-implemented",
             )
-        if format_ not in {"text", "json"}:
+        # UX audit Rec #8 (2026-05-15): accept ``jsonl`` as a synonym of ``json``
+        # — `nucleus run --format json` already emits NDJSON; ``jsonl`` matches
+        # jq ecosystem convention so pipelines `nucleus run x --format jsonl | jq .`
+        # signal NDJSON-ness up front. Normalised to ``"json"`` before being
+        # passed to the renderer so render code stays single-branch.
+        if format_ not in {"text", "json", "jsonl"}:
             raise NucleusInvalidAssetDefinition(
                 user_message=f"--format {format_!r} is not supported for `nucleus run`.",
-                fix_hint="Pass --format text (default) or --format json.",
+                fix_hint="Pass --format text (default), --format json (NDJSON), or --format jsonl (alias).",
             )
+        if format_ == "jsonl":
+            format_ = "json"
         asset_key = keys[0]
         config_path = _locate_project_config()
         config = _load_project_config(config_path)
@@ -1157,11 +1179,17 @@ def query(
                 fix_hint='Use a SQL string instead: nucleus query "SELECT * FROM <asset>".',
                 docs_url="https://nucleus.dev/errors/not-implemented",
             )
-        if format_ not in {"text", "json", "csv"}:
+        # UX audit Rec #8: ``jsonl`` accepted as alias for ``json`` (NDJSON).
+        if format_ not in {"text", "json", "jsonl", "csv"}:
             raise NucleusInvalidAssetDefinition(
                 user_message=f"--format {format_!r} is not supported.",
-                fix_hint="Pass --format text (default), --format json, or --format csv.",
+                fix_hint=(
+                    "Pass --format text (default), --format json (NDJSON), "
+                    "--format jsonl (alias), or --format csv."
+                ),
             )
+        if format_ == "jsonl":
+            format_ = "json"
         if not sql or not sql.strip():
             raise NucleusInvalidAssetDefinition(
                 user_message="A SQL string is required.",
@@ -1206,11 +1234,14 @@ def list_assets(
         nucleus list --format json
     """
     try:
-        if format_ not in {"text", "json"}:
+        # UX audit Rec #8: ``jsonl`` accepted as alias for ``json``.
+        if format_ not in {"text", "json", "jsonl"}:
             raise NucleusInvalidAssetDefinition(
                 user_message=f"--format {format_!r} is not supported for `nucleus list`.",
-                fix_hint="Pass --format text (default) or --format json.",
+                fix_hint="Pass --format text (default), --format json, or --format jsonl (alias).",
             )
+        if format_ == "jsonl":
+            format_ = "json"
         config_path = _locate_project_config()
         _import_assets_package(config_path.parent)
         from nucleus.sdk.decorators import _registered_keys

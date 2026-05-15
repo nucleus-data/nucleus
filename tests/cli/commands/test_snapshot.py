@@ -80,7 +80,7 @@ def test_branch_create_already_exists() -> None:
     table = _make_table(refs={"audit-2026": existing_ref})
     with _patch_open(table):
         result = runner.invoke(snapshot_app, ["branch", "create", "raw.users", "audit-2026"])
-    assert result.exit_code != 0 or "Error:" in result.output
+    assert result.exit_code != 0 or "Error" in result.output
     table.manage_snapshots().create_branch.assert_not_called()
 
 
@@ -111,7 +111,7 @@ def test_branch_delete_not_found() -> None:
     table = _make_table(refs={})
     with _patch_open(table):
         result = runner.invoke(snapshot_app, ["branch", "delete", "raw.users", "nonexistent"])
-    assert result.exit_code != 0 or "Error:" in result.output
+    assert result.exit_code != 0 or "Error" in result.output
     table.manage_snapshots().remove_branch.assert_not_called()
 
 

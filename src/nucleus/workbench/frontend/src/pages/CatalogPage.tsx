@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import { fetchCatalog } from '../lib/api';
 import TopNav from '../components/TopNav';
+import NamespacePath from '../components/NamespacePath';
+import { relativeTime, absoluteTime } from '../lib/relativeTime';
 
 const PAGE_SIZE = 25;
 
@@ -131,25 +133,31 @@ export default function CatalogPage() {
                   borderBottom: '1px solid var(--border)',
                 }}
               >
-                {['Asset key', 'Namespace', 'Schedule', 'Contract', 'Checks', 'Dependencies', 'Compute'].map(
-                  (col) => (
-                    <th
-                      key={col}
-                      style={{
-                        padding: '10px 16px',
-                        textAlign: 'left',
-                        fontSize: 11,
-                        fontWeight: 700,
-                        color: 'var(--muted)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {col}
-                    </th>
-                  ),
-                )}
+                {[
+                  'Asset',
+                  'Schedule',
+                  'Contract',
+                  'Checks',
+                  'Last materialized',
+                  'Dependencies',
+                  'Compute',
+                ].map((col) => (
+                  <th
+                    key={col}
+                    style={{
+                      padding: '10px 16px',
+                      textAlign: 'left',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: 'var(--muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {col}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -176,27 +184,16 @@ export default function CatalogPage() {
                     (e.currentTarget as HTMLElement).style.background = 'transparent';
                   }}
                 >
-                  {/* Asset key */}
+                  {/* Asset — Rec #5 (2026-05-15): namespace · name chip pair
+                      + copy-on-click button. Click the chip text to navigate. */}
                   <td style={{ padding: '10px 16px' }}>
                     <Link
                       to={`/assets/${encodeURIComponent(row.key)}`}
-                      className="font-mono"
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                        color: 'var(--primary)',
-                        textDecoration: 'none',
-                      }}
+                      aria-label={`Open ${row.key}`}
+                      style={{ textDecoration: 'none' }}
                     >
-                      {row.key}
+                      <NamespacePath fullKey={row.key} namespace={row.namespace} />
                     </Link>
-                  </td>
-
-                  {/* Namespace */}
-                  <td style={{ padding: '10px 16px' }}>
-                    <span className="font-mono" style={{ fontSize: 12, color: 'var(--muted)' }}>
-                      {row.namespace}
-                    </span>
                   </td>
 
                   {/* Schedule */}
@@ -221,6 +218,20 @@ export default function CatalogPage() {
                   <td style={{ padding: '10px 16px' }}>
                     <span style={{ fontSize: 12, color: row.check_count > 0 ? 'var(--text)' : 'var(--subtle)' }}>
                       {row.check_count > 0 ? row.check_count : '—'}
+                    </span>
+                  </td>
+
+                  {/* Last materialized — Rec #6 (2026-05-15): relative time
+                      from RunLedger.list(asset_key, status="success"). */}
+                  <td style={{ padding: '10px 16px' }}>
+                    <span
+                      title={absoluteTime(row.last_materialized) || undefined}
+                      style={{
+                        fontSize: 12,
+                        color: row.last_materialized ? 'var(--text)' : 'var(--subtle)',
+                      }}
+                    >
+                      {relativeTime(row.last_materialized)}
                     </span>
                   </td>
 

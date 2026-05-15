@@ -192,7 +192,7 @@ class TestRunsShow:
 
         assert result.exit_code != 0
         combined = (result.output or "") + (result.stderr or "")
-        assert "NE3011" in combined or "not found" in combined.lower() or "Error:" in combined
+        assert "NE3011" in combined or "not found" in combined.lower() or "Error" in combined
 
     def test_show_fix_hint_present_on_not_found(self, runner: CliRunner, ledger: RunLedger) -> None:
         with _patch_ledger(ledger):
@@ -239,7 +239,7 @@ class TestRunsCancel:
 
         assert result.exit_code != 0
         combined = (result.output or "") + (result.stderr or "")
-        assert "Error:" in combined or "not found" in combined.lower()
+        assert "Error" in combined or "not found" in combined.lower()
 
 
 # ---------------------------------------------------------------------------

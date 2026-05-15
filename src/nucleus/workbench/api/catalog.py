@@ -18,7 +18,10 @@ from typing import Any
 # Docs: https://fastapi.tiangolo.com/tutorial/bigger-applications/
 from fastapi import APIRouter, HTTPException
 
+from pathlib import Path
+
 from nucleus.coordination.error_translation import translate
+from nucleus.coordination.run_ledger import RunLedger
 from nucleus.errors import NucleusError
 from nucleus.sdk.decorators import _registered_keys, get_asset, get_checks
 
@@ -28,7 +31,37 @@ _DEFAULT_PAGE_SIZE = 25
 _MAX_PAGE_SIZE = 100
 
 
-def _catalog_row(key: str) -> dict[str, Any] | None:
+def _resolve_ledger() -> RunLedger | None:
+    """Locate the project's RunLedger so the catalog rows can show
+    ``last_materialized`` (UX audit Rec #6, 2026-05-15).
+
+    Returns ``None`` when the API is invoked outside a project tree (tests
+    + bare ``nucleus workbench start`` from $HOME) — the catalog page still
+    renders, just without the freshness column.
+    """
+    try:
+        from nucleus.cli.main import _locate_project_config  # lazy: keeps CLI off the API hot path
+        config_path = _locate_project_config()
+        return RunLedger(config_path.parent)
+    except NucleusError:
+        # Fall back to cwd so the field is at least populated for `nucleus workbench start`
+        # invocations that happen to live inside a project.  Returns None when no ledger
+        # exists yet (fresh project, never materialised).
+        ledger_dir = Path.cwd()
+        if (ledger_dir / ".nucleus" / "runs" / "runs.ndjson").exists():
+            return RunLedger(ledger_dir)
+        return None
+
+
+def _last_materialized(ledger: RunLedger | None, asset_key: str) -> str | None:
+    """Return the most-recent SUCCESS run's ``started_at`` for ``asset_key``."""
+    if ledger is None:
+        return None
+    records = ledger.list(asset_key=asset_key, status="success", limit=1)
+    return records[0].started_at if records else None
+
+
+def _catalog_row(key: str, ledger: RunLedger | None) -> dict[str, Any] | None:
     """Build one catalog row for a registered asset key."""
     defn = get_asset(key)
     if defn is None:
@@ -44,6 +77,9 @@ def _catalog_row(key: str) -> dict[str, Any] | None:
         "check_count": len(checks),
         "dep_count": len(defn.deps),
         "compute": defn.compute,
+        # UX audit Rec #6 (2026-05-15): most-recent SUCCESS run timestamp.
+        # ``null`` when never materialised; the frontend renders an em-dash.
+        "last_materialized": _last_materialized(ledger, key),
     }
 
 
@@ -87,9 +123,13 @@ def list_catalog(
         start = (page - 1) * page_size
         page_keys = all_keys[start : start + page_size]
 
+        # UX audit Rec #6 — resolve ledger ONCE per page (not once per row).
+        # When no project context is reachable the ledger is None and every
+        # row's ``last_materialized`` field renders null.
+        ledger = _resolve_ledger()
         items: list[dict[str, Any]] = []
         for key in page_keys:
-            row = _catalog_row(key)
+            row = _catalog_row(key, ledger)
             if row is not None:
                 items.append(row)
 

@@ -110,7 +110,7 @@ class TestScheduleOn:
 
         assert result.exit_code != 0
         combined = (result.output or "") + (result.stderr or "")
-        assert "already running" in combined.lower() or "NE5014" in combined or "Error:" in combined
+        assert "already running" in combined.lower() or "NE5014" in combined or "Error" in combined
 
 
 # ---------------------------------------------------------------------------
@@ -247,7 +247,7 @@ class TestScheduleTrigger:
 
         assert result.exit_code != 0
         combined = (result.output or "") + (result.stderr or "")
-        assert "Error:" in combined
+        assert "Error" in combined
 
 
 # ---------------------------------------------------------------------------

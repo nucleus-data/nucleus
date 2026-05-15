@@ -72,7 +72,9 @@ snapshot_app.add_typer(tag_app, name="tag")
 
 
 def _exit_err(err: NucleusError, code: int = 1) -> None:
-    typer.echo(f"Error: {err.user_message}", err=True)
+    """Render NucleusError + exit. UX audit Rec #3 (2026-05-15): bracket the NE-code."""
+    code_tag = getattr(err, "error_code", "") or "NE3001"
+    typer.echo(f"Error [{code_tag}]: {err.user_message}", err=True)
     if err.fix_hint:
         typer.echo(f"Fix:   {err.fix_hint}", err=True)
     typer.echo(f"Docs:  {err.docs_url}", err=True)

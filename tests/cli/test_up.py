@@ -44,7 +44,7 @@ def test_no_project_raises(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> N
     monkeypatch.chdir(tmp_path)
     result = runner.invoke(app, ["up"])
     assert result.exit_code == 1
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr
 
 
 def test_missing_compose_yaml_raises(project_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -53,7 +53,7 @@ def test_missing_compose_yaml_raises(project_dir: Path, monkeypatch: pytest.Monk
     result = runner.invoke(app, ["up"])
     assert result.exit_code == 1
     assert "docker-compose.yaml" in result.stderr
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr
 
 
 def test_docker_missing_raises(monkeypatch: pytest.MonkeyPatch, project_with_compose: Path) -> None:
@@ -70,7 +70,7 @@ def test_docker_missing_raises(monkeypatch: pytest.MonkeyPatch, project_with_com
 
     result = runner.invoke(app, ["up"])
     assert result.exit_code == 1
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr
     assert "Docker is not installed" in result.stderr
 
 
@@ -189,7 +189,7 @@ def test_compose_failure_translates_environment(
 
     result = runner.invoke(app, ["up"])
     assert result.exit_code == 1
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr
 
 
 def test_image_pull_maps_to_network_error(
@@ -209,7 +209,7 @@ def test_image_pull_maps_to_network_error(
 
     result = runner.invoke(app, ["up"])
     assert result.exit_code == 1
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr
     assert "pull" in result.stderr.lower() or "image" in result.stderr.lower()
 
 
@@ -227,7 +227,7 @@ def test_health_poll_timeout(project_with_compose: Path, monkeypatch: pytest.Mon
 
     result = runner.invoke(app, ["up"])
     assert result.exit_code == 1
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr
 
 
 def test_http_poll_uses_httpx(project_with_compose: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -319,4 +319,4 @@ def test_rebuild_down_failure_raises(
 
     result = runner.invoke(app, ["up", "--rebuild"])
     assert result.exit_code == 1
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr

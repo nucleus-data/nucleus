@@ -9,7 +9,7 @@
  * Theme tokens are injected via defineTheme so Monaco matches the app palette.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { Play, Loader2, AlertCircle, Table2 } from 'lucide-react';
 import type { QueryResultDTO } from '../types';
@@ -28,16 +28,11 @@ export default function QueryEditor() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-        e.preventDefault();
-        void run();
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  // UX audit Rec #7 (2026-05-15): ``run`` is held in a ref so Monaco's
+  // ``addCommand`` (registered once at mount time) always invokes the
+  // freshest version. Without this the keybinding captures the initial
+  // closure and Cmd-Enter would race against stale ``sql`` state.
+  const runRef = useRef<(() => Promise<void>) | null>(null);
 
   const run = useCallback(async () => {
     const q = sql.trim();
@@ -55,9 +50,27 @@ export default function QueryEditor() {
     }
   }, [sql, loading]);
 
+  // Keep the ref pointing at the latest ``run`` callback.
+  runRef.current = run;
+
   const monacoTheme = theme === 'dark' ? 'nucleus-dark' : 'nucleus-light';
 
-  function handleEditorMount(_: unknown, monaco: { editor: { defineTheme: (name: string, def: unknown) => void } }) {
+  function handleEditorMount(
+    editor: { addCommand: (keybinding: number, handler: () => void) => void },
+    monaco: {
+      KeyMod: { CtrlCmd: number };
+      KeyCode: { Enter: number };
+      editor: { defineTheme: (name: string, def: unknown) => void };
+    },
+  ) {
+    // UX audit Rec #7 — Cmd/Ctrl+Enter inside Monaco invokes the latest run
+    // closure via the ref. Match the Snowsight + Databricks SQL Editor
+    // convention; the existing toolbar hint already advertises ⌘Enter.
+    // Docs: https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.ICodeEditor.html#addCommand
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+      void runRef.current?.();
+    });
+
     monaco.editor.defineTheme('nucleus-dark', {
       base: 'vs-dark',
       inherit: true,

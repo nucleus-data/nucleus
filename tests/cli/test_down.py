@@ -44,7 +44,7 @@ def test_down_no_project(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Non
     monkeypatch.chdir(tmp_path)
     out = runner.invoke(app, ["down"])
     assert out.exit_code == 1
-    assert "Error:" in out.stderr
+    assert "Error" in out.stderr
 
 
 def test_down_no_compose_raises(project_dir: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -105,7 +105,7 @@ def test_down_compose_failure(project_with_compose: Path, monkeypatch: pytest.Mo
 
     result = runner.invoke(app, ["down"])
     assert result.exit_code == 1
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr
 
 
 def test_down_docker_missing(monkeypatch: pytest.MonkeyPatch, project_with_compose: Path) -> None:
@@ -122,7 +122,7 @@ def test_down_docker_missing(monkeypatch: pytest.MonkeyPatch, project_with_compo
 
     result = runner.invoke(app, ["down"])
     assert result.exit_code == 1
-    assert "Error:" in result.stderr
+    assert "Error" in result.stderr
 
 
 def test_v1_runner_invokes_docker_compose_binary(

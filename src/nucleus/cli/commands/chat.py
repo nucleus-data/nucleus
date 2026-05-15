@@ -76,7 +76,10 @@ def chat(
             model=model,
         )
     except NucleusError as err:
-        typer.echo(f"Error: {err.user_message}", err=True)
+        # UX audit Rec #3 (2026-05-15): bracket-prefix the NE-code so users
+        # can grep NE4001 / NE4002 etc. directly from terminal output.
+        code_tag = getattr(err, "error_code", "") or "NE3001"
+        typer.echo(f"Error [{code_tag}]: {err.user_message}", err=True)
         if err.fix_hint:
             typer.echo(f"Fix:   {err.fix_hint}", err=True)
         typer.echo(f"Docs:  {err.docs_url}", err=True)
