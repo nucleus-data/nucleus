@@ -4,10 +4,11 @@
 
 | Version | Supported |
 | ------- | --------- |
+| 0.2.x   | ✓         |
 | 0.1.x   | ✓         |
 | Older   | ✗         |
 
-Pre-release and older tags are best-effort only; upgrade to the latest `0.1.x` line when reporting issues.
+Pre-release and older tags are best-effort only; upgrade to the latest `0.2.x` line (or, if still on the `0.1.x` series, the latest `0.1.x`) when reporting issues.
 
 ## Reporting a vulnerability
 

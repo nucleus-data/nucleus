@@ -1,10 +1,25 @@
 # Nucleus — default code owners (GitHub CODEOWNERS)
 # Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 #
-# Replace @founder with the maintainer GitHub handle before making the repo public.
-* @founder
+# Every path needs a fallback owner.  The most specific match wins.
 
-# Future area ownership (uncomment + assign handles when the team grows):
+* @mtoanng
+
+# Canonical source-of-truth documents
+/nucleus_architecture_v4.1.md @mtoanng
+/AGENTS.md                    @mtoanng
+/README.md                    @mtoanng
+/CHANGELOG.md                 @mtoanng
+
+# Architecture Decision Records — every ADR needs founder sign-off
+/docs/decisions/              @mtoanng
+
+# Governance + CI infrastructure
+/scripts/                     @mtoanng
+/.github/                     @mtoanng
+/.pre-commit-config.yaml      @mtoanng
+
+# Future team-owner placeholders (uncomment + assign once team grows):
 # /src/nucleus/coordination/   @coordination-owner
 # /src/nucleus/ctx/            @ctx-owner
-# /.github/workflows/          @infra-owner
+# /src/nucleus/workbench/      @workbench-owner

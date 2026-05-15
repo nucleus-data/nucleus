@@ -1,15 +1,86 @@
-# Dependabot — weekly dependency updates (Constraint #11: one logical bump per PR when merged).
+# Dependabot — monthly dependency updates, one-component-per-PR discipline.
+# Per AGENTS.md §11.13 (Constraint #11) + founder hardening pass 2026-05-15.
+#
+# Schedule is MONTHLY (not weekly) because the upgrade workflow requires:
+#   1. read the changelog from current → target
+#   2. document rollback command
+#   3. run upgrade smoke tests
+#   4. wait 24h before next dep upgrade
+# Weekly cadence creates an unworkable backlog for a solo + AI maintainer.
+#
+# Grouping: by default Dependabot opens one PR per dependency (preserves the
+# one-component-per-PR rule).  Major-version bumps are routed through a
+# dedicated `*-major` group so they all land in a single labelled PR per
+# ecosystem per month — that PR is then split + ADR'd by the founder.
+#
+# Labels: every PR gets `dependencies` + an ecosystem tag (`python`,
+# `github_actions`, `javascript`).  Major-version groups additionally
+# inherit `major-version-upgrade` + `needs-adr` (top-level labels apply to
+# every PR Dependabot opens; the founder/triager adds the major-specific
+# tags on triage if Dependabot's title does not carry "bump … major").
+#
 # Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 version: 2
 updates:
+  # ---- Python runtime + dev deps ---------------------------------------
   - package-ecosystem: pip
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
     open-pull-requests-limit: 3
+    commit-message:
+      prefix: "deps(python)"
+    labels:
+      - dependencies
+      - python
+    groups:
+      python-major:
+        applies-to: version-updates
+        update-types: ["major"]
+        patterns:
+          - "*"
 
+  # ---- GitHub Actions ---------------------------------------------------
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
     open-pull-requests-limit: 3
+    commit-message:
+      prefix: "deps(actions)"
+    labels:
+      - dependencies
+      - github_actions
+    groups:
+      actions-major:
+        applies-to: version-updates
+        update-types: ["major"]
+        patterns:
+          - "*"
+
+  # ---- Workbench landing-page npm (root /frontend) ----------------------
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: monthly
+      day: monday
+      time: "06:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "deps(npm)"
+    labels:
+      - dependencies
+      - javascript
+    groups:
+      npm-major:
+        applies-to: version-updates
+        update-types: ["major"]
+        patterns:
+          - "*"

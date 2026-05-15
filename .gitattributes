@@ -1,0 +1,51 @@
+# Nucleus root .gitattributes
+# Docs: https://git-scm.com/docs/gitattributes
+#
+# Forces LF line endings on text files cross-platform (the beachhead persona
+# uses MacBooks + Linux + WSL2; Windows users transparently get CRLF in their
+# working tree via core.autocrlf=true but the repo stores LF).
+
+* text=auto eol=lf
+
+# Explicit text
+*.py text eol=lf
+*.pyi text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.cfg text eol=lf
+*.ini text eol=lf
+*.sh text eol=lf
+*.svg text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+
+# Windows-only scripts keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Explicit binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.parquet binary
+*.whl binary
+
+# Generated files — exclude from diffs in PR review
+package-lock.json linguist-generated=true
+yarn.lock linguist-generated=true
+uv.lock linguist-generated=true

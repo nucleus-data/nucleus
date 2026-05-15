@@ -1,0 +1,60 @@
+# .github/workflows/codeql.yml — Nucleus CodeQL Python SAST
+#
+# Per AGENTS.md §11 + .cursor/rules/nucleus.mdc + founder hardening directive
+# 2026-05-15: enables GitHub-hosted CodeQL static analysis as part of the v0.2
+# beta stability pass.
+#
+# Schedule: weekly + on PR.  Runs entirely on GitHub-provided runners; no
+# self-hosted compute required.  Only python is analysed — frontend JS lives
+# in the Workbench bundle which is type-checked separately by the frontend
+# pipeline.
+#
+# Anti-Over-Engineering note: the v4.1 architecture deferred SAST to v0.5+ in
+# .github/workflows/security.yml.  Founder reversed that decision in the
+# 2026-05-15 hardening pass because (a) CodeQL is zero-cost on public repos,
+# (b) results are advisory and do NOT block CI, (c) one workflow with one
+# language is a flat, comprehensible surface.
+
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "30 4 * * 1"   # 04:30 UTC every Monday
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  analyze:
+    name: Analyze (python)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
