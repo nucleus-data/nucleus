@@ -74,6 +74,7 @@ import contextlib
 import dataclasses
 import inspect
 import logging
+import os
 import time
 import uuid
 from datetime import UTC, datetime
@@ -517,6 +518,7 @@ def materialize_asset(
     lock_timeout: float = 30.0,
     snapshot_retain_days: int = 30,
     snapshot_min_keep: int = 10,
+    _via_mini_scheduler: bool = False,
 ) -> MaterializationResult:
     """Materialize a single Nucleus asset and return its outcome record.
 
@@ -594,6 +596,31 @@ def materialize_asset(
             ),
             docs_url="https://nucleus.dev/errors/not-implemented",
             asset=asset_key,
+        )
+
+    # Composability swap proof (v4.1 §6.7 + §9.3): when the env var
+    # NUCLEUS_USE_MINI_SCHEDULER=1 is exported, route through the
+    # mini-scheduler entry point in ``coordination/daemon.py`` so the
+    # alternative path is exercised end-to-end.  The ``_via_mini_scheduler``
+    # private flag breaks the recursion when the daemon re-enters here.
+    # The default path (env var unset) is unchanged — this is a strictly
+    # gated, opt-in route used by the integration test in
+    # ``tests/integration/test_dagster_to_mini_scheduler_swap.py``.
+    if (
+        not _via_mini_scheduler
+        and os.environ.get("NUCLEUS_USE_MINI_SCHEDULER") == "1"
+    ):
+        from nucleus.coordination.daemon import run_asset as _mini_run
+
+        return _mini_run(
+            asset_key,
+            partition=partition,
+            dry_run=dry_run,
+            warehouse_dir=warehouse_dir,
+            memory_limit=memory_limit,
+            lock_timeout=lock_timeout,
+            snapshot_retain_days=snapshot_retain_days,
+            snapshot_min_keep=snapshot_min_keep,
         )
 
     entry = _resolve_asset_from_registry(asset_key)

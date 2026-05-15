@@ -447,6 +447,75 @@ def trigger_asset(
         raise translate(exc) from exc
 
 
+def run_asset(
+    asset_key: str,
+    *,
+    partition: str | None = None,
+    dry_run: bool = False,
+    warehouse_dir: Path | None = None,
+    memory_limit: str | None = None,
+    lock_timeout: float = 30.0,
+    snapshot_retain_days: int = 30,
+    snapshot_min_keep: int = 10,
+) -> Any:
+    """Mini-scheduler asset entry point — empirical composability proof.
+
+    # Stability: Beta
+
+    This function is the explicit, named alternative entry point for the
+    Dagster → mini-scheduler swap target documented in
+    ``nucleus_architecture_v4.1.md`` §6.7 (mini-scheduler) + §9.3
+    (composability constitution: interface + smoke tests).  It is the path
+    the integration test ``tests/integration/test_dagster_to_mini_scheduler_swap.py``
+    exercises to verify the swap boundary works end-to-end without
+    importing Dagster.
+
+    When ``NUCLEUS_USE_MINI_SCHEDULER=1`` is exported, the default
+    :func:`nucleus.coordination.asset_materialization.materialize_asset`
+    entry point routes through this function — proving the swap is real.
+    Otherwise this function works exactly like :func:`trigger_asset`,
+    delegating to the AMA helpers; the data write path has been
+    Dagster-free since the 2026-05-14 beachhead E2E fix (Option A,
+    ``coordination/asset_materialization.py`` docstring), so both routes
+    converge on the same helpers — the empirical proof is the equivalent
+    :class:`MaterializationResult` returned from both entry points.
+
+    Args:
+        asset_key, partition, dry_run, warehouse_dir, memory_limit,
+        lock_timeout, snapshot_retain_days, snapshot_min_keep: see
+        :func:`nucleus.coordination.asset_materialization.materialize_asset`
+        for full descriptions.  ``upstream`` is fixed to ``"skip"``
+        (v0.1 scope) and ``timeout_seconds`` is omitted (accepted but
+        not enforced at the AMA layer).
+
+    Returns:
+        :class:`nucleus.sdk.results.MaterializationResult`
+
+    Raises:
+        NucleusAssetNotFound (NE3002), NucleusError: see AMA contract.
+    """
+    from nucleus.coordination.asset_materialization import (
+        materialize_asset,
+    )
+
+    try:
+        return materialize_asset(
+            asset_key,
+            partition=partition,
+            dry_run=dry_run,
+            warehouse_dir=warehouse_dir,
+            memory_limit=memory_limit,
+            lock_timeout=lock_timeout,
+            snapshot_retain_days=snapshot_retain_days,
+            snapshot_min_keep=snapshot_min_keep,
+            _via_mini_scheduler=True,
+        )
+    except NucleusError:
+        raise
+    except Exception as exc:
+        raise translate(exc) from exc
+
+
 def get_daemon_status(project_root: Path) -> DaemonStatus:
     """Return the current daemon status and active schedule overview.
 
@@ -485,6 +554,7 @@ def get_daemon_status(project_root: Path) -> DaemonStatus:
 __all__ = [
     "DaemonStatus",
     "get_daemon_status",
+    "run_asset",
     "start_daemon",
     "stop_daemon",
     "trigger_asset",

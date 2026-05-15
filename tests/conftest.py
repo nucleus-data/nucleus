@@ -37,10 +37,18 @@ def pytest_collection_modifyitems(
     config: pytest.Config,  # noqa: ARG001 — reserved for future use
     items: list[pytest.Item],
 ) -> None:
-    """Auto-skip integration tests when env vars are not set.
+    """Auto-skip ``@pytest.mark.integration`` tests when env vars are not set.
 
-    Integration tests require real services (Postgres, MinIO). If their
-    env vars aren't present, skip rather than fail.
+    Tests that explicitly carry ``@pytest.mark.integration`` (per the
+    ``[tool.pytest.ini_options] markers`` list in ``pyproject.toml``)
+    require real external services (Postgres, MinIO).  When their env
+    vars are absent we skip rather than fail.
+
+    Detection is marker-based, NOT path-based — placing a test in
+    ``tests/integration/`` no longer triggers the auto-skip unless it
+    also carries the marker.  This keeps in-process integration tests
+    (e.g. the Dagster ⇄ mini-scheduler swap proof) runnable without
+    Postgres credentials.
     """
     integration_required_env = ("NUCLEUS_TEST_PG_DSN",)
     has_integration_env = all(os.environ.get(v) for v in integration_required_env)
@@ -51,7 +59,10 @@ def pytest_collection_modifyitems(
         'Set them or run with `pytest -m "not integration"`.'
     )
     for item in items:
-        if "integration" in item.keywords and not has_integration_env:
+        has_marker = any(
+            marker.name == "integration" for marker in item.iter_markers()
+        )
+        if has_marker and not has_integration_env:
             item.add_marker(skip_integration)
 
 
