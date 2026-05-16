@@ -29,7 +29,7 @@ Docs:
     psycopg 3.2.3 — https://www.psycopg.org/psycopg3/docs/api/copy.html
     Postgres COPY — https://www.postgresql.org/docs/16/sql-copy.html
     dlt sql_database — https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database
-    Perf claims — docs/research/performance_reliability_targets.md §2.4
+    Perf claims — docs/internal/research/performance_reliability_targets.md §2.4
 """
 
 from __future__ import annotations

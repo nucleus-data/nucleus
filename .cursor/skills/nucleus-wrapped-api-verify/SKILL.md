@@ -32,23 +32,23 @@ integration) and `@AGENTS.md §11.13` (one-component-per-PR upgrades).
 
 ## Per-library research doc index
 
-`@docs/research/README.md` is the master index. Each anchor carries pin,
+`@docs/internal/research/README.md` is the master index. Each anchor carries pin,
 license, surface area, known hallucinations, and the live docs URL. Read
 the relevant anchor before writing code that imports the library:
 
-- Tier 0: `@docs/research/pyiceberg.md`, `@docs/research/pyarrow.md`,
-  `@docs/research/openlineage.md`, `@docs/research/opentelemetry.md`,
-  `@docs/research/lance.md`
-- Tier 1: `@docs/research/duckdb.md`, `@docs/research/polars.md`,
-  `@docs/research/sqlglot.md`, `@docs/research/dlt.md`,
-  `@docs/research/daft.md`, `@docs/research/soda.md`,
-  `@docs/research/dbt-duckdb.md`, `@docs/research/marimo.md`
-- Tier 2: `@docs/research/dagster.md`
+- Tier 0: `@docs/internal/research/pyiceberg.md`, `@docs/internal/research/pyarrow.md`,
+  `@docs/internal/research/openlineage.md`, `@docs/internal/research/opentelemetry.md`,
+  `@docs/internal/research/lance.md`
+- Tier 1: `@docs/internal/research/duckdb.md`, `@docs/internal/research/polars.md`,
+  `@docs/internal/research/sqlglot.md`, `@docs/internal/research/dlt.md`,
+  `@docs/internal/research/daft.md`, `@docs/internal/research/soda.md`,
+  `@docs/internal/research/dbt-duckdb.md`, `@docs/internal/research/marimo.md`
+- Tier 2: `@docs/internal/research/dagster.md`
 
 ## Known hallucinations — never repeat
 
 Cite by name when rejecting AI-suggested usages. Full entries with detection
-and fix are in `@docs/research/ai_hallucinations.md`.
+and fix are in `@docs/internal/research/ai_hallucinations.md`.
 
 - `pyiceberg.commit_atomic()` — does NOT exist. Use `Catalog.commit_table()`
   + app-level coordination (per `@docs/decisions/ADR-001-no-iceberg-commit-service.md`).
@@ -62,11 +62,11 @@ and fix are in `@docs/research/ai_hallucinations.md`.
   writes through `pyiceberg` (`Catalog.create_table()` + `Table.append()`).
 - Cross-pollinated pandas methods on Polars frames (`.iloc`, `.loc`,
   `.apply()` returning DataFrames). Polars has its own surface; check
-  `@docs/research/polars.md`.
+  `@docs/internal/research/polars.md`.
 
 ## When you catch a new hallucination
 
-Append to `@docs/research/ai_hallucinations.md` using the established format:
+Append to `@docs/internal/research/ai_hallucinations.md` using the established format:
 
 ```markdown
 ## YYYY-MM-DD: library.method_or_class

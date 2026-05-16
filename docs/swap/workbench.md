@@ -57,4 +57,4 @@ selection callbacks). Rewire rendering only; do not fork coordination or
 
 - ADR-016 Decision + Rationale §§4–7 and Risk mitigations (bundle size,
   xyflow scale, Pydantic vs msgspec, Tauri deferral).
-- `docs/research/workbench.md` — framework evidence base.
+- `docs/internal/research/workbench.md` — framework evidence base.

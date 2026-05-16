@@ -31,7 +31,7 @@ PoC #1 `pytest` cannot confirm 17/17 green until §1 markers fire on a real Pyth
 - `poc/p4_boot_time/measure.py:102` — sole literal NV in `measure.py` this scan. **3 PoC #4 harness gaps observed but not yet labelled in source**: (a) SeaweedFS lacks `/minio/health/live` → 404 → `measure_minio_health()` → `measure_storage_health()` generalization per ADR-008:81, (b) Windows SQLAlchemy temp-dir cleanup race, (c) `file:///` URI construction latent at `measure.py:118`. Append NV comments at next PoC #4 edit so they grep in v3.
 - **`ctx.materialize(...)` API gap → ADR-013 candidate** — same surface as v01_skeleton_plan §7 item 1; flagged separately because it widens the public-API contract and warrants its own ADR (not a v0.1-skeleton hot-fix).
 - **SeaweedFS internal Iceberg REST Catalog on `:8181`** — parallel-worker investigation in flight at scan time; not yet a source-logged NV. Will surface in v3 if unresolved at next sweep.
-- `docs/research/minio.md` lines 25 / 65 / 217 / 237 / §3.2 cosmetic date pairings (maintenance pass) — **NOT new NV markers** (grep confirms minio[BB] = 14, unchanged from §5); informational only.
+- `docs/internal/research/minio.md` lines 25 / 65 / 217 / 237 / §3.2 cosmetic date pairings (maintenance pass) — **NOT new NV markers** (grep confirms minio[BB] = 14, unchanged from §5); informational only.
 
 ### Top-5 unblock leverage (subjective, ROI-ordered)
 
@@ -113,7 +113,7 @@ PoC #5 (`poc/p5_beachhead/`): **0 NV markers**. `scripts/benchmark_regression.py
 
 ---
 
-## §5. Research-doc open ends (`docs/research/*.md`)
+## §5. Research-doc open ends (`docs/internal/research/*.md`)
 
 Full per-item enumeration unchanged from v1 unless flagged. Net §5 total: **76 markers across 14 active research docs** (v1: 83; −7 — see Resolved callout).
 
@@ -228,9 +228,9 @@ Items that became green between FF v1 (~02:50) and KK v2 (05:10).
 
 - `C4_container.md`: 5 → 2 (−3) — Worker JJ-2 removed stale Typer assumption (:134), stale "minio.md not-yet-written" note (:150), one §7 cross-ref absorbed by ADR-008.
 - `sequence_swap_drill.md`: 2 → 1 (−1) — JJ-2 sweep #2.
-- `docs/research/minio.md`: 20 → 14 (−6) — Worker HH's ADR-008 absorbed MinIO archival posture, SeaweedFS-as-default, AGPLv3 Cloud-bundle risk; JJ-2 propagated to v4.1 §5.8. Status header now ALTERNATE.
-- `docs/research/pyarrow.md`: 6 → 5 (−1) — JJ-2 cleanup.
-- `docs/research/lance.md`: phrasing fixed (count unchanged at 10) — JJ-1 corrected v4.1 §4 "LF aligned" claim.
+- `docs/internal/research/minio.md`: 20 → 14 (−6) — Worker HH's ADR-008 absorbed MinIO archival posture, SeaweedFS-as-default, AGPLv3 Cloud-bundle risk; JJ-2 propagated to v4.1 §5.8. Status header now ALTERNATE.
+- `docs/internal/research/pyarrow.md`: 6 → 5 (−1) — JJ-2 cleanup.
+- `docs/internal/research/lance.md`: phrasing fixed (count unchanged at 10) — JJ-1 corrected v4.1 §4 "LF aligned" claim.
 - `patterns/secret_management.md`: 2 → 1 (−1) — sweep cleanup.
 
 **Cross-reference resolutions (file landings)**:

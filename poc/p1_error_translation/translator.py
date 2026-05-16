@@ -5,7 +5,7 @@ Scope: baseline 3 handlers + fallback; iteration adds wrapped-library coverage
 (README §5). Graduates to ``src/nucleus/coordination/error_translation.py``
 once the PoC acceptance criteria (README §2) pass.
 
-Pins (per AGENTS.md §11.12, see ``docs/research/<lib>.md``):
+Pins (per AGENTS.md §11.12, see ``docs/internal/research/<lib>.md``):
 dagster==1.9.5, polars==1.18.0, duckdb==1.1.3, pyiceberg==0.8.1.
 Spec: ``nucleus_architecture_v4.1.md`` §6.4 +
 ``docs/architecture/sequence_error_translation.md``.
@@ -273,7 +273,7 @@ def _timeout_error_handler(exc: BaseException) -> NucleusError:
 # Lazy registry: avoids importing dagster at module load. Built on first call.
 # NEEDS VERIFICATION on first PoC run: confirm
 # ``dagster.DagsterExecutionStepExecutionError`` is the exact class name and
-# import path in 1.9.5. Log any rename to docs/research/ai_hallucinations.md.
+# import path in 1.9.5. Log any rename to docs/internal/research/ai_hallucinations.md.
 # Single-element cell avoids ``global`` while preserving lazy init (PLW0603).
 _HANDLERS_CELL: list[dict[type, Handler] | None] = [None]
 
@@ -286,7 +286,7 @@ def _registry() -> dict[type, Handler]:
             dg.DagsterExecutionStepExecutionError: _dagster_step_handler,
         }
 
-        # Polars exceptions per docs/research/polars.md §6.
+        # Polars exceptions per docs/internal/research/polars.md §6.
         # Docs: https://docs.pola.rs/api/python/stable/reference/exceptions.html
         try:
             from polars.exceptions import ColumnNotFoundError, SchemaError
@@ -296,7 +296,7 @@ def _registry() -> dict[type, Handler]:
         except ImportError:
             pass
 
-        # DuckDB exceptions per docs/research/duckdb.md §6 (all inherit from duckdb.Error).
+        # DuckDB exceptions per docs/internal/research/duckdb.md §6 (all inherit from duckdb.Error).
         # Docs: https://duckdb.org/docs/stable/clients/python/dbapi
         try:
             import duckdb
@@ -309,7 +309,7 @@ def _registry() -> dict[type, Handler]:
         except ImportError:
             pass
 
-        # pyiceberg exceptions per docs/research/pyiceberg.md §6. NEEDS VERIFICATION
+        # pyiceberg exceptions per docs/internal/research/pyiceberg.md §6. NEEDS VERIFICATION
         # on first PoC run — research doc flags constructor + __cause__ chaining,
         # especially the ValidationError / CommitStateUnknownException pair.
         # Docs: https://py.iceberg.apache.org/api/#exceptions

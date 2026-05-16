@@ -115,7 +115,7 @@ _UpstreamMode = Literal["skip", "materialize", "validate"]
 # ---------------------------------------------------------------------------
 
 # Fraction of total RAM to target for DuckDB's memory_limit.
-# Lowered 0.80 → 0.60 per ``docs/research/performance_reliability_targets.md``
+# Lowered 0.80 → 0.60 per ``docs/internal/research/performance_reliability_targets.md``
 # §10 item #2 — the upstream default of 80 % combined with no GROUP BY hash
 # spill on `memory_limit` exhaustion (https://duckdb.org/docs/1.3/guides/troubleshooting/oom_errors)
 # silently OOM-kills the process on machines that also run Docker containers,

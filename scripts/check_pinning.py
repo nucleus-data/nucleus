@@ -12,7 +12,7 @@ Enforces (in order of severity):
    runtime libraries that simply ship behind an opt-in install (e.g.
    ``pip install nucleus[observability]``); they are not contributor
    tooling. Source: ADR-012 amendment 2026-05-14 +
-   ``docs/research/otel_day1_decision.md`` Option α-split.
+   ``docs/internal/research/otel_day1_decision.md`` Option α-split.
 3. Every entry across every other ``[project.optional-dependencies]`` table
    (``dev``, ``docs``, future contributor-tooling extras) is also pinned. By
    default, those deps may use compatible-release (``~=``) since minor-flex
@@ -86,7 +86,7 @@ COMPAT_DOC = REPO_ROOT / "docs" / "compatibility.md"
 # nucleus[observability]`) that ship real runtime libraries -- not
 # contributor tooling. Same exact-pin discipline as `[project]
 # dependencies`. Source: ADR-012 amendment 2026-05-14 +
-# `docs/research/otel_day1_decision.md` Option alpha-split.
+# `docs/internal/research/otel_day1_decision.md` Option alpha-split.
 #
 # Add a group name here only when the extras row carries runtime semantics.
 # Linters / test runners / docs generators stay outside this set so their

@@ -18,7 +18,7 @@ Pins/docs:
     - ``pyarrow==18.1.0`` — https://arrow.apache.org/docs/python/api.html
     - ``sqlite3`` (stdlib) — https://docs.python.org/3/library/sqlite3.html
     - ``nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
-    - ``docs/research/pyiceberg.md`` §4-§6 — catalog + exception map
+    - ``docs/internal/research/pyiceberg.md`` §4-§6 — catalog + exception map
     - ``docs/patterns/type_mapping.md`` §3 — SQLite ↔ Arrow ↔ Iceberg
 """
 
@@ -103,11 +103,11 @@ def _open_catalog(warehouse_dir: Path) -> Catalog:
     """Open the filesystem-backed SQL catalog for ``warehouse_dir``.
 
     Uses PyIceberg's built-in ``SqlCatalog`` (SQLite-backed catalog) with a ``file://``
-    warehouse. v0.1 default per ``docs/research/pyiceberg.md`` §4.
+    warehouse. v0.1 default per ``docs/internal/research/pyiceberg.md`` §4.
 
     NEEDS VERIFICATION on first PoC run: confirm ``load_catalog`` accepts
     ``type='sql'`` + ``uri=sqlite:///...`` + ``warehouse=file:///...`` as plain
-    string kwargs in 0.8.1. Log any drift to ``docs/research/ai_hallucinations.md``.
+    string kwargs in 0.8.1. Log any drift to ``docs/internal/research/ai_hallucinations.md``.
     """
     warehouse_dir.mkdir(parents=True, exist_ok=True)
     catalog_db = warehouse_dir / "catalog.db"

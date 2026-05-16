@@ -11,7 +11,7 @@ This cookbook is the practical answer to:
 
 > "I have a Nucleus-managed Iceberg lakehouse on S3 (or GCS) and I want my analytics to run on BigQuery. What do I actually do?"
 
-It is a path, not a battle-tested runbook. Section 6 (Honest caveats) lists exactly what is and is not validated. The BigQuery-side documentation has more open questions than the Databricks or Snowflake docs - per `docs/research/parity_vs_databricks_snowflake.md` section 3.3 and section 7, several BigQuery surface claims were marked NEEDS VERIFICATION at research time and remain so here.
+It is a path, not a battle-tested runbook. Section 6 (Honest caveats) lists exactly what is and is not validated. The BigQuery-side documentation has more open questions than the Databricks or Snowflake docs - per `docs/internal/research/parity_vs_databricks_snowflake.md` section 3.3 and section 7, several BigQuery surface claims were marked NEEDS VERIFICATION at research time and remain so here.
 
 The BigQuery side leans on **BigLake** for cross-cloud or BigQuery-native Iceberg tables. Reference: <https://cloud.google.com/bigquery/docs/iceberg-tables>.
 
@@ -190,14 +190,14 @@ The full design lives in `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.
 
 ## 7. Honest caveats - what this cookbook does NOT yet validate
 
-Per `docs/research/parity_vs_databricks_snowflake.md` section 3.3 and section 7, BigQuery has **the highest open-question count of the three graduation targets** because several Google Cloud doc pages timed out during research. Treat the following as known unknowns:
+Per `docs/internal/research/parity_vs_databricks_snowflake.md` section 3.3 and section 7, BigQuery has **the highest open-question count of the three graduation targets** because several Google Cloud doc pages timed out during research. Treat the following as known unknowns:
 
 1. **No end-to-end test in CI today.** No Nucleus CI job spins up a BigQuery dataset and asserts that a Nucleus-written Iceberg snapshot reads cleanly through BigLake. PoC #5 external testers are the first verification path.
 2. **BigLake Metastore is fast-moving.** Several BigLake surfaces (Iceberg integration depth, federation from external Iceberg REST, cross-region availability) were GA at different times during 2025-2026. Pin to the live docs at <https://cloud.google.com/bigquery/docs/biglake-metastore> at integration time. <!-- banned-term: metastore -->
 3. **External Iceberg pointers do NOT auto-discover new snapshots.** Each `CREATE OR REPLACE EXTERNAL TABLE ... uris = [...]` references one specific `metadata.json`. If your Nucleus side commits a new snapshot, BigQuery will not see it until you re-issue the DDL. Workaround: emit a Dataform release on every Nucleus materialization, or graduate to BigLake Metastore (path 2). <!-- banned-term: metastore -->
 4. **Cross-cloud read via BigQuery Omni has region constraints.** Omni regions are limited; your S3 region may not have an Omni equivalent. Check <https://cloud.google.com/bigquery/docs/omni-introduction> before assuming cross-cloud reads will work.
 5. **Iceberg spec version mismatch is possible.** Nucleus pins `pyiceberg`. BigLake supports a documented Iceberg spec range (currently v1, v2; v3 features arrive gradually). Verify against <https://cloud.google.com/bigquery/docs/iceberg-tables> before relying on advanced spec features.
-6. **`bigframes` (BigQuery DataFrames) API surface evolves.** Marked NEEDS VERIFICATION in `docs/research/parity_vs_databricks_snowflake.md` section 7 item 2. Use the current version's docs, not memory.
+6. **`bigframes` (BigQuery DataFrames) API surface evolves.** Marked NEEDS VERIFICATION in `docs/internal/research/parity_vs_databricks_snowflake.md` section 7 item 2. Use the current version's docs, not memory.
 7. **OpenLineage events into Dataplex.** Nucleus emits OpenLineage to NDJSON FileTransport by default. Bridging to Dataplex lineage requires a separate ingestion step, not yet documented end-to-end (NEEDS VERIFICATION against <https://cloud.google.com/dataplex/docs> at integration time).
 8. **IAM permission propagation.** Nucleus has no RBAC layer in v0.2. Once BigQuery owns the tables, all access is governed by GCP IAM. Do NOT assume any Nucleus-side ACL semantics carry over.
 9. **Cost attribution.** The Nucleus per-asset cost meter (v0.7+) does not see BigQuery on-demand or slot costs. Use BigQuery's INFORMATION_SCHEMA.JOBS_BY_PROJECT and Cloud Billing.
@@ -212,7 +212,7 @@ If you hit any of the above, file an issue on <https://github.com/nucleus-data/n
 - `docs/cookbook/graduate-to-databricks.md` - sibling recipe for Databricks.
 - `docs/cookbook/graduate-to-snowflake.md` - sibling recipe for Snowflake.
 - `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md` - design spec for the `compute=` decorator that automates Mode 2.
-- `docs/research/parity_vs_databricks_snowflake.md` - the honest capability matrix that motivated this cookbook (BigQuery section is the most NEEDS VERIFICATION-heavy of the three).
+- `docs/internal/research/parity_vs_databricks_snowflake.md` - the honest capability matrix that motivated this cookbook (BigQuery section is the most NEEDS VERIFICATION-heavy of the three).
 - `nucleus_architecture_v4.1.md` section 10 - canonical Yield-to-Giants Strategy.
 
 ## External references (verified URL form, content NEEDS VERIFICATION at integration time)

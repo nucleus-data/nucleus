@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder  
 **Priority**: P0  
 **Target phase**: v0.3 (decorator design at v0.1/v0.2)  
-**Source research**: `docs/research/inspiration/embedded_analytics_bi.md` §9 + §4; `docs/research/inspiration/ai_data_tooling_2026.md` §3  
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §3 #7, §2.1
+**Source research**: `docs/internal/research/inspiration/embedded_analytics_bi.md` §9 + §4; `docs/internal/research/inspiration/ai_data_tooling_2026.md` §3  
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §3 #7, §2.1
 
 ---
 

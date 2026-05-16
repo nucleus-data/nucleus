@@ -4,7 +4,7 @@ Per ``nucleus_architecture_v4.1.md`` §6.2 step 4 (post-write OpenLineage
 emit) + §13.2 (asset-level lineage at v0.1; column-level deferred to
 v0.5+) + ``.cursor/rules/nucleus.mdc`` lineage row (OpenLineage + sqlglot,
 Tier 0 immortal). Companion research notes:
-``docs/research/openlineage.md``.
+``docs/internal/research/openlineage.md``.
 
 What this module does (v0.1 scope)
 ----------------------------------
@@ -23,7 +23,7 @@ invariant is asserted in ``tests/coordination/test_lineage.py``.
 What this module is NOT (anti-over-engineering, founder directive 2026-05-13)
 -----------------------------------------------------------------------------
 * No HTTP / Kafka / Marquez transport — v0.5+ per
-  ``docs/research/openlineage.md`` §5.3
+  ``docs/internal/research/openlineage.md`` §5.3
 * No column-level lineage — v0.5+ via sqlglot per v4.1 §13.2
 * No async emit / queue — sync FileTransport, one ``client.emit()`` per call
 * No batching — NDJSON is append-safe; one line per event
@@ -57,13 +57,13 @@ from nucleus.errors import NucleusLineageEmissionError
 
 _LOG = logging.getLogger(__name__)
 
-# Stable identifiers per OpenLineage spec; see docs/research/openlineage.md §4.
+# Stable identifiers per OpenLineage spec; see docs/internal/research/openlineage.md §4.
 # PRODUCER URI is reviewed by founder per task surfacing; JOB_NAMESPACE matches
 # the asset-graph identity Nucleus owns forever (AGENTS.md §0).
 PRODUCER: str = "https://nucleus.dev/v0.1"
 JOB_NAMESPACE: str = "nucleus"
 
-# Soft-dep import per docs/research/openlineage.md §10 (use event_v2 — the
+# Soft-dep import per docs/internal/research/openlineage.md §10 (use event_v2 — the
 # legacy openlineage.client.run path emits DeprecationWarning at import).
 # Docs: https://openlineage.io/docs/client/python  (pinned: 1.47.1)
 try:
@@ -116,7 +116,7 @@ def _build_outcome_facet(**properties: Any) -> Any:
     ``BaseFacet.with_additional_properties(**kwargs)``. v0.5+ will move
     ``snapshotId`` onto a proper ``DatasetVersionDatasetFacet`` once the
     Iceberg writer lands and there is a real OutputDataset to attach it
-    to (see ``docs/research/openlineage.md`` §5.1).
+    to (see ``docs/internal/research/openlineage.md`` §5.1).
     """
     return RunFacet().with_additional_properties(**properties)
 

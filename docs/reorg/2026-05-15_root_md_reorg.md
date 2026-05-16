@@ -82,7 +82,7 @@ Cross-references were enumerated using `Grep` (ripgrep) across the full reposito
 | `nucleus_poc_plan.md` | ~120+ | ~55 | `poc/p5_beachhead/DESIGN.md` (7), `docs/decisions/ADR-002` (1), `.cursor/rules/nucleus.mdc` (1) |
 | `nucleus_red_team_review.md` | ~60+ | ~25 | `nucleus_vs_databricks.md` (7), `nucleus_implementation_readiness.md` (7) |
 | `SETUP.md` | ~90+ | ~25 | `CONTRIBUTING.md` (7), `nucleus_architecture_v4.1.md` (1), `docs/decisions/ADR-008` (3) |
-| `nucleus_vs_databricks.md` | ~30+ | ~14 | `AGENTS.md` (1), `docs/research/workbench.md` (5) |
+| `nucleus_vs_databricks.md` | ~30+ | ~14 | `AGENTS.md` (1), `docs/internal/research/workbench.md` (5) |
 | `nucleus_project_anatomy.md` | ~40+ | ~22 | `docs/architecture/v01_skeleton_plan.md` (3), `.cursor/agents/external-data-engineer-tester.md` (2) |
 | `nucleus_asset_model_spec.md` | ~30+ | ~25 | `docs/archive/architecture-v4.md` (3), `docs/architecture/v01_skeleton_plan.md` (3) |
 | `nucleus_implementation_readiness.md` | ~25+ | ~11 | `AGENTS.md` (3), `nucleus_architecture_v4.1.md` (3) |

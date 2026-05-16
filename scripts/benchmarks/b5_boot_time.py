@@ -30,7 +30,7 @@ Docs:
     Python ``subprocess`` — https://docs.python.org/3/library/subprocess.html
     Python ``time.perf_counter`` — https://docs.python.org/3/library/time.html#time.perf_counter
     PoC #4 reference — AGENTS.md §1 status block (5.82 s validated 2026-05-12)
-    Perf doc claims — docs/research/performance_reliability_targets.md §2.1
+    Perf doc claims — docs/internal/research/performance_reliability_targets.md §2.1
 """
 
 from __future__ import annotations
@@ -59,7 +59,7 @@ from scripts.benchmarks._common import (
 DEFAULT_ITERATIONS: int = 10
 SUBPROC_TIMEOUT_S: float = 30.0
 
-# Claims from docs/research/performance_reliability_targets.md §2.1.
+# Claims from docs/internal/research/performance_reliability_targets.md §2.1.
 CLAIM_VERSION_COLD_S: float = 0.5
 CLAIM_VERSION_WARM_S: float = 0.150
 CLAIM_HELP_COLD_S: float = 0.5

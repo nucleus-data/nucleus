@@ -11,7 +11,7 @@ Architecture refs:
     nucleus_architecture_v4.1.md §6.3 (Coordination — dlt translator boundary)
     nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-019-snowflake-connector-via-dlt.md (scope contract)
-    docs/research/snowflake.md §4 (Snowflake error codes + exception hierarchy)
+    docs/internal/research/snowflake.md §4 (Snowflake error codes + exception hierarchy)
 
 Pins/docs:
     dlt==1.26.0 — https://dlthub.com/docs/general-usage/pipeline
@@ -42,7 +42,7 @@ def _row_count_from_load_info(load_info: Any) -> int:
 
     # NEEDS VERIFICATION: dlt 1.26.0 LoadInfo.load_packages[n].jobs shape.
     # Mirrors copy_from_postgres._row_count_from_load_info — same dlt shape
-    # regardless of source dialect per docs/research/dlt.md §13. The
+    # regardless of source dialect per docs/internal/research/dlt.md §13. The
     # integration test in tests/upgrade_smoke/test_dlt_upgrade.py verifies this.
     """
     total = 0
@@ -123,7 +123,7 @@ def ingest_snowflake_to_iceberg(
                 "Use a Snowflake SQLAlchemy URL, e.g. "
                 "'snowflake://user:pass@orgname-accountname/mydb/PUBLIC'"
                 "?warehouse=COMPUTE_WH'. "
-                "See docs/research/snowflake.md §2 for account identifier formats."
+                "See docs/internal/research/snowflake.md §2 for account identifier formats."
             ),
         )
 
@@ -142,7 +142,7 @@ def ingest_snowflake_to_iceberg(
     warehouse_path = Path(warehouse_dir)
     _open_catalog(warehouse_path)
 
-    # Lazy imports — never at CLI startup per docs/research/dlt.md §6 + PoC #4
+    # Lazy imports — never at CLI startup per docs/internal/research/dlt.md §6 + PoC #4
     # boot-time discipline. ``import dlt`` ≈ 200-400 ms cold.
     # Docs: https://dlthub.com/docs/general-usage/pipeline
     import dlt  # lazy-import; PLC0415 not enabled in this project's ruff config
@@ -163,8 +163,8 @@ def ingest_snowflake_to_iceberg(
     # Docs: https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database/setup
     # credentials= accepts a SQLAlchemy URL string. backend="sqlalchemy" pinned
     # explicitly — default has flipped in prior dlt releases; pin behavior per
-    # docs/research/dlt.md §13.3. reflection_level="full_with_precision" ensures
-    # NUMBER(p,s) / TIMESTAMP_TZ round-trip cleanly per docs/research/snowflake.md §6.
+    # docs/internal/research/dlt.md §13.3. reflection_level="full_with_precision" ensures
+    # NUMBER(p,s) / TIMESTAMP_TZ round-trip cleanly per docs/internal/research/snowflake.md §6.
     try:
         resource = sql_table(
             credentials=conn_str,
@@ -176,9 +176,9 @@ def ingest_snowflake_to_iceberg(
 
         # Docs: https://dlthub.com/docs/general-usage/pipeline
         # destination="filesystem" + table_format="iceberg" is the correct activation.
-        # NOT destination="iceberg" — see docs/research/dlt.md §9 (known gotcha).
+        # NOT destination="iceberg" — see docs/internal/research/dlt.md §9 (known gotcha).
         # pipeline_name namespaced with ``sf`` prefix to avoid collision with
-        # Postgres/MySQL pipelines per docs/research/dlt.md §9.
+        # Postgres/MySQL pipelines per docs/internal/research/dlt.md §9.
         pipeline = dlt.pipeline(
             pipeline_name=f"nucleus__sf__{dest_namespace}__{dest_table}",
             destination="filesystem",

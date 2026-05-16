@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder
 **Priority**: P0
 **Target phase**: v0.2
-**Source research**: `docs/research/inspiration/modern_python_ecosystem.md` §1, §2, §9
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §3 #1
+**Source research**: `docs/internal/research/inspiration/modern_python_ecosystem.md` §1, §2, §9
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §3 #1
 
 ---
 

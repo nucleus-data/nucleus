@@ -126,7 +126,7 @@ Final message MUST include:
 - Changing acceptance criteria to match what you achieved
 - Adding scope beyond the goal ("while I was here, I also refactored…")
 - Speculative refactors ("this code looks bad, let me clean it up")
-- Hallucinating APIs (per AGENTS.md §11.12 + `docs/research/ai_hallucinations.md`)
+- Hallucinating APIs (per AGENTS.md §11.12 + `docs/internal/research/ai_hallucinations.md`)
 
 ## When to defer instead of build
 

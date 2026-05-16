@@ -252,7 +252,7 @@ from nucleus.ctx import sql
 
 **Symptom**: AI claims to have edited 5 files. `git diff` shows only 2 were actually changed.
 
-**Fix**: Always run `git diff --stat` or read the file after AI edits. AI fabrications are most common on documentation + multi-file edits. See `docs/research/ai_hallucinations.md` for real examples.
+**Fix**: Always run `git diff --stat` or read the file after AI edits. AI fabrications are most common on documentation + multi-file edits. See `docs/internal/research/ai_hallucinations.md` for real examples.
 
 ---
 
@@ -326,7 +326,7 @@ from dagster import materialize
 | `check_error_codes.py` fails | #1, #5 | `src/nucleus/errors.py` |
 | CI red after dep upgrade | #7 (bulk upgrade) | `git log --oneline -10` |
 | Test passes but behavior is wrong | #17 | Re-read the spec; rewrite the test |
-| AI hallucinated an API | #16 | `docs/research/ai_hallucinations.md` |
+| AI hallucinated an API | #16 | `docs/internal/research/ai_hallucinations.md` |
 | `check_layering.py` fails | #13 | The import path in the error output |
 | LOC budget RED | #15 (speculative code) | `python scripts/loc_budget.py --detail` |
 
@@ -337,4 +337,4 @@ from dagster import materialize
 - `AGENTS.md §11.7` — error translation discipline
 - `docs/dev-guides/06-error-translation-guide.md` — full error translation patterns
 - `docs/dev-guides/10-governance-scripts.md` — what each script enforces
-- `docs/research/ai_hallucinations.md` — AI hallucination log
+- `docs/internal/research/ai_hallucinations.md` — AI hallucination log

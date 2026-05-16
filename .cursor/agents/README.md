@@ -31,7 +31,7 @@ Architect role stays in foreground on the parent (Opus 4.7). We deliberately do 
 | "Wire `@nucleus.asset` decorator end-to-end (decorator + registry + tests + CLI + docs)" | `builder` | Multi-file, multi-step, needs iteration to land cleanly |
 | "Upgrade `pyiceberg` 0.8.1 → 0.11.x" | `builder` | Full test sweep + migration loop |
 | "CI is red — diagnose and fix" | `builder` | Debug/fix loop, may span many iterations |
-| "Read `lakekeeper` docs + write `docs/research/lakekeeper.md`" | `researcher` | Docs-grounded synthesis |
+| "Read `lakekeeper` docs + write `docs/internal/research/lakekeeper.md`" | `researcher` | Docs-grounded synthesis |
 | "Compare Authentik vs Keycloak vs Okta for v0.3+ OIDC" | `researcher` | Ecosystem comparison |
 | "Verify worker α's claim that PoC #2 is promoted cleanly" | `verifier` | Post-completion skeptical validation |
 | "Confirm `nucleus up <10s` boot timing claim before merging PoC #4" | `verifier` | Performance claim verification |

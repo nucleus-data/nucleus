@@ -71,7 +71,7 @@ These workers correspond to `IN_PROGRESS` todos in the parent's todo list. Each 
 | `ga-chaos-tests` (Worker A2) | Chaos tests J3-J8 + run_chaos harness | `docs/release/chaos_test_results.md`, `tests/chaos/{__init__,test_chaos_smoke}.py`; modified `scripts/release_e2e/run_chaos.py` (per `6b6c606b`'s anti-collision list) | DONE_UNCOMMITTED |
 | `ga-lazy-imports` (Worker B2) | Lazy-import audit + governance script + tests | `scripts/check_lazy_imports.py`, `tests/cli/test_lazy_imports.py`; modified `src/nucleus/cli/main.py` | DONE_UNCOMMITTED |
 | `ga-install-split` (Worker B4) | Install-size split (`[core]` / `[ai]` / `[all]` extras) + governance script + tests | `scripts/check_install_size.py`, `tests/test_install_extras.py`; modified `pyproject.toml`, `docs/compatibility.md`, `docs/onboarding/quickstart.md` (per `6b6c606b`'s anti-collision list) | DONE_UNCOMMITTED |
-| `ga-scale-out-audit` (Worker F1) | Scale-out / Rust-rewrite reject research | `docs/research/scale_out_audit.md` | DONE_UNCOMMITTED (parent confirmed "Worker F1 done" at line 1600 of 3ce3831c transcript — this is just an artifact awaiting commit) |
+| `ga-scale-out-audit` (Worker F1) | Scale-out / Rust-rewrite reject research | `docs/internal/research/scale_out_audit.md` | DONE_UNCOMMITTED (parent confirmed "Worker F1 done" at line 1600 of 3ce3831c transcript — this is just an artifact awaiting commit) |
 
 ### 2.3 Other modifications in working tree (no specific worker mapping)
 
@@ -86,7 +86,7 @@ The remaining 14 modified files are scattered evidence of multiple workers' edit
 | `docs/budget_history.md` | LOC tracker | post-edit snapshot |
 | `docs/compatibility.md` | Worker B4 install-split + B-OTEL | version pin updates |
 | `docs/decisions/ADR-017-schedule-exposure-v01.md` | `worker-scheduling-exposure` | scheduling exposure ADR draft (Worker 3) |
-| `docs/research/ai_hallucinations.md` | various | hallucination log additions |
+| `docs/internal/research/ai_hallucinations.md` | various | hallucination log additions |
 | `poc/p1_error_translation/test_translator.py` + `translator.py` | `worker-postgres-error-fix` (Worker 4) | Postgres bad-creds error translation polish |
 | `poc/p3_ingest/ingest.py` | similar | PoC #3 ingest path polish |
 | `pyproject.toml` | Worker B4 install-split | `[core]/[ai]/[all]` extras |
@@ -156,7 +156,7 @@ Each block below proposes a focused commit. Bundling avoids one giant 20-file co
 - **Task**: Adversarial review of "should we Rust-rewrite for scale?" — concluded reject, stick with v0.3 plan.
 - **Status**: completed (parent acknowledged at line 1600 of `3ce3831c`).
 - **Artifacts**:
-  - `docs/research/scale_out_audit.md`
+  - `docs/internal/research/scale_out_audit.md`
 - **Suggested commit**: `docs(research): scale-out audit (Rust-rewrite reject; stick with v0.3)`
 
 ### 3.6 Scheduling exposure (worker-scheduling-exposure / Worker 3)
@@ -195,7 +195,7 @@ Each block below proposes a focused commit. Bundling avoids one giant 20-file co
   - `scripts/check_vocabulary.py` (M)
   - `scripts/loc_budget.py` (M — phase v0.1→v0.2 per `2014116d` request)
   - `docs/budget_history.md` (M)
-  - `docs/research/ai_hallucinations.md` (M)
+  - `docs/internal/research/ai_hallucinations.md` (M)
 - **Suggested commit**: `chore(governance): CI + pre-commit + governance scripts (LOC phase bump v0.1→v0.2, vocab + pin updates)`
 
 ### 3.10 CHANGELOG + README
@@ -237,7 +237,7 @@ If a specific inline subagent does prove non-functional later (e.g., test runner
 
 ~56 historical inline subagents under `3ce3831c/subagents/` were modified today. These break down loosely as:
 - Wave 1 builders (~11 — all completed; their work is in commit `a41a82c`)
-- Research subagents (multiple — all completed; their work is in `docs/research/`)
+- Research subagents (multiple — all completed; their work is in `docs/internal/research/`)
 - ADR drafters (multiple — all completed; their work is in `docs/decisions/`)
 - Misc smaller subagents (Glob / Read / Grep helpers + status sweeps)
 

@@ -144,7 +144,7 @@ Review the last 4 weeks of commits to main. Flag any of:
 Be brutally honest. Cite file paths and line numbers. Suggest fixes.
 ```
 
-**You review the AI's review.** Don't accept all-clear without spot-checking 2-3 flagged items. Log any caught hallucinations in [`docs/research/ai_hallucinations.md`](research/ai_hallucinations.md).
+**You review the AI's review.** Don't accept all-clear without spot-checking 2-3 flagged items. Log any caught hallucinations in [`docs/internal/research/ai_hallucinations.md`](research/ai_hallucinations.md).
 
 ### 4.2 Snapshot LOC + budget history (15 min)
 
@@ -451,7 +451,7 @@ If the AI suggests a method you don't recognize:
 
 1. Cursor Chat: "Cite the official docs URL for `<library>.<method>` and confirm it exists in version `<pinned>`."
 2. If the AI hedges or refuses to cite → the method probably doesn't exist. Assume hallucination.
-3. Log every caught hallucination in [`docs/research/ai_hallucinations.md`](research/ai_hallucinations.md). This catalog becomes priceless over time.
+3. Log every caught hallucination in [`docs/internal/research/ai_hallucinations.md`](research/ai_hallucinations.md). This catalog becomes priceless over time.
 
 ### 8.5 LLM cost management
 

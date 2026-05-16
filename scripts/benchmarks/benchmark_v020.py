@@ -1,7 +1,7 @@
 """Nucleus v0.2.0 release benchmark suite — single-command entry point.
 
 Per the user-facing benchmark task spec (see
-`docs/research/benchmarks_v0.2.0.md`):
+`docs/internal/research/benchmarks_v0.2.0.md`):
 
     "Reproduce: 1 command:
        python scripts/benchmarks/benchmark_v020.py --suite all --output benchmarks/results.json"
@@ -27,7 +27,7 @@ The legacy orchestrator at ``scripts/benchmarks/run_all.py`` writes the
 internal-facing markdown baseline at ``docs/benchmarks/<date>_baseline.md``
 and is still the right tool for daily CI; ``benchmark_v020.py`` is the
 release-facing single-output entry users see in
-``docs/research/benchmarks_v0.2.0.md``.
+``docs/internal/research/benchmarks_v0.2.0.md``.
 
 Per Anti-Over-Engineering Discipline (`AGENTS.md`):
     Keep this file thin. It does not measure anything itself; it only
@@ -252,7 +252,7 @@ def main(argv: list[str] | None = None) -> int:
             else software_versions()
         ),
         "benchmarks": per_bench,
-        "report_url": "docs/research/benchmarks_v0.2.0.md",
+        "report_url": "docs/internal/research/benchmarks_v0.2.0.md",
         "rerun_command": f"python scripts/benchmarks/benchmark_v020.py --suite {args.suite}",
     }
 

@@ -1,7 +1,7 @@
 """Optional-extras install matrix smoke test — `pyproject.toml` Option a-split.
 
 Validates the disposition landed 2026-05-14 per
-``docs/research/otel_day1_decision.md`` Option a-split:
+``docs/internal/research/otel_day1_decision.md`` Option a-split:
 
 1. `pip install nucleus` (no extras) imports cleanly — the four core
    modules (``nucleus``, ``nucleus.ctx``, ``nucleus.errors``,
@@ -16,7 +16,7 @@ Validates the disposition landed 2026-05-14 per
    expected pins (per ADR-012 amendment 2026-05-14).
 4. `msgspec` is REMOVED — not in `[project] dependencies`, not in any
    `[project.optional-dependencies]` group, and (after a clean install)
-   not importable. Per ``docs/research/otel_day1_decision.md`` §D3.
+   not importable. Per ``docs/internal/research/otel_day1_decision.md`` §D3.
 5. `opentelemetry-sdk` only ships when the user opts in via
    ``pip install nucleus[observability]``.
 
@@ -30,7 +30,7 @@ Architecture refs:
   (Amendment 2026-05-14 — substrate-by-API-only)
 - ``docs/decisions/ADR-012-runtime-dependency-pin-matrix-v01.md``
   (Amendment 2026-05-14 — pin count 25 → 23 + 2 optional)
-- ``docs/research/otel_day1_decision.md`` §D1-D3 (researcher disposition)
+- ``docs/internal/research/otel_day1_decision.md`` §D1-D3 (researcher disposition)
 - PEP 621 ``[project.optional-dependencies]``:
   https://peps.python.org/pep-0621/
 - Python packaging guide:
@@ -125,7 +125,7 @@ def test_opentelemetry_api_always_available() -> None:
 def test_runtime_extras_groups_declared_with_expected_pins() -> None:
     """``[project.optional-dependencies]`` declares the two runtime-extras groups.
 
-    Per ADR-012 amendment 2026-05-14 + ``docs/research/otel_day1_decision.md``
+    Per ADR-012 amendment 2026-05-14 + ``docs/internal/research/otel_day1_decision.md``
     §D4: ``observability`` carries ``opentelemetry-sdk==1.29.0`` and
     ``lineage-advanced`` carries ``sqlglot==26.0.0``. Both pins remain
     version-locked even though they are opt-in.
@@ -162,7 +162,7 @@ def test_runtime_extras_groups_declared_with_expected_pins() -> None:
 def test_msgspec_absent_from_all_dependency_groups() -> None:
     """``msgspec`` is REMOVED from core and every extras group.
 
-    Per ``docs/research/otel_day1_decision.md`` §D3 (Option a-split,
+    Per ``docs/internal/research/otel_day1_decision.md`` §D3 (Option a-split,
     founder-approved 2026-05-14): zero callers under ``src/``, ``tests/``,
     ``poc/``, ``scripts/``; planned ``NucleusError + configs`` use never
     materialized; pure-stdlib substitutes (``json``, ``dataclasses``,
@@ -189,7 +189,7 @@ def test_msgspec_absent_from_all_dependency_groups() -> None:
         names = _dep_packages(deps)
         assert "msgspec" not in names, (
             f"msgspec re-appeared in extras group `{group}` -- "
-            f"per `docs/research/otel_day1_decision.md` §D3 it is removed entirely; "
+            f"per `docs/internal/research/otel_day1_decision.md` §D3 it is removed entirely; "
             f"reintroduction requires a new ADR."
         )
 
@@ -216,7 +216,7 @@ def test_msgspec_unimportable_after_clean_install() -> None:
     spec = importlib.util.find_spec("msgspec")
     assert spec is None, (
         "msgspec is importable but should not be -- it was removed from "
-        "pyproject.toml on 2026-05-14 per `docs/research/otel_day1_decision.md` §D3. "
+        "pyproject.toml on 2026-05-14 per `docs/internal/research/otel_day1_decision.md` §D3. "
         "If you see this in a dev venv, run `pip uninstall -y msgspec`. "
         "If you see this in CI, a regression has re-introduced the pin."
     )
@@ -238,7 +238,7 @@ def test_msgspec_unimportable_after_clean_install() -> None:
 def test_opentelemetry_sdk_unimportable_in_minimal_install() -> None:
     """``import opentelemetry.sdk`` is unavailable in the minimal install.
 
-    Per ADR-011 amendment 2026-05-14 + ``docs/research/otel_day1_decision.md``
+    Per ADR-011 amendment 2026-05-14 + ``docs/internal/research/otel_day1_decision.md``
     §D1: SDK ships only via ``pip install nucleus[observability]``. A user
     on the default install must NOT find ``opentelemetry.sdk`` available.
     The skipif above suppresses this test in dev envs that opted into

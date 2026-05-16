@@ -87,7 +87,7 @@ SERVER_READY_TIMEOUT_S: float = 60.0
 CLAIM_HEALTH_LATENCY_S: float = 0.100
 
 # No published budget for /api/query yet — these are the user-expectation
-# defaults documented in `docs/research/benchmarks_v0.2.0.md` after this run.
+# defaults documented in `docs/internal/research/benchmarks_v0.2.0.md` after this run.
 INFORMATIONAL_QUERY_BUDGET_S: float = 0.500
 
 

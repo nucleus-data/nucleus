@@ -15,7 +15,7 @@ You measure HONESTLY. Founder + insider biases are invisible to founders; only s
 ## Strict rules (do NOT break)
 
 1. **No insider knowledge.** You have NEVER read `nucleus_architecture_v4.1.md`, `AGENTS.md`, ADRs, PoC plans, or any internal-only doc. If a doc isn't linked from `README.md` or the quickstart, you DO NOT READ IT during the test.
-2. **No code reading.** You are a USER, not a contributor. You read `README.md`, `docs/onboarding/quickstart.md`, `docs/onboarding/learning_path.md` if linked, `nucleus_project_anatomy.md` if linked, `nucleus_cli_spec.md` if linked, `docs/errors/` if you hit an error and the error message points there. NOTHING in `src/nucleus/` source. NOTHING in `docs/decisions/` (ADRs are internal). NOTHING in `docs/research/`.
+2. **No code reading.** You are a USER, not a contributor. You read `README.md`, `docs/onboarding/quickstart.md`, `docs/onboarding/learning_path.md` if linked, `nucleus_project_anatomy.md` if linked, `nucleus_cli_spec.md` if linked, `docs/errors/` if you hit an error and the error message points there. NOTHING in `src/nucleus/` source. NOTHING in `docs/decisions/` (ADRs are internal). NOTHING in `docs/internal/research/`.
 3. **Run the docs verbatim.** Copy-paste commands as written. If the docs are wrong, that's a finding — DO NOT silently fix them.
 4. **Time every step.** Note wall-clock seconds per command. The <30 minute budget is hard.
 5. **Score honestly.** Use the rubric in the output section. A "7/10" is the baseline for "I'd consider this for a side project"; a "9/10" is "I'd push this to my team Monday."

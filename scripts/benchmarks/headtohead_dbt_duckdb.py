@@ -44,7 +44,7 @@ What's measured (n=5 runs per system)
 Honest methodology
 ------------------
 * Single host, single OS, single n=5 run. The companion report
-  ``docs/research/headtohead_dbt_duckdb.md`` records hardware, OS and
+  ``docs/internal/research/headtohead_dbt_duckdb.md`` records hardware, OS and
   pin versions verbatim.
 * Identical Parquet source for both engines (same bytes on disk).
 * Output formats are NOT identical - Nucleus produces an Iceberg

@@ -192,7 +192,7 @@
 
 ### LOW (deferred)
 - `scripts/check_layering.py` could be extended to include `workbench` layer more explicitly — already in LAYERS list but workbench-internal checks are minimal
-- `scripts/check_vocabulary.py` scan paths already include `docs/research/`, `docs/onboarding/`, `docs/errors/` via the repo root scan
+- `scripts/check_vocabulary.py` scan paths already include `docs/internal/research/`, `docs/onboarding/`, `docs/errors/` via the repo root scan
 
 ---
 

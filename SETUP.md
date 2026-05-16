@@ -417,7 +417,7 @@ Every new terminal starts fresh — re-run `source .venv/bin/activate` per sessi
 
 ### §M3. Install Docker Desktop on macOS
 
-The v0.1 stack runs the storage substrate in Docker — currently MinIO `RELEASE.2025-09-07T16-13-09Z` (`sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e`, verified 2026-05-13) per [`docs/research/minio.md`](docs/research/minio.md) §2.1, with [`docs/decisions/ADR-008-storage-substrate-v01.md`](docs/decisions/ADR-008-storage-substrate-v01.md) (PROPOSED) introducing SeaweedFS as the dual-track default. Either way, you need a Docker daemon; on macOS that means Docker Desktop.
+The v0.1 stack runs the storage substrate in Docker — currently MinIO `RELEASE.2025-09-07T16-13-09Z` (`sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e`, verified 2026-05-13) per [`docs/internal/research/minio.md`](docs/internal/research/minio.md) §2.1, with [`docs/decisions/ADR-008-storage-substrate-v01.md`](docs/decisions/ADR-008-storage-substrate-v01.md) (PROPOSED) introducing SeaweedFS as the dual-track default. Either way, you need a Docker daemon; on macOS that means Docker Desktop.
 
 > **Storage substrate**: As of [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md) (2026-05-13), `docker-compose.yml` at repo root defaults to **SeaweedFS** (Apache-2.0, actively maintained). The archived MinIO release (`RELEASE.2025-09-07T16-13-09Z`, AGPLv3, upstream archived 2026-04-25) lives in `docker-compose.minio.yml` for opt-in use. `docker compose up` picks the default; `docker compose -f docker-compose.minio.yml up` picks the alternate. Iceberg byte path is identical; no application-layer code change.
 
@@ -433,7 +433,7 @@ OR download the `.dmg` from https://www.docker.com/products/docker-desktop/ (URL
 
 #### Apple Silicon vs Intel
 
-Docker Desktop auto-pulls the correct architecture (arm64 for Apple Silicon, amd64 for Intel) when both manifests exist. Confirm a pulled image's arch with `docker inspect <image> | grep Architecture` — expected `arm64` or `amd64`. If only `amd64` is published, the image runs under **Rosetta 2** emulation (slower, higher RAM). Per [`docs/research/minio.md`](docs/research/minio.md) §3.2 the MinIO upstream archived 2026-04-25, so the pinned `RELEASE.2025-09-07T16-13-09Z` will not receive future arm64 manifests — see §M8 #2 for the PoC #5 implication. **NEEDS VERIFICATION** on Apple Silicon arch availability for that exact tag, and on the SeaweedFS pin once [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md) accepts.
+Docker Desktop auto-pulls the correct architecture (arm64 for Apple Silicon, amd64 for Intel) when both manifests exist. Confirm a pulled image's arch with `docker inspect <image> | grep Architecture` — expected `arm64` or `amd64`. If only `amd64` is published, the image runs under **Rosetta 2** emulation (slower, higher RAM). Per [`docs/internal/research/minio.md`](docs/internal/research/minio.md) §3.2 the MinIO upstream archived 2026-04-25, so the pinned `RELEASE.2025-09-07T16-13-09Z` will not receive future arm64 manifests — see §M8 #2 for the PoC #5 implication. **NEEDS VERIFICATION** on Apple Silicon arch availability for that exact tag, and on the SeaweedFS pin once [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md) accepts.
 
 #### Resource limits
 
@@ -530,7 +530,7 @@ Verify boot in <10s:
 
 | Surface | URL / path | Default credentials | Source |
 |---|---|---|---|
-| **MinIO Console** (when MinIO compose) | http://localhost:9001 | `minioadmin` / `minioadmin` | [`docs/research/minio.md`](docs/research/minio.md) §2.1 + §4.3 (NEEDS VERIFICATION on default-cred preservation per Worker BB §2.1 + `nucleus_cli_spec.md` §10 NV #7) |
+| **MinIO Console** (when MinIO compose) | http://localhost:9001 | `minioadmin` / `minioadmin` | [`docs/internal/research/minio.md`](docs/internal/research/minio.md) §2.1 + §4.3 (NEEDS VERIFICATION on default-cred preservation per Worker BB §2.1 + `nucleus_cli_spec.md` §10 NV #7) |
 | **MinIO S3 endpoint** | http://localhost:9000 | (sigv4 with above) | Same |
 | **SeaweedFS S3 endpoint** (when SeaweedFS compose, default per [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md)) | http://localhost:9000 | configurable | NEEDS VERIFICATION (ADR-008 PROPOSED; final pin + UI URL pending acceptance) |
 | **Iceberg catalog file** | `./.nucleus/catalog.db` | (SQLite) | `nucleus_cli_spec.md` §7 + §10 NV #5 |
@@ -561,7 +561,7 @@ For unfamiliar errors, copy verbatim per Windows §10 — same protocol. macOS `
 
 External testers on macOS run the same `git clone` → `nucleus up` → `nucleus ingest` → `nucleus query` flow as Windows testers ([`poc/p5_beachhead/SCENARIO.md`](poc/p5_beachhead/SCENARIO.md)), with three OS-derived nuances worth surfacing in the moderator's pre-session brief:
 
-1. **Docker startup overhead is lower on macOS than on Windows.** macOS Docker Desktop runs containers in a lightweight VM (Apple Virtualization framework or HyperKit) without Windows Hyper-V's enable-feature dance. Per [`docs/research/minio.md`](docs/research/minio.md) §7 the MinIO single-binary cold-start is `<500ms` on Linux/macOS and `+1-3s` on Docker Desktop overhead — meaningfully faster than the same path on Windows (where Hyper-V layered on top inflates startup further). Expect macOS testers to land closer to the `<10s` `nucleus up` target. **NEEDS VERIFICATION** against PoC #4 measurements once they're produced on both OSes.
+1. **Docker startup overhead is lower on macOS than on Windows.** macOS Docker Desktop runs containers in a lightweight VM (Apple Virtualization framework or HyperKit) without Windows Hyper-V's enable-feature dance. Per [`docs/internal/research/minio.md`](docs/internal/research/minio.md) §7 the MinIO single-binary cold-start is `<500ms` on Linux/macOS and `+1-3s` on Docker Desktop overhead — meaningfully faster than the same path on Windows (where Hyper-V layered on top inflates startup further). Expect macOS testers to land closer to the `<10s` `nucleus up` target. **NEEDS VERIFICATION** against PoC #4 measurements once they're produced on both OSes.
 
 2. **Apple Silicon image-arch parity is per-image (cross-ref §M3).** The only third-party container is the storage substrate. The **archived** MinIO `RELEASE.2025-09-07T16-13-09Z` receives no future arm64 builds; if its existing arm64 manifest is incomplete on an M-series tester's machine, Docker Desktop falls back to Rosetta 2 emulation and `nucleus up` slows. SeaweedFS (per [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md)) historically publishes arm64 — pin TBD. Flag a Rosetta fallback as a PoC #5 stuck-point. **NEEDS VERIFICATION** pre-PoC #5 dry-run on both substrates.
 

@@ -1,7 +1,7 @@
 """Empirical benchmark suite for the Nucleus v0.2.0 GA hardening wave.
 
 Each ``b*_*.py`` script measures one dimension of the perf claims in
-``docs/research/performance_reliability_targets.md`` and writes both
+``docs/internal/research/performance_reliability_targets.md`` and writes both
 human-readable output (stdout) and machine-readable JSON
 (``docs/benchmarks/_results/<name>.json``).
 

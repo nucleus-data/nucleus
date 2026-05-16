@@ -12,7 +12,7 @@ Three reasons, none of them "Spark / Databricks / Snowflake is bad" (all three a
 2. **Single-node optimization is the v0.1–v1.0 envelope.** DuckDB beats Spark for <100 GB workloads on most benchmarks (TPC-H 10 GB on DuckDB ~2.5 s per published numbers at <https://duckdb.org/2023/02/13/announcing-duckdb-070.html>). Above ~5 TB, the architecturally-correct answer is **yield to giants** (Mode 2 dispatch in v1.5+), not "make Nucleus Spark-flavored."
 3. **Local-identical-to-prod.** Same engine code locally and in production is the felt moat (v4.1 §2.1).
 
-If your problem is 100+ TB multi-team writes, Spark + Databricks is right. The scale-out audit (`docs/research/scale_out_audit.md`) is explicit about that.
+If your problem is 100+ TB multi-team writes, Spark + Databricks is right. The scale-out audit (`docs/internal/research/scale_out_audit.md`) is explicit about that.
 
 ---
 
@@ -40,7 +40,7 @@ Why DataFusion as a clean swap interface: pure-Rust, embeddable, Apache 2.0, Arr
 
 You graduate. That is the documented answer, not a marketing line.
 
-Per `docs/research/scale_out_audit.md` and `nucleus_architecture_v4.1.md` §1.5, the documented data envelope is 100 GB–5 TB and the documented engineer envelope is 5–20. Above that envelope three real gaps surface:
+Per `docs/internal/research/scale_out_audit.md` and `nucleus_architecture_v4.1.md` §1.5, the documented data envelope is 100 GB–5 TB and the documented engineer envelope is 5–20. Above that envelope three real gaps surface:
 
 1. **Cross-machine concurrency** — the advisory file lock in `coordination/locks.py` is filesystem-local; multi-host coordination is the catalog's job. Closure path: Lakekeeper REST catalog (v0.3+).
 2. **Workbench at 50+ concurrent users** — single uvicorn worker by default. Closure path: `--workers=N` or k8s replicas.
@@ -104,7 +104,7 @@ What this means concretely:
 Three reasons:
 
 1. **Beachhead persona reach.** Per `nucleus_architecture_v4.1.md` §1.5, the persona is a 5–20 engineer startup data team. Data engineers in 2026 are overwhelmingly Python-fluent; mandating Rust/Go would gate adoption on a language the persona doesn't already use daily.
-2. **Wrap-not-build.** The hot path is already in fast languages: DuckDB (C++), Polars (Rust), pyarrow (C++), pyiceberg (Python+Rust). Per `docs/research/scale_out_audit.md`, ~95% of execution time at any meaningful workload runs in those wrapped engines, not in Nucleus's Python glue. Rewriting the glue in Rust would optimize the wrong 5%.
+2. **Wrap-not-build.** The hot path is already in fast languages: DuckDB (C++), Polars (Rust), pyarrow (C++), pyiceberg (Python+Rust). Per `docs/internal/research/scale_out_audit.md`, ~95% of execution time at any meaningful workload runs in those wrapped engines, not in Nucleus's Python glue. Rewriting the glue in Rust would optimize the wrong 5%.
 3. **AI Copilot ergonomics.** Python is what LLMs write fluently in 2026; the platform's own `ctx` API needs to be in the language the AI is best at producing.
 
 If a perf regression appears in the Python glue, the response is to `cargo build` the offending hot path as a `pyo3` extension — not rewrite the platform.
@@ -174,7 +174,7 @@ Honestly: single-node, until you graduate. The documented envelope is **100 GB�
 2. **Mode 2 hybrid dispatch (v1.5+).** `@nucleus.sql_asset(compute="databricks")` — Nucleus orchestrates, Databricks executes, result committed back to Iceberg.
 3. **Mode 3 federation (v2.0+).** Each domain runs its own Nucleus; cross-domain queries via Trino/Databricks/Snowflake against a federated Iceberg catalog. Data Mesh full.
 
-Per `docs/research/scale_out_audit.md`, NONE of these modes require rewriting Nucleus internals. The eight-question gate rejected every candidate Rust rewrite for the same reason — optimizing the wrong 5%.
+Per `docs/internal/research/scale_out_audit.md`, NONE of these modes require rewriting Nucleus internals. The eight-question gate rejected every candidate Rust rewrite for the same reason — optimizing the wrong 5%.
 
 ---
 
@@ -284,7 +284,7 @@ Your bet is on **Iceberg + open standards**, not on Nucleus the company. The Mo 
 
 Companion files:
 - `docs/release/launch_kit/comparison_vs_databricks_snowflake.md` — full capability matrix
-- `docs/research/scale_out_audit.md` — honest scale-out assessment
+- `docs/internal/research/scale_out_audit.md` — honest scale-out assessment
 - `docs/swap/dagster.md` — composability swap rationale
 - `nucleus_architecture_v4.1.md` — ~50 min read, source of truth
 

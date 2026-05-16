@@ -3,13 +3,13 @@
 Status: ACCEPTED
 Date: 2026-05-15
 Author: builder (v0.2.0 reconciliation pass)
-Source: `docs/research/performance_reliability_targets.md` §2
+Source: `docs/internal/research/performance_reliability_targets.md` §2
 
 ## Context
 
 Nucleus v0.1.0 ships with qualitative performance targets from `nucleus_architecture_v4.1.md` §16 (boot < 10 s, 100M-row aggregate < 2 s). These targets are validated empirically at PoC milestones (PoC #4: `nucleus up` = 5.82 s / 117.3 MB; WSL Beachhead E2E: 7 s boot) but there is no automated regression gate that catches new code slowing a critical path before it merges.
 
-Wave-1H research (`docs/research/performance_reliability_targets.md`) formalised nine per-operation budget sections from v4.1 §5/§16 and beachhead empirical data. Those budgets now need to be a first-class CI signal, not just a narrative in a research doc.
+Wave-1H research (`docs/internal/research/performance_reliability_targets.md`) formalised nine per-operation budget sections from v4.1 §5/§16 and beachhead empirical data. Those budgets now need to be a first-class CI signal, not just a narrative in a research doc.
 
 The anti-over-engineering directive (`.cursor/rules/nucleus.mdc`) explicitly prohibits building measurement infrastructure before the caller exists. A benchmark harness that nobody runs is speculative code. The minimal viable commitment is: (1) adopt the nine-section budget table as the authoritative v0.2 target; (2) stub a script for CI; (3) defer automation to v0.3 when a stable benchmark suite is available.
 
@@ -17,7 +17,7 @@ Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 ## Decision
 
-1. **Adopt the numeric budgets in `docs/research/performance_reliability_targets.md` §2 as the authoritative v0.2 performance commitment.** The nine sections (Boot/Startup, Materialise, DuckDB query, Ingest, SQL resolver, Workbench, AI Copilot, Governance scripts, Memory) are the canonical reference.
+1. **Adopt the numeric budgets in `docs/internal/research/performance_reliability_targets.md` §2 as the authoritative v0.2 performance commitment.** The nine sections (Boot/Startup, Materialise, DuckDB query, Ingest, SQL resolver, Workbench, AI Copilot, Governance scripts, Memory) are the canonical reference.
 
 2. **Establish `scripts/check_perf_budget.py` as a placeholder** that prints the budget table from a machine-readable `pyproject.toml` `[tool.nucleus.perf_budgets]` block and exits 0. The actual benchmark measurements are not automated in v0.2 (defer to v0.3 per §4 below).
 

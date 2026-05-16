@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder  
 **Priority**: P2  
 **Target phase**: v0.3  
-**Source research**: `docs/research/inspiration/storage_formats_2026.md` §8; `docs/research/inspiration/embedded_analytics_bi.md` §7  
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §3 #10, §2.7
+**Source research**: `docs/internal/research/inspiration/storage_formats_2026.md` §8; `docs/internal/research/inspiration/embedded_analytics_bi.md` §7  
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §3 #10, §2.7
 
 ---
 

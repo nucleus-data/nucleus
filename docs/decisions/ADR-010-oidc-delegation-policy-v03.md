@@ -3,7 +3,7 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: oidc, auth, security, v0.3, delegation, constraint-6
-> **Related**: ADR-002 §6 (yield-to-giants), ADR-004 (catalog OIDC integration), ADR-006 (`NE5xxx` band reserved for `NucleusAuthProviderUnavailable`), ADR-007 (Authentik MIT GREEN, Keycloak Apache-2.0 GREEN, Okta + Entra ID = commercial SaaS), AGENTS.md §3 Hard Constraint #6, `nucleus_architecture_v4.1.md` §15.1, `docs/research/oidc_providers.md` (Worker W, ~32 KB), `docs/security/threat_model_v0.md` §6 + §11.
+> **Related**: ADR-002 §6 (yield-to-giants), ADR-004 (catalog OIDC integration), ADR-006 (`NE5xxx` band reserved for `NucleusAuthProviderUnavailable`), ADR-007 (Authentik MIT GREEN, Keycloak Apache-2.0 GREEN, Okta + Entra ID = commercial SaaS), AGENTS.md §3 Hard Constraint #6, `nucleus_architecture_v4.1.md` §15.1, `docs/internal/research/oidc_providers.md` (Worker W, ~32 KB), `docs/security/threat_model_v0.md` §6 + §11.
 
 ## Context
 
@@ -82,7 +82,7 @@ Provider lock-in is not a meaningful risk here: OIDC is a *standard*; the unifor
 - Spec: <https://openid.net/specs/openid-connect-core-1_0.html> · Discovery: <https://openid.net/specs/openid-connect-discovery-1_0.html> · PKCE RFC 7636 · Device Grant RFC 8628
 - Authentik: <https://goauthentik.io/docs/> · Keycloak: <https://www.keycloak.org/documentation> · <https://www.keycloak.org/security> (mandatory CVE subscription)
 - Okta: <https://developer.okta.com/docs/concepts/oauth-openid/> · <https://www.okta.com/pricing/> (verify quarterly per NEEDS VERIFICATION #2) · Entra ID: <https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc>
-- PyJWT: <https://pyjwt.readthedocs.io/> · Primary: `docs/research/oidc_providers.md` (Worker W)
+- PyJWT: <https://pyjwt.readthedocs.io/> · Primary: `docs/internal/research/oidc_providers.md` (Worker W)
 
 ## Trigger
 

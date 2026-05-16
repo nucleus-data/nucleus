@@ -16,7 +16,7 @@ npm run dev
 ## References
 
 - Decision record: [`docs/decisions/ADR-016-workbench-mvp.md`](../docs/decisions/ADR-016-workbench-mvp.md)
-- Companion research: [`docs/research/workbench.md`](../docs/research/workbench.md)
+- Companion research: [`docs/internal/research/workbench.md`](../docs/internal/research/workbench.md)
 
 ## Stability
 

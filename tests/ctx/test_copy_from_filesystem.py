@@ -16,7 +16,7 @@ Verifies ``ingest_filesystem_to_iceberg()``:
     10. format='json' → read_json_auto in query.
 
 Architecture refs:
-    docs/research/filesystem_duckdb.md §6 (error classification)
+    docs/internal/research/filesystem_duckdb.md §6 (error classification)
     nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
 """
 

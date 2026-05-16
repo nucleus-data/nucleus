@@ -467,7 +467,7 @@ AI hallucinations are MOST dangerous when they sound plausible. A made-up `pyice
 
 | Situation | Required reading | Required artifact |
 |---|---|---|
-| First integration of an OSS component | Full Getting Started + relevant API reference sections | Notes in `/docs/research/<component>.md` |
+| First integration of an OSS component | Full Getting Started + relevant API reference sections | Notes in `/docs/internal/research/<component>.md` |
 | Adding new functionality from existing OSS component | Specific API page on official docs | Docs URL in code comment |
 | Upgrading minor version (1.2.0 → 1.3.0) | Release notes + changelog | Changelog summary in upgrade PR description |
 | Upgrading major version (1.x → 2.x) | Migration guide + breaking changes | ADR + migration test |
@@ -495,7 +495,7 @@ import duckdb
 - Never fabricate API names that "should exist"
 - When asked about library behavior, cite docs section, not memory
 
-**Anti-pattern logs**: When AI hallucinates an API, log it in `/docs/research/ai_hallucinations.md` for future awareness:
+**Anti-pattern logs**: When AI hallucinates an API, log it in `/docs/internal/research/ai_hallucinations.md` for future awareness:
 
 ```markdown
 ## 2026-05-15: pyiceberg.commit_atomic()

@@ -10,8 +10,8 @@
 > 4. **`--mode append|replace`** CLI flag (terse, Nucleus-shaped per AGENTS.md §7); rejects `--write-disposition` (dlt vocabulary leak).
 > 5. **+1-week effort buffer** accepted; if SQLAlchemy backend needs a JSONB / NUMERIC adapter shim, +1 week absorbs it. Stage 2 ConnectorX pre-commit deferred to evidence.
 > **Tags**: connectors, ingestion, dlt, postgres, stage-1, wrap-not-build, error-translation
-> **Supersedes (in part)**: portions of `nucleus_architecture_v4.1.md` §5.5.1 (Amendment 13 sized a native Postgres branch on `ctx.copy_from`; this ADR proposes dlt wrap) + `docs/research/dlt.md` §10 (placed dlt at v0.3+; Stage 1 narrows the trigger to one production-grade SQL source).
-> **Related**: ADR-001 (no commit service), ADR-002 §6 (dlt deferred to v0.3+ — this ADR re-prioritizes), ADR-003 (PyIceberg `0.8.1 → 0.11.x` — **hard prerequisite**), ADR-006 (NE-codes), ADR-007 (license tier — dlt is Apache-2.0, GREEN), ADR-013 (`ctx.materialize` shape mirrored here for `ctx.copy_from_postgres`), `docs/research/dlt.md` §13, `docs/swap/dlt.md`, `nucleus_architecture_v4.1.md` §5.5 + §6.3 + §6.4, `AGENTS.md` §3 #10/#11 + §11.12 + §11.13, `src/nucleus/ctx/copy_from.py` (the SQLite parallel).
+> **Supersedes (in part)**: portions of `nucleus_architecture_v4.1.md` §5.5.1 (Amendment 13 sized a native Postgres branch on `ctx.copy_from`; this ADR proposes dlt wrap) + `docs/internal/research/dlt.md` §10 (placed dlt at v0.3+; Stage 1 narrows the trigger to one production-grade SQL source).
+> **Related**: ADR-001 (no commit service), ADR-002 §6 (dlt deferred to v0.3+ — this ADR re-prioritizes), ADR-003 (PyIceberg `0.8.1 → 0.11.x` — **hard prerequisite**), ADR-006 (NE-codes), ADR-007 (license tier — dlt is Apache-2.0, GREEN), ADR-013 (`ctx.materialize` shape mirrored here for `ctx.copy_from_postgres`), `docs/internal/research/dlt.md` §13, `docs/swap/dlt.md`, `nucleus_architecture_v4.1.md` §5.5 + §6.3 + §6.4, `AGENTS.md` §3 #10/#11 + §11.12 + §11.13, `src/nucleus/ctx/copy_from.py` (the SQLite parallel).
 
 ## Context
 
@@ -22,7 +22,7 @@ Two architectural paths exist:
 1. **Native Postgres branch on `ctx.copy_from`** — ~150 LOC of SQLAlchemy + PyIceberg, mirroring the SQLite branch verbatim. Zero new runtime deps.
 2. **Wrap dlt's `sql_database` verified source** — ~80 LOC of glue, +1 runtime dep (`dlt==1.26.0`, ~30 MB closure including `pyiceberg-core`). Inherits production-grade type mapping, lazy schema reflection, and the foundation for incremental loading (Stage 2) + 100+ connectors (v0.3+).
 
-Per `docs/research/dlt.md` §13 (the companion research note), dlt's [`sql_database`](https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database) source on the [Iceberg destination](https://dlthub.com/docs/dlt-ecosystem/destinations/iceberg) is the canonical wrap-not-build choice once we accept the dependency cost. This ADR proposes path 2 and surfaces path 1 as the alternative for founder ratification.
+Per `docs/internal/research/dlt.md` §13 (the companion research note), dlt's [`sql_database`](https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database) source on the [Iceberg destination](https://dlthub.com/docs/dlt-ecosystem/destinations/iceberg) is the canonical wrap-not-build choice once we accept the dependency cost. This ADR proposes path 2 and surfaces path 1 as the alternative for founder ratification.
 
 ADR-002 §6 + ADR-003 §"Downstream consumers" already documented dlt as the v0.3+ default and PyIceberg `0.11.x` as its hard prerequisite. This ADR does not contradict that sequencing — it ratifies an *acceleration* of dlt's first wrap (Postgres only) into Stage 1 once ADR-003 lands.
 
@@ -77,8 +77,8 @@ Re-export `ingest_postgres_to_iceberg` from `src/nucleus/ctx/__init__.py` alongs
 - Atomic single-table Iceberg commit (PyIceberg per ADR-001 — no custom commit service).
 - Schema auto-inference, including `NUMERIC(p,s)`, `TIMESTAMPTZ`, `JSONB→string`, `BYTEA`.
 - TLS via libpq URL params (`?sslmode=require&sslrootcert=...`) per <https://www.postgresql.org/docs/current/libpq-ssl.html>.
-- OpenLineage emit on the same code path as the SQLite branch (per `docs/research/openlineage.md` + ADR-009 — bookend hooks at the AMA boundary, no new emitter).
-- Error translation per `docs/research/dlt.md` §13.8 — all paths route to existing NE-codes (no new allocations).
+- OpenLineage emit on the same code path as the SQLite branch (per `docs/internal/research/openlineage.md` + ADR-009 — bookend hooks at the AMA boundary, no new emitter).
+- Error translation per `docs/internal/research/dlt.md` §13.8 — all paths route to existing NE-codes (no new allocations).
 
 **Out (deferred):**
 
@@ -142,7 +142,7 @@ def ingest_postgres_to_iceberg(conn_str, source_table, *, warehouse_dir,
     return _row_count_from_load_info(load_info)
 ```
 
-`_translate_dlt_postgres_exception` lives next to the existing PoC #1 promoted translator (`src/nucleus/coordination/error_translation.py`) and reuses its two-level `__context__` walk for `PipelineStepFailed` (per `docs/research/dlt.md` §5.4 + §13.8). No new NE-codes; no new error classes.
+`_translate_dlt_postgres_exception` lives next to the existing PoC #1 promoted translator (`src/nucleus/coordination/error_translation.py`) and reuses its two-level `__context__` walk for `PipelineStepFailed` (per `docs/internal/research/dlt.md` §5.4 + §13.8). No new NE-codes; no new error classes.
 
 ## Composability
 
@@ -156,9 +156,9 @@ If dlt itself becomes unviable post-Stage 1 (license pivot, dltHub fold, perf re
 |---|---|---|---|
 | **dlt minor-version churn** — 1.26.0 → 1.27.0 already in alpha (PyPI 2026-05-12); SQL-database verified source has had API churn historically. | MED | Schema-inference behavior shift = silent data corruption. | Exact pin per AGENTS.md §11.13; add `tests/upgrade_smoke/test_dlt_upgrade.py` regression-locking the 6 Postgres column types in §13.6; no auto-bump (one-component-per-PR). |
 | **Postgres connection auth scope creep** — IAM, Vault, OIDC, SSH tunnel pressure mid-Stage-1. | MED | Stage 1 LOC ceiling breach + scope drift. | Hard freeze: connection-string + libpq SSL only. SSH/IAM/Vault rejected with a `NucleusConfigError` fix-hint pointing at v0.5 ADR-010 work. |
-| **Large-table memory** — dlt's normalize step writes per-load Parquet to `pipelines_dir`; 1M-row Postgres table ≈ 100-500 MB temp footprint per `docs/research/dlt.md` §6. | LOW | Out-of-disk on small dev machines. | Row-count ceiling documented (10M Stage 1; §13.9); `recommended_file_size` capability override stays available; PoC #4 boot harness gains a 10M-row smoke test. |
+| **Large-table memory** — dlt's normalize step writes per-load Parquet to `pipelines_dir`; 1M-row Postgres table ≈ 100-500 MB temp footprint per `docs/internal/research/dlt.md` §6. | LOW | Out-of-disk on small dev machines. | Row-count ceiling documented (10M Stage 1; §13.9); `recommended_file_size` capability override stays available; PoC #4 boot harness gains a 10M-row smoke test. |
 | **Schema drift mid-ingest** — Postgres `ALTER TABLE` between reflection and read raises mid-`pipeline.run()`. | LOW | Partial commit, then failure. | Translate to `NucleusSchemaEvolutionError` (NE1004); idempotent re-run after schema settles. v4.1 §15 contracts NOT in scope for Stage 1. |
-| **PyIceberg upgrade slip** — ADR-003 must land first (`dlt[pyiceberg]>=0.9.1` floor per `docs/research/dlt.md` §6/§7). | LOW | Stage 1 blocked entirely. | ADR-003 is ACCEPTED 2026-05-13; trigger condition (PoC #1 17/17 green) already cleared. Sequencing is "land ADR-003, then this." |
+| **PyIceberg upgrade slip** — ADR-003 must land first (`dlt[pyiceberg]>=0.9.1` floor per `docs/internal/research/dlt.md` §6/§7). | LOW | Stage 1 blocked entirely. | ADR-003 is ACCEPTED 2026-05-13; trigger condition (PoC #1 17/17 green) already cleared. Sequencing is "land ADR-003, then this." |
 
 ## Effort estimate
 
@@ -205,7 +205,7 @@ git revert <stage-1-pr>
 
 User-side data: Iceberg tables remain readable (Tier 0 immortal substrate per `nucleus_architecture_v4.1.md` §4.1); user can re-ingest via path A (native Postgres branch) once that fallback exists. No data migration required — the table format is the contract, dlt is the loader.
 
-If structural rollback (dlt unviable): ADR-014a documents the swap to path A (~150 LOC native Postgres branch on `ctx.copy_from` — pre-sized in `docs/research/dlt.md` §13 Q1).
+If structural rollback (dlt unviable): ADR-014a documents the swap to path A (~150 LOC native Postgres branch on `ctx.copy_from` — pre-sized in `docs/internal/research/dlt.md` §13 Q1).
 
 ---
 
@@ -280,7 +280,7 @@ nucleus ingest mysql+pymysql://user:pass@host:3306/db --table shop.orders --as r
 | `sqlalchemy.exc.NoSuchTableError` | NE1008 | `NucleusSourceNotFound` |
 | Fallthrough | NE3001 | `NucleusInternalError` |
 
-Same two-level `__context__` walk as the Postgres translator (`docs/research/dlt.md` §5.4 + §13.8). User-facing strings strip `pymysql`, `dlt`, `mysql`, `sqlalchemy`, `PipelineStepFailed` per AGENTS.md §11.7 (validated by `scripts/dagster_leak_check.py`).
+Same two-level `__context__` walk as the Postgres translator (`docs/internal/research/dlt.md` §5.4 + §13.8). User-facing strings strip `pymysql`, `dlt`, `mysql`, `sqlalchemy`, `PipelineStepFailed` per AGENTS.md §11.7 (validated by `scripts/dagster_leak_check.py`).
 
 ### Cross-references
 

@@ -10,7 +10,7 @@
 
 ## Capability comparison table
 
-> Sources: `nucleus_architecture_v4.1.md`, `docs/research/scale_out_audit.md`, public Databricks docs (<https://docs.databricks.com/>), Snowflake docs (<https://docs.snowflake.com/>). Last verified 2026-05-15.
+> Sources: `nucleus_architecture_v4.1.md`, `docs/internal/research/scale_out_audit.md`, public Databricks docs (<https://docs.databricks.com/>), Snowflake docs (<https://docs.snowflake.com/>). Last verified 2026-05-15.
 
 | Capability | Nucleus v0.2 | Databricks | Snowflake |
 |---|---|---|---|
@@ -68,7 +68,7 @@ Per `nucleus_architecture_v4.1.md` §10:
 What we explicitly do NOT mean by "yield to giants":
 
 - We do NOT compete with Databricks or Snowflake on multi-team scale, ML platform, lineage UI polish, or compliance certifications. Those are their wins by design.
-- We do NOT plan to "extend Nucleus until it can do what Databricks does." Per the scale-out audit (`docs/research/scale_out_audit.md`), every candidate Rust rewrite to push Nucleus into multi-team distributed-compute territory was rejected on the 8-question gate — the right answer at that scale is yield, not engine swap.
+- We do NOT plan to "extend Nucleus until it can do what Databricks does." Per the scale-out audit (`docs/internal/research/scale_out_audit.md`), every candidate Rust rewrite to push Nucleus into multi-team distributed-compute territory was rejected on the 8-question gate — the right answer at that scale is yield, not engine swap.
 - We do NOT bash competitors. Databricks and Snowflake are excellent products, built by excellent teams, solving real problems for the personas they serve. Different personas; different right answers.
 
 ---
@@ -155,7 +155,7 @@ Honestly: depends on whether the founder commits to (a) raise, (b) hand off, or 
 ## See also
 
 - `nucleus_architecture_v4.1.md` §10 — Yield-to-Giants Strategy (full Mode 1/2/3 detail)
-- `docs/research/scale_out_audit.md` — Honest assessment of where Nucleus breaks at large-team scale (TL;DR: not a fit by design; graduation is the answer)
+- `docs/internal/research/scale_out_audit.md` — Honest assessment of where Nucleus breaks at large-team scale (TL;DR: not a fit by design; graduation is the answer)
 - `docs/cookbook/production-deployment.md` — Single-node self-hosted Nucleus production setup
 - `docs/release/launch_kit/faq_launch.md` — 25 launch-day FAQs including pricing / scale-out / contributing
 - Databricks docs: <https://docs.databricks.com/>

@@ -8,7 +8,7 @@ In v0.1 (post-PoC #1 promotion), DuckDB usage is deliberately narrow:
 
 - **Exception-class registration**: `coordination/error_translation.py` lazy-imports `duckdb` to register handlers for the five exception types we translate to `NucleusError` subclasses (lines 324-330, lazy inside `_registry()` to avoid a hard import at module load).
 - **No SQL execution wired in v0.1**: `engines/duckdb_engine.py` is not yet promoted; the `nucleus query` and `nucleus run` CLI commands stub on `NucleusInternalError` per the v0.1 skeleton.
-- **Future SQL surface**: `coordination/sql_resolver.py` (PoC #2 promoted) will hand a rendered SQL string to the engine; `ctx.read(...)` will scan Iceberg via DuckDB once `engines/duckdb_engine.py` lands. See `docs/research/duckdb.md` §4 + §8.
+- **Future SQL surface**: `coordination/sql_resolver.py` (PoC #2 promoted) will hand a rendered SQL string to the engine; `ctx.read(...)` will scan Iceberg via DuckDB once `engines/duckdb_engine.py` lands. See `docs/internal/research/duckdb.md` §4 + §8.
 - **Iceberg writes are NOT a DuckDB concern**: PyIceberg owns atomic commits per ADR-001 + Hard Constraint #5. DuckDB is read-side only.
 
 If our wrap surface stays this narrow, the swap is mostly an exception-registry rewrite. As `engines/duckdb_engine.py` grows, this section grows with it; review on every promotion PR.
@@ -25,7 +25,7 @@ Today (v0.1, exception registry only — `coordination/error_translation.py:324-
 | `duckdb.OutOfMemoryException` | `error_translation.py:329` | `datafusion.errors.ResourcesExhausted` (NEEDS VERIFICATION) |
 | `duckdb.TransactionException` | `error_translation.py:330` | DataFusion is not a transactional store — concurrent-write conflicts surface at the catalog instead |
 
-Future (when `engines/duckdb_engine.py` lights up — `docs/research/duckdb.md` §5):
+Future (when `engines/duckdb_engine.py` lights up — `docs/internal/research/duckdb.md` §5):
 
 | Symbol | Wrap responsibility | DataFusion equivalent |
 |---|---|---|
@@ -77,7 +77,7 @@ Located at `tests/swap/test_duckdb_swap.py`. Verifies the **default (DuckDB) wra
 
 Per v4.1 §9.3, swap fires only on:
 
-- DuckDB Foundation pivots license unfavorably (current: MIT — `docs/research/duckdb.md` §1)
+- DuckDB Foundation pivots license unfavorably (current: MIT — `docs/internal/research/duckdb.md` §1)
 - DataFusion's Iceberg story reaches stable parity with DuckDB's `iceberg_scan` (currently DuckDB covers Iceberg v1 + v2 read; v3 partial)
 - TPC-H 10 GB or `:memory:` startup regresses >2× vs the pinned 1.1.3 baseline (PoC #4 budget)
 - DuckDB drops Windows or macOS-arm64 wheels (PoC #4 cross-platform requirement)
@@ -94,4 +94,4 @@ Until one fires, we maintain interface + smoke tests only, never a full second i
 - DataFusion Python: https://datafusion.apache.org/python/  (re-verify on PyPI at trigger time per `AGENTS.md` §11.12)
 - `datafusion-iceberg`: https://github.com/apache/datafusion-iceberg
 - Architecture: `nucleus_architecture_v4.1.md` §5.1 (Engines), §9.2 (composability tier table), §9.3 (swap discipline)
-- Research notes: `docs/research/duckdb.md`
+- Research notes: `docs/internal/research/duckdb.md`

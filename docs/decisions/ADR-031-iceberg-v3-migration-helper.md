@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder  
 **Priority**: P1  
 **Target phase**: v0.3  
-**Source research**: `docs/research/inspiration/iceberg_catalog_deep_dive.md` §2; `docs/research/inspiration/storage_formats_2026.md` §2  
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §3 #8, §2.4
+**Source research**: `docs/internal/research/inspiration/iceberg_catalog_deep_dive.md` §2; `docs/internal/research/inspiration/storage_formats_2026.md` §2  
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §3 #8, §2.4
 
 ---
 

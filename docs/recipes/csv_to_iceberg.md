@@ -125,4 +125,4 @@ nucleus run staging.events_partitioned          # <!-- pre-v0.1; nucleus_cli_spe
 4. **`partition_by="month(event_ts)"` string DSL** — exists in [`docs/patterns/partitioning.md`](../patterns/partitioning.md) §6 but the parser inside `@nucleus.asset` is not implemented.
 5. **One-Parquet-per-month commit semantics** — confirmable via `nucleus snapshot list` ([`nucleus_cli_spec.md`](../../nucleus_cli_spec.md) §6.1) once the snapshot CLI ships.
 
-Hit any of these? Log to [`docs/research/ai_hallucinations.md`](../research/ai_hallucinations.md). Re-validate after PoC #3 expands beyond SQLite.
+Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../research/ai_hallucinations.md). Re-validate after PoC #3 expands beyond SQLite.

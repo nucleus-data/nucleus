@@ -3,7 +3,7 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: openlineage, lineage, events, schema-stability, tier-0, ama
-> **Related**: ADR-001 (snapshot id), ADR-002 §8.2 (AI/MCP consume lineage), ADR-005 (tiers — OL facets Stable @ v0.5 → Frozen @ v1.0), ADR-006 (NE-codes → `errorMessage`), ADR-007 (OL = GREEN Apache-2.0), AGENTS.md §11.7 + §11.12, v4.1 §6.2 step 4 + §6.4 + §12.4, `docs/research/openlineage.md` (Worker J), `docs/research/ai_hallucinations.md` (2026-05-13 `openlineage-dagster` trap), `docs/architecture/sequence_asset_materialization.md` §2 row "3, 17" + §5 row 3 (Worker L)
+> **Related**: ADR-001 (snapshot id), ADR-002 §8.2 (AI/MCP consume lineage), ADR-005 (tiers — OL facets Stable @ v0.5 → Frozen @ v1.0), ADR-006 (NE-codes → `errorMessage`), ADR-007 (OL = GREEN Apache-2.0), AGENTS.md §11.7 + §11.12, v4.1 §6.2 step 4 + §6.4 + §12.4, `docs/internal/research/openlineage.md` (Worker J), `docs/internal/research/ai_hallucinations.md` (2026-05-13 `openlineage-dagster` trap), `docs/architecture/sequence_asset_materialization.md` §2 row "3, 17" + §5 row 3 (Worker L)
 
 ## Context
 
@@ -96,7 +96,7 @@ Every Nucleus-emitted `RunEvent` MUST carry these. Missing field = AMA bug; caug
 - Spec: <https://openlineage.io/docs/spec/object-model> · <https://openlineage.io/docs/spec/run-cycle> · <https://openlineage.io/docs/spec/naming>
 - Python client: <https://openlineage.io/docs/client/python/usage>
 - ColumnLineage facet (v0.5+): <https://raw.githubusercontent.com/OpenLineage/OpenLineage/main/spec/facets/ColumnLineageDatasetFacet.json>
-- PyPI 2026-05-13: <https://pypi.org/project/openlineage-python/1.47.1/> · Primary: `docs/research/openlineage.md` (Worker J) · `docs/research/ai_hallucinations.md`
+- PyPI 2026-05-13: <https://pypi.org/project/openlineage-python/1.47.1/> · Primary: `docs/internal/research/openlineage.md` (Worker J) · `docs/internal/research/ai_hallucinations.md`
 
 ### NEEDS VERIFICATION
 

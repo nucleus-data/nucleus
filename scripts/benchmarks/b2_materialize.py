@@ -39,7 +39,7 @@ Docs:
     PyIceberg table layout —
         https://py.iceberg.apache.org/configuration/
     Perf claims —
-        docs/research/performance_reliability_targets.md §2.2 + §3
+        docs/internal/research/performance_reliability_targets.md §2.2 + §3
 """
 
 from __future__ import annotations

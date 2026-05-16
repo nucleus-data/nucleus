@@ -31,7 +31,7 @@
 - `docs/release/launch_kit/LAUNCH_DAY_TIMELINE.md` (timeline worker)
 - `docs/release/launch_kit/SOCIAL_POSTS.md` (already landed, exemption fixed during consolidation)
 - `docs/release/launch_kit/SHOW_HN_HEADLINES.md`, `HN_REDDIT_FAQ.md`, `60_SECOND_DEMO_SCRIPT.md`
-- `docs/research/benchmarks_v0.2.0.md` (current empirical truth at `docs/benchmarks/2026-05-15_baseline.md`)
+- `docs/internal/research/benchmarks_v0.2.0.md` (current empirical truth at `docs/benchmarks/2026-05-15_baseline.md`)
 
 **Closeable now (zero blockers, founder-side)**: Phases 0, 1, 4, 5, 6, 7. **Hard-blocked on founder hands**: Phase 2 (PyPI account + OIDC trusted publisher) and Phase 3 (tag push) per AGENTS.md §3 — these CANNOT be performed by any agent.
 
@@ -191,7 +191,7 @@ Skipped sections (already in HEAD):
 
 **Summary**: 8 research docs (R1–R8, all verified 2026-05-15) synthesised into a single prioritised adoption shortlist. 11 new ADR stubs created at `docs/decisions/ADR-026-*.md` through `docs/decisions/ADR-036-*.md`, all STATUS=PROPOSED awaiting founder ratification.
 
-**Deliverable**: `docs/research/inspiration/ADOPTION_SHORTLIST.md`
+**Deliverable**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md`
 
 ### Top-15 Adoption Items
 
@@ -299,7 +299,7 @@ Skipped sections (already in HEAD):
 - CLEANUP §2-4 (archive + consolidate + stale docs)
 - Chaos J3-J8 (need Docker CI infra)
 - `docs/dev-guides/` vocabulary SKIP cleanup
-- `docs/research/lakekeeper.md` and `docs/research/marimo.md`
+- `docs/internal/research/lakekeeper.md` and `docs/internal/research/marimo.md`
 
 ### **Founder gate items (CANNOT be done by AI)**
 
@@ -330,7 +330,7 @@ Skipped sections (already in HEAD):
   - **How caught**: parallel onboarding-polish swarm read `__init__.py` to write quickstart examples, found `__all__` did not contain the claimed new symbols, and surfaced this as an escalation rather than fabricating workaround imports.
   - **Foreground fix (architect)**: rewrote `src/nucleus/ctx/__init__.py` to actually re-export `copy_from`, `sql`, `read`, refreshed the stale module docstring ("Pre-Heartbeat: public surface is empty" → live v0.1 status), and extended `__all__` to 6 symbols. Smoke test: all 4 symbols resolve at runtime.
   - **Regression sweep after foreground fix**: pytest **406 passed / 21 skipped / 0 failed / 4 warnings** (FastAPI ORJSONResponse deprecation, expected); `check_layering.py` PASS; `check_api_stability.py` PASS (5 public symbols tagged); `check_vocabulary.py` PASS.
-  - **Logged to `docs/research/ai_hallucinations.md`** with carry-forward: every subagent claim of "file edited" MUST be cross-verified by `git diff` (or equivalent file read) before being trusted. Future builder prompts should require a literal `git diff --stat` snippet, not a self-written file table.
+  - **Logged to `docs/internal/research/ai_hallucinations.md`** with carry-forward: every subagent claim of "file edited" MUST be cross-verified by `git diff` (or equivalent file read) before being trusted. Future builder prompts should require a literal `git diff --stat` snippet, not a self-written file table.
   - **Secondary inflation caught**: Phase D builder reported `456 passed / 22 skipped` total; actual collection is **427 tests** (406 passed + 21 skipped). The 39-test delta is real; the absolute totals were inflated. Phase D verifier (running parallel) will independently audit.
 
 ### 2026-05-14 01:40 ICT — onboarding docs synced with Phase D + Phase C + AMA + dlt postgres
@@ -349,7 +349,7 @@ Skipped sections (already in HEAD):
   - Added both rows to `docs/compatibility.md §1`; bumped header pin count from 23 → 25.
   - Added both rows to `docs/decisions/ADR-012-...md` matrix; bumped footnote pin count from 23 → 25.
   - Added the genuine "Fork A reviewer clarifier" to `docs/decisions/ADR-016-...md` under Alternative B, distinguishing reviewer's "Fork A = notebook embed" (Alternative D, rejected) from the ADR's "Fork A = Dagster + Marquez" (Alternative A, also rejected). Future reviewers citing "Fork A" should confirm which one.
-  - Logged second hallucination to `docs/research/ai_hallucinations.md` with carry-forward: composer-2-fast is a confirmed-unreliable narrator for documentation edits; future delegations of doc-heavy work to that model must include a post-condition grep validation in the prompt.
+  - Logged second hallucination to `docs/internal/research/ai_hallucinations.md` with carry-forward: composer-2-fast is a confirmed-unreliable narrator for documentation edits; future delegations of doc-heavy work to that model must include a post-condition grep validation in the prompt.
 - **Two simultaneous CRITICAL Constraint #11 violations closed in one foreground PR** (pyyaml + orjson). Both were direct runtime imports without top-level pyproject pins.
 - **Known-warning carry-forward**: FastAPI 0.116+ deprecates explicit `ORJSONResponse` default; tests/workbench emit 4 deprecation warnings. Architect may switch to FastAPI's Pydantic JSON-bytes path in v0.2.1 to clear warnings (behavior identical).
 
@@ -391,7 +391,7 @@ Founder action: pick (a) / (b) / (c). If (b), architect can autopilot the pyproj
 
 #### OTEL Day-1 researcher — LANDED (founder-decision-ready)
 
-Subagent survived the corporate proxy (different network leg than the verifier runs). Output: `docs/research/otel_day1_decision.md` (23.6 KB, 276 lines, within 18–26 KB target).
+Subagent survived the corporate proxy (different network leg than the verifier runs). Output: `docs/internal/research/otel_day1_decision.md` (23.6 KB, 276 lines, within 18–26 KB target).
 
 **Verified empirical claim**: the drift verifier's "no v0.1 callers" claim is **TRUE** — `rg` across `src/nucleus/`, `tests/`, `poc/`, `scripts/` returns zero imports of `opentelemetry`, `sqlglot`, or `msgspec` (only the license-tier metadata in `scripts/check_licenses.py:100-101`).
 
@@ -847,7 +847,7 @@ The Loop Mode rule landed at 17:14 ICT (founder directive "go into loop mode" �
 
 ### C3.1 — ADR-008 stale strings (6 refs)
 
-**Source**: `docs/decisions/ADR-008` lines 10, 16, 32, 33, 66, 109; `ai_hallucinations.md` 2026-05-13 MinIO; `docs/research/minio.md:245`. **Type**: amendment. **Blocks**: A1.14.
+**Source**: `docs/decisions/ADR-008` lines 10, 16, 32, 33, 66, 109; `ai_hallucinations.md` 2026-05-13 MinIO; `docs/internal/research/minio.md:245`. **Type**: amendment. **Blocks**: A1.14.
 **Edits**: `RELEASE.2025-10-15T17-29-55Z` → `RELEASE.2025-09-07T16-13-09Z` (5×); `release 2026-05-04` → `release 2025-05-04` (1×).
 **Recommendation**: *Mechanical sed/replace bundled with A1.14 + A1.15 + C3.2.*
 
@@ -892,7 +892,7 @@ The Loop Mode rule landed at 17:14 ICT (founder directive "go into loop mode" �
 
 ### D4.3 — SeaweedFS REST catalog re-probe at v0.3
 
-**Source**: `docs/research/seaweedfs.md` §8 (YELLOW) + §"Recommendation". **Type**: decision (scheduled re-probe). **Blocks**: nothing — ADR-008 + ADR-004 stand per §8.3.
+**Source**: `docs/internal/research/seaweedfs.md` §8 (YELLOW) + §"Recommendation". **Type**: decision (scheduled re-probe). **Blocks**: nothing — ADR-008 + ADR-004 stand per §8.3.
 **Recommendation**: *Block 4 h in v0.3 readiness checklist (Mo 14-20); if GREEN with `boto3` + SigV4, open follow-up ADR adding SeaweedFS REST as third v0.3+ catalog option (NOT ladder collapse).*
 
 ---
@@ -906,16 +906,16 @@ The Loop Mode rule landed at 17:14 ICT (founder directive "go into loop mode" �
 
 ### D4.5 — DuckLake monitoring
 
-**Source**: `docs/decisions/ADR-002` §4.2 P3; `docs/research/ducklake.md`. **Type**: monitoring (escalate-on-trigger). **Blocks**: nothing yet.
+**Source**: `docs/decisions/ADR-002` §4.2 P3; `docs/internal/research/ducklake.md`. **Type**: monitoring (escalate-on-trigger). **Blocks**: nothing yet.
 **Recommendation**: *Quarterly check; trigger ADR-002 amendment only if DuckLake captures >5% beachhead-persona mindshare OR DuckDB Labs makes it an opinionated default in DuckDB ≥ 1.3.*
 
 ---
 
 ## §5. Optional polish — 3 items
 
-- **E5.1 — `docs/research/minio.md` lines 25 / 65 / 217 / 237 / §3.2 cosmetic date pairings** (`NEEDS_VERIFICATION_INDEX.md` §"Newly surfaced this session" item 5). *Bundle with next docs-hygiene sweep post-A1.16.*
+- **E5.1 — `docs/internal/research/minio.md` lines 25 / 65 / 217 / 237 / §3.2 cosmetic date pairings** (`NEEDS_VERIFICATION_INDEX.md` §"Newly surfaced this session" item 5). *Bundle with next docs-hygiene sweep post-A1.16.*
 - **E5.2 — `SETUP.md §M3` macOS Docker bring-up: verify no residuals** (`NEEDS_VERIFICATION_INDEX.md` §"Resolved this session" macOS §M3 row). *Quick smoke test on next macOS access; file targeted fix only if residual surfaces.*
-- **E5.3 — `docs/research/README.md:39` fabricated MinIO tag**. *Bundle with C3.1 + C3.2.*
+- **E5.3 — `docs/internal/research/README.md:39` fabricated MinIO tag**. *Bundle with C3.1 + C3.2.*
 
 ---
 

@@ -3,11 +3,11 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0; clears AGENTS.md §9 Stop Condition for pre-v0.1 ship)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: storage, supply-chain, license, agplv3, beachhead, stop-condition
-> **Related**: ADR-002 §6 + §8.1; ADR-007 (AGPLv3 = Tier 2 YELLOW); AGENTS.md §3 Constraint #1 + §9 Stop Conditions; v4.1 §3.1 + §4.1 + §1.5 + §9; `docs/research/minio.md` (Worker BB, 2026-05-13)
+> **Related**: ADR-002 §6 + §8.1; ADR-007 (AGPLv3 = Tier 2 YELLOW); AGENTS.md §3 Constraint #1 + §9 Stop Conditions; v4.1 §3.1 + §4.1 + §1.5 + §9; `docs/internal/research/minio.md` (Worker BB, 2026-05-13)
 
 ## Context
 
-Worker BB's research (`docs/research/minio.md`, 23.5 KB) verified two upstream facts that re-shape MinIO from "OSS YELLOW with AGPLv3 footnote" to "archived dependency with no future CVE patches": (1) `github.com/minio/minio` was **archived 2026-04-25** (Worker BB §3.2 + §11; banner at <https://github.com/minio/minio>), and (2) the terminal OSS release `RELEASE.2025-09-07T16-13-09Z` shipped [GHSA-jjjj-jwhf-8rgr](https://github.com/minio/minio/security/advisories/GHSA-jjjj-jwhf-8rgr); MinIO Inc. publicly labels OSS MinIO **"unmaintained"** (Worker BB §1 — **NEEDS VERIFICATION on exact blog URL**). This trips **AGENTS.md §9 Stop Conditions** explicitly (*"A major upstream OSS we wrap breaks compatibility, hostile licenses, or dies"*) and **must be reconciled before v0.1 ships** — PoC #3, PoC #4, and PoC #5 all pin the archived release.
+Worker BB's research (`docs/internal/research/minio.md`, 23.5 KB) verified two upstream facts that re-shape MinIO from "OSS YELLOW with AGPLv3 footnote" to "archived dependency with no future CVE patches": (1) `github.com/minio/minio` was **archived 2026-04-25** (Worker BB §3.2 + §11; banner at <https://github.com/minio/minio>), and (2) the terminal OSS release `RELEASE.2025-09-07T16-13-09Z` shipped [GHSA-jjjj-jwhf-8rgr](https://github.com/minio/minio/security/advisories/GHSA-jjjj-jwhf-8rgr); MinIO Inc. publicly labels OSS MinIO **"unmaintained"** (Worker BB §1 — **NEEDS VERIFICATION on exact blog URL**). This trips **AGENTS.md §9 Stop Conditions** explicitly (*"A major upstream OSS we wrap breaks compatibility, hostile licenses, or dies"*) and **must be reconciled before v0.1 ships** — PoC #3, PoC #4, and PoC #5 all pin the archived release.
 
 AGPLv3 is **secondary but still real** (ADR-007 Tier 2 YELLOW): SAFE for OSS user-on-laptop (same posture as `docker run postgres:15-alpine`); DANGER if Cloud bundles the binary or offers managed-MinIO SaaS (AGPLv3 §13 forces source release). Post-archive, supply-chain risk dominates; AGPLv3 doesn't get worse but stops being the headline. Two architectural facts make this resolvable cheaply: **S3 API is Tier 0 immortal** per v4.1 §3.1 + §4.1 (*"Universal: MinIO, SeaweedFS, R2, GCS, Azure"*) — the protocol doesn't die, only the implementation changed governance state; and **Nucleus's hot path doesn't `import minio`** (Worker BB §1 + §2.2) — every byte goes through `pyiceberg` + `s3fs` (transitive via `pyiceberg[s3fs]==0.8.1`) + DuckDB `httpfs`. Swapping is compose + docs, not code.
 
@@ -84,7 +84,7 @@ User picks: `docker compose up` (SeaweedFS, default) OR `docker compose -f docke
 
 | Risk | Mitigation |
 |---|---|
-| SeaweedFS S3-API parity gap vs MinIO / AWS S3 | PoC #4 + PoC #3 verify; gaps logged in `docs/research/seaweedfs.md` (v0.5 per Worker BB §10) |
+| SeaweedFS S3-API parity gap vs MinIO / AWS S3 | PoC #4 + PoC #3 verify; gaps logged in `docs/internal/research/seaweedfs.md` (v0.5 per Worker BB §10) |
 | SeaweedFS less familiar to data engineers | Default + quickstart uses SeaweedFS; MinIO template tagged "archived upstream — for prior-MinIO familiarity only" |
 | Dual templates = maintenance burden | Small: two YAML files; swap-drill smoke test in CI per Constraint #9 |
 | Future SeaweedFS archival | Swap path in `docs/swap/storage_substrate.md`; Tier-0 portability keeps future swap config-only |
@@ -97,7 +97,7 @@ User picks: `docker compose up` (SeaweedFS, default) OR `docker compose -f docke
 2. **PoC #3 ingest** writes Iceberg via SeaweedFS — `pyiceberg` 0.8.1 + `s3fs` `Catalog.create_namespace` + `Table.append` + `scan().to_arrow()` parity.
 3. **PoC #1 error translation** runs against SeaweedFS — `CommitFailedException` / `CommitStateUnknownException` still surface (PoC #1 is backend-agnostic per Worker BB §3 + §4.2).
 4. **Swap-drill smoke test** in CI per Constraint #9: same pytest suite runs against both compose templates; divergence is a regression.
-5. **README + SETUP.md** + `docs/research/minio.md` cross-link + status flip in follow-up PR (not this ADR's diff per hard-constraint).
+5. **README + SETUP.md** + `docs/internal/research/minio.md` cross-link + status flip in follow-up PR (not this ADR's diff per hard-constraint).
 
 ## Rollback
 
@@ -113,7 +113,7 @@ If SeaweedFS proves problematic: **ADR-008a** flips default back to MinIO archiv
 
 ## Trigger
 
-Status flips **PROPOSED → ACCEPTED** when, in a single follow-up PR (kept out of this ADR's diff per the hard-constraint): founder signs off on Option C; `docker-compose.yml` switched to SeaweedFS + `docker-compose.minio.yml` created with the SeaweedFS tag pinned + image size measured (resolves NV #1); `docs/swap/storage_substrate.md` authored (interface + smoke tests per Constraint #9); `docs/research/minio.md` status header → "ALTERNATE substrate per ADR-008" with cross-links in §3.3 + §10 + §11; v4.1 §5.x note added; README + SETUP.md quickstart updated; `docs/research/seaweedfs.md` scheduled at v0.5 entry.
+Status flips **PROPOSED → ACCEPTED** when, in a single follow-up PR (kept out of this ADR's diff per the hard-constraint): founder signs off on Option C; `docker-compose.yml` switched to SeaweedFS + `docker-compose.minio.yml` created with the SeaweedFS tag pinned + image size measured (resolves NV #1); `docs/swap/storage_substrate.md` authored (interface + smoke tests per Constraint #9); `docs/internal/research/minio.md` status header → "ALTERNATE substrate per ADR-008" with cross-links in §3.3 + §10 + §11; v4.1 §5.x note added; README + SETUP.md quickstart updated; `docs/internal/research/seaweedfs.md` scheduled at v0.5 entry.
 
 **Not gated on PoC #1.** Governance + infrastructure; **must land pre-v0.1** to clear §9 before any `src/nucleus/` production code per AGENTS.md §11.1.
 
@@ -124,7 +124,7 @@ Status flips **PROPOSED → ACCEPTED** when, in a single follow-up PR (kept out 
 | `poc/p4_boot_time/measure.py` | Re-baseline; `measure_minio_health()` → `measure_storage_health()` on promotion (AGENTS.md §11.1); `{200, 403}` → `{200, 429}` (Worker BB §4.1) |
 | `poc/p3_ingest/ingest.py` | Verify `pyiceberg` + `s3fs` round-trip against SeaweedFS; no code change (backend-independent) |
 | PoC #5 beachhead | New compose = new tester instruction; field-tested in the same pass that locks the tagline (ADR-002 §8.4) |
-| `docs/research/minio.md` | Status → "ALTERNATE substrate per ADR-008"; remains the archived-substrate reference |
+| `docs/internal/research/minio.md` | Status → "ALTERNATE substrate per ADR-008"; remains the archived-substrate reference |
 | `docs/swap/storage_substrate.md` | New on acceptance; documents MinIO ↔ SeaweedFS drill per Constraint #9 |
 | v4.1 §5.x + README + SETUP.md | Cross-ref + quickstart mentions SeaweedFS default + archived-MinIO alternate |
 | `pyproject.toml` | **No change** — `minio`-py was correctly not pinned (Worker BB §2.2); ADR-003's `pyiceberg==0.11.x` is independent |

@@ -14,7 +14,7 @@ You are most likely one of:
 - **[I'm a user wanting to try Nucleus]** → [30-minute Quickstart](getting-started/quickstart.md) — `git clone` to a real BI-ready Iceberg table on your laptop.
 - **[I'm a developer wanting to contribute]** → [Contributing](community/contributing.md) + the developer guides ([source on GitHub](https://github.com/nucleus-data/nucleus/tree/main/docs/dev-guides)).
 - **[I'm an AI coding agent]** → read [`AGENTS.md`](https://github.com/nucleus-data/nucleus/blob/main/AGENTS.md) (the universal AI handover) and [`.cursor/rules/nucleus.mdc`](https://github.com/nucleus-data/nucleus/blob/main/.cursor/rules/nucleus.mdc) (vocabulary + 8-question gate).
-- **[I'm evaluating Nucleus vs Databricks / Snowflake / dbt]** → [Why Nucleus](why-nucleus.md) + [parity research](https://github.com/nucleus-data/nucleus/blob/main/docs/research/parity_vs_databricks_snowflake.md).
+- **[I'm evaluating Nucleus vs Databricks / Snowflake / dbt]** → [Why Nucleus](why-nucleus.md) + [parity research](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/research/parity_vs_databricks_snowflake.md).
 - **[I'm a skeptic — show me proof]** → [Empirical benchmarks](https://github.com/nucleus-data/nucleus/blob/main/docs/benchmarks/2026-05-15_baseline.md) (11 measured deltas vs aspirational targets, honest).
 - **[I want the deep architecture]** → [`nucleus_architecture_v4.1.md`](https://github.com/nucleus-data/nucleus/blob/main/nucleus_architecture_v4.1.md) — the single source of truth.
 - **[I want the roadmap]** → [Roadmap](community/roadmap.md).

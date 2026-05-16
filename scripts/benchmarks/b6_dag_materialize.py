@@ -8,7 +8,7 @@ Verifies the realistic v0.2.0 user expectation:
 There is no perf-doc claim for "N assets in M layers in T seconds" today
 (perf doc §2.2 only budgets per-asset materialize), so this script
 captures the empirical baseline rather than asserting PASS/FAIL against a
-fixed target. The numbers feed `docs/research/benchmarks_v0.2.0.md` (the
+fixed target. The numbers feed `docs/internal/research/benchmarks_v0.2.0.md` (the
 user-facing report) so a startup data team can answer "how long does my
 50-asset analytics warehouse take to refresh on my MacBook?".
 

@@ -19,7 +19,7 @@ To run manually (requires Docker + testcontainers):
 
 Architecture refs:
     docs/decisions/ADR-014-dlt-postgres-source.md §"MySQL parity"
-    docs/research/dlt.md §13.6 (column type round-trip table — Postgres analog)
+    docs/internal/research/dlt.md §13.6 (column type round-trip table — Postgres analog)
     AGENTS.md §11.13 (upgrade workflow — add upgrade smoke test as part of the PR)
 """
 

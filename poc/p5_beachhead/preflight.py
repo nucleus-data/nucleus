@@ -285,8 +285,8 @@ def check_port_9000() -> CheckResult:
 def check_port_8181() -> CheckResult:
     free, msg = _port_free(8181)
     if free:
-        return _r("15. Port 8181", PASS, "localhost:8181 bindable", "docs/research/seaweedfs.md")
-    return _r("15. Port 8181", FAIL, f"occupied ({msg})", "docs/research/seaweedfs.md")
+        return _r("15. Port 8181", PASS, "localhost:8181 bindable", "docs/internal/research/seaweedfs.md")
+    return _r("15. Port 8181", FAIL, f"occupied ({msg})", "docs/internal/research/seaweedfs.md")
 
 
 # ----------------------------------------------------------------------------

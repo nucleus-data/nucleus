@@ -3,7 +3,7 @@
 > **Component**: `litellm==1.83.14` (Intelligence layer Copilot wrap)
 > **Tier**: Tier 2 — Intelligence engine wrap (not immortal; LLM economics volatile)
 > **ADR**: [ADR-015](../decisions/ADR-015-ai-chat-mvp.md)
-> **Research**: [docs/research/ai_copilot.md](../research/ai_copilot.md) §12
+> **Research**: [docs/internal/research/ai_copilot.md](../research/ai_copilot.md) §12
 > **Composability rule**: interface + smoke tests maintained always; full swap built **on-demand only**
 > (Composability by Constitution §3 — do NOT pre-implement; this doc records the swap plan)
 

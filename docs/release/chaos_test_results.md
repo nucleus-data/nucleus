@@ -2,7 +2,7 @@
 
 > **Run owner**: Worker A2 — Chaos Test Execution (v0.2.0 GA hardening Wave 2)
 > **Suite version**: `scripts/release_e2e/run_chaos.py` (J1–J8 fully implemented)
-> **Spec**: `docs/research/performance_reliability_targets.md` §8 + `docs/release/E2E_TEST_PLAN.md` §Suite J
+> **Spec**: `docs/internal/research/performance_reliability_targets.md` §8 + `docs/release/E2E_TEST_PLAN.md` §Suite J
 > **Run timestamp**: 2026-05-15T10:46:26Z (UTC)
 > **Reliability score**: **6 / 8 PASS** (2 FAILs are legitimate chaos findings — translate-layer gaps detected)
 
@@ -249,7 +249,7 @@ Then either:
 - (a) add a `pydantic.ValidationError` → `NucleusCatalogError` (NE1007) handler in `coordination/error_translation.py`, OR
 - (b) rely on the existing `_value_error_handler` (pydantic `ValidationError` subclasses `ValueError` in v2) and route corrupted-metadata messages to `NucleusCatalogError` based on message content.
 
-Option (a) is cleaner. Recommend adding a `nucleus repair` CLI verb that runs the recovery playbook from `docs/research/performance_reliability_targets.md` §6.2 (the "Catalog corruption recovery" gap) — this would let the fix-hint actually point users to a real command. (Currently no `nucleus repair` exists; the perf-doc-§8-row-8 "run nucleus repair" hint is aspirational.)
+Option (a) is cleaner. Recommend adding a `nucleus repair` CLI verb that runs the recovery playbook from `docs/internal/research/performance_reliability_targets.md` §6.2 (the "Catalog corruption recovery" gap) — this would let the fix-hint actually point users to a real command. (Currently no `nucleus repair` exists; the perf-doc-§8-row-8 "run nucleus repair" hint is aspirational.)
 
 ---
 
@@ -260,7 +260,7 @@ Option (a) is cleaner. Recommend adding a `nucleus repair` CLI verb that runs th
 | **CF-1** | `_commit_to_iceberg` mkdir at warehouse path bypasses translate() | **HIGH (P0)** | Worker B1 / asset_materialization | `src/nucleus/coordination/asset_materialization.py:352` |
 | **CF-2** | `_register_catalog_in_duckdb` does not wrap `catalog.load_table()` in translate() | **HIGH (P0)** | Worker B2 / cli main | `src/nucleus/cli/main.py:428` (called from `_execute_sql` line 450 — outside the existing try block at lines 461-464) |
 | **CF-3** | Pydantic v2 `ValidationError` has no translate handler | **MEDIUM (P1)** | Worker B1 / error_translation | `src/nucleus/coordination/error_translation.py` — add `pydantic.ValidationError` → `NucleusCatalogError` (NE1007) handler |
-| **CF-4** | `nucleus repair` command referenced in perf doc §8 row 8 hint does not exist | LOW (DOC) | Worker C / docs + CLI | `docs/research/performance_reliability_targets.md` §8 row 8 hint is aspirational |
+| **CF-4** | `nucleus repair` command referenced in perf doc §8 row 8 hint does not exist | LOW (DOC) | Worker C / docs + CLI | `docs/internal/research/performance_reliability_targets.md` §8 row 8 hint is aspirational |
 | **CF-5** | Perf doc §8 NE-code expectations are misaligned with `src/nucleus/errors.py` reality | LOW (DOC) | Worker C / docs | See §6 below; affects all 6 rows |
 | **CF-6** | Scheduler daemon does NOT emit clock-skew warning when host clock drifts | LOW (deferred) | Wave-3 / scheduler-daemon | Deferred to v0.3 per ADR-025 |
 
@@ -276,7 +276,7 @@ Both J1 and J2 PASS in this run (12.10 s and 3.55 s respectively). No regression
 
 ## 6. Discrepancies — perf doc §8 vs `src/nucleus/errors.py`
 
-Per the anti-hallucination directive: **every "Expected NE code" cell in `docs/research/performance_reliability_targets.md` §8 is wrong or rephrased**, because the perf-doc table was written against an earlier draft of the error registry. Documented honestly here (Worker C may align the perf doc to reality post-this report).
+Per the anti-hallucination directive: **every "Expected NE code" cell in `docs/internal/research/performance_reliability_targets.md` §8 is wrong or rephrased**, because the perf-doc table was written against an earlier draft of the error registry. Documented honestly here (Worker C may align the perf doc to reality post-this report).
 
 | Row | Perf doc says | Reality (verified `src/nucleus/errors.py` 2026-05-15) | Effect |
 |---|---|---|---|

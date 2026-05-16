@@ -1,6 +1,6 @@
 """Forbid ``os.rename(`` and ``Path.rename(`` calls inside ``src/nucleus/``.
 
-Per ``docs/research/performance_reliability_targets.md`` §10 item #5 +
+Per ``docs/internal/research/performance_reliability_targets.md`` §10 item #5 +
 ``docs/decisions/ADR-024-reliability-hardening-plan.md`` P0-4.
 
 Why
@@ -45,7 +45,7 @@ Scope
 -----
 We scan ``src/nucleus/**.py`` only. Third-party deps (e.g. ``pyiceberg``
 inside ``.venv/``) are out of scope; Worker B1's audit
-(``docs/research/windows_atomicity.md``) confirms ``pyiceberg`` ≥ 0.11
+(``docs/internal/research/windows_atomicity.md``) confirms ``pyiceberg`` ≥ 0.11
 uses pyarrow / SQLite catalog atomicity primitives instead of filesystem
 rename.
 
@@ -265,9 +265,9 @@ def _render(report: RenameReport, target: Path) -> str:
     lines.append("  * os.replace(src, dst) handles both atomically.")
     lines.append("")
     lines.append(
-        "References: docs/research/performance_reliability_targets.md (perf gap #5), "
+        "References: docs/internal/research/performance_reliability_targets.md (perf gap #5), "
         "docs/decisions/ADR-024-reliability-hardening-plan.md P0-4, "
-        "docs/research/windows_atomicity.md."
+        "docs/internal/research/windows_atomicity.md."
     )
     return "\n".join(lines)
 

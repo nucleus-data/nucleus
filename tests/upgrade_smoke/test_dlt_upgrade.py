@@ -1,7 +1,7 @@
 """dlt upgrade smoke tests — Postgres column type round-trip regression lock.
 
 Per AGENTS.md §11.13 (Hard Constraint #11 — Upgrade-safe stack design).
-Locks the 6 Postgres column types specified in docs/research/dlt.md §13.6:
+Locks the 6 Postgres column types specified in docs/internal/research/dlt.md §13.6:
   BIGINT, TEXT, NUMERIC(10,2), TIMESTAMPTZ, JSONB, BYTEA.
 
 Status: **SKIP-BY-DEFAULT** (testcontainers integration deferred to follow-up swarm)
@@ -13,7 +13,7 @@ To run manually (requires Docker + testcontainers):
 
 Architecture refs:
     docs/decisions/ADR-014-dlt-postgres-source.md §Verification plan §7
-    docs/research/dlt.md §13.6 (column type round-trip table)
+    docs/internal/research/dlt.md §13.6 (column type round-trip table)
     AGENTS.md §11.13 (upgrade workflow — add upgrade smoke test as part of the PR)
 """
 
@@ -42,7 +42,7 @@ pytestmark = [
 # ---------------------------------------------------------------------------
 # Each case: CREATE TABLE with the given Postgres type, ingest via
 # ingest_postgres_to_iceberg, scan via pyiceberg, assert Iceberg type matches
-# the mapping in docs/research/dlt.md §13.6.
+# the mapping in docs/internal/research/dlt.md §13.6.
 #
 # Structure is present so any swarm or builder can uncomment + wire
 # testcontainers fixtures without changing the test names (upgrade regression
@@ -51,14 +51,14 @@ pytestmark = [
 
 
 def test_bigint_round_trips_as_iceberg_long():
-    """BIGINT → Iceberg LongType (docs/research/dlt.md §13.6)."""
+    """BIGINT → Iceberg LongType (docs/internal/research/dlt.md §13.6)."""
     # TODO (follow-up swarm): wire Postgres testcontainer + ingest_postgres_to_iceberg.
     # Assert: pyiceberg schema field type is LongType.
     pytest.skip("Testcontainers fixture not yet wired — deferred per ADR-014 §Sequencing.")
 
 
 def test_text_round_trips_as_iceberg_string():
-    """TEXT → Iceberg StringType (docs/research/dlt.md §13.6)."""
+    """TEXT → Iceberg StringType (docs/internal/research/dlt.md §13.6)."""
     pytest.skip("Testcontainers fixture not yet wired — deferred per ADR-014 §Sequencing.")
 
 
@@ -74,7 +74,7 @@ def test_numeric_10_2_round_trips_as_iceberg_decimal():
 def test_timestamptz_round_trips_as_iceberg_timestamptz():
     """TIMESTAMPTZ → Iceberg TimestamptzType (NOT TimestampType — timezone-aware).
 
-    AI commonly conflates TIMESTAMP and TIMESTAMPTZ — see docs/research/dlt.md §13.10.
+    AI commonly conflates TIMESTAMP and TIMESTAMPTZ — see docs/internal/research/dlt.md §13.10.
     This case is the regression lock that catches that conflation.
     """
     pytest.skip("Testcontainers fixture not yet wired — deferred per ADR-014 §Sequencing.")
@@ -86,5 +86,5 @@ def test_jsonb_round_trips_as_iceberg_string():
 
 
 def test_bytea_round_trips_as_iceberg_binary():
-    """BYTEA → Iceberg BinaryType (docs/research/dlt.md §13.6)."""
+    """BYTEA → Iceberg BinaryType (docs/internal/research/dlt.md §13.6)."""
     pytest.skip("Testcontainers fixture not yet wired — deferred per ADR-014 §Sequencing.")

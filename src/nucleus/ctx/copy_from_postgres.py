@@ -11,7 +11,7 @@ Architecture refs:
     nucleus_architecture_v4.1.md §6.3 (Coordination — dlt translator boundary)
     nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-014-dlt-postgres-source.md (scope contract)
-    docs/research/dlt.md §13 (Postgres-source integration notes)
+    docs/internal/research/dlt.md §13 (Postgres-source integration notes)
 
 Pins/docs:
     dlt==1.26.0 — https://dlthub.com/docs/general-usage/pipeline
@@ -146,7 +146,7 @@ def ingest_postgres_to_iceberg(
     # See https://dlthub.com/docs/dlt-ecosystem/destinations/iceberg (catalog config)
     _open_catalog(warehouse_path)
 
-    # Lazy import — never at CLI startup per docs/research/dlt.md §6 + PoC #4
+    # Lazy import — never at CLI startup per docs/internal/research/dlt.md §6 + PoC #4
     # boot-time discipline. ``import dlt`` ≈ 200-400 ms cold.
     # Docs: https://dlthub.com/docs/general-usage/pipeline
     import dlt  # lazy-import; PLC0415 not enabled in this project's ruff config
@@ -159,9 +159,9 @@ def ingest_postgres_to_iceberg(
     # Docs: https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database/setup
     # credentials= accepts a SQLAlchemy URL string (Stage 1 default per ADR-014 §13.5).
     # backend="sqlalchemy" pinned explicitly — default has flipped in prior dlt releases;
-    # pin behavior per docs/research/dlt.md §13.3.
+    # pin behavior per docs/internal/research/dlt.md §13.3.
     # reflection_level="full_with_precision" ensures NUMERIC(p,s) / TIMESTAMPTZ
-    # round-trip cleanly per docs/research/dlt.md §13.6.
+    # round-trip cleanly per docs/internal/research/dlt.md §13.6.
     #
     # With reflection_level="full_with_precision", SQLAlchemy may connect and reflect
     # at resource construction time (not only inside pipeline.run).
@@ -177,8 +177,8 @@ def ingest_postgres_to_iceberg(
 
         # Docs: https://dlthub.com/docs/general-usage/pipeline
         # destination="filesystem" + table_format="iceberg" is the correct activation.
-        # NOT destination="iceberg" — see docs/research/dlt.md §9 (known gotcha).
-        # pipeline_name namespaced per docs/research/dlt.md §9 ("pipeline_name is the
+        # NOT destination="iceberg" — see docs/internal/research/dlt.md §9 (known gotcha).
+        # pipeline_name namespaced per docs/internal/research/dlt.md §9 ("pipeline_name is the
         # state key" — two assets sharing one name overwrite each other's state).
         pipeline = dlt.pipeline(
             pipeline_name=f"nucleus__pg__{dest_namespace}__{dest_table}",

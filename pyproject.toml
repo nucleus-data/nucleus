@@ -78,7 +78,7 @@ dependencies = [
   "jinja2==3.1.6",                  # Docs: https://jinja.palletsprojects.com/
 
   # Core infrastructure.
-  # msgspec removed entirely 2026-05-14 per docs/research/otel_day1_decision.md §D3.
+  # msgspec removed entirely 2026-05-14 per docs/internal/research/otel_day1_decision.md §D3.
   "click==8.1.8",                   # CLI framework. Docs: https://click.palletsprojects.com/
   "structlog==24.4.0",              # Structured logging. Docs: https://www.structlog.org/
   "typer==0.15.1",                  # CLI ergonomics on top of Click. Docs: https://typer.tiangolo.com/
@@ -235,7 +235,7 @@ observability = [
 ]
 
 # Opt-in column-level lineage + asset-graph dep extraction
-# (per docs/research/sqlglot.md §10; first concrete caller v0.5+ per
+# (per docs/internal/research/sqlglot.md §10; first concrete caller v0.5+ per
 # `nucleus_architecture_v4.1.md` §6.2 column-lineage roadmap).
 # Note: when `nucleus[postgres]` / `nucleus[mysql]` / `nucleus[snowflake]` is
 # installed, dlt transitively pulls sqlglot too — so those users effectively

@@ -297,7 +297,7 @@ def _render_report(short_names: list[str], total_wall_s: float) -> str:
     parts.append(
         textwrap.dedent(f"""
         > Honest measurements of the v0.2.0 GA performance + reliability claims
-        > documented in `docs/research/performance_reliability_targets.md`.
+        > documented in `docs/internal/research/performance_reliability_targets.md`.
         >
         > **Why this exists**: those claims were never empirically verified before
         > the v0.2.0 tag. This report is the first run of the benchmark suite that

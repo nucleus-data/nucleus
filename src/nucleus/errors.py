@@ -357,7 +357,7 @@ class NucleusLineageEmissionError(NucleusError):
     (:mod:`nucleus.coordination.lineage`) this error is **never**
     propagated to the user - it is constructed, logged at WARN, and
     swallowed so a lineage failure cannot fail the underlying
-    materialization. Per ``docs/research/openlineage.md`` section 5.1
+    materialization. Per ``docs/internal/research/openlineage.md`` section 5.1
     OL emission lives at v4.1 section 6.2 step 4 (post-write).
 
     Layer (ADR-006 section 1): L2 Coordination - Nucleus owns the

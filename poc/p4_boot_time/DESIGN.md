@@ -51,14 +51,14 @@ overhead, antivirus interference).
 
 1. **Dagster import cost** — known to be 2-3s; risk that v0.1 transitive deps
    push us over the 3s phase budget. Lazy-import wrapper already planned in
-   `coordination/` (per `docs/research/dagster.md` §7).
+   `coordination/` (per `docs/internal/research/dagster.md` §7).
 2. **Docker cold-start variance** — first MinIO start can be 5-15s depending on
    disk + image cache. We measure post-first-start; uncached `docker pull` is
    out of scope.
 3. **pyiceberg + filesystem warm-cache** — second `load_catalog` hits OS page
    cache. Measure cold via `sync; echo 3 > /proc/sys/vm/drop_caches` on Linux
    only; macOS/Windows accept warm-cache reading.
-4. **Windows `os.replace` semantics** — per `docs/research/pyiceberg.md` §7,
+4. **Windows `os.replace` semantics** — per `docs/internal/research/pyiceberg.md` §7,
    filesystem-catalog atomic-pointer-swap differs on Windows. Boot itself
    doesn't exercise this; only first commit does.
 

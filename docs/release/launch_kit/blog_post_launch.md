@@ -200,7 +200,7 @@ The day Nucleus is the wrong tool, here is how you leave — without re-migratin
 
 **Mode 3 — Federation (v2.0+).** Each domain runs its own Nucleus; cross-domain queries via Trino, Databricks, or Snowflake against the federated Iceberg catalog. Data Mesh full.
 
-Per `docs/research/scale_out_audit.md`, **none of these modes require rewriting Nucleus internals**. Nucleus is glue; the real work happens in C++ (DuckDB, pyarrow), Rust (Polars), or wire-bound network I/O. At any meaningful workload, ~95% of execution time is already in code that Nucleus does not own. Yield is a feature of the architecture, not a future migration.
+Per `docs/internal/research/scale_out_audit.md`, **none of these modes require rewriting Nucleus internals**. Nucleus is glue; the real work happens in C++ (DuckDB, pyarrow), Rust (Polars), or wire-bound network I/O. At any meaningful workload, ~95% of execution time is already in code that Nucleus does not own. Yield is a feature of the architecture, not a future migration.
 
 ---
 
@@ -245,6 +245,6 @@ We built Nucleus for ourselves first. We hope it works for you too.
 
 ---
 
-*Honest disclosures (because credibility matters).* Nucleus v0.2.0 is **beta software**. The empirical benchmark baseline at `docs/benchmarks/2026-05-15_baseline.md` documents 11 measured failures vs the aspirational performance targets in `docs/research/performance_reliability_targets.md` — boot time runs ~2 s on a contention-loaded host vs the original <500 ms claim, and the B4 concurrent-run safety test FAILs on Windows due to NTFS lock semantics. We are documenting these honestly rather than re-running until numbers improve. Re-measurements on freshly-booted beachhead-spec hardware are tracked for v0.2.1.
+*Honest disclosures (because credibility matters).* Nucleus v0.2.0 is **beta software**. The empirical benchmark baseline at `docs/benchmarks/2026-05-15_baseline.md` documents 11 measured failures vs the aspirational performance targets in `docs/internal/research/performance_reliability_targets.md` — boot time runs ~2 s on a contention-loaded host vs the original <500 ms claim, and the B4 concurrent-run safety test FAILs on Windows due to NTFS lock semantics. We are documenting these honestly rather than re-running until numbers improve. Re-measurements on freshly-booted beachhead-spec hardware are tracked for v0.2.1.
 
 *Nucleus is built on the work of [Apache Arrow](https://arrow.apache.org), [Apache Iceberg](https://iceberg.apache.org), [Apache Parquet](https://parquet.apache.org), [DuckDB](https://duckdb.org), [Polars](https://pola.rs), [Dagster](https://dagster.io), [OpenLineage](https://openlineage.io), and [OpenTelemetry](https://opentelemetry.io). If we ship something useful, it is because these foundations exist. Support them.*

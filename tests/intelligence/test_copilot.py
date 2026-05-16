@@ -222,7 +222,7 @@ def test_error_translation_timeout(tmp_path):
     import litellm
 
     # CRITICAL: litellm.Timeout NOT litellm.TimeoutError
-    # See docs/research/ai_hallucinations.md entry 2026-05-13
+    # See docs/internal/research/ai_hallucinations.md entry 2026-05-13
     timeout_exc = litellm.Timeout(
         message="Request timed out",
         model="claude",

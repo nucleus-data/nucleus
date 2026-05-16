@@ -5,7 +5,7 @@ ADR-015 §6 and v4.1 §6.4.
 
 IMPORTANT — verified against docs 2026-05-13:
   ``litellm.Timeout``  (NOT ``litellm.TimeoutError``) — see
-  ``docs/research/ai_hallucinations.md`` entry for the catch.
+  ``docs/internal/research/ai_hallucinations.md`` entry for the catch.
 
 Docs: https://docs.litellm.ai/docs/exception_mapping
 Architecture ref: ``nucleus_architecture_v4.1.md`` §6.4 + ADR-015 §6

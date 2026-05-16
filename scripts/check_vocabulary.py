@@ -89,6 +89,7 @@ SKIP_PATTERNS = [
     # would otherwise pollute the gate. Added 2026-05-16 during the v0.2.0
     # ultimate-sprint close-out builder pass; matches the .venv- precedent.
     ".scratch/",
+    "TRANSCRIPT.md",  # transient agent-session transcript dumped at repo root; untracked, regenerated per run
     "scripts/check_vocabulary.py",  # self-exempt; we list the terms here
     "site/",  # mkdocs build output
     "build/",
@@ -101,7 +102,8 @@ SKIP_PATTERNS = [
     "docs/audits/",  # audit trails MUST contain banned terms as evidence
     "docs/audit/",  # audit trails MUST contain banned terms as evidence (alt spelling)
     "docs/decisions/",  # ADRs MAY discuss what was decided NOT to do
-    "docs/research/",  # research files cite competitor positioning narratives and ecosystem analysis
+    "docs/internal/research/",  # research files cite competitor positioning narratives and ecosystem analysis
+    "docs/research/ultimate_upgrade/",  # concurrent researcher subagent output; untracked, awaits founder review (post-reorg residue, 2026-05-16)
     "docs/dev-guides/",  # scaffolding guides reference banned comparator terms verbatim
     "docs/roadmap/",  # roadmap docs discuss positioning context and what we decided NOT to do
     "pyproject.toml",  # holds the ban-list itself; TOML can't carry HTML exemption markers

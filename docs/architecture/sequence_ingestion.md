@@ -107,7 +107,7 @@ sequenceDiagram
 - `psycopg.OperationalError` (connection refused) → `NucleusSourceConnectionError` (§4.5)
 - `psycopg.errors.InsufficientPrivilege` → `NucleusSourceAuthError` (§4.5)
 - Source column outside the v0 supported type set → `NucleusUnsupportedTypeError` (raised by `ctx.copy_from` directly; see `poc/p3_ingest/ingest.py` lines 80-89)
-- `pyiceberg.exceptions.CommitFailedException` → `NucleusCommitConflictError` (§4.4) — retryable per `docs/research/pyiceberg.md` §6
+- `pyiceberg.exceptions.CommitFailedException` → `NucleusCommitConflictError` (§4.4) — retryable per `docs/internal/research/pyiceberg.md` §6
 - `pyiceberg.exceptions.NoSuchNamespaceError` (race against auto-create) → `NucleusCatalogError` (§4.4)
 - `pyiceberg.exceptions.CommitStateUnknownException` (network mid-commit) → `NucleusCommitUnknownError` (**not** retried blindly)
 - Filesystem write failure under `warehouse/` → `NucleusIOError`
@@ -120,7 +120,7 @@ Per `nucleus_architecture_v4.1.md` §5.5.1 and `nucleus_poc_plan.md` §3:
 
 | Aspect | v0.1 in-scope | Deferred |
 |---|---|---|
-| Sources | PostgreSQL, MySQL, SQLite, CSV, Parquet, JSON (6) | 100+ SaaS connectors → dlt v0.3+ (`docs/research/dlt.md`) |
+| Sources | PostgreSQL, MySQL, SQLite, CSV, Parquet, JSON (6) | 100+ SaaS connectors → dlt v0.3+ (`docs/internal/research/dlt.md`) |
 | Modes | `full_refresh` | `incremental` (cursor-based merge) → v0.3 |
 | Schema | Auto-infer from source introspection | User-supplied contract overrides → v0.3 |
 | Partitioning | Optional `--partition <col>:<transform>` (identity / day / month) | Hidden partitioning evolution → v0.5 |
@@ -140,7 +140,7 @@ From `nucleus_poc_plan.md` §3:
 1. `nucleus ingest postgres://u:p@h/db --table public.orders --as raw.orders` runs end-to-end.
 2. Schema auto-inferred per `docs/patterns/type_mapping.md` §3.
 3. Iceberg destination asset auto-created (namespace + asset) on first run; reused after.
-4. Atomic commit — no partial snapshots visible (Iceberg optimistic concurrency, `docs/research/pyiceberg.md` §6).
+4. Atomic commit — no partial snapshots visible (Iceberg optimistic concurrency, `docs/internal/research/pyiceberg.md` §6).
 5. Preview shows 10 rows — rendered by a follow-up `ctx.sql("SELECT * FROM raw.orders LIMIT 10")` (see [`sequence_query.md`](sequence_query.md) §2).
 6. All 6 v0.1 sources pass the round-trip + type-mapping suite (fallback: drop to 3 if any family fails, per `nucleus_poc_plan.md` §3).
 7. LOC under `src/nucleus/ctx/copy_from.py` ≤ 500.
@@ -151,7 +151,7 @@ From `nucleus_poc_plan.md` §3:
 ## §6. What this sequence doesn't do
 
 - **No retry orchestration.** Retries belong to the Asset Materialization Adapter, not `ctx.copy_from` ([`sequence_error_translation.md`](sequence_error_translation.md) §8).
-- **No staging / dedup.** `mode="full_refresh"` appends a fresh snapshot; row-level merge is a v0.3 dlt-shaped problem (`docs/research/dlt.md` §4.1).
+- **No staging / dedup.** `mode="full_refresh"` appends a fresh snapshot; row-level merge is a v0.3 dlt-shaped problem (`docs/internal/research/dlt.md` §4.1).
 - **No schema evolution.** A mid-stream source-schema change raises `pyiceberg.exceptions.ValidationError` → `NucleusSchemaEvolutionError`.
 - **No background daemon.** Every `nucleus ingest` is one synchronous Python process. Scheduling is the user's responsibility in v0.1; `@nucleus.schedule` lands v0.2 (`nucleus_architecture_v4.1.md` §6.1).
 
@@ -161,8 +161,8 @@ From `nucleus_poc_plan.md` §3:
 
 Per AGENTS.md §11.12, before graduating PoC #3 → `src/nucleus/ctx/copy_from.py`:
 
-1. **SQLAlchemy reflection on Postgres / MySQL.** PoC #3 currently uses stdlib `sqlite3` (`poc/p3_ingest/ingest.py` lines 122-159). v0.1 graduates to `engine.connect()` + `MetaData().reflect(only=[table])`. Confirm reflection covers `PRIMARY KEY` + `NOT NULL` on Postgres 14+ / MySQL 8+ — required to synthesize Iceberg `required`. Log drift in `docs/research/ai_hallucinations.md`.
-2. **`Table.append(arrow_table)` signature across pyiceberg 0.8.1 → 0.11.x.** [ADR-003](../decisions/ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md) queues the upgrade; signature has churned per `docs/research/pyiceberg.md` §9.
+1. **SQLAlchemy reflection on Postgres / MySQL.** PoC #3 currently uses stdlib `sqlite3` (`poc/p3_ingest/ingest.py` lines 122-159). v0.1 graduates to `engine.connect()` + `MetaData().reflect(only=[table])`. Confirm reflection covers `PRIMARY KEY` + `NOT NULL` on Postgres 14+ / MySQL 8+ — required to synthesize Iceberg `required`. Log drift in `docs/internal/research/ai_hallucinations.md`.
+2. **`Table.append(arrow_table)` signature across pyiceberg 0.8.1 → 0.11.x.** [ADR-003](../decisions/ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md) queues the upgrade; signature has churned per `docs/internal/research/pyiceberg.md` §9.
 3. **OpenLineage emitter wire-up.** v4.1 §6.2 lists emission as step 4 of the Asset Materialization Adapter; concrete client library, transport (HTTP vs file), and namespace convention for ingest events are unresolved. Neither PoC #1 nor PoC #3 exercises the emitter end-to-end.
 4. **Type coverage for `JSONB` / `TIMESTAMPTZ` / `NUMERIC(p,s)` / `ARRAY`.** PoC #3 supports only `INTEGER`, `REAL`, `TEXT`, `BLOB` (`poc/p3_ingest/ingest.py` lines 55-60); v0.1 acceptance requires the full Postgres set (`docs/patterns/type_mapping.md` §3).
 5. **Filesystem-catalog atomicity on Windows.** Filesystem catalogs rely on `os.replace` for the metadata-pointer swap; Windows behaves differently from POSIX. ADR-001 mandates a kill-9 stress test on Win + macOS + Linux. Until passed, `commit(...)` is not proven on Windows.
@@ -172,7 +172,7 @@ Per AGENTS.md §11.12, before graduating PoC #3 → `src/nucleus/ctx/copy_from.p
 ## §8. Evolution & versioning
 
 - New source family within SQLAlchemy: PR + smoke test + `docs/patterns/type_mapping.md` extension. No ADR.
-- Switch to dlt for a source (v0.3+): ADR required. Per `docs/research/dlt.md` §5.1, dlt sources surface as `@nucleus.source(engine="dlt")`; `ctx.copy_from` stays the simple default for the six v0.1 sources.
+- Switch to dlt for a source (v0.3+): ADR required. Per `docs/internal/research/dlt.md` §5.1, dlt sources surface as `@nucleus.source(engine="dlt")`; `ctx.copy_from` stays the simple default for the six v0.1 sources.
 - Change to `IngestResult` shape: PR + spec note (public surface per `nucleus_architecture_v4.1.md` §13.1).
 - Remove a source family: ADR required (breaking).
 

@@ -1,7 +1,7 @@
 # 12 — AI Pair Programming with Cursor
 
 > **What you're doing**: Working effectively with Cursor and AI agents on Nucleus code without introducing hallucinations, vocabulary drift, or error-translation gaps.
-> **Why it matters**: AI assistance is powerful but dangerous without discipline. This project has caught multiple AI hallucinations that would have shipped if not for structured verification. Per `AGENTS.md §11`, `docs/research/ai_hallucinations.md`.
+> **Why it matters**: AI assistance is powerful but dangerous without discipline. This project has caught multiple AI hallucinations that would have shipped if not for structured verification. Per `AGENTS.md §11`, `docs/internal/research/ai_hallucinations.md`.
 > **Time**: 5 min to read; ongoing practice
 
 ---
@@ -145,7 +145,7 @@ AI training data is stale. An API that "should exist" may not exist in the pinne
 When you catch an AI hallucination (a fabricated API or behavior), log it:
 
 ```markdown
-<!-- docs/research/ai_hallucinations.md -->
+<!-- docs/internal/research/ai_hallucinations.md -->
 
 ## YYYY-MM-DD: <library>.<method>
 AI suggested: `<fabricated API call>`
@@ -222,7 +222,7 @@ When in doubt about tab completion: use Chat instead.
 
 ## Common AI Failure Modes in Nucleus
 
-Based on `docs/research/ai_hallucinations.md`:
+Based on `docs/internal/research/ai_hallucinations.md`:
 
 1. **Inventing methods** that "should exist" (e.g., `dataframe.to_iceberg()` — doesn't exist in Polars).
 2. **Mixing APIs** from similar libraries (pandas methods on Polars).
@@ -240,4 +240,4 @@ Based on `docs/research/ai_hallucinations.md`:
 - `AGENTS.md §11.12` — Official documentation discipline
 - `.cursor/rules/nucleus.mdc` — Cursor-specific rules (auto-applied)
 - `.cursor/agents/` — Custom subagent definitions (swarm-implementer, builder, researcher, verifier)
-- `docs/research/ai_hallucinations.md` — living hallucination log
+- `docs/internal/research/ai_hallucinations.md` — living hallucination log

@@ -3,7 +3,7 @@
 > **Pattern**: Big Data — Iceberg Lifecycle / Maintenance
 > **Status**: Pre-implementation reference. Not exposed in v0.1. CLI surface (`nucleus optimize`) lands in v0.3+; automatic triggers in v0.5+.
 > **Audience**: Anyone reviewing the Asset Materialization Adapter; anyone diagnosing "my reads got slow after N commits".
-> **References**: [`docs/research/pyiceberg.md`](../research/pyiceberg.md) §4, §7; [`docs/research/duckdb.md`](../research/duckdb.md) §5, §7; [`docs/patterns/partitioning.md`](./partitioning.md) §4; [`docs/patterns/snapshot_retention.md`](./snapshot_retention.md); [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
+> **References**: [`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §4, §7; [`docs/internal/research/duckdb.md`](../research/duckdb.md) §5, §7; [`docs/patterns/partitioning.md`](./partitioning.md) §4; [`docs/patterns/snapshot_retention.md`](./snapshot_retention.md); [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
 > **Last reviewed**: 2026-05-12 — versions per [`docs/compatibility.md`](../compatibility.md) (`pyiceberg==0.8.1`, `duckdb==1.1.3`)
 
 Read this **before** writing PoC #1 or any code that touches `Table.append` / `Table.overwrite` in a loop. Skipping compaction is how warehouses silently become 100× slower.

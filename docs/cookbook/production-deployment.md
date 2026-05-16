@@ -9,7 +9,7 @@ Nucleus v0.2 is intentionally **single-node**: you run one well-provisioned Linu
 
 ## Hardware sizing
 
-Empirical anchors: PoC #4 (`AGENTS.md` status block, summarized in [`docs/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md)) measured **`nucleus up` cold boot ≈ 5.82 s** and **idle RSS ≈ 117 MB** for the CLI plus sidecar profile — far below typical VM headroom. Production sizing is dominated by **DuckDB + Polars peak RAM during materialization** (see §Performance tuning), not idle footprint.
+Empirical anchors: PoC #4 (`AGENTS.md` status block, summarized in [`docs/internal/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md)) measured **`nucleus up` cold boot ≈ 5.82 s** and **idle RSS ≈ 117 MB** for the CLI plus sidecar profile — far below typical VM headroom. Production sizing is dominated by **DuckDB + Polars peak RAM during materialization** (see §Performance tuning), not idle footprint.
 
 | Data volume | RAM | CPU | SSD / NVMe | Notes |
 |-------------|-----|-----|------------|-------|
@@ -130,7 +130,7 @@ When Lakekeeper / REST catalog lands for shared teams, add **`pg_dump` + WAL arc
 
 ### CLI health status
 
-There is **no `nucleus health` Typer command wired yet** in `src/nucleus/cli/main.py` (confirmed 2026-05-15). The capability is specified illustratively in [`docs/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md) §7.3 (“Health check command (v0.2)”) as a future consolidation of probes.
+There is **no `nucleus health` Typer command wired yet** in `src/nucleus/cli/main.py` (confirmed 2026-05-15). The capability is specified illustratively in [`docs/internal/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md) §7.3 (“Health check command (v0.2)”) as a future consolidation of probes.
 
 **v0.2 operational probes**
 
@@ -206,7 +206,7 @@ nucleus.example.com {
 
 Generate hashes: `caddy hash-password` ([docs](https://caddyserver.com/docs/command-line#caddy-hash-password)).
 
-| **Authelia / Authentik / OAuth2-proxy** | Preferred when you already run an IdP — aligns with future native OIDC (`docs/research/oidc_providers.md`). |
+| **Authelia / Authentik / OAuth2-proxy** | Preferred when you already run an IdP — aligns with future native OIDC (`docs/internal/research/oidc_providers.md`). |
 
 ## Secret rotation
 
@@ -255,9 +255,9 @@ Primary levers (single-node):
 
 - **DuckDB** — `memory_limit` + `threads` set during materialization ([DuckDB tuning](https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html)); AMA sets a safe default — override via `nucleus_project.yaml` per [`nucleus_project_anatomy.md`](../../nucleus_project_anatomy.md) examples.
 - **Polars** — limit thread pool on shared hosts (`POLARS_MAX_THREADS` env) to cap CPU contention.
-- **Dagster** — reduce concurrent heavy runs on one box (future tunable; see parity research rows for `max_concurrent_runs` in `docs/research/parity_vs_bosch_ely_adb_batch.md`).
+- **Dagster** — reduce concurrent heavy runs on one box (future tunable; see parity research rows for `max_concurrent_runs` in `docs/internal/research/parity_vs_bosch_ely_adb_batch.md`).
 
-Full numeric budgets: [`docs/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md).
+Full numeric budgets: [`docs/internal/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md).
 
 ---
 
@@ -292,5 +292,5 @@ Treat public cloud list price + **support comp** as your comparison baseline; th
 - [`docs/cookbook/cloud-credentials.md`](cloud-credentials.md) — *link target for Wave cookbook; create when file lands*
 - [`docs/cookbook/ai-copilot-setup.md`](ai-copilot-setup.md) — *forthcoming — until published, configure LLM keys per `secret_management` + [ADR-015](../decisions/ADR-015-ai-chat-mvp.md)*
 - [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) section 10 — yield to giants
-- [`docs/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md) — perf + reliability budgets
+- [`docs/internal/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md) — perf + reliability budgets
 - Local dev MinIO alternate (archived upstream note): [`docker-compose.demo.yml`](../../docker-compose.demo.yml) — **do not edit** per policy; contrast with SeaweedFS default in [`docker-compose.yml`](../../docker-compose.yml)

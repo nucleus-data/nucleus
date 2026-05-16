@@ -3,11 +3,11 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: licensing, dependencies, governance, cloud-readiness
-> **Related**: ADR-001, ADR-002 §8.x (yield-to-giants commercial path), ADR-003, ADR-005, ADR-006, AGENTS.md §3 Hard Constraints, nucleus_architecture_v4.1.md §9 (composability), `docs/research/minio.md` (Worker BB — AGPLv3), `docs/research/soda.md` (Worker T — Apache-2.0 v3 vs Elastic v4)
+> **Related**: ADR-001, ADR-002 §8.x (yield-to-giants commercial path), ADR-003, ADR-005, ADR-006, AGENTS.md §3 Hard Constraints, nucleus_architecture_v4.1.md §9 (composability), `docs/internal/research/minio.md` (Worker BB — AGPLv3), `docs/internal/research/soda.md` (Worker T — Apache-2.0 v3 vs Elastic v4)
 
 ## Context
 
-Two parallel research workers (`docs/research/minio.md`, `docs/research/soda.md`) surfaced license-boundary findings that have real legal consequences for Nucleus's commercial path (Cloud tier per ADR-002):
+Two parallel research workers (`docs/internal/research/minio.md`, `docs/internal/research/soda.md`) surfaced license-boundary findings that have real legal consequences for Nucleus's commercial path (Cloud tier per ADR-002):
 
 | Finding | Component | License | Implication |
 |---|---|---|---|
@@ -120,7 +120,7 @@ This script is **release-blocker discipline** for v0.5 (Cloud preview phase). Pr
 2. **`.github/PULL_REQUEST_TEMPLATE.md`** — add license-tier checkbox to existing constraints list (already mirrors AGENTS.md §3)
 3. **`docs/compatibility.md`** — extend matrix with License column + tier classification
 4. **CHANGELOG.md** — every dependency add/upgrade notes its license tier
-5. **Research doc template** — going forward, every `docs/research/<lib>.md` MUST have a §License + §Tier-classification section (Worker T and Worker BB both did this; codify)
+5. **Research doc template** — going forward, every `docs/internal/research/<lib>.md` MUST have a §License + §Tier-classification section (Worker T and Worker BB both did this; codify)
 
 ## Rollback
 

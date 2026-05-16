@@ -6,7 +6,7 @@ Promoted from `poc/p1_error_translation/translator.py` to
 Scope: baseline 3 handlers + fallback; iteration adds wrapped-library coverage
 (Polars / DuckDB / pyiceberg / stdlib).
 
-Pins (per AGENTS.md §11.12, see ``docs/research/<lib>.md``):
+Pins (per AGENTS.md §11.12, see ``docs/internal/research/<lib>.md``):
 dagster==1.9.5, polars==1.18.0, duckdb==1.1.3, pyiceberg==0.11.1.
 Spec: ``nucleus_architecture_v4.1.md`` §6.4 +
 ``docs/architecture/sequence_error_translation.md``.
@@ -355,7 +355,7 @@ def _pydantic_validation_handler(exc: BaseException) -> NucleusError:
 # Lazy registry: avoids importing dagster at module load. Built on first call.
 # NEEDS VERIFICATION on first PoC run: confirm
 # ``dagster.DagsterExecutionStepExecutionError`` is the exact class name and
-# import path in 1.9.5. Log any rename to docs/research/ai_hallucinations.md.
+# import path in 1.9.5. Log any rename to docs/internal/research/ai_hallucinations.md.
 _HANDLERS: dict[type, Handler] | None = None
 
 
@@ -368,7 +368,7 @@ def _registry() -> dict[type, Handler]:
             dg.DagsterExecutionStepExecutionError: _dagster_step_handler,
         }
 
-        # Polars exceptions per docs/research/polars.md §6.
+        # Polars exceptions per docs/internal/research/polars.md §6.
         # Docs: https://docs.pola.rs/api/python/stable/reference/exceptions.html
         try:
             from polars.exceptions import ColumnNotFoundError, SchemaError
@@ -378,7 +378,7 @@ def _registry() -> dict[type, Handler]:
         except ImportError:
             pass
 
-        # DuckDB exceptions per docs/research/duckdb.md §6 (all inherit from duckdb.Error).
+        # DuckDB exceptions per docs/internal/research/duckdb.md §6 (all inherit from duckdb.Error).
         # Docs: https://duckdb.org/docs/stable/clients/python/dbapi
         try:
             import duckdb
@@ -391,7 +391,7 @@ def _registry() -> dict[type, Handler]:
         except ImportError:
             pass
 
-        # pyiceberg exceptions per docs/research/pyiceberg.md §6. NEEDS VERIFICATION
+        # pyiceberg exceptions per docs/internal/research/pyiceberg.md §6. NEEDS VERIFICATION
         # on first PoC run — research doc flags constructor + __cause__ chaining,
         # especially the ValidationError / CommitStateUnknownException pair.
         # Docs: https://py.iceberg.apache.org/api/#exceptions
@@ -449,7 +449,7 @@ def _translate_dlt_postgres_exception(exc: BaseException) -> NucleusError:  # no
     """Translate a dlt / psycopg / sqlalchemy Postgres-source exception to a NucleusError.
 
     Implements the two-level ``__context__`` walk for dlt's ``PipelineStepFailed``
-    per ``docs/research/dlt.md`` §5.4 + §13.8. Maps Postgres-source-specific
+    per ``docs/internal/research/dlt.md`` §5.4 + §13.8. Maps Postgres-source-specific
     errors to existing NE-codes per ADR-014 §Scope (no new code allocations).
 
     User-facing ``user_message`` and ``fix_hint`` MUST NOT contain the strings
@@ -461,7 +461,7 @@ def _translate_dlt_postgres_exception(exc: BaseException) -> NucleusError:  # no
     """
     # Walk the full cause chain (outer PipelineStepFailed → sqlalchemy wrapper →
     # psycopg inner). _iter_causes handles both __cause__ and __context__ links,
-    # matching the two-level walk required per docs/research/dlt.md §5.4.
+    # matching the two-level walk required per docs/internal/research/dlt.md §5.4.
     for candidate in _iter_causes(exc):
         mod = (type(candidate).__module__ or "").lower()
         cls = type(candidate).__name__
@@ -602,7 +602,7 @@ def _translate_dlt_mysql_exception(exc: BaseException) -> NucleusError:  # noqa:
 
     Mirrors :func:`_translate_dlt_postgres_exception` per ADR-014
     §"MySQL parity (2026-05-14)". Implements the two-level ``__context__`` walk
-    for dlt's ``PipelineStepFailed`` per ``docs/research/dlt.md`` §5.4 + §13.8
+    for dlt's ``PipelineStepFailed`` per ``docs/internal/research/dlt.md`` §5.4 + §13.8
     and maps MySQL-source-specific errors to existing NE-codes (no new
     code allocations).
 
@@ -778,7 +778,7 @@ def _translate_dlt_snowflake_exception(exc: BaseException) -> NucleusError:  # n
     """Translate a dlt / snowflake-connector / sqlalchemy Snowflake-source exception to a NucleusError.
 
     Implements the two-level ``__context__`` walk for dlt's ``PipelineStepFailed``
-    per ``docs/research/dlt.md`` §5.4. Maps Snowflake-source-specific errors to
+    per ``docs/internal/research/dlt.md`` §5.4. Maps Snowflake-source-specific errors to
     existing NE-codes per ADR-019 §Scope (no new code allocations).
 
     User-facing ``user_message`` and ``fix_hint`` MUST NOT contain the strings
@@ -819,7 +819,7 @@ def _translate_dlt_snowflake_exception(exc: BaseException) -> NucleusError:  # n
                         "Verify the username and password in your connection string. "
                         "Connection strings take the form: "
                         "snowflake://user:pass@orgname-accountname/db/schema. "
-                        "See docs/research/snowflake.md §2 for account identifier formats."
+                        "See docs/internal/research/snowflake.md §2 for account identifier formats."
                     ),
                     cause=exc,
                 )
@@ -832,7 +832,7 @@ def _translate_dlt_snowflake_exception(exc: BaseException) -> NucleusError:  # n
                     ),
                     fix_hint=(
                         "Verify the account identifier. Preferred form: 'orgname-accountname'. "
-                        "See docs/research/snowflake.md §2 for supported formats."
+                        "See docs/internal/research/snowflake.md §2 for supported formats."
                     ),
                     cause=exc,
                 )
@@ -871,7 +871,7 @@ def _translate_dlt_snowflake_exception(exc: BaseException) -> NucleusError:  # n
                     fix_hint=(
                         "Verify the account identifier in your connection string. "
                         "Confirm outbound HTTPS (port 443) is allowed to your account. "
-                        "See docs/research/snowflake.md §2."
+                        "See docs/internal/research/snowflake.md §2."
                     ),
                     cause=exc,
                 )
@@ -884,7 +884,7 @@ def _translate_dlt_snowflake_exception(exc: BaseException) -> NucleusError:  # n
                     ),
                     fix_hint=(
                         "Verify the connection string does not disable TLS. "
-                        "See docs/research/snowflake.md §3 for auth options."
+                        "See docs/internal/research/snowflake.md §3 for auth options."
                     ),
                     cause=exc,
                 )
