@@ -27,7 +27,7 @@
 - [ ] Update `docs/architecture/sequence_query.md` §1 Status; retarget the `poc/p2_ctx_sql/resolver.py` line refs in §2 / §3.1 to the new path.
 - [ ] Mark PoC #2 PASS in `docs/specs/nucleus_poc_plan.md` §2 (use §12 PoC Report Template). The `[ ] PoC #2-5` checkbox in `AGENTS.md` §1 stays unchecked until PoC #5 also completes.
 - [ ] **If Option B at T9**: open ADR-006 PR (separate; NOT bundled).
-- [ ] `CHANGELOG.md` "Unreleased": `sql_resolver: Internal → Beta, see ADR-005 §2 row 2`. If Option B, also `errors: NucleusAssetGraphError added, Stable, see ADR-006`. Bump LOC row in `docs/budget_history.md`.
+- [ ] `CHANGELOG.md` "Unreleased": `sql_resolver: Internal → Beta, see ADR-005 §2 row 2`. If Option B, also `errors: NucleusAssetGraphError added, Stable, see ADR-006`. Bump LOC row in `docs/internal/budget_history.md`.
 
 ## §4 Post-promotion verification
 

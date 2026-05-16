@@ -118,7 +118,7 @@ This script is **release-blocker discipline** for v0.5 (Cloud preview phase). Pr
 
 1. **`scripts/check_licenses.py`** (~80 LOC) — v0.5 release blocker; reads `pip show` for every pinned dep, classifies per this ADR, fails on tier shift
 2. **`.github/PULL_REQUEST_TEMPLATE.md`** — add license-tier checkbox to existing constraints list (already mirrors AGENTS.md §3)
-3. **`docs/compatibility.md`** — extend matrix with License column + tier classification
+3. **`docs/internal/compatibility.md`** — extend matrix with License column + tier classification
 4. **CHANGELOG.md** — every dependency add/upgrade notes its license tier
 5. **Research doc template** — going forward, every `docs/internal/research/<lib>.md` MUST have a §License + §Tier-classification section (Worker T and Worker BB both did this; codify)
 

@@ -19,7 +19,7 @@ Per [AGENTS.md §11.13](https://github.com/nucleus-data/nucleus/blob/main/AGENTS
 
 ## Compatibility matrix
 
-Current pinned versions are tracked in [`docs/compatibility.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/compatibility.md).
+Current pinned versions are tracked in [`docs/internal/compatibility.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/compatibility.md).
 
 ## Upgrade workflow
 
@@ -52,7 +52,7 @@ Beachhead E2E: PASS
 
 ## Quarterly audit
 
-Every 3 months, review [`docs/compatibility.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/compatibility.md) for:
+Every 3 months, review [`docs/internal/compatibility.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/compatibility.md) for:
 
 - Components more than 2 minor versions behind
 - Security advisories

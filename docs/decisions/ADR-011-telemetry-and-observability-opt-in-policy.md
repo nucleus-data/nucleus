@@ -154,7 +154,7 @@ Status flips **PROPOSED → ACCEPTED** when all three hold: (1) founder reviews 
 
 ### Amendment 2026-05-14 — Option α-split per `docs/internal/research/otel_day1_decision.md`
 
-Trigger: drift-detection verifier MEDIUM #3 (`docs/FOUNDER_ACTION_QUEUE.md` §0 / B2.8) flagged four `[project.dependencies]` pins with **zero callers** under `src/nucleus/`, `tests/`, `poc/`, `scripts/`. Researcher's Option α-split disposition (founder-approved blanket — "approve all recommendations and proposals", 2026-05-14) lands as follows:
+Trigger: drift-detection verifier MEDIUM #3 (`docs/internal/FOUNDER_ACTION_QUEUE.md` §0 / B2.8) flagged four `[project.dependencies]` pins with **zero callers** under `src/nucleus/`, `tests/`, `poc/`, `scripts/`. Researcher's Option α-split disposition (founder-approved blanket — "approve all recommendations and proposals", 2026-05-14) lands as follows:
 
 - `opentelemetry-api==1.29.0` — **KEEP** in `[project] dependencies` (no-op substrate honored without `src/` source code; ADR-011 §1 Day-1 promise satisfied via `NonRecordingSpan` per https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html).
 - `opentelemetry-sdk==1.29.0` — **MOVE** to `[project.optional-dependencies] observability`. Install via `pip install nucleus[observability]`. SDK pin only matters once an exporter is configured (per §5 v0.5+ scope).

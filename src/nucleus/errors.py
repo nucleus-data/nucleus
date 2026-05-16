@@ -725,7 +725,7 @@ class NucleusFeatureDeferredError(NucleusError):
 # ============================================================================
 # Layer 5 / Intelligence (AI Copilot v0.2+, ctx.agent v0.5+)
 # NE4xxx range accepted 2026-05-13 via ADR-015 ratification; co-amendment per
-# docs/FOUNDER_ACTION_QUEUE.md §0 + ADR-006 §Decision.
+# docs/internal/FOUNDER_ACTION_QUEUE.md §0 + ADR-006 §Decision.
 # ============================================================================
 
 

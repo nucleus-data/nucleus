@@ -4,7 +4,7 @@
 > **Status**: Pre-implementation reference. Not exposed in v0.1. CLI surface (`nucleus expire-snapshots`) lands in v0.3+.
 > **Audience**: Anyone reviewing the Asset Materialization Adapter; anyone debugging "we delete daily but storage keeps growing".
 > **References**: [`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §4, §5; [`docs/patterns/compaction.md`](./compaction.md); [`docs/patterns/partitioning.md`](./partitioning.md); [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
-> **Last reviewed**: 2026-05-12 — versions per [`docs/compatibility.md`](../compatibility.md) (`pyiceberg==0.8.1`)
+> **Last reviewed**: 2026-05-12 — versions per [`docs/internal/compatibility.md`](../internal/compatibility.md) (`pyiceberg==0.8.1`)
 
 Read this **before** any code path that calls `Table.append`, `Table.overwrite`, or the compaction recipe in [`compaction.md`](./compaction.md). Every one of those creates a snapshot. Without retention, snapshots accumulate forever.
 

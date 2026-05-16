@@ -30,7 +30,7 @@ Verified via `https://pypi.org/pypi/dagster/1.9.5/json` + `https://github.com/da
 | Gap | ~16 months / multiple minor releases. **Informational, not blocking.** |
 | CVEs affecting 1.9.5 | None. CVE-2025-51481 (LFI in `dagster._grpc.impl.get_notebook_data`) is in 1.10.14, fixed in 1.10.16; does **not** affect 1.9.5. |
 
-The gap is intentional pre-Heartbeat: stabilize the wrap against a known release before chasing minors. Upgrade workflow: [`docs/compatibility.md`](../../compatibility.md) §4.
+The gap is intentional pre-Heartbeat: stabilize the wrap against a known release before chasing minors. Upgrade workflow: [`docs/compatibility.md`](../compatibility.md) §4.
 
 ---
 

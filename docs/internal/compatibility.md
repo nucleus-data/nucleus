@@ -1,9 +1,9 @@
 # Component Compatibility Matrix
 
-> **Purpose**: Living matrix mandated by [`AGENTS.md §11.13`](../AGENTS.md) (Hard Constraint #11 — *Upgrade-safe stack design*). Each row records the exact pin, the license tier per [ADR-007](decisions/ADR-007-dependency-license-tier-policy.md), and the next planned change citing the ADR that fires it. The canonical pin matrix lives in [ADR-012](decisions/ADR-012-runtime-dependency-pin-matrix-v01.md); this file is the derived, always-bumped snapshot consumed by humans and quarterly audits.
+> **Purpose**: Living matrix mandated by [`AGENTS.md §11.13`](../../AGENTS.md) (Hard Constraint #11 — *Upgrade-safe stack design*). Each row records the exact pin, the license tier per [ADR-007](decisions/ADR-007-dependency-license-tier-policy.md), and the next planned change citing the ADR that fires it. The canonical pin matrix lives in [ADR-012](decisions/ADR-012-runtime-dependency-pin-matrix-v01.md); this file is the derived, always-bumped snapshot consumed by humans and quarterly audits.
 > **Owner**: Solo founder · **Last verified**: 2026-05-14 (ADR-012 + ADR-011 amendments — Option α-split)
 > **Tracked**: 24 runtime pins + Python floor in §1 (added `croniter==3.0.4` 2026-05-14 per ADR-017) · 2 runtime extras pins (`[observability]`, `[lineage-advanced]`) + 11 dev + 3 docs pins in §2 · 2 storage-substrate container images in §3
-> **Companions**: [`AGENTS.md §11.13`](../AGENTS.md) · [`pyproject.toml`](../pyproject.toml) · [ADR-007](decisions/ADR-007-dependency-license-tier-policy.md) (license tiers) · [ADR-008](decisions/ADR-008-storage-substrate-v01.md) (storage) · [ADR-012](decisions/ADR-012-runtime-dependency-pin-matrix-v01.md) (canonical pin matrix) · [`docs/internal/research/`](research/README.md) (research index)
+> **Companions**: [`AGENTS.md §11.13`](../../AGENTS.md) · [`pyproject.toml`](../../pyproject.toml) · [ADR-007](decisions/ADR-007-dependency-license-tier-policy.md) (license tiers) · [ADR-008](decisions/ADR-008-storage-substrate-v01.md) (storage) · [ADR-012](decisions/ADR-012-runtime-dependency-pin-matrix-v01.md) (canonical pin matrix) · [`docs/internal/research/`](research/README.md) (research index)
 
 **Maintenance discipline (AGENTS.md §11.13)**: ONE component per PR · no bulk upgrades · 24 h cool-down between merges · major-version bumps require an ADR first ([ADR-003](decisions/ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md) is the v0.1 example) · this file is updated only via PR after the §4 workflow has been followed end-to-end.
 
@@ -83,8 +83,8 @@ Dual-track compose templates; the application layer is S3-API-agnostic so no `py
 
 | Image | Pinned tag | Digest (`sha256:`) | License · Tier | Status | Role | Compose file |
 |-------|-----------|--------------------|----------------|--------|------|--------------|
-| `chrislusf/seaweedfs` | `4.23` (pushed 2025-05-04) | `c6d6fb84b081f1f09bb089184ff4b45d2f163a1bfa8b354d04cf400c6e06f242` | Apache-2.0 · **GREEN** | Active (~32 k stars) | **Default** v0.1 storage | [`docker-compose.yml`](../docker-compose.yml) |
-| `quay.io/minio/minio` | `RELEASE.2025-09-07T16-13-09Z` (terminal OSS) | `14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e` | **AGPLv3** · **YELLOW** | **Archived 2026-04-25** — no future CVE patches | Alternate (opt-in only) | [`docker-compose.minio.yml`](../docker-compose.minio.yml) |
+| `chrislusf/seaweedfs` | `4.23` (pushed 2025-05-04) | `c6d6fb84b081f1f09bb089184ff4b45d2f163a1bfa8b354d04cf400c6e06f242` | Apache-2.0 · **GREEN** | Active (~32 k stars) | **Default** v0.1 storage | [`docker-compose.yml`](../../docker-compose.yml) |
+| `quay.io/minio/minio` | `RELEASE.2025-09-07T16-13-09Z` (terminal OSS) | `14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e` | **AGPLv3** · **YELLOW** | **Archived 2026-04-25** — no future CVE patches | Alternate (opt-in only) | [`docker-compose.minio.yml`](../../docker-compose.minio.yml) |
 
 **Cloud rule** (ADR-007 YELLOW): MinIO MUST NOT be bundled into a Nucleus Cloud distribution or offered as a managed service (AGPLv3 §13 would force source-release of the Cloud control plane). SeaweedFS has no such constraint. **Tag-drift**: ADR-008's body cites `RELEASE.2025-10-15…`; the verified digest above is for `…-09-07…`, what the compose file pins — see §6 NV #2.
 
@@ -92,7 +92,7 @@ Dual-track compose templates; the application layer is S3-API-agnostic so no `py
 
 ## §4. Upgrade workflow reminder (AGENTS.md §11.13)
 
-Canonical workflow lives in [`AGENTS.md §11.13`](../AGENTS.md); skipping any step = rejected PR.
+Canonical workflow lives in [`AGENTS.md §11.13`](../../AGENTS.md); skipping any step = rejected PR.
 
 1. **ONE component per PR.** Reject Renovate/Dependabot batched PRs; split them.
 2. **Read the changelog** from current to target (every intermediate minor, not just target); summarize behavioral changes in the PR body.
@@ -113,7 +113,7 @@ Every **3 months**, a dedicated 1–2 day session reviews this matrix end-to-end
 | Audit #2 | 2026-11-13 | scheduled |
 | Audit #3 | 2027-02-13 | scheduled |
 
-Slippage of an audit is itself a Stop-Condition signal per [`AGENTS.md §9`](../AGENTS.md).
+Slippage of an audit is itself a Stop-Condition signal per [`AGENTS.md §9`](../../AGENTS.md).
 
 ---
 
@@ -122,7 +122,7 @@ Slippage of an audit is itself a Stop-Condition signal per [`AGENTS.md §9`](../
 Open gaps tracked until resolved:
 
 1. **`Tested versions` is single-valued.** No multi-version CI matrix yet; AGENTS.md §11.13 implies `scripts/upgrade_smoke.py` + `tests/upgrade_smoke/test_<component>_upgrade.py` per Tier-1/2 row — target v0.3. Once it lands, the column expands to the exercised range.
-2. **Storage-substrate tag drift.** [ADR-008](decisions/ADR-008-storage-substrate-v01.md) body cites MinIO `RELEASE.2025-10-15T17-29-55Z`; [`docker-compose.minio.yml`](../docker-compose.minio.yml) pins `RELEASE.2025-09-07T16-13-09Z` (Worker B verified). Resolution: ADR-008 Trigger housekeeping PR reconciles the ADR body; this file already records the verified pin.
+2. **Storage-substrate tag drift.** [ADR-008](decisions/ADR-008-storage-substrate-v01.md) body cites MinIO `RELEASE.2025-10-15T17-29-55Z`; [`docker-compose.minio.yml`](../../docker-compose.minio.yml) pins `RELEASE.2025-09-07T16-13-09Z` (Worker B verified). Resolution: ADR-008 Trigger housekeeping PR reconciles the ADR body; this file already records the verified pin.
 3. **License-tier source-of-truth.** [ADR-007](decisions/ADR-007-dependency-license-tier-policy.md) Verification §1 calls for `scripts/check_licenses.py` (~80 LOC, v0.5 release blocker) — not authored yet. Today, license rows are manual reads of PyPI / GitHub LICENSE per AGENTS.md §11.12.
 4. **`psycopg[binary]==3.2.3` LGPL string.** ADR-012 NV: the `binary` extra ships pre-built `libpq`; confirm LGPLv3+ classification covers the binary-extra path (dynamic-link exempt per ADR-007 Tier 2) before ADR-012 flips PROPOSED → ACCEPTED.
 5. ~~**`s3fs` explicit pin.** Currently transitive via `pyiceberg[s3fs]==0.8.1` (ADR-012 NV); promote to top-level pin in the next housekeeping PR.~~ **CLEARED 2026-05-13** — explicit pin `s3fs==2026.4.0` landed in `pyproject.toml:48`; row in §1 updated; ADR-012 matrix row updated.

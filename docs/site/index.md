@@ -175,4 +175,4 @@ Nucleus is five layers over open-source foundations:
 ---
 
 !!! tip "v0.1 beta"
-    Nucleus is beta software. The API is stable within v0.1; breaking changes follow [ADR-005](governance/architecture-decisions.md). Pin versions; read [`docs/compatibility.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/compatibility.md) before upgrading.
+    Nucleus is beta software. The API is stable within v0.1; breaking changes follow [ADR-005](governance/architecture-decisions.md). Pin versions; read [`docs/internal/compatibility.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/compatibility.md) before upgrading.

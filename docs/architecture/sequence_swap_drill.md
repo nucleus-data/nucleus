@@ -21,7 +21,7 @@ A stale swap interface is **worse than no swap interface** — it creates the il
 
 A drill fires when **any** of these hold for a tracked Tier 1/2 component:
 
-1. **Calendar** — ≥ 90 days since last drill (`docs/compatibility.md` last-drill column).
+1. **Calendar** — ≥ 90 days since last drill (`docs/internal/compatibility.md` last-drill column).
 2. **Vendor signal** — upstream OSS commit count drops ≥ 50% over 30 days (per-component thresholds in `docs/internal/swap/<component>.md` §1; auto-alert per v4.1 §9.4).
 3. **License change** — Tier 1/2 dep relicenses outside {Apache-2.0, MIT, BSD-3}.
 4. **Performance regression** — smoke benchmark slows >2x in a release (`scripts/benchmark_regression.py` in CI today).
@@ -39,7 +39,7 @@ Per v4.1 §9.3 + §19 row 11, **calendar is the floor, never the ceiling**. Each
 - **SwapDoc** — `docs/internal/swap/<component>.md` (3 in place at 2026-05-13).
 - **InterfaceModule** + **SmokeTestSuite** — `src/nucleus/internal/swap/<component>` + `tests/swap_smoke/test_<component>.py` (v0.5+; §9 row 3).
 - **CIPipeline** — `.github/workflows/ci.yml`.
-- **CompatibilityMatrix** — `docs/compatibility.md` (per `AGENTS.md` §11.13).
+- **CompatibilityMatrix** — `docs/internal/compatibility.md` (per `AGENTS.md` §11.13).
 - **ADRArchive** — `docs/decisions/` (ADR-001 … ADR-006 today).
 
 In v0.1 most boxes resolve to the founder reading swap docs by hand; the sequences below describe the **target end state**, with v0.1 manual fallbacks called out where they differ.
@@ -126,7 +126,7 @@ sequenceDiagram
 
 The founder picks one of three paths and records the choice in the ADR:
 
-- **(a) pin downgrade** — pin previous known-good version in `docs/compatibility.md`; ADR documents the downgrade reason.
+- **(a) pin downgrade** — pin previous known-good version in `docs/internal/compatibility.md`; ADR documents the downgrade reason.
 - **(b) accept + update** — amend Protocol in `src/nucleus/internal/swap/<component>` to reflect new behavior; re-baseline smoke tests.
 - **(c) full-adapter trigger** — drill becomes MIGRATION (see §5.3); per §8 it must consume the at-most-one full-adapter slot.
 

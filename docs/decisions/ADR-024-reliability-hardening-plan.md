@@ -54,7 +54,7 @@ Add a test `tests/coordination/test_windows_rename_atomicity.py` that:
 - Verifies `pathlib.Path.rename()` on the current platform is either atomic (POSIX) or documented as non-atomic (Windows NTFS).
 - Emits a `logging.WARNING` on Windows indicating the atomicity caveat.
 
-Add the Windows caveat to `docs/compatibility.md` and `SETUP.md` "Platform notes" section. Do NOT attempt to "fix" NTFS atomicity in v0.2 (would require a custom write-ahead log, violating the anti-over-engineering directive). Document the safe workaround: store filesystem catalog on WSL2 ext4 volume instead of NTFS root.
+Add the Windows caveat to `docs/internal/compatibility.md` and `SETUP.md` "Platform notes" section. Do NOT attempt to "fix" NTFS atomicity in v0.2 (would require a custom write-ahead log, violating the anti-over-engineering directive). Document the safe workaround: store filesystem catalog on WSL2 ext4 volume instead of NTFS root.
 
 ### P0-5: Error-budget SLO definitions ✓ IMPLEMENTED
 
@@ -80,7 +80,7 @@ In `src/nucleus/coordination/asset_materialization.py`, wrap `execute_in_process
 
 **Negative / Open:**
 
-- `filelock` promoted from optional to required dep (adds ~30 KB to install). Needs `pyproject.toml` edit + `docs/compatibility.md` row.
+- `filelock` promoted from optional to required dep (adds ~30 KB to install). Needs `pyproject.toml` edit + `docs/internal/compatibility.md` row.
 - `expire_snapshots` API name NEEDS VERIFICATION against `pyiceberg==0.8.1` before implementation (Research doc NEEDS VERIFICATION 11.3).
 - Chaos J3-J8 full automation deferred to v0.3 (needs Docker CI infra; Chaos J1 + J2 are runnable immediately per `scripts/run_chaos.py`).
 

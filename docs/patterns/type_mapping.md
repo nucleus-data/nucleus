@@ -3,7 +3,7 @@
 > **Pattern**: Big Data — Type System Bridging
 > **Audience**: Anyone writing or reviewing `ctx.copy_from`, `ctx.sql`, engine adapters, or schema contracts
 > **Status**: Reference document. Property tests in `tests/patterns/test_type_mapping.py` enforce.
-> **Last reviewed**: Month 0 (Pre-Heartbeat) — versions targets per `docs/compatibility.md`
+> **Last reviewed**: Month 0 (Pre-Heartbeat) — versions targets per `docs/internal/compatibility.md`
 
 Cross-system data movement looks simple ("just copy the rows") but **subtle type corruption** is the #1 silent killer in real-world data engineering. This document is the authoritative mapping table. PRs that change any type handling **must** update this file.
 

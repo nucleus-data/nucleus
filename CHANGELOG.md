@@ -127,7 +127,7 @@ the full deprecation cycle that core data APIs receive.
 - **ADR-018..025 ratified** — all 8 Wave 1 ADRs flipped PROPOSED → ACCEPTED (ADR-018 was already ACCEPTED). Ratification date: 2026-05-15; shipped code: commit a41a82c (v0.2.0 handover bundle).
 - **ADR-026, ADR-027, ADR-028** flipped PROPOSED → ACCEPTED (code shipped in this bundle).
 - **`docs/cookbook/bi-connectivity.md`** — new cookbook page: "Connect Superset/Evidence/Rill/Streamlit to Nucleus via `nucleus.db`" with concrete connect-string examples for all 4 BI tools.
-- **`docs/compatibility.md`** — ruff row updated to `0.15.13`.
+- **`docs/internal/compatibility.md`** — ruff row updated to `0.15.13`.
 
 #### Fixed
 - **workbench:** Offline-first static index.html — embedded Tailwind/React via local `static/vendor/`, system font stack, inline SVG icons replacing `lucide-react`. Fixes blank page on corporate networks blocking `cdn.tailwindcss.com`/`fonts.googleapis.com`/`esm.sh`. (ADR-016 Fork B)
@@ -181,11 +181,11 @@ the full deprecation cycle that core data APIs receive.
 ### Changed — v0.1 launch wave
 - Promoted `nucleus up` and `nucleus down` from stub to real implementations. Wraps `docker compose` (v2 with v1 fallback) over a `docker-compose.yaml` shipped by `nucleus init`. MinIO health-check via `httpx`; clean error translation for missing docker, port conflicts, image-pull failures, and 30 s health-check timeout. Closes the last v4.1 beachhead-critical CLI gap. (See `tests/cli/test_up.py` + `tests/cli/test_down.py`.)
 - Runtime dependency surface tightened per Option α-split (drift-detection verifier MEDIUM #3): `opentelemetry-sdk==1.29.0` and `sqlglot==26.0.0` moved to `[project.optional-dependencies]` (`observability` + `lineage-advanced`); `msgspec==0.18.6` removed entirely. Default `pip install nucleus` install size shrinks ~2 MB (OpenTelemetry SDK + `opentelemetry-semantic-conventions` ≈ 1.5 MB; msgspec ≈ 0.5 MB; sqlglot still arrives transitively via `dlt` per `pip show dlt` 2026-05-14). ADR-011 + ADR-012 amended in place; pin count revised 25 → 23 core + 2 optional. No source code changes (zero v0.1 callers under `src/`, `tests/`, `poc/`, `scripts/`). `scripts/check_pinning.py` extended (~50 LOC) to enforce exact-pin discipline on the new runtime-extras tier and to surface mandatory-vs-optional pin counts in its summary line. New regression-lock suite at `tests/upgrade_smoke/test_optional_extras.py` (9 tests) guards the install matrix. See `docs/internal/research/otel_day1_decision.md` §D1-D3 for the full rationale.
-- `click==8.1.7` → `click==8.1.8` (Constraint #11 single-component bump) so the declared pin matches `litellm==1.83.14`’s `click==8.1.8` requirement. Changelog: https://github.com/pallets/click/blob/main/CHANGES.rst (`Version 8.1.8`). Companion updates: ADR-012, `docs/compatibility.md`, `.pre-commit-config.yaml`, `docs/specs/nucleus_cli_spec.md`. Rollback: `pip install click==8.1.7`.
+- `click==8.1.7` → `click==8.1.8` (Constraint #11 single-component bump) so the declared pin matches `litellm==1.83.14`’s `click==8.1.8` requirement. Changelog: https://github.com/pallets/click/blob/main/CHANGES.rst (`Version 8.1.8`). Companion updates: ADR-012, `docs/internal/compatibility.md`, `.pre-commit-config.yaml`, `docs/specs/nucleus_cli_spec.md`. Rollback: `pip install click==8.1.7`.
 - `scripts/upgrade_smoke.py` — ADR-012 cross-check now unions mandatory `[project.dependencies]` pins with optional-runtime extras (`observability`, `lineage-advanced`) so the matrix matches `pyproject.toml` after Option α-split (2026-05-14).
 
 ### Fixed — v0.1 launch wave
-- `pyproject.toml`: `jinja2` 3.1.5 → 3.1.6 to align with `litellm==1.83.14` transitive exact pin (`litellm` hard-locks `jinja2==3.1.6` in wheel metadata; cold install was failing with `ERROR: Cannot install jinja2==3.1.5` on clean envs). 3.1.6 is also a security release (GHSA-cpwx-vrp4-4pq7). ADR-012 + `docs/compatibility.md` updated. Caught by WSL beachhead E2E 2026-05-14.
+- `pyproject.toml`: `jinja2` 3.1.5 → 3.1.6 to align with `litellm==1.83.14` transitive exact pin (`litellm` hard-locks `jinja2==3.1.6` in wheel metadata; cold install was failing with `ERROR: Cannot install jinja2==3.1.5` on clean envs). 3.1.6 is also a security release (GHSA-cpwx-vrp4-4pq7). ADR-012 + `docs/internal/compatibility.md` updated. Caught by WSL beachhead E2E 2026-05-14.
 - ADR-005 §2 schedule amended 2026-05-14: `ctx.write`, `ctx.log`, and `ctx.params` are **DEFERRED (v0.2+)** — not exported in v0.1 per `src/nucleus/ctx/__init__.py` / `docs/specs/nucleus_architecture_v4.1.md` §13.1; substitutes remain asset returns, stdlib `logging`, and CLI/config.
 - `nucleus ingest mysql://...` CLI scheme allow-list now matches the dispatcher (post-Worker-B cleanup) — previously rejected at the CLI pre-flight even though `ctx.copy_from` accepted MySQL.
 - `_V01_COMMANDS` smoke matrix in `tests/cli/test_main.py` extended from 7 → 8 commands so `chat` is exercised by every per-command `--help` test (ADR-015 surface parity).
@@ -266,7 +266,7 @@ the full deprecation cycle that core data APIs receive.
 ### Added — Documentation artifacts
 
 - `docs/decisions/README.md` — ADR index (001–016 ACCEPTED at snapshot time).
-- `docs/compatibility.md` — pin matrix companion to ADR-012.
+- `docs/internal/compatibility.md` — pin matrix companion to ADR-012.
 - `docs/errors/` — error slug stubs referenced by `docs_url` conventions.
 - `docs/specs/nucleus_poc_plan.md` — PoC #1–#5 status and criteria.
 
@@ -318,7 +318,7 @@ No code is installable. This entry exists so the changelog has a starting point.
 - C4 architecture diagrams (`docs/architecture/C4_context.md`, `C4_container.md`).
 - Critical sequence: error translation flow (`docs/architecture/sequence_error_translation.md`).
 - ADR template (`docs/decisions/_template.md`) + first ADR (`ADR-001-no-iceberg-commit-service.md`).
-- Component compatibility matrix (`docs/compatibility.md`).
+- Component compatibility matrix (`docs/internal/compatibility.md`).
 - Type-mapping pattern doc (`docs/patterns/type_mapping.md`).
 - CI workflows (`.github/workflows/ci.yml`, `upgrade-deps.yml`).
 - Issue & PR templates (`.github/ISSUE_TEMPLATE/`, `PULL_REQUEST_TEMPLATE.md`).

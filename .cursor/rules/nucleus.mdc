@@ -180,7 +180,7 @@ This rule supersedes any AI preference for "clean abstractions" or "future-proof
 
 6. **Every layer must earn its keep.** Three layers between user input and the underlying engine = two too many. The `ctx` SDK is the only contracted abstraction; everything else must justify its existence to the founder before it lands.
 
-Refactor trigger: if a reviewer reads a new file and cannot tell within 30 seconds *what concrete v0.1 user pain it removes*, the file should not exist yet. Revert and document the imagined need in `docs/FOUNDER_ACTION_QUEUE.md` for later reconsideration.
+Refactor trigger: if a reviewer reads a new file and cannot tell within 30 seconds *what concrete v0.1 user pain it removes*, the file should not exist yet. Revert and document the imagined need in `docs/internal/FOUNDER_ACTION_QUEUE.md` for later reconsideration.
 
 ---
 
@@ -485,7 +485,7 @@ DO create:
 - ✅ `/docs/internal/swap/<component>.md` for swap target documentation
 - ✅ `/docs/internal/research/<component>.md` for official docs notes (per Constraint #10)
 - ✅ `/docs/internal/research/ai_hallucinations.md` to log AI-fabricated APIs (per Constraint #10)
-- ✅ `/docs/compatibility.md` for version matrix (per Constraint #11)
+- ✅ `/docs/internal/compatibility.md` for version matrix (per Constraint #11)
 - ✅ `/internal/poc/poc<N>_<name>/` for PoC stubs
 - ✅ `/scripts/<discipline>.py` for CI enforcement scripts
 

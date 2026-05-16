@@ -56,7 +56,7 @@ Two structural changes were applied to `translator.py` by the bring-up worker AF
 - `AGENTS.md` §1 — phase-gate row `[ ] PoC #1` → `[✓] PoC #1 (promoted YYYY-MM-DD)`.
 - `docs/specs/nucleus_architecture_v4.1.md` §6.4 — drop "PoC #1 validates feasibility" caveat; v4.1.2 deferral note rewritten iff ADR-006 ratifies in this PR.
 - `docs/decisions/ADR-002-positioning-decision-2026-05.md` §8.6 — apply-log row for the promotion commit.
-- `docs/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot (`AGENTS.md` §11.6).
+- `docs/internal/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot (`AGENTS.md` §11.6).
 
 `poc/p1_error_translation/` source stays in tree for 30 days per `PROMOTION_CHECKLIST.md` §5 dual-source policy.
 

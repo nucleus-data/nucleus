@@ -1,6 +1,6 @@
 # AI Copilot — LLM provider setup
 
-Nucleus's AI Copilot calls [LiteLLM](https://docs.litellm.ai/) (`litellm==1.83.14`, see [`docs/compatibility.md`](../compatibility.md)), which routes requests to 100+ providers using a unified completion API.
+Nucleus's AI Copilot calls [LiteLLM](https://docs.litellm.ai/) (`litellm==1.83.14`, see [`docs/internal/compatibility.md`](../internal/compatibility.md)), which routes requests to 100+ providers using a unified completion API.
 
 Use this guide to configure API keys and models for `nucleus chat` and the Workbench Copilot panel (`nucleus workbench up`).
 

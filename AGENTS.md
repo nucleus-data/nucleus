@@ -251,7 +251,7 @@ When you (an AI agent) propose changes:
 8. **Be brutally honest about scope.** Overpromising scope is the #1 killer of OSS projects.
 9. **Respect the composability constitution.** Never introduce a non-swappable Tier 1/2 dependency.
 10. **Cite official documentation URLs** when suggesting any code that uses a wrapped library. If you cannot cite, write `# NEEDS VERIFICATION` and ask the user to confirm. **Never fabricate APIs that "should exist".** See §11.12.
-11. **Check current pinned version** before suggesting library usage. AI training cutoff may be stale; the API you remember may have changed. When uncertain, default to "check `/docs/compatibility.md` for current version, then verify against that version's official docs."
+11. **Check current pinned version** before suggesting library usage. AI training cutoff may be stale; the API you remember may have changed. When uncertain, default to "check `/docs/internal/compatibility.md` for current version, then verify against that version's official docs."
 12. **Flag bulk upgrade requests.** If user asks to "upgrade dependencies", split into one-component-per-PR per §11.13. Never bulk-upgrade.
 
 ---
@@ -386,7 +386,7 @@ If you cannot fill out the OSS Options section honestly, the answer is "wrap, do
 
 Hard ceiling: **30,000 LOC** by v1.0.
 
-Tracked monthly via `scripts/loc_budget.py`. Output committed to `/docs/budget_history.md`.
+Tracked monthly via `scripts/loc_budget.py`. Output committed to `/docs/internal/budget_history.md`.
 
 | Phase | Expected LOC |
 |---|---|
@@ -539,7 +539,7 @@ Dev deps (linters, formatters) can use loose pins. Runtime deps cannot.
 
 #### Compatibility matrix (mandatory artifact)
 
-Maintain `/docs/compatibility.md`:
+Maintain `/docs/internal/compatibility.md`:
 
 ```markdown
 # Compatibility Matrix (last updated: YYYY-MM-DD)
@@ -603,7 +603,7 @@ Every 3 months, dedicated 1-2 day session:
 - Plan upgrades for next quarter
 - Identify "stale" deps (>6 months behind)
 - Identify security advisories
-- Update `/docs/compatibility.md`
+- Update `/docs/internal/compatibility.md`
 
 **For one-person reality:** This sounds like a lot of overhead. It's actually *less* than the alternative (debugging mysterious failures from upgrade drift). Pay 1 day per quarter to save 1 week per year.
 

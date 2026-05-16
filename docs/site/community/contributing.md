@@ -78,6 +78,6 @@ The four governance gates that are hard release blockers:
 
 - Be kind. We follow the [Code of Conduct](code-of-conduct.md). Disagreement on architecture is normal and welcome; rudeness is not.
 - Cite your sources. When proposing a change, point at the architecture section it touches.
-- Defer is a valid answer. Many great ideas land in `docs/FOUNDER_ACTION_QUEUE.md` for a future version.
+- Defer is a valid answer. Many great ideas land in `docs/internal/FOUNDER_ACTION_QUEUE.md` for a future version.
 
 If you're unsure whether something fits, open a [GitHub Discussion](https://github.com/nucleus-data/nucleus/discussions) — it's lower-stakes than an issue and often faster.

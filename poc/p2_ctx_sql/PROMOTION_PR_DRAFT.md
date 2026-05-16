@@ -61,7 +61,7 @@ None blocking. Two soft items carry from `REVIEW_NOTES.md`; the 16-test suite pa
 - `docs/architecture/sequence_query.md` §1 — Status → "shipped"; retarget `resolver.py` line refs in §2 / §3.1.
 - `docs/specs/nucleus_cli_spec.md` §3.6 + §10 NV #2 — drop "Confirm at PoC #2 promotion" caveat.
 - `CHANGELOG.md` "Unreleased" — `sql_resolver: Internal → Beta, see ADR-005 §2 row 2`.
-- `docs/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot (`AGENTS.md` §11.6).
+- `docs/internal/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot (`AGENTS.md` §11.6).
 - **IF Option B at T9**: `src/nucleus/errors.py` adds `NucleusAssetGraphError` + `__all__`; ADR-006 §"Initial code assignment" gains the new `NE3xxx` row.
 
 `poc/p2_ctx_sql/` stays in tree **30 days** dual-source per `PROMOTION_CHECKLIST.md` §5 — removable after 30 days of zero `NucleusInternalError` fallbacks AND zero open `# NEEDS VERIFICATION` markers.

@@ -149,7 +149,7 @@ Be brutally honest. Cite file paths and line numbers. Suggest fixes.
 ### 4.2 Snapshot LOC + budget history (15 min)
 
 ```powershell
-python scripts/loc_budget.py | Tee-Object -FilePath docs/budget_history.md -Append
+python scripts/loc_budget.py | Tee-Object -FilePath docs/internal/budget_history.md -Append
 ```
 
 Verify trend stays GREEN against the phase ceiling (v0.2: 12,000 / v0.3: 16,000 / v0.5: 20,000 / v1.0: 28,000).
@@ -169,7 +169,7 @@ pip-audit --strict
 pip list --outdated
 ```
 
-Update [`docs/compatibility.md`](compatibility.md). Identify any dep >6 months behind upstream. Plan one upgrade for next quarter (do **not** plan more than one per quarter unless forced by CVE).
+Update [`docs/internal/compatibility.md`](compatibility.md). Identify any dep >6 months behind upstream. Plan one upgrade for next quarter (do **not** plan more than one per quarter unless forced by CVE).
 
 ### 4.5 Community health snapshot (30 min)
 
@@ -184,7 +184,7 @@ Numbers feed §10 health dashboard. Trends matter; absolute values are noise.
 
 ### 4.6 Re-read the founder action queue (15 min)
 
-[`docs/FOUNDER_ACTION_QUEUE.md`](FOUNDER_ACTION_QUEUE.md) is the deferred-work log. Close items you finished. Promote items that have aged into "act now" (e.g., security advisory now has a fix available). Do **not** add new items unless they truly require founder action.
+[`docs/internal/FOUNDER_ACTION_QUEUE.md`](FOUNDER_ACTION_QUEUE.md) is the deferred-work log. Close items you finished. Promote items that have aged into "act now" (e.g., security advisory now has a fix available). Do **not** add new items unless they truly require founder action.
 
 ---
 
@@ -198,7 +198,7 @@ Quarterly is the rhythm of the **upgrade audit** (Constraint #11) and the **road
 python scripts/upgrade_smoke.py
 ```
 
-For each wrapped Tier 1/2 dep, decide: stay, minor-bump, major-bump-ADR. Update [`docs/compatibility.md`](compatibility.md) with the chosen target version. Bulk-upgrade is forbidden — pick ONE component to upgrade this quarter and one to plan for next quarter. Open the upgrade PR per [`docs/dev-guides/07-upgrade-wrapped-library.md`](dev-guides/07-upgrade-wrapped-library.md).
+For each wrapped Tier 1/2 dep, decide: stay, minor-bump, major-bump-ADR. Update [`docs/internal/compatibility.md`](compatibility.md) with the chosen target version. Bulk-upgrade is forbidden — pick ONE component to upgrade this quarter and one to plan for next quarter. Open the upgrade PR per [`docs/dev-guides/07-upgrade-wrapped-library.md`](dev-guides/07-upgrade-wrapped-library.md).
 
 ### 5.2 Full security review (3 hours)
 
@@ -222,7 +222,7 @@ Edit the current phase doc. **Do not** edit future phase docs unless research ha
 
 ### 5.4 Budget history review (30 min)
 
-Read [`docs/budget_history.md`](budget_history.md) tail. Any month where LOC delta exceeded the phase trajectory by >500 LOC = audit which PRs added what. The 30K ceiling is a wall, not a target.
+Read [`docs/internal/budget_history.md`](budget_history.md) tail. Any month where LOC delta exceeded the phase trajectory by >500 LOC = audit which PRs added what. The 30K ceiling is a wall, not a target.
 
 ### 5.5 Re-read the deeps (1 hour)
 
@@ -565,7 +565,7 @@ You write the ADR **before** writing the code, not after. ADRs are decisions; co
 
 ### 10.2 When to defer
 
-Per [`AGENTS.md`](../AGENTS.md) §10 disciplines — "Default to deferring. Over-eagerness is a bug." Apply the 8-question gate. Any "no" or "unclear" → defer. Log the deferred item to [`docs/FOUNDER_ACTION_QUEUE.md`](FOUNDER_ACTION_QUEUE.md) with a 1-line note for future-you.
+Per [`AGENTS.md`](../AGENTS.md) §10 disciplines — "Default to deferring. Over-eagerness is a bug." Apply the 8-question gate. Any "no" or "unclear" → defer. Log the deferred item to [`docs/internal/FOUNDER_ACTION_QUEUE.md`](FOUNDER_ACTION_QUEUE.md) with a 1-line note for future-you.
 
 ### 10.3 When to escalate to "stop and ask"
 

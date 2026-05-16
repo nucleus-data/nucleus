@@ -16,7 +16,7 @@ description: Install Nucleus and its dependencies on macOS, Linux, or Windows.
 | OS | macOS 12+, Ubuntu 22.04+, Windows 10/11 (WSL2) | — |
 
 !!! note "Python version"
-    Python 3.11 is the primary supported interpreter. Python 3.12 is tested but not the CI primary. Python 3.13 is not yet validated. See [`docs/compatibility.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/compatibility.md).
+    Python 3.11 is the primary supported interpreter. Python 3.12 is tested but not the CI primary. Python 3.13 is not yet validated. See [`docs/internal/compatibility.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/compatibility.md).
 
 ## Install
 

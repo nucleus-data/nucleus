@@ -55,7 +55,7 @@ None blocking. Two soft items carry forward for founder triage.
 - `AGENTS.md` §1 — `[ ] PoC #2-5` stays unchecked until PoC #5 lands; add per-PoC `(promoted YYYY-MM-DD)` annotation per Worker C precedent.
 - `docs/specs/nucleus_architecture_v4.1.md` §5.5.1 — drop "PoC #3 validates feasibility" caveat; flip `ctx.copy_from` row in §13.2 Internal → Beta **only if** Option A.
 - `v01_skeleton_plan.md` §3 + `sequence_ingestion.md` §5 — **IF Option B**, retarget skeleton plan line 40 + sequence_ingestion §5 line 146.
-- `docs/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot per `AGENTS.md` §11.6.
+- `docs/internal/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot per `AGENTS.md` §11.6.
 
 `poc/p3_ingest/` stays in tree for **30 days** dual-source per the Worker C / PoC #1 + PoC #2 precedent; remove only after 30 consecutive days of zero `NucleusInternalError` fallbacks attributable to ingest gaps.
 

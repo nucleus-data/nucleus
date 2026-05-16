@@ -30,7 +30,7 @@ Demonstrates `ctx.agent` + `nucleus-mcp-server` (~500 LOC, v0.5 per [v4.1 §18.4
 - **Beachhead first.** Recipes that don't serve the 30-minute Postgres → Iceberg metric are deferred or marked preview.
 - **Status is honest.** `<!-- pre-v0.1 -->` and `NEEDS VERIFICATION` markers stay in until the underlying code ships; never silently delete them.
 - **Patterns vs. recipes.** The *why* lives in [`../patterns/`](../patterns/); the *what to type* lives here. A recipe never re-explains a pattern — it links.
-- **Recipes break first.** When a wrapped pin moves in [`../compatibility.md`](../compatibility.md), recipes are the first artifact re-run — they are the user contract.
+- **Recipes break first.** When a wrapped pin moves in [`../internal/compatibility.md`](../internal/compatibility.md), recipes are the first artifact re-run — they are the user contract.
 - **No invented invocations.** Every `nucleus <verb>` line must trace to [`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md); every `ctx.<method>` to [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md).
 
 ---

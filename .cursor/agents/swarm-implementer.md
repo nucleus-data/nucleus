@@ -72,7 +72,7 @@ Pre-existing failures gated on a PROPOSED ADR are NOT your responsibility — no
 
 You may run alongside 1-3 other swarm-implementer workers. You MUST NOT touch:
 
-- `docs/specs/nucleus_poc_plan.md`, `docs/budget_history.md` — parent aggregates after all workers land
+- `docs/specs/nucleus_poc_plan.md`, `docs/internal/budget_history.md` — parent aggregates after all workers land
 - `AGENTS.md`, `.cursor/rules/nucleus.mdc`, `docs/specs/nucleus_architecture_v4.1.md` — architect-only files
 - Any ADR (`docs/decisions/ADR-*.md`)
 - Any other worker's owned directory (the parent prompt will list these)

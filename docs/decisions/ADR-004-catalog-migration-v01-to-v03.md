@@ -52,7 +52,7 @@ Per AGENTS.md §7: user-facing copy says **catalog** uniformly. Polaris's "metas
 | **Lakekeeper less mature** — single-company governance (Worker F §9); pre-1.0 with breaking minors at 0.6.0 / 0.11.0 / 0.12.0 | Polaris path preserved; Mo 24 gate can flip documented default (ADR-002 §8.3); `SqlCatalog` indefinite fallback |
 | **Polaris JVM blows laptop budget** for solo dev — 500 MB-1.5 GB heap (Worker H §6); Helm prod 8 GiB | Default is Lakekeeper; opt-in only; v0.3 compose tunes `JAVA_OPTS_APPEND="-Xms512m -Xmx1g"` (Worker H §12) |
 | **Polaris `internal` token-issuance accidentally enabled** — Constraint #6 violation (Polaris CAN issue tokens; Lakekeeper NEVER does) | Polaris template hard-codes `polaris.authentication.<realm>.type=external` + `polaris.realm-context.require-header=true` (Worker H §5.2); CI lint rejects `internal` / `mixed` in shipped templates |
-| **pyiceberg version skew** — post-ADR-003 0.11.x against Lakekeeper 0.12.x vs Polaris 1.4.x (Worker F §7 + Worker H §7) | `pyiceberg.RestCatalog` smoke-tested against both per swap-drill (`docs/architecture/sequence_swap_drill.md` §4); `docs/compatibility.md` tracks pinned tuples |
+| **pyiceberg version skew** — post-ADR-003 0.11.x against Lakekeeper 0.12.x vs Polaris 1.4.x (Worker F §7 + Worker H §7) | `pyiceberg.RestCatalog` smoke-tested against both per swap-drill (`docs/architecture/sequence_swap_drill.md` §4); `docs/internal/compatibility.md` tracks pinned tuples |
 | **OIDC syntax differs per catalog** + **AI hallucinates clients** — `principal-roles-mapper` differs (Worker W §5.1); `LakekeeperClient` / `PolarisClient` / `PolarisError` / `RestCatalog.create_warehouse()` all fabricated (Worker F §9 + Worker H §10) | Per-provider recipes tested against Worker W's 4-provider matrix; the future OIDC v0.3 auth ADR (per Worker W §11 — number TBA; ADR-008 is already taken by the storage-substrate triage) lands alongside this ADR with a unified `[auth]` block; AI agents cite Worker F §9 / Worker H §10 before importing anything beyond `pyiceberg.RestCatalog` + `httpx`; log hallucinations per AGENTS.md §11.12 |
 
 ## Verification plan
@@ -62,7 +62,7 @@ Per AGENTS.md §7: user-facing copy says **catalog** uniformly. Polaris's "metas
 3. **Error-translation contract** (`docs/internal/research/pyiceberg.md` §6 + Worker F §5.5 + Worker H §5.6): trigger each row on real Lakekeeper 0.12.2 AND Polaris 1.4.1. Worker H §5.6: Polaris's `501` on `/oauth/tokens` in `external`-mode is a new case → `NucleusConfigError`.
 4. **Swap drill** (`docs/architecture/sequence_swap_drill.md` §4): Lakekeeper↔Polaris is a named quarterly drill; first runs before v0.3 GA. Both implement the same `pyiceberg.Catalog` Protocol.
 5. **`scripts/check_jvm_in_core_path.py`** (NV — author alongside `scripts/check_licenses.py` per ADR-007): verifies Polaris runs as a separate container, never embedded → preserves Constraint #1 exemption per ADR-002 §6.
-6. **`docs/compatibility.md`**: add Lakekeeper 0.12.2 + Polaris 1.4.1 rows with `tested_with_pyiceberg=0.11.x` once ADR-003 lands.
+6. **`docs/internal/compatibility.md`**: add Lakekeeper 0.12.2 + Polaris 1.4.1 rows with `tested_with_pyiceberg=0.11.x` once ADR-003 lands.
 
 ## Rollback
 

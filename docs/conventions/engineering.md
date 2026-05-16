@@ -3,7 +3,7 @@
 > **Status**: v0.1 (locked at pre-Heartbeat, Month 0)
 > **Owner**: Solo founder
 > **Authority**: This document overrides personal preference. PRs that violate these conventions are rejected without further review.
-> **Companion docs**: [`AGENTS.md`](../../AGENTS.md), [`.cursor/rules/nucleus.mdc`](../../.cursor/rules/nucleus.mdc), [`docs/compatibility.md`](../compatibility.md)
+> **Companion docs**: [`AGENTS.md`](../../AGENTS.md), [`.cursor/rules/nucleus.mdc`](../../.cursor/rules/nucleus.mdc), [`docs/internal/compatibility.md`](../internal/compatibility.md)
 
 Engineering conventions exist to make 1,000 small decisions once so we never re-debate them. Every convention here has a **Decision** and a **Why** — if you find a reason to violate it, raise an ADR in [`docs/decisions/`](../decisions/), don't just bend the rule.
 

@@ -109,7 +109,7 @@ Run `python scripts/loc_budget.py --report` and paste the cumulative line:
 - [ ] Public API change → updated `docs/specs/nucleus_ctx_sdk_spec.md` (or noted as intentional)
 - [ ] Type-mapping change → updated `docs/patterns/type_mapping.md` + property tests
 - [ ] Error type added / changed → updated `docs/architecture/sequence_error_translation.md`
-- [ ] Dep change → updated `docs/compatibility.md`
+- [ ] Dep change → updated `docs/internal/compatibility.md`
 
 ---
 

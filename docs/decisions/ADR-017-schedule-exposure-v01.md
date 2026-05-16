@@ -149,7 +149,7 @@ Gate verdict: **PASS (with Q7 founder override + Q8 explicit roadmap deviation)*
   release on the `<4` line, forced by `dagster==1.9.5`'s transitive `croniter<4,>=0.3.34`
   constraint. API surface used (`is_valid`, `get_next`) is stable across 0.3.x–3.x.
 - **ADR-012 amendment**: Active pin matrix gains 1 row.
-- **docs/compatibility.md**: +1 row (croniter).
+- **docs/internal/compatibility.md**: +1 row (croniter).
 - **API surface additive only** — existing `@nucleus.asset` callers unaffected (`schedule=None` default).
 - **`nucleus schedule on/off/trigger` deferred** — users who try those commands get a clear
   `NucleusFeatureDeferredError` with a "v0.2" message.

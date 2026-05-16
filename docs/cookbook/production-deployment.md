@@ -30,7 +30,7 @@ Authoritative file (pinned images, networks, resource limits): **`docker-compose
 
 | Service | Role | Image pin |
 |---------|------|-----------|
-| `storage` | S3-compatible object store | `chrislusf/seaweedfs:4.23` ([ADR-008](../decisions/ADR-008-storage-substrate-v01.md), [`docs/compatibility.md`](../compatibility.md)) |
+| `storage` | S3-compatible object store | `chrislusf/seaweedfs:4.23` ([ADR-008](../decisions/ADR-008-storage-substrate-v01.md), [`docs/internal/compatibility.md`](../internal/compatibility.md)) |
 | `nucleus` | CLI + Workbench (FastAPI) | Built from `docker/Dockerfile.production` → tag `nucleus:production-local` |
 | `caddy` | TLS + reverse proxy | `caddy:2.8.4-alpine` |
 
@@ -222,7 +222,7 @@ Per `AGENTS.md` §11.13 — **one dependency upgrade per PR** in development; on
 
 **Bare-metal / venv install**
 
-1. Read pins in [`docs/compatibility.md`](../compatibility.md).
+1. Read pins in [`docs/internal/compatibility.md`](../internal/compatibility.md).
 2. `pip install nucleus==<new-version>` inside the activated environment.
 3. `nucleus version` → exit code **0**.
 4. Canary: `nucleus run <your_smoke_asset_key>`.

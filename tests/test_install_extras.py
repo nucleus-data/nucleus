@@ -27,7 +27,7 @@ Per PEP 621 ``[project.optional-dependencies]``
 Companion governance:
 - ``scripts/check_install_size.py`` -- enforces the <30 core-deps ceiling
 - ``scripts/check_pinning.py`` -- enforces ``==`` discipline on extras
-- ``docs/compatibility.md`` §2 -- human-readable extras matrix
+- ``docs/internal/compatibility.md`` §2 -- human-readable extras matrix
 """
 
 from __future__ import annotations

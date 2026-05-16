@@ -4,7 +4,7 @@
 > **Status**: Pre-implementation reference. Used by: Tier 1+ asset declarations (`partition_by=...`).
 > **Audience**: Anyone writing or reviewing assets that materialize to Iceberg, especially before touching `ctx.asset` partition arguments.
 > **References**: [`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §4, §7; [`docs/patterns/type_mapping.md`](./type_mapping.md) §4.4; [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
-> **Last reviewed**: 2026-05-12 — versions per [`docs/compatibility.md`](../compatibility.md) (`pyiceberg==0.8.1`, `pyarrow==18.1.0`)
+> **Last reviewed**: 2026-05-12 — versions per [`docs/internal/compatibility.md`](../internal/compatibility.md) (`pyiceberg==0.8.1`, `pyarrow==18.1.0`)
 
 Read this **before** writing Tier 0 Heartbeat code that calls `Table.append` or `create_table(... partition_spec=...)`. Picking the wrong partition transform is the #1 silent performance killer in Iceberg warehouses.
 

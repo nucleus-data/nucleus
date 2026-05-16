@@ -121,7 +121,7 @@ Any feature that does not serve this metric is deferred. Other personas (solo co
 
 ## Proprietary LOC Budget
 
-Hard ceiling: **30,000 LOC** by v1.0. Tracked monthly via `scripts/loc_budget.py`. Committed to `docs/budget_history.md`.
+Hard ceiling: **30,000 LOC** by v1.0. Tracked monthly via `scripts/loc_budget.py`. Committed to `docs/internal/budget_history.md`.
 
 | Phase | LOC ceiling | Rationale |
 |---|---|---|

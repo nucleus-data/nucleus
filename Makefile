@@ -109,7 +109,7 @@ coverage:  ## Run tests + open HTML coverage report
 # ----------------------------------------------------------------------------
 
 .PHONY: check-pinning
-check-pinning:  ## Constraint #11 — pinned versions match docs/compatibility.md
+check-pinning:  ## Constraint #11 — pinned versions match docs/internal/compatibility.md
 	$(PYTHON) scripts/check_pinning.py
 
 .PHONY: check-layering
