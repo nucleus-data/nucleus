@@ -27,7 +27,7 @@ Everything else is rented from open source.
 
 **v0.1.0 Foundation — released (beta) 2026-05-14.** Beachhead empirically validated; PoC #5 external-tester kit ready.
 
-**v0.2.0 Public Launch — bundled + close-out 2026-05-15.** Wave 1 (11 builders) + Wave 2 P0-1/P0-2/P0-3 reliability hardening + Workbench v0.3 + close-out batch (chaos translate-leak fixes, UX polish, ADR-039) all in `main`. **Founder pushes the tag** per AGENTS.md §3 + `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` Section 4.5.
+**v0.2.0 Public Launch — bundled + close-out 2026-05-15.** Wave 1 (11 builders) + Wave 2 P0-1/P0-2/P0-3 reliability hardening + Workbench v0.3 + close-out batch (chaos translate-leak fixes, UX polish, ADR-039) all in `main`. **Founder pushes the tag** per AGENTS.md §3 + `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` Section 4.5.
 
 ```
 [✓] Architecture v4.1 locked (supersedes v4.0 and v3)

@@ -1,7 +1,7 @@
 # Nucleus — Solo-Founder Long-Term Handover
 
 > **Audience**: The founder, future-self, 6+ months after the v0.2.0 public launch.
-> **Purpose**: The **steady-state** operations manual for solo-maintaining Nucleus long-term. Not the launch-day runbook — that lives in [`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md). Not the day-0 onboarding — that lives in [`docs/roadmap/HANDOVER.md`](roadmap/HANDOVER.md). **This file is the one you re-read every quarter** when you have forgotten why Nucleus exists, how to triage a Dependabot PR, or whether to take a break.
+> **Purpose**: The **steady-state** operations manual for solo-maintaining Nucleus long-term. Not the launch-day runbook — that lives in [`docs/internal/release-process/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md). Not the day-0 onboarding — that lives in [`docs/roadmap/HANDOVER.md`](roadmap/HANDOVER.md). **This file is the one you re-read every quarter** when you have forgotten why Nucleus exists, how to triage a Dependabot PR, or whether to take a break.
 >
 > **Anti-Over-Engineering reminder** (founder directive, 2026-05-13): "Focus on simplicity and real core values. Over-engineering causes black-box experiences and bad future health of the platform." When this file conflicts with new AI suggestions about "clean abstractions" or "future-proofing", **this file wins** until you amend it on purpose.
 
@@ -623,4 +623,4 @@ When you feel like succeeding, re-read [`docs/decisions/ADR-002-positioning-deci
 
 *Last reviewed: 2026-05-15 (v0.2.0 ship). Re-review next quarter (2026-08).*
 
-*Cross-references: [`AGENTS.md`](../AGENTS.md) (universal AI handover), [`docs/specs/nucleus_architecture_v4.1.md`](specs/nucleus_architecture_v4.1.md) (architecture source of truth), [`docs/START_HERE.md`](START_HERE.md) (entry point for new arrivals), [`docs/roadmap/HANDOVER.md`](roadmap/HANDOVER.md) (Day-0 onboarding for next developer), [`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md) (launch-day runbook).*
+*Cross-references: [`AGENTS.md`](../AGENTS.md) (universal AI handover), [`docs/specs/nucleus_architecture_v4.1.md`](specs/nucleus_architecture_v4.1.md) (architecture source of truth), [`docs/START_HERE.md`](START_HERE.md) (entry point for new arrivals), [`docs/roadmap/HANDOVER.md`](roadmap/HANDOVER.md) (Day-0 onboarding for next developer), [`docs/internal/release-process/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md) (launch-day runbook).*

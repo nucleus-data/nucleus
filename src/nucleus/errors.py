@@ -1089,7 +1089,7 @@ class NucleusRaceConditionDuringWrite(NucleusError):
     the AMA's pre-write mkdir fails before any Iceberg catalog touch.
 
     See ``docs/errors/NE5018-race-condition-during-write.md`` +
-    ``docs/release/chaos_test_results.md`` §J3 (CF-1).
+    ``docs/internal/release-process/chaos_test_results.md`` §J3 (CF-1).
 
     # Stability: Beta
     """

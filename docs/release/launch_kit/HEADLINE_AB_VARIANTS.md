@@ -43,7 +43,7 @@ Each variant is 80 characters max (HN soft limit). Each carries a single rhetori
 - **Framing**: lead with the empirically-validated beachhead metric (PoC #5 WSL E2E, 8/8 gates PASS, 2026-05-14). Concrete number, concrete persona.
 - **Audience**: CTOs and tech leads of 5-20 engineer startups who feel the data-platform setup tax weekly.
 - **Predicted objection**: "30 minutes is suspiciously fast - what corners are cut?"
-- **Counter (one line)**: Zero - `scripts/beachhead_e2e.py` is in the repo, the WSL run output is at `docs/release/e2e_results_20260514T190132.md`, and the eleven empirical performance gaps are published before launch in `docs/benchmarks/2026-05-15_baseline.md`.
+- **Counter (one line)**: Zero - `scripts/beachhead_e2e.py` is in the repo, the WSL run output is at `docs/internal/release-process/e2e_results_20260514T190132.md`, and the eleven empirical performance gaps are published before launch in `docs/benchmarks/2026-05-15_baseline.md`.
 - **WHY THIS VARIANT**: 1. Time-to-value beats feature lists on HN; 2. Persona specificity ("5-engineer team") signals scope discipline, not over-reach.
 
 ---

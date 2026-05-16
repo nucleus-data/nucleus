@@ -90,7 +90,7 @@ In practice we expect `cli → workbench` and `workbench → ctx` to be the acti
 
 ### Positive
 
-- The pre-existing `cli/main.py:1334` layering FAIL is cleared. v0.2.0 governance suite returns to all-green per `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §3.
+- The pre-existing `cli/main.py:1334` layering FAIL is cleared. v0.2.0 governance suite returns to all-green per `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §3.
 - Architecture intent (`v4.1 §8.1`) is now mirrored faithfully in the CI rule. Future Layer-4 surfaces (Marimo at v0.3, Portal at v0.5) can be added at depth `4` without reopening this discussion.
 - The change is local to one script (~10 LOC delta). No runtime code change. No new module, no new test infrastructure.
 

@@ -11,7 +11,7 @@ path. This pytest file only asserts:
   (skipped on missing CLI; we don't actually run them here).
 
 The full per-scenario validation lives in
-``docs/release/chaos_test_results.md`` (last-run evidence) and is regenerated
+``docs/internal/release-process/chaos_test_results.md`` (last-run evidence) and is regenerated
 by Worker A2's release-gate run.
 
 Per AGENTS.md §11.8 chaos discipline + ADR-024 (reliability hardening).

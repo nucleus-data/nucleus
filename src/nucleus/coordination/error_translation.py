@@ -308,7 +308,7 @@ def _file_exists_handler(exc: BaseException) -> NucleusError:
 
     Fires when a write path's mkdir fails because the target already
     exists as a non-directory entry. Closes chaos J3 (CF-1) translate()
-    gap — see ``docs/release/chaos_test_results.md`` §J3.
+    gap — see ``docs/internal/release-process/chaos_test_results.md`` §J3.
 
     Docs: https://docs.python.org/3/library/exceptions.html#FileExistsError
     """
@@ -334,7 +334,7 @@ def _pydantic_validation_handler(exc: BaseException) -> NucleusError:
     corrupted ``*.metadata.json`` (truncated, empty, externally edited)
     surfaces as ``pydantic_core._pydantic_core.ValidationError`` from
     ``pyiceberg.table.metadata.parse_raw``. Closes chaos J8 (CF-2 + CF-3)
-    translate() gap — see ``docs/release/chaos_test_results.md`` §J8.
+    translate() gap — see ``docs/internal/release-process/chaos_test_results.md`` §J8.
 
     Docs: https://docs.pydantic.dev/latest/api/pydantic_core/#pydantic_core.ValidationError
     Docs: https://py.iceberg.apache.org/api/  (pyiceberg==0.11.1)

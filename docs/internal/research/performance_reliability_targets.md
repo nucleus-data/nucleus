@@ -400,7 +400,7 @@ No `compact_table()`, no `TPCH_BENCH()`, no Delta Lake APIs mixed into Iceberg d
 
 ## 14. v0.2.0 empirical actuals (2026-05-15 baseline)
 
-> Appended 2026-05-15 by the v0.2 close-out batch (`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.9). Demotes §2 from a v0.2 SLO to a v0.3+ aspirational target. Full per-benchmark evidence in [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) (internal-facing baseline) and [`docs/internal/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) (release-facing user report — adds B6 multi-asset DAG, B7 check overhead, B8 Workbench API, B9 ctx.sql overhead per the second builder wave 2026-05-15).
+> Appended 2026-05-15 by the v0.2 close-out batch (`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.9). Demotes §2 from a v0.2 SLO to a v0.3+ aspirational target. Full per-benchmark evidence in [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) (internal-facing baseline) and [`docs/internal/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) (release-facing user report — adds B6 multi-asset DAG, B7 check overhead, B8 Workbench API, B9 ctx.sql overhead per the second builder wave 2026-05-15).
 
 ### 14.1 Headline actuals vs §2 claims
 
@@ -437,7 +437,7 @@ The following §7.5 SLOs ARE empirically validated as of 2026-05-15:
 
 - Iceberg commit > 99.99 %: PASS via B2 100 successful commits / 100 attempts.
 - `nucleus up` boot < 10 s: PASS (PoC #4: 5.82 s; WSL E2E: 7 s).
-- Chaos J1/J2/J4/J5/J6 (Linux/WSL)/J7: PASS per `docs/release/chaos_test_results.md`.
+- Chaos J1/J2/J4/J5/J6 (Linux/WSL)/J7: PASS per `docs/internal/release-process/chaos_test_results.md`.
 
 These are the v0.2.0 release contract. Everything in §2 above demotes to roadmap.
 
@@ -445,8 +445,8 @@ These are the v0.2.0 release contract. Everything in §2 above demotes to roadma
 
 - [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) — per-benchmark raw output + hardware caveats (B1–B5).
 - [`docs/internal/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) — release-facing user report adding B6–B9 (this builder wave, 2026-05-15).
-- [`docs/release/chaos_test_results.md`](../release/chaos_test_results.md) — J1–J8 results (J3 + J8 closed in v0.2; see CF-1 + CF-2 fix in this same close-out batch).
-- [`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](../release/v0.2_FOUNDER_CLOSE_CHECKLIST.md) §1.9 — pre-sprint blocker #8 (this reconciliation).
+- [`docs/internal/release-process/chaos_test_results.md`](../internal/release-process/chaos_test_results.md) — J1–J8 results (J3 + J8 closed in v0.2; see CF-1 + CF-2 fix in this same close-out batch).
+- [`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](../internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md) §1.9 — pre-sprint blocker #8 (this reconciliation).
 
 ### 14.6 Additional benchmarks (B6–B9, added 2026-05-15 builder wave)
 

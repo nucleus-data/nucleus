@@ -274,7 +274,7 @@ Count: 5.
 - `docs/specs/nucleus_architecture_v4.1.md` §1.5, §1.6, §2.1, §3, §4.1, §4.2, §5.5.1, §5.7, §5.8, §6.1, §10, §11.2, §11.3, §17.1, §18.1, §20.1
 - ADRs: 002 §8.1, 004, 007, 008, 035
 - `docs/internal/research/marimo.md`, `docs/internal/research/s3_duckdb.md`
-- `docs/release/public_demo_deploy_plan.md`, `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md`
+- `docs/release/public_demo_deploy_plan.md`, `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md`
 - `deploy/fly.toml`, `deploy/vercel.json`, `deploy/render.yaml`
 
 ---
