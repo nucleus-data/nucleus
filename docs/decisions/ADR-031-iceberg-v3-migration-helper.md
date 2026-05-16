@@ -62,5 +62,5 @@ Phase 2 (post NV-2 confirmation): Enable actual DV writes; update format-version
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §4 (Tier 0 — Iceberg as immortal table format)
-- `nucleus_architecture_v4.1.md` §5.5 (catalog handles atomic commits)
+- `docs/specs/nucleus_architecture_v4.1.md` §4 (Tier 0 — Iceberg as immortal table format)
+- `docs/specs/nucleus_architecture_v4.1.md` §5.5 (catalog handles atomic commits)

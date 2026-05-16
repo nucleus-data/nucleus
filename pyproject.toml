@@ -236,7 +236,7 @@ observability = [
 
 # Opt-in column-level lineage + asset-graph dep extraction
 # (per docs/internal/research/sqlglot.md §10; first concrete caller v0.5+ per
-# `nucleus_architecture_v4.1.md` §6.2 column-lineage roadmap).
+# `docs/specs/nucleus_architecture_v4.1.md` §6.2 column-lineage roadmap).
 # Note: when `nucleus[postgres]` / `nucleus[mysql]` / `nucleus[snowflake]` is
 # installed, dlt transitively pulls sqlglot too — so those users effectively
 # receive it without `[lineage-advanced]`. This extras group exposes sqlglot

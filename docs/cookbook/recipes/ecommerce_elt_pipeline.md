@@ -493,7 +493,7 @@ The `gold__revenue_dashboard` and `gold__retention_dashboard` views show up unde
 
 ## How this graduates to Databricks / Snowflake
 
-The same Iceberg snapshots that power the laptop dashboards graduate without re-modeling — that is the explicit yield-to-giants strategy of `nucleus_architecture_v4.1.md` §10.
+The same Iceberg snapshots that power the laptop dashboards graduate without re-modeling — that is the explicit yield-to-giants strategy of `docs/specs/nucleus_architecture_v4.1.md` §10.
 
 1. **Mode 1 — portability**: point Databricks Unity Catalog or Snowflake's Iceberg catalog at the same `gold/` warehouse path. Existing dashboards keep reading the same snapshots; Nucleus continues to author new ones from the laptop or a small VM.
 2. **Mode 2 — hybrid compute**: when one nightly cohort retention asset starts pushing your single-node memory budget, mark only that asset `compute="databricks"` (lights up at v0.3+). Everything else stays local. The asset graph stays one graph; only the materializing engine changes.
@@ -521,7 +521,7 @@ Treat all numbers above as rough magnitude. The point is not "Nucleus is cheaper
 - [`docs/cookbook/production-deployment.md`](../production-deployment.md) — single-node deployment sizing + backup cadence
 - [`docs/cookbook/bi-connectivity.md`](../bi-connectivity.md) — Superset / Evidence / Rill / Streamlit setup
 - [`docs/cookbook/ai-copilot-setup.md`](../ai-copilot-setup.md) — Copilot opt-in + provider keys (`nucleus chat`)
-- [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §6.2 (AMA), §6.4 (Error Translation), §10 (Yield to giants)
+- [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §6.2 (AMA), §6.4 (Error Translation), §10 (Yield to giants)
 - [ADR-014 — dlt Postgres source](../../decisions/ADR-014-dlt-postgres-source.md)
 - [ADR-017 — `schedule=` kwarg](../../decisions/ADR-017-asset-schedule-kwarg.md)
 - [ADR-028 — snapshot branch + tag CLI](../../decisions/ADR-028-snapshot-branch-tag-cli.md)

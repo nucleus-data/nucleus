@@ -1,6 +1,6 @@
 # Nucleus Roadmap — Overview
 
-> *Per `nucleus_architecture_v4.1.md` §18 (the authoritative roadmap section). Numbers marked `# NEEDS VERIFICATION` are projections pending external validation (PoC #5 field test).*
+> *Per `docs/specs/nucleus_architecture_v4.1.md` §18 (the authoritative roadmap section). Numbers marked `# NEEDS VERIFICATION` are projections pending external validation (PoC #5 field test).*
 
 ---
 
@@ -82,7 +82,7 @@ Every decision — a new feature, a dependency upgrade, an ADR — must serve �
 
 ## Yield-to-Giants Strategy
 
-Nucleus does **not** compete with Databricks/Snowflake. We integrate via three modes (per `nucleus_architecture_v4.1.md` §10):
+Nucleus does **not** compete with Databricks/Snowflake. We integrate via three modes (per `docs/specs/nucleus_architecture_v4.1.md` §10):
 
 | Mode | Mechanism | When available |
 |---|---|---|
@@ -94,7 +94,7 @@ Nucleus does **not** compete with Databricks/Snowflake. We integrate via three m
 
 ## Non-Goals (summary — full list in `non-goals.md`)
 
-Per `nucleus_architecture_v4.1.md` §20:
+Per `docs/specs/nucleus_architecture_v4.1.md` §20:
 
 | We will NEVER build | Why |
 |---|---|
@@ -137,4 +137,4 @@ Hard ceiling: **30,000 LOC** by v1.0. Tracked monthly via `scripts/loc_budget.py
 
 ---
 
-*Source: `nucleus_architecture_v4.1.md` §18. Read the individual phase docs for full feature lists, acceptance criteria, and contributor workflows.*
+*Source: `docs/specs/nucleus_architecture_v4.1.md` §18. Read the individual phase docs for full feature lists, acceptance criteria, and contributor workflows.*

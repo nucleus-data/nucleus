@@ -2,7 +2,7 @@
 
 This module exposes the Typer ``app`` that ``pyproject.toml`` wires as the
 ``nucleus`` console script.  Each command is a thin operator wrapper over one
-``ctx.*`` call; per nucleus_architecture_v4.1.md §8 L4 the CLI delegates all
+``ctx.*`` call; per docs/specs/nucleus_architecture_v4.1.md §8 L4 the CLI delegates all
 business logic to the coordination / ctx layers.
 
 Typical invocations::
@@ -16,10 +16,10 @@ Typical invocations::
     nucleus query "SELECT * FROM raw.users LIMIT 10"
     nucleus version
 
-See ``nucleus_cli_spec.md`` for the full command surface, flag conventions,
+See ``docs/specs/nucleus_cli_spec.md`` for the full command surface, flag conventions,
 exit-code contract (§8), and stability tier of each command.
 
-Architecture refs: nucleus_architecture_v4.1.md §8 L4 (CLI layer), §6.4
+Architecture refs: docs/specs/nucleus_architecture_v4.1.md §8 L4 (CLI layer), §6.4
 (Error Translation — user-facing strings must never contain Dagster/DuckDB
 class names), §5.5.1 (ctx.copy_from for ingest), §5.6 (ctx.sql for query).
 """
@@ -65,7 +65,7 @@ from nucleus.errors import (
 # (confirmed 2026-05-13 against src/nucleus/errors.py — no such class defined).
 # Per task instructions, NucleusInternalError is used as the closest available
 # class for all stub commands. Replace when NucleusNotImplementedError is added
-# per nucleus_cli_spec.md §10 NV #4 and ADR-006 §Initial L4 allocations.
+# per docs/specs/nucleus_cli_spec.md §10 NV #4 and ADR-006 §Initial L4 allocations.
 
 # The Typer app — this is the symbol ``pyproject.toml`` references as
 #   nucleus = "nucleus.cli.main:app"  # noqa: ERA001 — example, not commented-out code.
@@ -96,7 +96,7 @@ def _version_callback(value: bool) -> None:
 
 
 def _exit_nucleus_error(err: NucleusError, code: int = 1) -> NoReturn:
-    """Render a NucleusError to stderr per nucleus_cli_spec.md §5.4 and exit.
+    """Render a NucleusError to stderr per docs/specs/nucleus_cli_spec.md §5.4 and exit.
 
     Output format (stderr only):
 
@@ -120,7 +120,7 @@ def _exit_nucleus_error(err: NucleusError, code: int = 1) -> NoReturn:
 
 
 # ==============================================================================
-# `nucleus init` helpers (nucleus_cli_spec.md §3.1)
+# `nucleus init` helpers (docs/specs/nucleus_cli_spec.md §3.1)
 # ==============================================================================
 # Per the founder anti-over-engineering directive (.cursor/rules/nucleus.mdc
 # 2026-05-13): the init command is intentionally a thin file-copy + str.format
@@ -131,7 +131,7 @@ def _exit_nucleus_error(err: NucleusError, code: int = 1) -> NoReturn:
 _PROJECT_NAME_RE: re.Pattern[str] = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 
 # Bundled template keys. v0.1 ships only "default" (alias of v01); per
-# nucleus_cli_spec.md §3.1 the spec lists minimal/postgres/csv as future
+# docs/specs/nucleus_cli_spec.md §3.1 the spec lists minimal/postgres/csv as future
 # variants — those are deferred until empirical user demand justifies the
 # branching cost (founder directive 2026-05-13: no speculative code).
 _TEMPLATE_KEYS: dict[str, str] = {"default": "v01"}
@@ -272,7 +272,7 @@ def _copy_traversable(
 # ==============================================================================
 # Data-plane helpers (run / ingest / query)
 # ==============================================================================
-# Per nucleus_cli_spec.md §3.4-§3.6 + §7. Every data-plane command needs to
+# Per docs/specs/nucleus_cli_spec.md §3.4-§3.6 + §7. Every data-plane command needs to
 # (a) locate the user's project, (b) read its YAML config, and (c) import
 # the project's assets/ package so @nucleus.asset decorators register before
 # materialize / query touches the registry. Helpers stay private so the
@@ -485,7 +485,7 @@ def _execute_sql(
 
 
 # ==============================================================================
-# `nucleus up` / `nucleus down` helpers (nucleus_cli_spec.md §3.2 - §3.3)
+# `nucleus up` / `nucleus down` helpers (docs/specs/nucleus_cli_spec.md §3.2 - §3.3)
 # ==============================================================================
 # Wrap ``docker compose`` / ``docker-compose`` via nucleus.cli._compose (stdlib
 # subprocess — no docker-py). MinIO readiness uses pinned httpx (lazy import —
@@ -544,7 +544,7 @@ def _rows_for_runtime_table(compose_file: Path) -> list[tuple[str, str]]:
 
 
 # ==============================================================================
-# Root callback — global flags (nucleus_cli_spec.md §6)
+# Root callback — global flags (docs/specs/nucleus_cli_spec.md §6)
 # ==============================================================================
 
 
@@ -563,7 +563,7 @@ def root(
 
 
 # ==============================================================================
-# v0.1 commands — nucleus_cli_spec.md §3
+# v0.1 commands — docs/specs/nucleus_cli_spec.md §3
 # ==============================================================================
 
 
@@ -596,7 +596,7 @@ def init(
     example asset under ``<project_name>/``. Pure file-copy + ``str.format``
     interpolation — no engines, no shellouts, no network.
 
-    Per [bold]nucleus_cli_spec.md §3.1[/bold]. Wraps stdlib
+    Per [bold]docs/specs/nucleus_cli_spec.md §3.1[/bold]. Wraps stdlib
     ``importlib.resources`` for the template copy. ``--no-git`` suppresses
     the post-scaffold `git init` suggestion (the suggestion is print-only;
     Nucleus never shells out to git).
@@ -664,7 +664,7 @@ def up(
     ``docker-compose.yaml`` bundled by ``nucleus init``. When MinIO is declared,
     waits up to thirty seconds for the HTTP readiness probe to return success.
 
-    Per [bold]nucleus_cli_spec.md §3.2[/bold]. References:
+    Per [bold]docs/specs/nucleus_cli_spec.md §3.2[/bold]. References:
     https://docs.docker.com/compose/reference/ ·
     https://min.io/docs/minio/linux/operations/monitoring/healthcheck-probe.html
 
@@ -786,7 +786,7 @@ def down(
     Iceberg warehouse under ``data/`` always remain untouched; `--volumes`
     deletes only anonymous volumes Compose created during ``up``.
 
-    Per [bold]nucleus_cli_spec.md §3.3[/bold].
+    Per [bold]docs/specs/nucleus_cli_spec.md §3.3[/bold].
 
     [bold]Examples[/bold]
 
@@ -883,7 +883,7 @@ def run(
     snapshot atomically, and emits an OpenLineage event. Equivalent to calling
     ``nucleus.materialize(...)`` from Python (per ADR-013).
 
-    Per [bold]nucleus_cli_spec.md §3.4[/bold]. Wraps the Asset Materialization
+    Per [bold]docs/specs/nucleus_cli_spec.md §3.4[/bold]. Wraps the Asset Materialization
     Adapter (v4.1 §6.2). All orchestrator internals are hidden from user output.
 
     [bold]Examples[/bold]
@@ -1002,7 +1002,7 @@ def ingest(
     Auto-infers schema, auto-creates the destination asset, pulls rows from the
     source, commits atomically, and prints a 10-row preview.
 
-    Per [bold]nucleus_cli_spec.md §3.5[/bold]. Dispatches by URL scheme:
+    Per [bold]docs/specs/nucleus_cli_spec.md §3.5[/bold]. Dispatches by URL scheme:
     ``sqlite://`` wraps the built-in copy helper; ``postgresql://`` /
     ``postgres://`` wraps the Stage 1 SQL source (ADR-014, v4.1 §5.5).
 
@@ -1053,7 +1053,7 @@ def ingest(
         # CLI-level --mode validation. The unified ``nucleus.ctx.copy_from``
         # dispatcher also rejects unsupported write_disposition values, but the
         # CLI keeps this check so the user-facing wording ("Merge and upsert
-        # modes are deferred to v0.3+") matches nucleus_cli_spec.md §3.5.
+        # modes are deferred to v0.3+") matches docs/specs/nucleus_cli_spec.md §3.5.
         if mode not in {"append", "replace"}:
             raise NucleusConfigError(
                 user_message=f"--mode {mode!r} is not supported in v0.1.",
@@ -1078,8 +1078,8 @@ def ingest(
         warehouse_dir = _resolve_warehouse_dir(config, config_path.parent)
 
         # Delegate to the unified ctx.copy_from dispatcher per
-        # nucleus_ctx_sdk_spec.md §0 (Principle 1 — ctx is the only thing users
-        # import) + nucleus_architecture_v4.1.md §5.5.1. The dispatcher routes
+        # docs/specs/nucleus_ctx_sdk_spec.md §0 (Principle 1 — ctx is the only thing users
+        # import) + docs/specs/nucleus_architecture_v4.1.md §5.5.1. The dispatcher routes
         # sqlite / postgresql / postgres internally; the CLI no longer
         # re-implements scheme branching here.
         # Lazy import keeps boot-time cost off the hot path per PoC #4 +
@@ -1158,7 +1158,7 @@ def query(
     resolver (v4.1 §5.6). Results render as a Rich table on TTY; NDJSON with
     ``--format json``; CSV with ``--format csv``.
 
-    Per [bold]nucleus_cli_spec.md §3.6[/bold]. Wraps DuckDB against the
+    Per [bold]docs/specs/nucleus_cli_spec.md §3.6[/bold]. Wraps DuckDB against the
     Iceberg catalog using PyIceberg's Arrow scan (v4.1 §5.6).
 
     [bold]Examples[/bold]
@@ -1237,7 +1237,7 @@ def version(
     Pass ``--check-updates`` to query PyPI; network failure downgrades to a
     warning (exit 0 preserved).
 
-    Per [bold]nucleus_cli_spec.md §3.7[/bold]. Wraps:
+    Per [bold]docs/specs/nucleus_cli_spec.md §3.7[/bold]. Wraps:
     ``nucleus.__version__`` + ``importlib.metadata.version()``;
     no network unless ``--check-updates``.
     Docs: https://docs.python.org/3/library/importlib.metadata.html
@@ -1276,7 +1276,7 @@ def version(
 
 
 # ==============================================================================
-# v0.2 commands — nucleus_cli_spec.md §3.8 (Beta tier, ADR-015)
+# v0.2 commands — docs/specs/nucleus_cli_spec.md §3.8 (Beta tier, ADR-015)
 # ==============================================================================
 
 from nucleus.cli.commands.chat import chat as _chat_cmd

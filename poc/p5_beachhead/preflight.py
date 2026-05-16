@@ -331,12 +331,12 @@ def check_pytest_collect() -> CheckResult:
 def check_nucleus_cli() -> CheckResult:
     rc, out, _err = _run([sys.executable, "-m", "nucleus", "--version"], timeout=20)
     if rc == 0:
-        return _r("21. nucleus CLI", PASS, f"-m nucleus -> {out.strip()}", "nucleus_cli_spec.md")
+        return _r("21. nucleus CLI", PASS, f"-m nucleus -> {out.strip()}", "docs/specs/nucleus_cli_spec.md")
     nucleus = shutil.which("nucleus")
     if nucleus:
         rc2, out2, _e = _run([nucleus, "--version"], timeout=20)
         if rc2 == 0:
-            return _r("21. nucleus CLI", PASS, f"nucleus -> {out2.strip()}", "nucleus_cli_spec.md")
+            return _r("21. nucleus CLI", PASS, f"nucleus -> {out2.strip()}", "docs/specs/nucleus_cli_spec.md")
     return _r("21. nucleus CLI", FAIL, "not invocable; run `pip install -e .[dev]`", "SETUP.md §M5")
 
 

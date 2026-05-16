@@ -25,5 +25,5 @@ This is the most common error during asset development — the asset's return va
 
 - Source: `src/nucleus/errors.py` (`NucleusSchemaError`)
 - Default fix hint: "Verify column types and nullability in your asset's return value." (variants per source: column-name spelling, dtypes match declared schema.)
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

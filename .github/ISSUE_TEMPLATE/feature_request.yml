@@ -8,7 +8,7 @@ body:
       value: |
         Thanks for the suggestion!
 
-        **Before you file**: read [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §20 (Non-Goals) and `README.md` ("What is NOT in scope"). If your feature falls there, the answer will likely be "use a different tool"; check first.
+        **Before you file**: read [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §20 (Non-Goals) and `README.md` ("What is NOT in scope"). If your feature falls there, the answer will likely be "use a different tool"; check first.
 
         For features that require **architectural changes**, file an *ADR proposal* instead (different template).
 

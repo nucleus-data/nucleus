@@ -36,7 +36,7 @@ Layer prefix map ([ADR-006 §Decision](../decisions/ADR-006-nucleus-error-code-n
 
 ## Adding a new code
 
-Per `nucleus_architecture_v4.1.md` §6.4 and [ADR-006 §Decision](../decisions/ADR-006-nucleus-error-code-numbering.md):
+Per `docs/specs/nucleus_architecture_v4.1.md` §6.4 and [ADR-006 §Decision](../decisions/ADR-006-nucleus-error-code-numbering.md):
 
 1. Subclass `NucleusError` in `src/nucleus/errors.py`.
 2. Assign a unique `error_code: ClassVar[str]` from the correct layer band (next monotonic value, no reservations, no gaps for "round numbers").
@@ -52,5 +52,5 @@ These initial 12 are hand-written at v0.1. Per [ADR-006 §Verification plan #2](
 
 - Source: [`src/nucleus/errors.py`](../../src/nucleus/errors.py)
 - Translator: [`src/nucleus/coordination/error_translation.py`](../../src/nucleus/coordination/error_translation.py)
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006 NucleusError Error Code Numbering Scheme](../decisions/ADR-006-nucleus-error-code-numbering.md)

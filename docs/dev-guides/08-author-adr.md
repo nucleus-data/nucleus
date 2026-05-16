@@ -14,7 +14,7 @@ Write an ADR when you're making a decision that:
 3. Makes a major version upgrade (X.y.z → X+1.0.0).
 4. Changes the public `ctx.*` API surface.
 5. Changes the CLI command surface.
-6. Deviates from the architecture in `nucleus_architecture_v4.1.md`.
+6. Deviates from the architecture in `docs/specs/nucleus_architecture_v4.1.md`.
 7. Affects the 30K LOC budget significantly.
 8. Any architectural question where "future developers need to understand why."
 
@@ -70,7 +70,7 @@ Example: `docs/decisions/ADR-019-redis-cache-for-lineage.md`
 Why is this decision needed now? What constraints exist?
 Reference the relevant architecture section.>
 
-Per `nucleus_architecture_v4.1.md` §X.Y: ...
+Per `docs/specs/nucleus_architecture_v4.1.md` §X.Y: ...
 
 ## Options Considered
 
@@ -123,8 +123,8 @@ Reference the Five Pillars and beachhead metric if relevant.>
 
 ## Architecture Sections Affected
 
-- `nucleus_architecture_v4.1.md` §X.Y — <what changes>
-- `nucleus_ctx_sdk_spec.md` §X.Y — <what changes> (if applicable)
+- `docs/specs/nucleus_architecture_v4.1.md` §X.Y — <what changes>
+- `docs/specs/nucleus_ctx_sdk_spec.md` §X.Y — <what changes> (if applicable)
 
 ## Open Questions (NV = Needs Verification)
 
@@ -163,7 +163,7 @@ Rules:
 
 When an ADR moves to ACCEPTED, update:
 1. `docs/decisions/README.md` — add a row to the ADR table.
-2. `nucleus_architecture_v4.1.md` — add a citation in the relevant section (e.g., §6.3 "See ADR-014 for dlt integration").
+2. `docs/specs/nucleus_architecture_v4.1.md` — add a citation in the relevant section (e.g., §6.3 "See ADR-014 for dlt integration").
 3. `docs/compatibility.md` — if the ADR adds a new dependency.
 4. `CHANGELOG.md` — in the next release's entry.
 

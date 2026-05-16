@@ -6,7 +6,7 @@ Wraps ``nucleus.coordination.schedules.list_schedules`` and
 Zero orchestrator types cross the boundary — enforced by
 ``scripts/dagster_leak_check.py`` script in CI.
 
-``nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
 ADR-016 §3 — Fork B API surface.
 ADR-017 — Schedule exposure v0.1.
 

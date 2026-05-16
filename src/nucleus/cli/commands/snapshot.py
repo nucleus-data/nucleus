@@ -9,8 +9,8 @@ Exposes pyiceberg's ``table.manage_snapshots()`` API via three subcommand groups
     nucleus snapshot list   <asset>
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §6.3 (coordination layer)
-    nucleus_architecture_v4.1.md §13 (CLI surface)
+    docs/specs/nucleus_architecture_v4.1.md §6.3 (coordination layer)
+    docs/specs/nucleus_architecture_v4.1.md §13 (CLI surface)
     ADR-028 (Iceberg branch + tag CLI verbs)
 
 Docs (AGENTS.md §11.12):

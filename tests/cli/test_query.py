@@ -1,5 +1,5 @@
 # ruff: noqa: ARG002
-"""Tests for ``nucleus query`` — nucleus_cli_spec.md §3.6.
+"""Tests for ``nucleus query`` — docs/specs/nucleus_cli_spec.md §3.6.
 
 Exercises the SQL-against-warehouse CLI surface end-to-end:
 

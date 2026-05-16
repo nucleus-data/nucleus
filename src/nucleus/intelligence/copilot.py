@@ -12,7 +12,7 @@ Docs (verified 2026-05-13 per AGENTS.md §11.12):
   LiteLLM exception mapping: https://docs.litellm.ai/docs/exception_mapping
   LiteLLM providers: https://docs.litellm.ai/docs/providers
 
-Architecture ref: ``nucleus_architecture_v4.1.md`` §7.2 + ADR-015
+Architecture ref: ``docs/specs/nucleus_architecture_v4.1.md`` §7.2 + ADR-015
 Pin: ``litellm==1.83.14`` (single new runtime dep per AGENTS.md §11.13)
 
 # Stability: Beta

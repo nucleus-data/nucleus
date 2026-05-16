@@ -8,7 +8,7 @@ Source asset: `assets/nucleus-logo-option-2-composable.png`
 
 ## Why this one
 
-- Tells the architecture story directly: 6 wrap'd OSS components forming a single core; 1 orange segment offset = "swap interface + smoke tests" (Composability Law #1, `nucleus_architecture_v4.1.md` §9).
+- Tells the architecture story directly: 6 wrap'd OSS components forming a single core; 1 orange segment offset = "swap interface + smoke tests" (Composability Law #1, `docs/specs/nucleus_architecture_v4.1.md` §9).
 - Metallic film-grain + blue/orange accent matches Editorial Hero UI direction (Workbench v0.3).
 - Visually distinct from React (orbital), Dagster (DAG), Airflow (pinwheel), generic monograms.
 - Scales: hexagon-only mark works at 16px favicon; full lockup works at billboard.

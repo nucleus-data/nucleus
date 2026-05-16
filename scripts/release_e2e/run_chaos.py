@@ -20,7 +20,7 @@ Design principles:
 
 Refs:
     docs/release/E2E_TEST_PLAN.md §"Suite J"
-    nucleus_architecture_v4.1.md §6.2 step 3 (atomic commit guarantee)
+    docs/specs/nucleus_architecture_v4.1.md §6.2 step 3 (atomic commit guarantee)
     AGENTS.md §11.8 (chaos testing posture)
 """
 

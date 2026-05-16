@@ -1,6 +1,6 @@
 # Swap target: dlt → Sling (primary) / Singer (secondary)
 
-> **Tier**: 2 per `nucleus_architecture_v4.1.md` §3, §9.2 (Ingestion engine).
+> **Tier**: 2 per `docs/specs/nucleus_architecture_v4.1.md` §3, §9.2 (Ingestion engine).
 > **Current**: `dlt[sql_database,pyiceberg]==1.26.0` — **PINNED Stage 1 (2026-05-13, ADR-014)**. Postgres → Iceberg via `src/nucleus/ctx/copy_from_postgres.py`; MySQL → Iceberg via `src/nucleus/ctx/copy_from_mysql.py` (co-default landed 2026-05-14 per ADR-014 §"MySQL parity"; same `sql_database` source, +`pymysql==1.1.1` driver).
 > **Swap target (primary)**: Sling (`sling-cli`) — MIT, Go-native single binary, JVM-free, lower connector breadth.
 > **Swap target (secondary)**: Singer (taps + targets) — per-tap mixed licensing (some AGPL-3.0; audit gate at trigger time).

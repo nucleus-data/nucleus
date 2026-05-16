@@ -72,6 +72,6 @@ Token management: user provides `MODAL_TOKEN_ID` + `MODAL_TOKEN_SECRET` in `nucl
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §10.2 (Mode 2 hybrid compute)
-- `nucleus_architecture_v4.1.md` §14 (yield-to-giants strategy)
+- `docs/specs/nucleus_architecture_v4.1.md` §10.2 (Mode 2 hybrid compute)
+- `docs/specs/nucleus_architecture_v4.1.md` §14 (yield-to-giants strategy)
 - `AGENTS.md §3` Hard Constraint #6 (OIDC delegation — Modal OIDC emission satisfies for downstream S3)

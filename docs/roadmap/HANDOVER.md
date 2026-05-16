@@ -37,7 +37,7 @@ python scripts/loc_budget.py             # must show GREEN
 2. This doc (done).
 3. [`docs/roadmap/overview.md`](overview.md) — 10 min; orients you in the version timeline.
 4. [`docs/roadmap/v0.2-public-launch.md`](v0.2-public-launch.md) — the current phase.
-5. [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) — 50 min; the architectural bible.
+5. [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) — 50 min; the architectural bible.
 
 ---
 
@@ -48,11 +48,11 @@ python scripts/loc_budget.py             # must show GREEN
 | What | Where |
 |---|---|
 | Product identity + constraints | `AGENTS.md` §0-§4 |
-| Architecture (single source of truth) | `nucleus_architecture_v4.1.md` |
-| API surface (ctx SDK) | `nucleus_ctx_sdk_spec.md` |
-| Asset model | `nucleus_asset_model_spec.md` |
-| CLI commands | `nucleus_cli_spec.md` |
-| Project layout | `nucleus_project_anatomy.md` |
+| Architecture (single source of truth) | `docs/specs/nucleus_architecture_v4.1.md` |
+| API surface (ctx SDK) | `docs/specs/nucleus_ctx_sdk_spec.md` |
+| Asset model | `docs/specs/nucleus_asset_model_spec.md` |
+| CLI commands | `docs/specs/nucleus_cli_spec.md` |
+| Project layout | `docs/specs/nucleus_project_anatomy.md` |
 | All ADRs (why decisions were made) | `docs/decisions/ADR-*.md` |
 | What shipped (version history) | `CHANGELOG.md` |
 | Dependency pins + upgrade history | `docs/compatibility.md` |

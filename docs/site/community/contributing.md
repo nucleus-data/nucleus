@@ -28,7 +28,7 @@ If `make check` is red on a fresh clone, that's a bug — please file an issue.
 Read these in order. They take ~30 minutes total and prevent ~90% of "needs more context" review cycles.
 
 1. [`AGENTS.md`](https://github.com/nucleus-data/nucleus/blob/main/AGENTS.md) — universal agent guide: vocabulary, the 11 hard constraints, the 8-question gate, workflow discipline
-2. [`nucleus_architecture_v4.1.md`](https://github.com/nucleus-data/nucleus/blob/main/nucleus_architecture_v4.1.md) — the single source of truth (supersedes v4.0 and v3)
+2. [`docs/specs/nucleus_architecture_v4.1.md`](https://github.com/nucleus-data/nucleus/blob/main/nucleus_architecture_v4.1.md) — the single source of truth (supersedes v4.0 and v3)
 3. The [Architecture Decisions index](../governance/architecture-decisions.md) — every "build vs wrap" decision is logged as an ADR
 
 ## Contribution types

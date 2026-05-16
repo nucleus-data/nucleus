@@ -1,7 +1,7 @@
 """Schema-contracts runtime — execute ``@nucleus.check`` bodies (L4 SDK).
 
-Per ``nucleus_architecture_v4.1.md`` §15 (schema contracts) +
-``nucleus_asset_model_spec.md`` §10 (check semantics). Closes the v0.1
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §15 (schema contracts) +
+``docs/specs/nucleus_asset_model_spec.md`` §10 (check semantics). Closes the v0.1
 loop on quality checks: the ``@nucleus.check`` decorator already
 registers check bodies (``sdk/decorators.py``), the ``CheckResult``
 value type already exists (``sdk/results.py``), and ``MaterializationResult``
@@ -34,7 +34,7 @@ What this module is NOT (anti-over-engineering, founder directive 2026-05-13)
 * No ``CheckSeverity`` enum or ``CheckPolicy`` knobs — the decorator's
   ``severity={"error","warn"}`` is the v0.1 surface. ``block_consumers``
   + downstream-blocking semantics land at v0.3+ per
-  ``nucleus_asset_model_spec.md`` §9.2.
+  ``docs/specs/nucleus_asset_model_spec.md`` §9.2.
 * No ``fail_fast=True`` option — v0.1 always runs all registered checks
   and returns the full picture so users see every failure at once.
   Failing checks DO NOT raise; they're captured as
@@ -79,7 +79,7 @@ def run_checks_for_asset(asset_key: str) -> tuple[CheckResult, ...]:
 
     # Stability: Beta
 
-    Per ``nucleus_architecture_v4.1.md`` §15 + ``nucleus_asset_model_spec.md``
+    Per ``docs/specs/nucleus_architecture_v4.1.md`` §15 + ``docs/specs/nucleus_asset_model_spec.md``
     §10. Each check is invoked with no arguments; check functions are
     expected to pull data via the SDK's own context (``ctx.sql``,
     ``ctx.read``, etc.) when materialization is complete. v0.1 does not
@@ -129,7 +129,7 @@ def list_registered_checks(asset_key: str) -> tuple[str, ...]:
 
     Names are :attr:`function.__qualname__` snapshots taken at registration
     time. Useful for introspection (the eventual ``nucleus list``
-    command per ``nucleus_cli_spec.md``) and for debugging which check
+    command per ``docs/specs/nucleus_cli_spec.md``) and for debugging which check
     fired which result.
 
     Args:

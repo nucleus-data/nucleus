@@ -14,7 +14,7 @@
 > 8. **Lazy-import extras `[copilot-typed]`** = **NO** (Anti-Over-Engineering); LiteLLM is the only runtime dep needed.
 > **Tags**: copilot, intelligence-layer, v0.2, ai-assisted, litellm, wow-factor
 > **Layer**: L5 Intelligence (primary) + L4 Experience (CLI surface)
-> **Architecture refs**: `nucleus_architecture_v4.1.md` §7.2 (Copilot staging — v0.2 = "Inline AI chat … Claude API + project file context"); §7.7 (why this layer is the moat); §8.1 (surfaces by release — Workbench `❌` in v0.1 / `✅` in v0.2); §20.1 (Non-Goals: "Full AI Copilot (lineage-aware, schema-aware) in v0.1"); §11.5 (secrets never in logs / AI context); `AGENTS.md` §3 Constraint #7 (no ML platform / AI training / agent hosting), §8 Forbidden Mental Models, §11.4 (per-feature workflow), §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` §Anti-Over-Engineering + §Forbidden Framings; ADR-002 §8 (positioning — AI-assisted demoted from headline to pillar); ADR-005 §2 (tier ladder); ADR-006 (NE-codes); ADR-007 (license tiers); ADR-011 (telemetry opt-in — privacy mirror); `docs/internal/research/ai_copilot.md` (research substrate this ADR ratifies).
+> **Architecture refs**: `docs/specs/nucleus_architecture_v4.1.md` §7.2 (Copilot staging — v0.2 = "Inline AI chat … Claude API + project file context"); §7.7 (why this layer is the moat); §8.1 (surfaces by release — Workbench `❌` in v0.1 / `✅` in v0.2); §20.1 (Non-Goals: "Full AI Copilot (lineage-aware, schema-aware) in v0.1"); §11.5 (secrets never in logs / AI context); `AGENTS.md` §3 Constraint #7 (no ML platform / AI training / agent hosting), §8 Forbidden Mental Models, §11.4 (per-feature workflow), §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` §Anti-Over-Engineering + §Forbidden Framings; ADR-002 §8 (positioning — AI-assisted demoted from headline to pillar); ADR-005 §2 (tier ladder); ADR-006 (NE-codes); ADR-007 (license tiers); ADR-011 (telemetry opt-in — privacy mirror); `docs/internal/research/ai_copilot.md` (research substrate this ADR ratifies).
 
 ## Context
 
@@ -67,7 +67,7 @@ class CopilotReply:
 
 Stability: **Beta @ v0.2 → Stable @ v0.5** (per ADR-005 §2). `frozen=True` per ADR-005 §3.
 
-CLI: `nucleus chat "<question>"` — the eighth command after v0.1's seven (per AGENTS.md §1). Requires `nucleus_cli_spec.md` amendment in the implementation PR.
+CLI: `nucleus chat "<question>"` — the eighth command after v0.1's seven (per AGENTS.md §1). Requires `docs/specs/nucleus_cli_spec.md` amendment in the implementation PR.
 
 ### 2. Scope
 
@@ -90,7 +90,7 @@ CLI: `nucleus chat "<question>"` — the eighth command after v0.1's seven (per 
 - Streaming SSE → v0.3+
 - Fine-tuning, model hosting → **NEVER** per Hard Constraint #7
 - `ctx.agent` runtime → v0.5+ per v4.1 §7.3 (separate ADR)
-- MCP server tool exposure → v0.5+ per `nucleus_architecture_v4.1.md` (separate ADR)
+- MCP server tool exposure → v0.5+ per `docs/specs/nucleus_architecture_v4.1.md` (separate ADR)
 
 ### 3. Pin matrix amendment
 
@@ -184,7 +184,7 @@ LOC impact: ~390 LOC across `src/nucleus/intelligence/copilot.py` (≤ 150), `sr
 
 **Trigger** (PROPOSED → ACCEPTED when all four hold): (1) founder resolves Open Questions #1-#8; (2) ADR-006 §NV co-accepts `NE4xxx` range; (3) v0.1 ship gate per AGENTS.md §1 (`[ ] v0.1 implementation` flipped to `[x]`); (4) re-verification of LLM SDK versions + pricing + model IDs at ratification time per research §15 NEEDS VERIFICATION (LLM SDK landscape moves fast).
 
-**Downstream**: `src/nucleus/intelligence/copilot.py` (~150 LOC), `src/nucleus/intelligence/context.py` (~100 LOC), `src/nucleus/intelligence/prompts/system.j2` (~60 LOC), `src/nucleus/cli/commands/chat.py` (~80 LOC), `tests/intelligence/test_copilot*.py`, `tests/upgrade_smoke/test_litellm.py`, `scripts/dagster_leak_check.py` extension, `pyproject.toml` `litellm==1.83.14` line, `nucleus_cli_spec.md` chat-command amendment, `docs/swap/litellm.md`, `docs/errors/copilot.md`. Compatibility matrix update in `docs/compatibility.md`. ADR-012 pin matrix update.
+**Downstream**: `src/nucleus/intelligence/copilot.py` (~150 LOC), `src/nucleus/intelligence/context.py` (~100 LOC), `src/nucleus/intelligence/prompts/system.j2` (~60 LOC), `src/nucleus/cli/commands/chat.py` (~80 LOC), `tests/intelligence/test_copilot*.py`, `tests/upgrade_smoke/test_litellm.py`, `scripts/dagster_leak_check.py` extension, `pyproject.toml` `litellm==1.83.14` line, `docs/specs/nucleus_cli_spec.md` chat-command amendment, `docs/swap/litellm.md`, `docs/errors/copilot.md`. Compatibility matrix update in `docs/compatibility.md`. ADR-012 pin matrix update.
 
 ## Docs URLs
 
@@ -201,7 +201,7 @@ External (verified 2026-05-13 — re-verify at ratification per research §15):
 - Ollama Python client: <https://github.com/ollama/ollama-python>
 - Ollama REST API: <https://github.com/ollama/ollama/blob/main/docs/api.md>
 
-Internal: `docs/internal/research/ai_copilot.md` (substrate); `nucleus_architecture_v4.1.md` §7.2 + §7.7 + §8.1 + §20.1 + §11.5; ADR-002 / ADR-005 / ADR-006 / ADR-007 / ADR-011 / ADR-012 / ADR-013.
+Internal: `docs/internal/research/ai_copilot.md` (substrate); `docs/specs/nucleus_architecture_v4.1.md` §7.2 + §7.7 + §8.1 + §20.1 + §11.5; ADR-002 / ADR-005 / ADR-006 / ADR-007 / ADR-011 / ADR-012 / ADR-013.
 
 ---
 

@@ -1,5 +1,5 @@
 # ruff: noqa: ARG002
-"""Tests for ``nucleus run`` — nucleus_cli_spec.md §3.4 + ADR-013.
+"""Tests for ``nucleus run`` — docs/specs/nucleus_cli_spec.md §3.4 + ADR-013.
 
 Exercises the materialize-asset CLI surface end-to-end:
 

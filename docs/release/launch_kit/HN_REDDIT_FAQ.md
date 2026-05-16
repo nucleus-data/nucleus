@@ -18,7 +18,7 @@ If your problem is 100+ TB multi-team writes, Spark + Databricks is right. The s
 
 ## Q2. How is this different from dbt?
 
-dbt is what we'd integrate via `dbt-duckdb` in v0.3+ as an **optional adapter** (per `nucleus_architecture_v4.1.md` §5.6). The reason we don't make dbt the v0.1 default is integration burden: `dbt-duckdb` is community-maintained, its release lag behind core dbt has burned similar projects, and we can't ship reliability-grade error translation through someone else's adapter without owning the boundary.
+dbt is what we'd integrate via `dbt-duckdb` in v0.3+ as an **optional adapter** (per `docs/specs/nucleus_architecture_v4.1.md` §5.6). The reason we don't make dbt the v0.1 default is integration burden: `dbt-duckdb` is community-maintained, its release lag behind core dbt has burned similar projects, and we can't ship reliability-grade error translation through someone else's adapter without owning the boundary.
 
 What we ship instead: ~180 LOC of native `ctx.sql` Jinja resolver with `{{ ref() }}` and `{{ source() }}` resolution. Hard scope ceiling **2,500 LOC** per v4.1 §5.6.0 — if we drift past, the policy is to STOP and integrate `dbt-duckdb` instead.
 
@@ -28,7 +28,7 @@ What you give up vs dbt: macro ecosystem, snapshots (SCD Type 2), doc generation
 
 ## Q3. Why DuckDB and not DataFusion?
 
-DuckDB is the **default**; DataFusion is the **swap target** (`nucleus_architecture_v4.1.md` §5.1 + `docs/swap/duckdb.md`).
+DuckDB is the **default**; DataFusion is the **swap target** (`docs/specs/nucleus_architecture_v4.1.md` §5.1 + `docs/swap/duckdb.md`).
 
 Why DuckDB as the default for v0.1: (1) more mature SQL surface in 2026, especially for window functions and complex `JOIN` planning (DuckDB published TPC-H 10 GB at ~2.5 s; DataFusion is competitive but newer); (2) richer Python ecosystem integration via `duckdb-engine` for BI tools; (3) battle-tested on small-to-mid datasets which is exactly the v0.1 envelope (100 GB–5 TB).
 
@@ -40,7 +40,7 @@ Why DataFusion as a clean swap interface: pure-Rust, embeddable, Apache 2.0, Arr
 
 You graduate. That is the documented answer, not a marketing line.
 
-Per `docs/internal/research/scale_out_audit.md` and `nucleus_architecture_v4.1.md` §1.5, the documented data envelope is 100 GB–5 TB and the documented engineer envelope is 5–20. Above that envelope three real gaps surface:
+Per `docs/internal/research/scale_out_audit.md` and `docs/specs/nucleus_architecture_v4.1.md` §1.5, the documented data envelope is 100 GB–5 TB and the documented engineer envelope is 5–20. Above that envelope three real gaps surface:
 
 1. **Cross-machine concurrency** — the advisory file lock in `coordination/locks.py` is filesystem-local; multi-host coordination is the catalog's job. Closure path: Lakekeeper REST catalog (v0.3+).
 2. **Workbench at 50+ concurrent users** — single uvicorn worker by default. Closure path: `--workers=N` or k8s replicas.
@@ -66,7 +66,7 @@ Yes, in v0.2 it intentionally is — and we say so in the docs.
 
 `nucleus chat "..."` is one CLI command that routes through `litellm==1.83.14` to your provider of choice (anthropic / openai / ollama / etc.). API keys come from your shell environment, never logged, never sent to Nucleus servers (we don't have any). Opt-in consent stored at `.nucleus/copilot_opt_in`. Cost ceiling defaults to $0.10/call. Setup recipe: `docs/cookbook/ai-copilot-setup.md`.
 
-v0.2 is intentionally thin per `nucleus_architecture_v4.1.md` §7.2. Schema-aware completion arrives in v0.3; lineage-aware refactoring + `ctx.agent` runtime arrive in v0.5. The differentiation is integration depth (asset graph context, lineage navigation, contract awareness), not "we have a chat command." Per v4.1 §2.1 the **Felt Moat is friction elimination**, not AI; AI is the **Technical Edge** that compounds over years.
+v0.2 is intentionally thin per `docs/specs/nucleus_architecture_v4.1.md` §7.2. Schema-aware completion arrives in v0.3; lineage-aware refactoring + `ctx.agent` runtime arrive in v0.5. The differentiation is integration depth (asset graph context, lineage navigation, contract awareness), not "we have a chat command." Per v4.1 §2.1 the **Felt Moat is friction elimination**, not AI; AI is the **Technical Edge** that compounds over years.
 
 We do not lead with AI marketing per `AGENTS.md` §8.
 
@@ -88,13 +88,13 @@ If you want Dagster's web UI directly, `nucleus enable compat-dagster` (Tier 3 e
 
 **Apache 2.0 forever.** No BSL/SSPL pivot.
 
-A license pivot is explicitly forbidden by `AGENTS.md` Hard Constraint trajectory and `nucleus_architecture_v4.1.md` §17.3. If we ever pivoted, it would auto-trigger the "vendor went hostile" composability fork condition documented in `docs/swap/dagster.md`, which would be a darkly self-referential outcome.
+A license pivot is explicitly forbidden by `AGENTS.md` Hard Constraint trajectory and `docs/specs/nucleus_architecture_v4.1.md` §17.3. If we ever pivoted, it would auto-trigger the "vendor went hostile" composability fork condition documented in `docs/swap/dagster.md`, which would be a darkly self-referential outcome.
 
 What this means concretely:
 
 - You can use Nucleus commercially (build a paid product on top, deploy as part of internal platform, sell consulting around it, fork it).
 - The only obligations are the standard Apache 2.0 attribution + license-include-on-redistribute clauses.
-- The OSS core is **complete enough to use forever without paying us** (`nucleus_architecture_v4.1.md` §17.3 explicit non-goal: no feature lock that breaks composability, no different SDK in "enterprise edition").
+- The OSS core is **complete enough to use forever without paying us** (`docs/specs/nucleus_architecture_v4.1.md` §17.3 explicit non-goal: no feature lock that breaks composability, no different SDK in "enterprise edition").
 - License audit is enforced by `scripts/check_licenses.py` in CI: only Apache 2.0 / MIT / BSD / MPL-2.0 / LGPLv3 (Tier 2 exception) dependencies allowed.
 
 ---
@@ -103,7 +103,7 @@ What this means concretely:
 
 Three reasons:
 
-1. **Beachhead persona reach.** Per `nucleus_architecture_v4.1.md` §1.5, the persona is a 5–20 engineer startup data team. Data engineers in 2026 are overwhelmingly Python-fluent; mandating Rust/Go would gate adoption on a language the persona doesn't already use daily.
+1. **Beachhead persona reach.** Per `docs/specs/nucleus_architecture_v4.1.md` §1.5, the persona is a 5–20 engineer startup data team. Data engineers in 2026 are overwhelmingly Python-fluent; mandating Rust/Go would gate adoption on a language the persona doesn't already use daily.
 2. **Wrap-not-build.** The hot path is already in fast languages: DuckDB (C++), Polars (Rust), pyarrow (C++), pyiceberg (Python+Rust). Per `docs/internal/research/scale_out_audit.md`, ~95% of execution time at any meaningful workload runs in those wrapped engines, not in Nucleus's Python glue. Rewriting the glue in Rust would optimize the wrong 5%.
 3. **AI Copilot ergonomics.** Python is what LLMs write fluently in 2026; the platform's own `ctx` API needs to be in the language the AI is best at producing.
 
@@ -135,7 +135,7 @@ The honest position is **"stable enough to evaluate seriously; not stable enough
 
 Open core, eventually. **None of the paid tiers ship in v0.2.** OSS Core is and will remain free forever (Apache 2.0).
 
-Per `nucleus_architecture_v4.1.md` §17:
+Per `docs/specs/nucleus_architecture_v4.1.md` §17:
 
 | Tier | Price target | Includes | Ships |
 |---|---|---|---|
@@ -168,7 +168,7 @@ If your problem is "I want to explore some data right now," DuckDB-in-Jupyter wi
 
 ## Q14. How does this scale?
 
-Honestly: single-node, until you graduate. The documented envelope is **100 GB–5 TB and 5–20 engineers** (`nucleus_architecture_v4.1.md` §1.5). Above that, three answers:
+Honestly: single-node, until you graduate. The documented envelope is **100 GB–5 TB and 5–20 engineers** (`docs/specs/nucleus_architecture_v4.1.md` §1.5). Above that, three answers:
 
 1. **Mode 1 graduation (today, zero effort).** Point Databricks/Snowflake/any Iceberg catalog at the same S3 bucket. No re-migration. The yield-to-giants strategy makes this work because there is no Nucleus byte format to migrate off — just Iceberg.
 2. **Mode 2 hybrid dispatch (v1.5+).** `@nucleus.sql_asset(compute="databricks")` — Nucleus orchestrates, Databricks executes, result committed back to Iceberg.
@@ -180,7 +180,7 @@ Per `docs/internal/research/scale_out_audit.md`, NONE of these modes require rew
 
 ## Q15. What's the Cloud tier?
 
-Not shipping today. **v0.2 is OSS only.** The Cloud tier is documented as a v1.0+ target per `nucleus_architecture_v4.1.md` §17:
+Not shipping today. **v0.2 is OSS only.** The Cloud tier is documented as a v1.0+ target per `docs/specs/nucleus_architecture_v4.1.md` §17:
 
 - **What it would do**: managed catalog (Lakekeeper hosted), managed S3 (warehouse storage), managed secrets, one-command deploy from local Nucleus → cloud Nucleus.
 - **What it would cost**: target ~$20/seat/mo + usage (the OSS core stays free; you pay for managed infra you'd otherwise run yourself).
@@ -194,7 +194,7 @@ Architecturally, it's a thin layer over the same `ctx` API + an OIDC delegation 
 
 Two reasons:
 
-1. **It's the wrong audience for v0.1–v1.0.** The beachhead persona (5–20 engineer startup, 100 GB–5 TB) does not run a k8s cluster for their data platform. They run a laptop. Building a k8s operator would optimize for a persona we explicitly defer to v1.5+ (`nucleus_architecture_v4.1.md` §1.4).
+1. **It's the wrong audience for v0.1–v1.0.** The beachhead persona (5–20 engineer startup, 100 GB–5 TB) does not run a k8s cluster for their data platform. They run a laptop. Building a k8s operator would optimize for a persona we explicitly defer to v1.5+ (`docs/specs/nucleus_architecture_v4.1.md` §1.4).
 2. **It would gate adoption on platform engineering.** A k8s operator implies "you need a platform team to deploy this," which is exactly the friction we're eliminating.
 
 For self-hosted production single-node deployments today, the documented path is `docs/cookbook/production-deployment.md` (uvicorn `--workers=N`, Caddy reverse proxy with OIDC wedge, systemd service file). For multi-host, the documented path is "yield to giants via Mode 1 graduation" — Databricks / Snowflake handle the k8s for you. If demand surfaces (>10 enterprise customers asking) we revisit per the trigger-event composability rule (v4.1 §9.3).
@@ -224,7 +224,7 @@ Schema-aware completion arrives in v0.3; lineage-aware refactoring arrives in v0
 
 ## Q18. How does error translation work?
 
-Every code path that catches an external library exception MUST translate it to a `NucleusError` subclass before it reaches the user. Per `nucleus_architecture_v4.1.md` §6.4:
+Every code path that catches an external library exception MUST translate it to a `NucleusError` subclass before it reaches the user. Per `docs/specs/nucleus_architecture_v4.1.md` §6.4:
 
 ```python
 try:
@@ -250,7 +250,7 @@ This discipline is the **#1 release blocker** and lives at the `ctx` boundary. A
 
 ## Q19. Will the API break in v0.3?
 
-Maybe — but bounded. Per `nucleus_architecture_v4.1.md` §13.3 (the "softened" API stability policy from v4.1 amendment #8):
+Maybe — but bounded. Per `docs/specs/nucleus_architecture_v4.1.md` §13.3 (the "softened" API stability policy from v4.1 amendment #8):
 
 - **Core data APIs** (`ctx.read`, `ctx.sql`, `ctx.copy_from`, `ctx.params`, `@nucleus.asset`, `@nucleus.check`): stable from v0.1, frozen from v1.0. We will only break these via deprecation warnings + 1-version overlap. Enforced by `scripts/check_api_stability.py` in CI.
 - **AI-related APIs** (`ctx.copilot`, `ctx.agent` v0.5+): may evolve faster than core because AI paradigms evolve quickly. We can't freeze for 5+ years.
@@ -286,7 +286,7 @@ Companion files:
 - `docs/release/launch_kit/comparison_vs_databricks_snowflake.md` — full capability matrix
 - `docs/internal/research/scale_out_audit.md` — honest scale-out assessment
 - `docs/swap/dagster.md` — composability swap rationale
-- `nucleus_architecture_v4.1.md` — ~50 min read, source of truth
+- `docs/specs/nucleus_architecture_v4.1.md` — ~50 min read, source of truth
 
 ---
 

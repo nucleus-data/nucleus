@@ -71,7 +71,7 @@ Core entry points: `SessionContext` (main context), `register_parquet()`, `regis
 
 ### 2.5 Swap interface implications for Nucleus
 
-Per `nucleus_architecture_v4.1.md §9.3`, DataFusion is Nucleus's documented swap target. The current obligation is:
+Per `docs/specs/nucleus_architecture_v4.1.md §9.3`, DataFusion is Nucleus's documented swap target. The current obligation is:
 1. Clean `Engine` Protocol interface (types compile, API matches)
 2. 5-10 smoke tests in CI
 3. Full adapter built only when trigger fires
@@ -101,7 +101,7 @@ Velox is Meta's unified execution engine, written in C++, that provides vectoriz
 
 ### 3.2 Why Velox is not a DuckDB alternative for Nucleus
 
-Velox is a **C++ execution kernel**, not a query engine. It has no SQL parser, no query optimizer, and no standalone Python operation — it requires a host system (Presto, Spark, Gluten) to function. Using Velox from Python would require building a full parser+planner layer, violating Hard Constraint #4 (`nucleus_architecture_v4.1.md §3`). PyVelox also ships x86_64 only (no ARM macOS wheels) and is Alpha-stability — incompatible with the beachhead's MacBook constraint.
+Velox is a **C++ execution kernel**, not a query engine. It has no SQL parser, no query optimizer, and no standalone Python operation — it requires a host system (Presto, Spark, Gluten) to function. Using Velox from Python would require building a full parser+planner layer, violating Hard Constraint #4 (`docs/specs/nucleus_architecture_v4.1.md §3`). PyVelox also ships x86_64 only (no ARM macOS wheels) and is Alpha-stability — incompatible with the beachhead's MacBook constraint.
 
 ### 3.3 Who uses Velox
 
@@ -204,7 +204,7 @@ The query planner implements "bridge" operators that stream tuples between local
 
 ### 6.3 Relevance to Nucleus's Yield-to-Giants Strategy
 
-MotherDuck is the most concrete implementation of `nucleus_architecture_v4.1.md §14` Mode 2 (hybrid compute): local DuckDB handles 1–100 GB, MotherDuck handles the overflow with zero query rewrites. Integration path for Nucleus v0.3+: `compute="md"` on `ctx.run()` ATTACHes MotherDuck via `duckdb.connect("md:token")` — zero new Nucleus LOC.
+MotherDuck is the most concrete implementation of `docs/specs/nucleus_architecture_v4.1.md §14` Mode 2 (hybrid compute): local DuckDB handles 1–100 GB, MotherDuck handles the overflow with zero query rewrites. Integration path for Nucleus v0.3+: `compute="md"` on `ctx.run()` ATTACHes MotherDuck via `duckdb.connect("md:token")` — zero new Nucleus LOC.
 
 **Critical open question**: MotherDuck's DuckLake lakehouse format vs Nucleus's Iceberg-backed assets. [NEEDS VERIFICATION — NV-6: are Nucleus's Iceberg files directly attachable to MotherDuck?] If not, a format bridge is needed before Mode 2 can work.
 

@@ -1,6 +1,6 @@
 # Research: Apache Polaris (JVM-native Iceberg REST Catalog)
 
-> **Component status in Nucleus**: **v0.3+ catalog co-default (alongside Lakekeeper).** Not in v0.1. v0.1 ships with the filesystem-backed `pyiceberg.SqlCatalog` per `nucleus_architecture_v4.1.md` §5.7 + Amendment 4. At `nucleus init` time (v0.3+), the user picks Lakekeeper or Polaris; Nucleus speaks to either via `pyiceberg.RestCatalog`. Tier 2 (wrappable, swappable) per v4.1 §9.
+> **Component status in Nucleus**: **v0.3+ catalog co-default (alongside Lakekeeper).** Not in v0.1. v0.1 ships with the filesystem-backed `pyiceberg.SqlCatalog` per `docs/specs/nucleus_architecture_v4.1.md` §5.7 + Amendment 4. At `nucleus init` time (v0.3+), the user picks Lakekeeper or Polaris; Nucleus speaks to either via `pyiceberg.RestCatalog`. Tier 2 (wrappable, swappable) per v4.1 §9.
 > **Pin candidate**: Polaris server **`1.4.1`** (released **2026-05-01**, downloads page + GitHub release verified 2026-05-13). **Not pinned in `pyproject.toml`** — Polaris is an external JVM service, not a Python dep. Python integration is **`pyiceberg==0.8.1` `RestCatalog`** (already pinned). Docker image: `apache/polaris:apache-polaris-1.4.1`; admin: `apache/polaris-admin-tool:apache-polaris-1.4.1`. Helm chart: `polaris/polaris` from `https://downloads.apache.org/polaris/helm-chart`.
 > **License**: **Apache-2.0** (Apache Software Foundation Top-Level Project — ALL ASF TLPs are Apache-2.0 by policy: https://www.apache.org/licenses/). GitHub blob viewer returns empty for `LICENSE.md` (same `WebFetch` quirk as Lakekeeper's repo); verify in-repo before pinning if paranoid.
 > **JVM-free**: **NO** — Polaris is Java 21 + Quarkus. Hard Constraint #1 explicit exception per `docs/decisions/ADR-002-positioning-decision-2026-05.md` §6: the constraint forbids JVM in **Nucleus's core path**; the catalog is an external service in its own process, identical to talking to a Postgres binary. JVM lives outside `nucleus up` startup. *Polaris is the ASF-governance / enterprise-trust trajectory; Lakekeeper is the no-JVM / single-binary trajectory.*
@@ -298,7 +298,7 @@ Integration ADR: `docs/decisions/ADR-NNN-lakekeeper-polaris-v03-catalog.md` (one
 - https://github.com/apache/polaris/blob/main/spec/polaris-management-service.yml — Management OpenAPI YAML.
 - https://py.iceberg.apache.org/configuration/#rest-catalog — pyiceberg side; OAuth2 + `scope=PRINCIPAL_ROLE:ALL`.
 - https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml — the spec Polaris implements.
-- `docs/internal/research/lakekeeper.md` — parallel doc; §8 matrix here mirrors §8 there.  •  `docs/internal/research/pyiceberg.md` §6 — error-translation v0.3 inherits.  •  `docs/decisions/ADR-002-positioning-decision-2026-05.md` §6 — co-default rationale.  •  `nucleus_architecture_v4.1.md` §5.7 — catalog stage table.
+- `docs/internal/research/lakekeeper.md` — parallel doc; §8 matrix here mirrors §8 there.  •  `docs/internal/research/pyiceberg.md` §6 — error-translation v0.3 inherits.  •  `docs/decisions/ADR-002-positioning-decision-2026-05.md` §6 — co-default rationale.  •  `docs/specs/nucleus_architecture_v4.1.md` §5.7 — catalog stage table.
 
 ---
 

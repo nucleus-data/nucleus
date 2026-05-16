@@ -122,13 +122,13 @@ Channels are ordered by expected yield-to-effort ratio, based on community size 
 | Day 17 | Write `docs/poc/p5_beachhead/results/AGGREGATE_SUMMARY.md` (see template structure below). |
 | Day 18–19 | Convert top-3 friction themes to backlog issues with severity + owner + resolution estimate. |
 | Day 20 | Founder decision: did we pass the PoC #5 gate? (see success criteria below) |
-| Day 21 | If PASS → unlock v0.1 ship gate per `nucleus_poc_plan.md` §13. If FAIL → schedule fix sprint and re-test. |
+| Day 21 | If PASS → unlock v0.1 ship gate per `docs/specs/nucleus_poc_plan.md` §13. If FAIL → schedule fix sprint and re-test. |
 
 ---
 
 ## Success criteria (binding)
 
-Per `nucleus_poc_plan.md` §5 and `AGENTS.md` §11.8:
+Per `docs/specs/nucleus_poc_plan.md` §5 and `AGENTS.md` §11.8:
 
 | Metric | Pass threshold | Measured by |
 |---|---|---|

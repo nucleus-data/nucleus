@@ -24,5 +24,5 @@ The Asset Materialization Adapter retries this case automatically up to 3 times.
 
 - Source: `src/nucleus/errors.py` (`NucleusCommitConflictError`)
 - Default fix hint: "Another writer committed to the same asset. Retry the run; if it persists, check for overlapping schedules."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

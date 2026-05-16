@@ -7,9 +7,9 @@ signature, same return type (row count), same error translation discipline.
 Stability: Beta @ v0.2 → Stable @ v0.5 → Frozen @ v1.0  (per ADR-005 §2)
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.5 (Ingestion — MySQL co-default branch)
-    nucleus_architecture_v4.1.md §6.3 (Coordination — dlt translator boundary)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_architecture_v4.1.md §5.5 (Ingestion — MySQL co-default branch)
+    docs/specs/nucleus_architecture_v4.1.md §6.3 (Coordination — dlt translator boundary)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-014-dlt-postgres-source.md §"MySQL parity (2026-05-14)"
     docs/internal/research/dlt.md §13 (sql_database source — multi-dialect coverage)
 

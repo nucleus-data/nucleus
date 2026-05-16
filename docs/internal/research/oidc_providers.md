@@ -1,6 +1,6 @@
 # Research: OIDC Providers — Authentik, Keycloak, Okta, Microsoft Entra ID
 
-> **Component status in Nucleus**: Hard Constraint #6 — **always delegate to OIDC; never own identity** (AGENTS.md §3 + `nucleus_architecture_v4.1.md` §15.1 + Amendment 9 / D17). v0.1 has **no auth** (single-user laptop — `docs/security/threat_model_v0.md` §6); v0.3+ Lakekeeper / Polaris catalogs delegate to OIDC; v0.5+ Workbench Cloud delegates to OIDC; post-v1.0 CLI remote ops use OIDC device-code flow.
+> **Component status in Nucleus**: Hard Constraint #6 — **always delegate to OIDC; never own identity** (AGENTS.md §3 + `docs/specs/nucleus_architecture_v4.1.md` §15.1 + Amendment 9 / D17). v0.1 has **no auth** (single-user laptop — `docs/security/threat_model_v0.md` §6); v0.3+ Lakekeeper / Polaris catalogs delegate to OIDC; v0.5+ Workbench Cloud delegates to OIDC; post-v1.0 CLI remote ops use OIDC device-code flow.
 > **Self-hosted candidates**: **Authentik 2026.2** (Python / Django, **MIT**), **Keycloak 26.6.1** (JVM / Quarkus, **Apache-2.0**).
 > **Hosted SaaS candidates**: **Okta** (incl. Auth0 / Customer Identity), **Microsoft Entra ID** (formerly Azure AD).
 > **Spec**: OpenID Connect Core 1.0 — https://openid.net/specs/openid-connect-core-1_0.html. All four are OpenID Certified (https://openid.net/certification/).
@@ -346,7 +346,7 @@ Integration ADR: `docs/decisions/ADR-NNN-oidc-v03-auth.md` — opens with v0.3 c
 - **Keycloak** (Apache-2.0): https://www.keycloak.org/documentation • https://www.keycloak.org/docs/latest/server_admin/ • https://github.com/keycloak/keycloak/releases • https://www.keycloak.org/security
 - **Okta**: https://developer.okta.com/docs/ • https://developer.okta.com/docs/concepts/oauth-openid/ • https://www.okta.com/pricing/ • https://developer.okta.com/signup/ (free integrator)
 - **Microsoft Entra ID**: https://learn.microsoft.com/en-us/entra/identity-platform/ • https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc • https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app • https://learn.microsoft.com/en-us/entra/identity-platform/signing-key-rollover
-- **Companion Nucleus docs**: `docs/internal/research/lakekeeper.md` §5.2 • `docs/internal/research/polaris.md` §5.2 • `docs/security/threat_model_v0.md` §6 • `docs/decisions/ADR-002-positioning-decision-2026-05.md` §8 • `nucleus_architecture_v4.1.md` §15.
+- **Companion Nucleus docs**: `docs/internal/research/lakekeeper.md` §5.2 • `docs/internal/research/polaris.md` §5.2 • `docs/security/threat_model_v0.md` §6 • `docs/decisions/ADR-002-positioning-decision-2026-05.md` §8 • `docs/specs/nucleus_architecture_v4.1.md` §15.
 
 ---
 

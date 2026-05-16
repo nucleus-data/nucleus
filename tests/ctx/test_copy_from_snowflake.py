@@ -19,7 +19,7 @@ Verifies ``ingest_snowflake_to_iceberg()``:
 Architecture refs:
     ADR-019 §Verification plan
     docs/internal/research/snowflake.md §4 (error code matrix)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
 """
 
 from __future__ import annotations

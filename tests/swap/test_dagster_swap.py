@@ -1,6 +1,6 @@
 """Swap smoke tests — Dagster → ``nucleus-mini-scheduler``.
 
-Per AGENTS.md Hard Constraint #9 + ``nucleus_architecture_v4.1.md`` §6.7,
+Per AGENTS.md Hard Constraint #9 + ``docs/specs/nucleus_architecture_v4.1.md`` §6.7,
 §9.3. Tests Dagster transitively through the AMA's public surface — NO
 direct ``import dagster`` here because ``scripts/dagster_leak_check.py``
 forbids it outside ``src/nucleus/coordination/`` + ``tests/coordination/``.

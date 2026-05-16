@@ -7,12 +7,12 @@ output via ``rich``.
 Entry point (declared in ``pyproject.toml``):
     nucleus = "nucleus.cli.main:app"
 
-Per ``nucleus_architecture_v4.1.md`` §13.1, the CLI surface is part of the
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §13.1, the CLI surface is part of the
 stable public API. Adding / changing commands follows the same semver
 discipline as the ``ctx`` SDK.
 
 See:
-    - ``nucleus_cli_spec.md``                        full CLI specification
+    - ``docs/specs/nucleus_cli_spec.md``                        full CLI specification
     - ``docs/architecture/C4_container.md`` §3.2     command list
 
 This package's content arrives progressively:

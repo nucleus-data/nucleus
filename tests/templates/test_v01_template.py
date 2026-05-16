@@ -3,7 +3,7 @@
 The template is the on-disk skeleton ``nucleus init`` copies into a new
 project directory. Every byte in ``src/nucleus/templates/v01/`` ends up on
 the user's filesystem inside their first 30 minutes with Nucleus, so silent
-edits here directly affect the beachhead metric (``nucleus_architecture_v4.1.md``
+edits here directly affect the beachhead metric (``docs/specs/nucleus_architecture_v4.1.md``
 §1.5). This file locks the template's invariants so any drift fails loud.
 
 Coverage (per Verifier-2 gap closure 2026-05-14):
@@ -71,7 +71,7 @@ from nucleus.sdk.decorators import asset as _asset_decorator
 # and update this constant in the SAME PR that edits the template.
 _EXAMPLE_PY_SHA256 = "9e2950c681899010ab80941778b58e2abf535444f1e01a6fd93465b5771d55a3"
 
-# The 7 template files the spec promises (``nucleus_cli_spec.md`` §3.1) plus Compose.
+# The 7 template files the spec promises (``docs/specs/nucleus_cli_spec.md`` §3.1) plus Compose.
 # Each tuple = (relative path under v01/, post-rename name on disk after init).
 _EXPECTED_TEMPLATE_FILES: tuple[tuple[str, str], ...] = (
     ("docker-compose.yaml", "docker-compose.yaml"),
@@ -115,7 +115,7 @@ def _read_template_bytes(rel_path: str) -> bytes:
 
 
 class TestInventory:
-    """Every file ``nucleus_cli_spec.md`` §3.1 promises ships in the wheel."""
+    """Every file ``docs/specs/nucleus_cli_spec.md`` §3.1 promises ships in the wheel."""
 
     @pytest.mark.parametrize("rel_path", [p for p, _ in _EXPECTED_TEMPLATE_FILES])
     def test_template_file_exists(self, rel_path: str) -> None:
@@ -308,7 +308,7 @@ class TestExampleAsset:
 
 
 class TestGitignore:
-    """Per ``nucleus_project_anatomy.md`` v4.1 §3 the gitignore template
+    """Per ``docs/specs/nucleus_project_anatomy.md`` v4.1 §3 the gitignore template
     excludes every directory the v0.1 workflow writes to, so users cannot
     accidentally commit local secrets / opt-in flags / warehouse data."""
 

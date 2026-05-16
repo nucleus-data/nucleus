@@ -21,9 +21,9 @@ Nucleus is not shaped like any of these tools. Understanding shape prevents the 
 | **SQLMesh** | SQL transformation + plan/diff workflow; Python-native; DuckDB-capable | **CLOSEST COMPETITOR IN SPIRIT** — most credible swap target for `ctx.sql` |
 | **Prefect** | Python-native flow/task orchestration; remote control plane | **DIFFERENT SHAPE** — similar yield-to-giants stance but flow/task model vs asset model |
 
-Per `nucleus_architecture_v4.1.md` §6 and `AGENTS.md §8`: we are NOT a "dbt killer," a "Dagster competitor," or a "better Airflow." We are a **different shape** that subsumes transformation and wraps orchestration.
+Per `docs/specs/nucleus_architecture_v4.1.md` §6 and `AGENTS.md §8`: we are NOT a "dbt killer," a "Dagster competitor," or a "better Airflow." We are a **different shape** that subsumes transformation and wraps orchestration.
 
-**Critical discipline**: the parity matrix shows what Nucleus exposes through `ctx` + CLI, **not** what raw Dagster offers. Per `nucleus_ctx_sdk_spec.md` §0 Principle 1: "`ctx` is the only thing users import." A feature counts only if exercisable via `@nucleus.*`, `nucleus <cmd>`, or `ctx.*` — without importing `dagster`/`duckdb`/`polars` directly.
+**Critical discipline**: the parity matrix shows what Nucleus exposes through `ctx` + CLI, **not** what raw Dagster offers. Per `docs/specs/nucleus_ctx_sdk_spec.md` §0 Principle 1: "`ctx` is the only thing users import." A feature counts only if exercisable via `@nucleus.*`, `nucleus <cmd>`, or `ctx.*` — without importing `dagster`/`duckdb`/`polars` directly.
 
 ---
 
@@ -414,11 +414,11 @@ All external documentation URLs cited in this report, verified 2026-05-15:
 - Serve/deploy flows: https://docs.prefect.io/v3/deploy/serve-flows
 
 ### Nucleus internal (primary sources of truth)
-- `nucleus_architecture_v4.1.md` §6.2, §6.3, §6.4, §6.5, §6.7, §7.2, §9, §10, §12, §18
-- `nucleus_ctx_sdk_spec.md` §0, §2, §3, §5, §6, §10, §12, §14
-- `nucleus_cli_spec.md` §3, §4, §5, §10
-- `nucleus_asset_model_spec.md` §3, §4, §5, §6, §8, §9, §10, §11, §15
-- `nucleus_poc_plan.md` (PoC #1–5 status)
+- `docs/specs/nucleus_architecture_v4.1.md` §6.2, §6.3, §6.4, §6.5, §6.7, §7.2, §9, §10, §12, §18
+- `docs/specs/nucleus_ctx_sdk_spec.md` §0, §2, §3, §5, §6, §10, §12, §14
+- `docs/specs/nucleus_cli_spec.md` §3, §4, §5, §10
+- `docs/specs/nucleus_asset_model_spec.md` §3, §4, §5, §6, §8, §9, §10, §11, §15
+- `docs/specs/nucleus_poc_plan.md` (PoC #1–5 status)
 - `docs/decisions/ADR-017-schedule-exposure-v01.md`
 - `src/nucleus/sdk/decorators.py` (current `@nucleus.asset` + `@nucleus.check`)
 - `src/nucleus/coordination/schedules.py` (schedule façade + `to_dagster_schedule`)

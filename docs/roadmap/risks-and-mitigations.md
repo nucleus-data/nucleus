@@ -1,6 +1,6 @@
 # Risks and Mitigations — Per-Phase Playbook
 
-> **Source**: `nucleus_architecture_v4.1.md` §19 (Risk Register) + per-phase analysis.
+> **Source**: `docs/specs/nucleus_architecture_v4.1.md` §19 (Risk Register) + per-phase analysis.
 > **Purpose**: For each phase, the top risks and concrete mitigation playbooks. Not sugar-coated.
 
 ---
@@ -247,4 +247,4 @@ Swap interfaces (DuckDB/DataFusion, Dagster/mini-scheduler) drift as the default
 
 ---
 
-*Source: `nucleus_architecture_v4.1.md` §19 (Risk Register). Per-phase analysis by architect, 2026-05-15.*
+*Source: `docs/specs/nucleus_architecture_v4.1.md` §19 (Risk Register). Per-phase analysis by architect, 2026-05-15.*

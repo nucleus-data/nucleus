@@ -4,7 +4,7 @@
 > **Scope**: Runtime containers (deployable processes / on-disk substrates) inside the Nucleus boundary, at v0.1 Hello World scope.
 > **Audience**: New contributors, founder onboarding, anyone planning v0.3+ container migrations.
 > **Last updated**: Month 0 (Pre-Heartbeat)
-> **Companion docs**: [`C4_context.md`](C4_context.md) (L1), [`C4_component.md`](C4_component.md) (L3), [`sequence_asset_materialization.md`](sequence_asset_materialization.md), [`sequence_ingestion.md`](sequence_ingestion.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)
+> **Companion docs**: [`C4_context.md`](C4_context.md) (L1), [`C4_component.md`](C4_component.md) (L3), [`sequence_asset_materialization.md`](sequence_asset_materialization.md), [`sequence_ingestion.md`](sequence_ingestion.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md)
 
 The C4 model has four levels (Context → Container → Component → Code). This is **Level 2**: the runtime processes that compose Nucleus on a single machine. Below is L1 (the system in its environment, [`C4_context.md`](C4_context.md)); above is L3 (inside the `ctx` SDK container, [`C4_component.md`](C4_component.md)). Per `v4.1` §3.1 layers are numbered **bottom-up, L0 = Physics, L4 = Experience** — the same numbering [`C4_component.md`](C4_component.md) and `src/nucleus/` use. The diagram in §2 overlays those layers onto the actual containers a v0.1 user runs.
 
@@ -190,7 +190,7 @@ Per `AGENTS.md` §11.12, treat each as a **draft contract** until flipped:
 - [`C4_context.md`](C4_context.md) (L1) — same boundary seen from outside.
 - [`C4_component.md`](C4_component.md) (L3) — inside the `ctx` SDK container (§3.1 row 2).
 - [`sequence_asset_materialization.md`](sequence_asset_materialization.md) / [`sequence_ingestion.md`](sequence_ingestion.md) — runtime flow across §3.1 containers.
-- [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §3 (layers), §5 (engines/catalog/object store), §6 (coordination), §11 (local-first), §16 (footprint), §18 (roadmap).
+- [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §3 (layers), §5 (engines/catalog/object store), §6 (coordination), §11 (local-first), §16 (footprint), §18 (roadmap).
 - [`../../poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md) — boot budget for §4.1.
 - [`../decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md) / [`../decisions/ADR-002-positioning-decision-2026-05.md`](../decisions/ADR-002-positioning-decision-2026-05.md) §3.
 - C4 model spec: <https://c4model.com> (`# NEEDS VERIFICATION` per the no-web-fetch constraint).

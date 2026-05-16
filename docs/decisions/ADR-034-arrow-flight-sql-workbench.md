@@ -67,5 +67,5 @@ Implementation scope (R8 §8.3):
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §7.2 (Workbench API layer)
-- `nucleus_architecture_v4.1.md` §18.3 (v0.3 roadmap — Workbench v0.3)
+- `docs/specs/nucleus_architecture_v4.1.md` §7.2 (Workbench API layer)
+- `docs/specs/nucleus_architecture_v4.1.md` §18.3 (v0.3 roadmap — Workbench v0.3)

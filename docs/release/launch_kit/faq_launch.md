@@ -49,7 +49,7 @@ That's it. You just materialized an Iceberg snapshot, queried it via DuckDB, and
 
 ### Q3. What's the realistic 30-minute path?
 
-Per `nucleus_architecture_v4.1.md` §1.5 the headline beachhead metric:
+Per `docs/specs/nucleus_architecture_v4.1.md` §1.5 the headline beachhead metric:
 
 > A 5-engineer startup team, on MacBooks, with Postgres source + S3 destination, builds their first BI-ready Iceberg table from `git clone` to live data in **<30 minutes**.
 
@@ -131,7 +131,7 @@ Secrets never appear in logs, run metadata, or AI Copilot context.
 
 ### Q10. Can Nucleus scale to 100+ engineers / 100 TB warehouse?
 
-**Honestly, no — and that's by design.** Per `docs/internal/research/scale_out_audit.md`, the documented data envelope is 100 GB–5 TB and the documented engineer envelope is 5–20 (per `nucleus_architecture_v4.1.md` §1.5). Above that, three real gaps surface:
+**Honestly, no — and that's by design.** Per `docs/internal/research/scale_out_audit.md`, the documented data envelope is 100 GB–5 TB and the documented engineer envelope is 5–20 (per `docs/specs/nucleus_architecture_v4.1.md` §1.5). Above that, three real gaps surface:
 
 1. **Cross-machine concurrency** — `coordination/locks.py` is filesystem-local only; multi-host coordination is the catalog's job. Closure path: Lakekeeper REST catalog (v0.3+).
 2. **Workbench at 50+ concurrent users** — single uvicorn worker by default. Closure path: `uvicorn --workers=N` or k8s replicas. Documentation, not code.
@@ -141,7 +141,7 @@ The architecturally-correct answer at large-team scale is **graduation via Icebe
 
 ### Q11. How do I graduate to Databricks / Snowflake?
 
-Per `nucleus_architecture_v4.1.md` §10 yield-to-giants strategy:
+Per `docs/specs/nucleus_architecture_v4.1.md` §10 yield-to-giants strategy:
 
 - **Mode 1 — Graduation (today, zero effort)**: Your Nucleus-managed Iceberg snapshots are vendor-neutral. Point Databricks (Iceberg-compat via UniForm or native Iceberg tables), Snowflake (Iceberg tables GA 2024), or any Iceberg REST catalog (Polaris, Lakekeeper, Unity, R2) at the same S3 bucket. **No re-migration. No format translation.** Done.
 - **Mode 2 — Hybrid compute (v1.5+)**: `@nucleus.sql_asset(compute="databricks")` — Nucleus orchestrates, Databricks executes, result committed back to Iceberg. The 30-min ergonomics stay; the 100-TB heavy lifting yields.
@@ -168,7 +168,7 @@ The whole point of the yield-to-giants strategy is that **your bet is on Iceberg
 
 **The OSS core is $0 forever.** Apache 2.0. Self-hosted, no seat licenses, no consumption pricing.
 
-Future tiers per `nucleus_architecture_v4.1.md` §17 (NOT shipping in v0.2):
+Future tiers per `docs/specs/nucleus_architecture_v4.1.md` §17 (NOT shipping in v0.2):
 
 | Tier | Price target | Includes |
 |---|---|---|
@@ -194,7 +194,7 @@ Future tiers per `nucleus_architecture_v4.1.md` §17 (NOT shipping in v0.2):
 
 ### Q16. What's next after v0.2?
 
-Per `nucleus_architecture_v4.1.md` §18.3:
+Per `docs/specs/nucleus_architecture_v4.1.md` §18.3:
 
 **v0.3 — Tier 3 Connectors (Mo 14–20)**
 - Lakekeeper REST catalog (default) + Polaris alternate (per ADR-004)
@@ -226,7 +226,7 @@ We do NOT promise dates. We DO promise that every commit will pass the 11 govern
 
 ### Q17. When is v0.3 expected?
 
-Per `nucleus_architecture_v4.1.md` §17.2 + §18.0 tier-version map: **Mo 14–20** in the project timeline, which translates roughly to **late 2026 / early 2027**. Solo-founder pacing per the v4.1.2 timeline patch. Mo 24 decision gate (raise / hand off / accept indie) per ADR-002 §8.3 may shift this.
+Per `docs/specs/nucleus_architecture_v4.1.md` §17.2 + §18.0 tier-version map: **Mo 14–20** in the project timeline, which translates roughly to **late 2026 / early 2027**. Solo-founder pacing per the v4.1.2 timeline patch. Mo 24 decision gate (raise / hand off / accept indie) per ADR-002 §8.3 may shift this.
 
 ### Q18. What's the Mo 24 decision gate?
 

@@ -71,5 +71,5 @@ Recommended: **Option A**. The CLI must include a prominent help-text note: *"No
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §6.3 (coordination layer)
-- `nucleus_architecture_v4.1.md` §13 (CLI surface)
+- `docs/specs/nucleus_architecture_v4.1.md` §6.3 (coordination layer)
+- `docs/specs/nucleus_architecture_v4.1.md` §13 (CLI surface)

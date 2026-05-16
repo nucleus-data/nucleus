@@ -2,8 +2,8 @@
 """Tests for :mod:`nucleus.sdk.contracts` — schema-contracts runtime.
 
 Validates the v0.1 wire-up of ``@nucleus.check`` execution per
-``nucleus_architecture_v4.1.md`` §15 +
-``nucleus_asset_model_spec.md`` §10 + the file's docstring contract:
+``docs/specs/nucleus_architecture_v4.1.md`` §15 +
+``docs/specs/nucleus_asset_model_spec.md`` §10 + the file's docstring contract:
 
     - registration discovery via :func:`list_registered_checks`
     - sequential execution + result normalisation via

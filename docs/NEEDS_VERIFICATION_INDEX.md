@@ -8,7 +8,7 @@
 
 ## How to use
 
-PoC #1 `pytest` cannot confirm 17/17 green until §1 markers fire on a real Python install. §3 setup markers fire when Docker Desktop is up + macOS §M1-§M8 walked. §6-§7 fire when external services land (Lakekeeper/Polaris/Marquez/OIDC at v0.3+). §8 is policy + governance scripts. Mark DONE in-place by editing the source AND removing the row here. **What's new in v2**: §3 +14 (SETUP.md macOS + docker-compose stubs), §4 +1 (v4.1 §5.8), §7 +17 (ADR-004/008/009/010), §8 +6 (governance scripts + nucleus_cli_spec.md §10); see "Resolved since v1" callout between §10 and §11.
+PoC #1 `pytest` cannot confirm 17/17 green until §1 markers fire on a real Python install. §3 setup markers fire when Docker Desktop is up + macOS §M1-§M8 walked. §6-§7 fire when external services land (Lakekeeper/Polaris/Marquez/OIDC at v0.3+). §8 is policy + governance scripts. Mark DONE in-place by editing the source AND removing the row here. **What's new in v2**: §3 +14 (SETUP.md macOS + docker-compose stubs), §4 +1 (v4.1 §5.8), §7 +17 (ADR-004/008/009/010), §8 +6 (governance scripts + docs/specs/nucleus_cli_spec.md §10); see "Resolved since v1" callout between §10 and §11.
 
 ---
 
@@ -20,14 +20,14 @@ PoC #1 `pytest` cannot confirm 17/17 green until §1 markers fire on a real Pyth
 
 - `poc/p4_boot_time/measure.py:102` + `poc/p3_ingest/ingest.py:106` + `poc/p4_boot_time/README.md:44` — Worker C audit confirmed `SqlCatalog(type='sql', uri=sqlite:///…, warehouse=file://…)` kwargs against pyiceberg `docs/configuration §570-587`; aligns with v4.1 §5.7 L511 ('filesystem catalog' = SqlCatalog over `file://` warehouse). Source comments still carry literal NV text; 3 §3 PoC-code rows retire on next v3 sweep once comments are amended.
 - `poc/p4_boot_time/measure.py` (psutil dep) — transitively present via existing pin chain; **explicit pin recommended** pre PoC #4 promotion (Worker C).
-- `ADR-008-storage-substrate-v01.md:32`/`:35`/`:55` + `nucleus_architecture_v4.1.md:47` — **SeaweedFS pinned `chrislusf/seaweedfs:4.23` (sha256:c6d6fb84b…)** per Worker B + maintenance pass; ADR-008 acceptance pending PoC #4 S3-parity probe. Acceptance will collapse §3 setup row · §4 v4.1:47 · §9 SeaweedFS line · §10 SeaweedFS-releases watch in one gate.
+- `ADR-008-storage-substrate-v01.md:32`/`:35`/`:55` + `docs/specs/nucleus_architecture_v4.1.md:47` — **SeaweedFS pinned `chrislusf/seaweedfs:4.23` (sha256:c6d6fb84b…)** per Worker B + maintenance pass; ADR-008 acceptance pending PoC #4 S3-parity probe. Acceptance will collapse §3 setup row · §4 v4.1:47 · §9 SeaweedFS line · §10 SeaweedFS-releases watch in one gate.
 - `docker-compose.minio.yml` + `SETUP.md:436` — **MinIO pin sha256:14cea493d… recorded** for `RELEASE.2025-09-07T16-13-09Z` (Worker B + maintenance pass); arm64 manifest availability still gates PoC #5 Apple Silicon dry-run (§9 row unchanged).
 - `SETUP.md` §7 — **Bosch corporate-proxy `NO_PROXY` gotcha documented** (maintenance pass); previously unlogged operational friction surface, now captured.
 - `poc/p3_ingest/ingest.py` Windows path → file URI — **`f"file://{posix}"` workaround landed** (PoC #3 Windows-fix worker); resolves Windows half of §3 `sequence_ingestion.md` sub-item "filesystem-catalog atomicity on Windows". ADR-001 kill-9 stress harness remains open.
 
 ### Newly surfaced this session
 
-- `docs/architecture/v01_skeleton_plan.md:150` (§7 header) + `:158` (inline NV in item 5) — **10 enumerated NV items** at lines 154-163 from skeleton-plan worker: (1) `ctx.materialize` missing from v4.1 §13.2 → **ADR-013 candidate**, (2) asset-name 2-vs-3-level cardinality, (3) `nucleus_project_anatomy.md` v3-era stale, (4) `openlineage-python==1.47.1` unpinned (Hard Constraint #11 step-8 block), (5) `Engine` Protocol shape (`Plan` + `ExecContext` undefined), (6) `ctx.read(snapshot=…)` deferral to v0.3, (7) CLI per-file structure unspec'd, (8) Polaris JVM exclusion re-verify @ v0.3, (9) `docker compose` vs `docker-compose` host probe, (10) `check_api_stability.py` precedence — **script has now landed** per §8, half-resolved.
+- `docs/architecture/v01_skeleton_plan.md:150` (§7 header) + `:158` (inline NV in item 5) — **10 enumerated NV items** at lines 154-163 from skeleton-plan worker: (1) `ctx.materialize` missing from v4.1 §13.2 → **ADR-013 candidate**, (2) asset-name 2-vs-3-level cardinality, (3) `docs/specs/nucleus_project_anatomy.md` v3-era stale, (4) `openlineage-python==1.47.1` unpinned (Hard Constraint #11 step-8 block), (5) `Engine` Protocol shape (`Plan` + `ExecContext` undefined), (6) `ctx.read(snapshot=…)` deferral to v0.3, (7) CLI per-file structure unspec'd, (8) Polaris JVM exclusion re-verify @ v0.3, (9) `docker compose` vs `docker-compose` host probe, (10) `check_api_stability.py` precedence — **script has now landed** per §8, half-resolved.
 - `poc/p4_boot_time/measure.py:102` — sole literal NV in `measure.py` this scan. **3 PoC #4 harness gaps observed but not yet labelled in source**: (a) SeaweedFS lacks `/minio/health/live` → 404 → `measure_minio_health()` → `measure_storage_health()` generalization per ADR-008:81, (b) Windows SQLAlchemy temp-dir cleanup race, (c) `file:///` URI construction latent at `measure.py:118`. Append NV comments at next PoC #4 edit so they grep in v3.
 - **`ctx.materialize(...)` API gap → ADR-013 candidate** — same surface as v01_skeleton_plan §7 item 1; flagged separately because it widens the public-API contract and warrants its own ADR (not a v0.1-skeleton hot-fix).
 - **SeaweedFS internal Iceberg REST Catalog on `:8181`** — parallel-worker investigation in flight at scan time; not yet a source-logged NV. Will surface in v3 if unresolved at next sweep.
@@ -56,10 +56,10 @@ PoC #1 `pytest` cannot confirm 17/17 green until §1 markers fire on a real Pyth
 ## §2. Critical / blocking for PoC #2 promotion
 
 - `poc/p2_ctx_sql/resolver.py` :40 — `NucleusInvalidAssetDefinition` reused for cycles vs new `NucleusAssetGraphError` (founder design)
-- `poc/p2_ctx_sql/REVIEW_NOTES.md` :53 — "register asset first" wording — mirrors PoC #1 H4 CLI gap (now resolved by `nucleus_cli_spec.md` landing — see §11)
+- `poc/p2_ctx_sql/REVIEW_NOTES.md` :53 — "register asset first" wording — mirrors PoC #1 H4 CLI gap (now resolved by `docs/specs/nucleus_cli_spec.md` landing — see §11)
 - `poc/p2_ctx_sql/REVIEW_NOTES.md` :61 — inline quote of the resolver.py:40 marker
 - `poc/p2_ctx_sql/PROMOTION_CHECKLIST.md` :41 — promotion gate references "zero open NV markers" before removing PoC copy
-- `poc/p2_ctx_sql/PROMOTION_CHECKLIST.md` :49 — `nucleus query` CLI per `nucleus_cli_spec.md` — spec doc **now in repo** per Worker GG (verify subcommand canonical name, not absence)
+- `poc/p2_ctx_sql/PROMOTION_CHECKLIST.md` :49 — `nucleus query` CLI per `docs/specs/nucleus_cli_spec.md` — spec doc **now in repo** per Worker GG (verify subcommand canonical name, not absence)
 - `docs/architecture/sequence_query.md` :221 §7 — **5 sub**: DuckDB Iceberg ext on Win · `Table.scan().to_duckdb(name)` churn 0.8.1→0.11.x · `duckdb.ParserException` line/col · `SET timezone='UTC'` connection-init · OL event schema for read-only `ctx.sql` (cross-ref ADR-009 §NV #1)
 
 **5 markers + 5 sequence-doc items.** (v1 had 4 markers; +1 from re-scoping `REVIEW_NOTES.md:61`.)
@@ -76,13 +76,13 @@ PoC #1 `pytest` cannot confirm 17/17 green until §1 markers fire on a real Pyth
 - `docs/architecture/sequence_ingestion.md` :160 §7 — **5 sub**: SQLAlchemy reflection of PK/NOT NULL on PG/MySQL · `Table.append(arrow_table)` signature drift · OL emitter wire-up · type coverage `JSONB`/`TIMESTAMPTZ`/`NUMERIC(p,s)`/`ARRAY` · filesystem-catalog atomicity on Windows
 - `poc/p4_boot_time/measure.py` :102 — v0.1 'filesystem catalog' realised as PyIceberg `SqlCatalog` over `file://` warehouse
 - `poc/p4_boot_time/README.md` :44 — `measure_catalog_init` SqlCatalog kwargs verification
-- `scripts/beachhead_e2e.py` :17 — `nucleus ingest` + `nucleus query` subcommand canonical names (cross-check against `nucleus_cli_spec.md` §4 now that it landed)
+- `scripts/beachhead_e2e.py` :17 — `nucleus ingest` + `nucleus query` subcommand canonical names (cross-check against `docs/specs/nucleus_cli_spec.md` §4 now that it landed)
 
 ### Stack readiness — NEW in v2 (macOS SETUP worker + JJ-2 alignment sweep #2)
 
 - `SETUP.md` :345/:368 — Homebrew `python@3.11` formula name + pyenv latest 3.11.x patch (macOS §M1)
 - `SETUP.md` :419/:423/:427 — Homebrew Cask `docker` vs `docker-desktop` rename · `.dmg` URL stability · Apple Silicon arch for archived MinIO tag + SeaweedFS pin (macOS §M3)
-- `SETUP.md` :524 — MinIO Console default-cred preservation `minioadmin/minioadmin` (cross-ref `nucleus_cli_spec.md` §10 NV #7)
+- `SETUP.md` :524 — MinIO Console default-cred preservation `minioadmin/minioadmin` (cross-ref `docs/specs/nucleus_cli_spec.md` §10 NV #7)
 - `SETUP.md` :526 — SeaweedFS S3 endpoint final pin + UI URL pending ADR-008 acceptance
 - `SETUP.md` :555/:557 — `nucleus up <10s` macOS Docker overhead vs Windows · Apple Silicon image-arch parity per-substrate · Rosetta fallback as PoC #5 stuck-point flag
 - `SETUP.md` :559/:561 — `nucleus doctor` availability for PoC #5 dry-run vs v0.3+ ship · Linux dry-run of §M1-§M8 (POSIX subset) pre-PoC-#5 recruitment
@@ -99,7 +99,7 @@ PoC #5 (`poc/p5_beachhead/`): **0 NV markers**. `scripts/benchmark_regression.py
 - **C4_container.md (2)** ← **dropped from 5 — JJ-2 cleared 3**: :175 §7 header (7-sub remain) · :196 C4 model URL.
 - **sequence_asset_materialization.md (2)**: :6/:141 §5 8-sub: `ctx.materialize` spelling · Dagster↔ctx bridging · OL event shapes (now ADR-009) · AMA write path · `ctx.read` identifier translation · contract validation timing · PyIceberg drift · DuckDB connection lifecycle.
 - **sequence_swap_drill.md (1)** ← **dropped from 2**: :194 §9 header (7-sub: cadence 28d-vs-90d · `scripts/drift_detection.py` n/a · `src/nucleus/swap/` + `tests/swap_smoke/` n/a · Tier 0 drill · drill-log location · license/health monitor automation · per-component walkthrough).
-- **nucleus_architecture_v4.1.md (1)** NEW: :47 — SeaweedFS exact tag pin + S3 parity edges per JJ-2 alignment sweep #2 (§5.8 Object Store amendment cross-refs ADR-008).
+- **docs/specs/nucleus_architecture_v4.1.md (1)** NEW: :47 — SeaweedFS exact tag pin + S3 parity edges per JJ-2 alignment sweep #2 (§5.8 Object Store amendment cross-refs ADR-008).
 
 `sequence_query.md` / `sequence_ingestion.md`: see §2 / §3. `sequence_error_translation.md` / `C4_context.md`: **0 NV markers**. **11 markers; ~32 sub.** (v1: 16; net −5.)
 
@@ -148,7 +148,7 @@ Each swap doc has a `## 7. NEEDS VERIFICATION` section. Header counts as 1 grep 
 
 ### Pre-v1 ADRs (counts unchanged from v1)
 
-- **ADR-005** :50 — `nucleus_cli_spec.md` parenthetical "may not yet exist" — **doc landed by Worker GG** (stale text; CLI surface stability item remains valid).
+- **ADR-005** :50 — `docs/specs/nucleus_cli_spec.md` parenthetical "may not yet exist" — **doc landed by Worker GG** (stale text; CLI surface stability item remains valid).
 - **ADR-005** :131-136 §NV — 3 founder sub-questions: `ctx.snapshot` tier mismatch · `ctx.agent.*` signatures · `ctx.copy_from` mode taxonomy.
 - **ADR-006** :58 ftn²/³ — H10 `NucleusCommitConflictError` L0/L1 straddle (NE1002 vs split NE2004) · H17 `TimeoutError` routing contested (H14 Option B).
 - **ADR-006** :62 §NV header (founder sign-off) · :86 `scripts/generate_error_docs.py` deferred to v0.2 (AST-walk half resolved by `check_error_codes.py` landing per §8).
@@ -169,7 +169,7 @@ ADR-001, ADR-002, ADR-003: **0 NV markers** (cleanly closed). **25 markers; ~22 
 
 These are **policy references** or **CI enforcement scripts**, not typical TODOs.
 
-**Policy references (unchanged from v1)**: `AGENTS.md` :238/:479 — Constraint #10 + Cursor-rules workflow · `.cursor/rules/nucleus.mdc` :351 — example pattern · `nucleus_cli_spec.md` :191 §10 — internal NV section header (Worker GG; doc landed).
+**Policy references (unchanged from v1)**: `AGENTS.md` :238/:479 — Constraint #10 + Cursor-rules workflow · `.cursor/rules/nucleus.mdc` :351 — example pattern · `docs/specs/nucleus_cli_spec.md` :191 §10 — internal NV section header (Worker GG; doc landed).
 
 **Governance scripts — NEW in v2** (external worker; CI enforcement promised in ADRs):
 
@@ -177,7 +177,7 @@ These are **policy references** or **CI enforcement scripts**, not typical TODOs
 - `scripts/check_error_codes.py` :32 — implements ADR-006 §Verification step 1 (AST walk on `NucleusError.error_code` regex `^NE[1-5]\d{3}$`); **resolves v1 §7 ADR-006 :85 AST-walk half**.
 - `scripts/check_api_stability.py` :29 — implements ADR-005 stability-tier enforcement (Frozen/Beta/Experimental surface diff vs locked manifest).
 
-`nucleus_poc_plan.md`, `README.md`, `nucleus_vs_databricks.md`: **0 NV markers** (positioning docs clean — v4.1 :47 is tracked under §4). **9 markers total** (v1: 3; +6).
+`docs/specs/nucleus_poc_plan.md`, `README.md`, `docs/specs/nucleus_vs_databricks.md`: **0 NV markers** (positioning docs clean — v4.1 :47 is tracked under §4). **9 markers total** (v1: 3; +6).
 
 ---
 
@@ -199,7 +199,7 @@ These are **policy references** or **CI enforcement scripts**, not typical TODOs
 - Catalog atomicity on Windows: ADR-001 kill-9 stress harness — Pre-v0.1
 - `ctx.agent.*` signatures lock: v0.5 design ADR — Mo 20-28
 - `ctx.copy_from` `mode="append"`: PoC #5 telemetry / founder call — Pre-v0.1
-- **`nucleus_cli_spec.md` content verification** (subcommands, exit codes, §10 internal NVs): Worker GG **landed doc**; content audit remaining ← UPDATED
+- **`docs/specs/nucleus_cli_spec.md` content verification** (subcommands, exit codes, §10 internal NVs): Worker GG **landed doc**; content audit remaining ← UPDATED
 - ADR-006 H10/H17 routing: founder sign-off — Pre-PoC-#1 promotion
 
 ---
@@ -235,7 +235,7 @@ Items that became green between FF v1 (~02:50) and KK v2 (05:10).
 
 **Cross-reference resolutions (file landings)**:
 
-- `nucleus_cli_spec.md` LANDED (Worker GG) — resolves "doc not in repo" half of v1 §2 :60, §3 `beachhead_e2e.py:17`, §7 ADR-005 :50. Internal §10 NV tracked under §8.
+- `docs/specs/nucleus_cli_spec.md` LANDED (Worker GG) — resolves "doc not in repo" half of v1 §2 :60, §3 `beachhead_e2e.py:17`, §7 ADR-005 :50. Internal §10 NV tracked under §8.
 - `scripts/check_licenses.py` LANDED — resolves v1 §7 ADR-007 :99 "to be authored" parenthetical. 3 internal NVs tracked under §8.
 - `scripts/check_error_codes.py` LANDED — resolves AST-walk-script half of v1 §7 ADR-006 :85. 1 internal NV under §8.
 - `scripts/check_api_stability.py` LANDED — implements ADR-005 stability tier enforcement. 1 internal NV under §8.
@@ -248,13 +248,13 @@ Items that became green between FF v1 (~02:50) and KK v2 (05:10).
 
 Raw markers per section: §1 = 2 (+1 ref) · §2 = 5 (+5 seq) · §3 = 7 PoC + 14 setup (+5 seq) · §4 = 11 (+~32 sub) · §4.5 = 20 · §5 = 76 · §6 = 10 (+~28 sub) · §7 = 25 (~22 sub) · §8 = 9. **Total raw: 181 markers across 59 files** (excluding the index's own self-references). **Substantive: ~235 open items.** **PoC #1 + #2 critical-path: 7 markers**. **Files with most items**: `minio.md` (14, was 20) · `SETUP.md` (11, NEW) · `slack_bot_on_data.md` (11) · `soda.md` (11) · `lance.md` (10) · `ADR-010` (9, NEW).
 
-**Delta vs v1 (155 → 181, +26)**: Top 3 gained — `SETUP.md` (+11), `ADR-010` (+9), `ADR-008` (+6). Top 3 lost — `minio.md` (−6), `C4_container.md` (−3), tied at −1 (`pyarrow.md`, `sequence_swap_drill.md`, `secret_management.md`). Files added: 12 (ADR-004/008/009/010, docker-compose.{yml,minio.yml}, check_{licenses,error_codes,api_stability}.py, nucleus_architecture_v4.1.md, nucleus_cli_spec.md, SETUP.md). Files removed: 0.
+**Delta vs v1 (155 → 181, +26)**: Top 3 gained — `SETUP.md` (+11), `ADR-010` (+9), `ADR-008` (+6). Top 3 lost — `minio.md` (−6), `C4_container.md` (−3), tied at −1 (`pyarrow.md`, `sequence_swap_drill.md`, `secret_management.md`). Files added: 12 (ADR-004/008/009/010, docker-compose.{yml,minio.yml}, check_{licenses,error_codes,api_stability}.py, docs/specs/nucleus_architecture_v4.1.md, docs/specs/nucleus_cli_spec.md, SETUP.md). Files removed: 0.
 
 ---
 
 ## §12. Hygiene notes
 
-**Workers landed at scan time**: HH (ADR-008) · II (ADR-004) · LL (ADR-009) · MM (ADR-010) · JJ-1 (sweep #1: Lance phrasing + 3 nav READMEs) · JJ-2 (sweep #2: v4.1 §5.7+§5.8 propagation + docker-compose stubs + README quickstart + SETUP.md §M3) · macOS SETUP worker (§M1-§M8) · external governance worker (`check_licenses.py` + `check_error_codes.py` + `check_api_stability.py` + PR template + `ci.yml`) · GG (`nucleus_cli_spec.md`, per `SESSION_STATE_2026-05-13.md`).
+**Workers landed at scan time**: HH (ADR-008) · II (ADR-004) · LL (ADR-009) · MM (ADR-010) · JJ-1 (sweep #1: Lance phrasing + 3 nav READMEs) · JJ-2 (sweep #2: v4.1 §5.7+§5.8 propagation + docker-compose stubs + README quickstart + SETUP.md §M3) · macOS SETUP worker (§M1-§M8) · external governance worker (`check_licenses.py` + `check_error_codes.py` + `check_api_stability.py` + PR template + `ci.yml`) · GG (`docs/specs/nucleus_cli_spec.md`, per `SESSION_STATE_2026-05-13.md`).
 
 **Workers in flight at v2 scan time**: **none**. All flagged workers from FF v1 §12 + SESSION_STATE-2026-05-13 queue have landed.
 

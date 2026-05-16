@@ -13,7 +13,7 @@ trigger fires with **measured evidence** — not preemptive dual stacks.
 
 - Real workloads exceed ~5000 graph nodes **and** profiling shows layout or
   interaction latency fails the Workbench RAM / interaction budget in
-  `nucleus_architecture_v4.1.md` §16.3, not anecdotal issue links alone.
+  `docs/specs/nucleus_architecture_v4.1.md` §16.3, not anecdotal issue links alone.
 
 **Notes:** Keep the **asset graph** as a narrow interface (nodes/edges +
 selection callbacks). Rewire rendering only; do not fork coordination or

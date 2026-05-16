@@ -3,7 +3,7 @@
 > **Audience**: You — the solo founder building Nucleus with me as your pair.
 > **Style**: Honest, sequential, project-specific. Not generic.
 > **Time**: Budget ~6-10 hrs/week of focused learning alongside coding.
-> **Companion**: [`AGENTS.md`](../../AGENTS.md), [`docs/conventions/engineering.md`](../conventions/engineering.md), [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)
+> **Companion**: [`AGENTS.md`](../../AGENTS.md), [`docs/conventions/engineering.md`](../conventions/engineering.md), [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md)
 
 > **Using Nucleus in your own project?** Start with [`quickstart.md`](./quickstart.md) and [`examples/`](../examples/) — this document is for **contributors** working inside the Nucleus git tree.
 
@@ -104,7 +104,7 @@ Read in this order, ~6 hrs total:
 5. [`docs/architecture/sequence_error_translation.md`](../architecture/sequence_error_translation.md) — 45 min. The most important sequence.
 6. [`docs/conventions/engineering.md`](../conventions/engineering.md) — 1 hr. Skim, then deep-read §3 (layers), §4 (errors), §7 (interfaces).
 7. [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md) — 20 min. The ADR pattern.
-8. [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) — 2-3 hrs. The source-of-truth. Don't try to remember everything; just orient.
+8. [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) — 2-3 hrs. The source-of-truth. Don't try to remember everything; just orient.
 
 **You know enough when**:
 - You can answer: "Why are there exactly 5 layers, not 4 or 6?"

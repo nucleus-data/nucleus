@@ -95,4 +95,4 @@ python scripts/check_licenses.py       # only GREEN + YELLOW-with-boundary
 
 ---
 
-*Last updated: 2026-05-15. Source: `AGENTS.md §11`, `nucleus_architecture_v4.1.md`.*
+*Last updated: 2026-05-15. Source: `AGENTS.md §11`, `docs/specs/nucleus_architecture_v4.1.md`.*

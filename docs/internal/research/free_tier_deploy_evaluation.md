@@ -166,7 +166,7 @@ Format: **RECOMMENDATION N — Owner — Target — 8-question gate — Effort**
 **REC-7 — Defer ADR-040 (Cloud-tier free-tier substrate matrix)**
 - Owner: founder draft after PoC #5 signal. Target: `docs/decisions/ADR-040-cloud-preview-free-tier-substrate.md` (NOT opened today). Trigger: 3+ external testers + Cloud Preview SKU decision per `§17.1` v0.4+. Effort: defer; 4-6 hours.
 
-**REC-8 — DO NOT amend `nucleus_architecture_v4.1.md` §13 from this proposal**
+**REC-8 — DO NOT amend `docs/specs/nucleus_architecture_v4.1.md` §13 from this proposal**
 - Owner: founder (preserve architect-only edit boundary per AGENTS §11.12). Proposal is operational, not architectural. Effort: 0 (guardrail reminder).
 
 ---
@@ -237,7 +237,7 @@ NO files touched by this pass. The list below fires only on ratification.
 - `public_demo_deploy_plan.md` — §3 Option D (Oracle Ampere Plan B) + §4 R2-backed variant + §5 CF Tunnel hardening + §8 Vercel ToS note (RECs 1, 4, 5)
 - `v0.2_FOUNDER_CLOSE_CHECKLIST.md` — ToS-read item under Section 4 (REC 5)
 - `docs/FOUNDER_ACTION_QUEUE.md` — informational link to this doc (end-of-day batch)
-- `nucleus_architecture_v4.1.md` — **NO change** (REC 8 — operational, not architectural)
+- `docs/specs/nucleus_architecture_v4.1.md` — **NO change** (REC 8 — operational, not architectural)
 - `docs/decisions/ADR-040-cloud-preview-free-tier-substrate.md` — NEW (deferred per REC 7, after PoC #5 signal)
 - `docs/compatibility.md` — NO change (no new pin)
 
@@ -271,7 +271,7 @@ Count: 5.
 **Internal Nucleus documents**:
 - `AGENTS.md` §0, §3, §4, §7, §8, §11.12
 - `.cursor/rules/nucleus.mdc` Tier table; 8-Question Gate; Anti-Over-Engineering
-- `nucleus_architecture_v4.1.md` §1.5, §1.6, §2.1, §3, §4.1, §4.2, §5.5.1, §5.7, §5.8, §6.1, §10, §11.2, §11.3, §17.1, §18.1, §20.1
+- `docs/specs/nucleus_architecture_v4.1.md` §1.5, §1.6, §2.1, §3, §4.1, §4.2, §5.5.1, §5.7, §5.8, §6.1, §10, §11.2, §11.3, §17.1, §18.1, §20.1
 - ADRs: 002 §8.1, 004, 007, 008, 035
 - `docs/internal/research/marimo.md`, `docs/internal/research/s3_duckdb.md`
 - `docs/release/public_demo_deploy_plan.md`, `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md`

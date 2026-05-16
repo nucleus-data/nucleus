@@ -8,7 +8,7 @@ This file is a navigation index only. **Do not** treat one-line summaries below 
 
 ## Tier 0 — Immortal substrates
 
-Open standards and reference implementations Nucleus treats as durable per `nucleus_architecture_v4.1.md` §4. **No swap target ever.**
+Open standards and reference implementations Nucleus treats as durable per `docs/specs/nucleus_architecture_v4.1.md` §4. **No swap target ever.**
 
 - **[lance.md](./lance.md)** (pin: deferred to v0.5+; candidate `pylance==6.0.0` / `lancedb==0.30.2`, license: Apache-2.0, tier: 0 format / 1 library) — Open multimodal lakehouse format + embedded vector library; Tier 0 case stands on ASF-inspired governance + open spec (LF-alignment claim flagged unverified, §9 item 7). *Worker R, 2026-05-13.*
 - **[openlineage.md](./openlineage.md)** (pin: candidate `openlineage-python==1.47.1`, license: Apache-2.0, tier: 0) — Open lineage event spec; AMA is the only call site. *2026-05-13.*

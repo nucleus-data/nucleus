@@ -3,7 +3,7 @@
 > **Last verified**: 2026-05-15 against official documentation + PyPI  
 > **Research tier**: AGENTS.md §11.14 — Research tier (model: Claude Sonnet 4.6 fallback per availability)  
 > **Audience**: Nucleus founder + future architects evaluating distributed/streaming decisions at v0.5–v2.0+  
-> **Related docs**: `docs/internal/research/inspiration/peer_distributed_streaming.md` (Daft/Smallpond/Polars — DO NOT REPEAT), `nucleus_architecture_v4.1.md` §10 (yield-to-giants Modes 1/2/3)  
+> **Related docs**: `docs/internal/research/inspiration/peer_distributed_streaming.md` (Daft/Smallpond/Polars — DO NOT REPEAT), `docs/specs/nucleus_architecture_v4.1.md` §10 (yield-to-giants Modes 1/2/3)  
 > **Note**: This document covers Ray, Modal, Coiled, Mojo, Dask, Paimon, Substrait, and Flink/Beam only. Daft, Smallpond, and Polars Streaming are covered in `peer_distributed_streaming.md`.
 
 ---

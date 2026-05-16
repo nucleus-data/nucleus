@@ -7,8 +7,8 @@ from the file(s); mixed-schema glob patterns raise ``NucleusSchemaError``.
 Stability: Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0  (per ADR-005 §2)
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.5 (Ingestion — local filesystem branch)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_architecture_v4.1.md §5.5 (Ingestion — local filesystem branch)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-020-object-storage-connectors-via-duckdb.md (scope)
     docs/internal/research/filesystem_duckdb.md §3-§6 (DuckDB local file reading)
 

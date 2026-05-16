@@ -224,7 +224,7 @@ python -m scripts.benchmarks.b7_check_overhead --scale 1m
 ```
 
 > Naming note: `@nucleus.check` is the v0.2 SDK quality-check decorator
-> (per `nucleus_ctx_sdk_spec.md` §2.4). Declarative `contract=` on
+> (per `docs/specs/nucleus_ctx_sdk_spec.md` §2.4). Declarative `contract=` on
 > `@nucleus.asset` accepts the value but enforcement is deferred to
 > v0.3+ (`src/nucleus/sdk/decorators.py:asset()` docstring + ADR-013).
 > The check decorator is what
@@ -533,7 +533,7 @@ checklist.
   hardware/software snapshot, atomic JSON writer).
 * `scripts/benchmarks/benchmark_v020.py` — release-facing single-command
   orchestrator.
-* `nucleus_architecture_v4.1.md` §1.5 (beachhead persona), §10
+* `docs/specs/nucleus_architecture_v4.1.md` §1.5 (beachhead persona), §10
   (yield to giants), §6.4 (error translation).
 * `AGENTS.md` §10.8 (be brutally honest about scope), §11.13
   (upgrade smoke baseline = this run).

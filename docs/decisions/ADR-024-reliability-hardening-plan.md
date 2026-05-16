@@ -99,9 +99,9 @@ In `src/nucleus/coordination/asset_materialization.py`, wrap `execute_in_process
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §6.2 (AMA step 3 — commit + lineage)
-- `nucleus_architecture_v4.1.md` §6.4 (Error Translation Layer — NE5001/5002)
-- `nucleus_architecture_v4.1.md` §9.3 (Composability — pyiceberg swap interface)
+- `docs/specs/nucleus_architecture_v4.1.md` §6.2 (AMA step 3 — commit + lineage)
+- `docs/specs/nucleus_architecture_v4.1.md` §6.4 (Error Translation Layer — NE5001/5002)
+- `docs/specs/nucleus_architecture_v4.1.md` §9.3 (Composability — pyiceberg swap interface)
 - `AGENTS.md` §11.7 (Error translation discipline)
 
 ## Rollback

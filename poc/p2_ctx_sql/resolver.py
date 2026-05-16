@@ -1,7 +1,7 @@
 """PROMOTED 2026-05-13 to ``src/nucleus/coordination/sql_resolver.py``. This
 directory remains as canonical PoC reference per rollback plan.
 
-Native ``ctx.sql`` Jinja resolver — PoC #2 (steps 2-3 of nucleus_poc_plan.md §2).
+Native ``ctx.sql`` Jinja resolver — PoC #2 (steps 2-3 of docs/specs/nucleus_poc_plan.md §2).
 
 Scope (deliberately minimal):
     - ONE feature: ``{{ ref('schema.name') }}`` rendering.
@@ -14,9 +14,9 @@ Scope (deliberately minimal):
 
 Pins/docs:
     - jinja2==3.1.5
-    - ``nucleus_architecture_v4.1.md`` §5.6.0 — native ctx.sql scope ceiling
-    - ``nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
-    - ``nucleus_poc_plan.md`` §2 — PoC #2 spec
+    - ``docs/specs/nucleus_architecture_v4.1.md`` §5.6.0 — native ctx.sql scope ceiling
+    - ``docs/specs/nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
+    - ``docs/specs/nucleus_poc_plan.md`` §2 — PoC #2 spec
 """
 
 from __future__ import annotations

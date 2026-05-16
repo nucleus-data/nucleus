@@ -1,7 +1,7 @@
 # 06 — Error Translation Guide
 
 > **What you're doing**: Adding new `NucleusError` subclasses, writing translator handlers, or verifying that external exceptions are properly translated.
-> **Why it matters**: The Error Translation Layer is the #1 release blocker discipline. A leaked Dagster classname or a raw `duckdb.CatalogException` in user output destroys the abstraction thesis. Per `nucleus_architecture_v4.1.md` §6.4.
+> **Why it matters**: The Error Translation Layer is the #1 release blocker discipline. A leaked Dagster classname or a raw `duckdb.CatalogException` in user output destroys the abstraction thesis. Per `docs/specs/nucleus_architecture_v4.1.md` §6.4.
 > **Authority**: ADR-006 (error code numbering), `AGENTS.md §11.7`.
 > **Time**: 1-2 hours per new translator handler
 
@@ -59,7 +59,7 @@ class NucleusMyNewError(NucleusError):
     """
     <One-sentence description of when this error fires>.
 
-    Per nucleus_architecture_v4.1.md §6.4.
+    Per docs/specs/nucleus_architecture_v4.1.md §6.4.
     """
     error_code: ClassVar[str] = "NE1003"    # next free in the appropriate band
     docs_url: ClassVar[str] = "https://nucleus.dev/errors/<slug>"
@@ -146,7 +146,7 @@ _HANDLERS: list[Callable[[Exception], NucleusError | None]] = [
 
 ## Step 3: The 8 Critical Translation Cases
 
-Per `nucleus_architecture_v4.1.md` §6.4, all 8 must be handled at every external boundary:
+Per `docs/specs/nucleus_architecture_v4.1.md` §6.4, all 8 must be handled at every external boundary:
 
 | # | Error type | Expected `NucleusError` subclass |
 |---|---|---|
@@ -304,6 +304,6 @@ If a new error code causes CI failure (duplicate code, wrong band):
 - `src/nucleus/errors.py` — all NucleusError subclasses
 - `src/nucleus/coordination/error_translation.py` — translator + handlers
 - ADR-006: `docs/decisions/ADR-006-nucleus-error-code-numbering.md`
-- `nucleus_architecture_v4.1.md` §6.4 — Error Translation Layer
+- `docs/specs/nucleus_architecture_v4.1.md` §6.4 — Error Translation Layer
 - `docs/errors/` — user-facing error docs (one page per error slug)
 - `.cursor/skills/nucleus-error-translation/SKILL.md` — Cursor skill for this discipline

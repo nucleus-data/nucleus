@@ -3,7 +3,7 @@
 Wraps ``nucleus.ctx.sql`` (which in turn uses DuckDB + Jinja) and returns
 rows + schema as JSON for the Workbench Query Editor page.
 
-``nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience) + §5.6.0 (ctx.sql).
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience) + §5.6.0 (ctx.sql).
 ADR-016 §3 — Fork B API surface.
 
 The caller must supply ``warehouse_dir`` pointing to a valid Nucleus warehouse.

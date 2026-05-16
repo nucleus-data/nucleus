@@ -28,6 +28,6 @@ This is distinct from a configuration problem (`NucleusConfigError`, `NE5001`) �
 
 - Source: `src/nucleus/errors.py` (`NucleusEnvironmentError`)
 - Default fix hint: command-specific (e.g., "Verify Docker is responsive" or "Check container logs and verify port 9000 is free.")
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
-- Spec: [`nucleus_cli_spec.md` §3.2](../../nucleus_cli_spec.md) (`nucleus up`) · §10 NV #4 (first L4 NE5xxx allocation)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
+- Spec: [`docs/specs/nucleus_cli_spec.md` §3.2](../specs/nucleus_cli_spec.md) (`nucleus up`) · §10 NV #4 (first L4 NE5xxx allocation)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

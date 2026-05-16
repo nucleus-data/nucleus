@@ -3,7 +3,7 @@
 > **Status**: Pre-research probe. **NOT** an amendment to ADR-008 (storage) or ADR-004 (catalog ladder); both stand. Records empirical findings from a 60-min live smoke probe to test whether SeaweedFS 4.23's auto-started `Iceberg REST Catalog Server at http://0.0.0.0:8181` (same `chrislusf/seaweedfs:4.23` image used for storage per ADR-008) is functional enough to **collapse** the ladder — i.e., let `nucleus up` rely on a single SeaweedFS binary for both object storage AND atomic-commit catalog, removing v0.1's `pyiceberg.SqlCatalog` and v0.3+'s Lakekeeper/Polaris dep.
 > **Verdict**: **YELLOW** — protocol-layer compliance is real and verified; pyiceberg E2E round-trip blocked on a fixable auth coupling. Existing ladder stands. Re-probe at v0.3 milestone.
 > **Date**: 2026-05-13 · **Owner**: Solo founder
-> **Tier (if adopted)**: Iceberg REST protocol = Tier 0 (immortal) per `nucleus_architecture_v4.1.md` §4.1; SeaweedFS server = Tier 1 implementation, swap target alongside Lakekeeper / Polaris.
+> **Tier (if adopted)**: Iceberg REST protocol = Tier 0 (immortal) per `docs/specs/nucleus_architecture_v4.1.md` §4.1; SeaweedFS server = Tier 1 implementation, swap target alongside Lakekeeper / Polaris.
 > **Used in**: nowhere yet. Probe-only artifact.
 
 Official-docs anchor per AGENTS.md Hard Constraint #10. Read before opening any future ADR amendment proposing to collapse the ADR-004 catalog ladder onto the SeaweedFS substrate.
@@ -43,7 +43,7 @@ Errors use the `{"error":{"message","type","code"}}` envelope with proper Iceber
 
 ## §3. Feature parity matrix vs. the PoC #3 baseline
 
-PoC #3 baseline = `pyiceberg.SqlCatalog` per `nucleus_architecture_v4.1.md` §5.7 + Amendment 4. It validated `create_namespace → create_table → append → scan` E2E successfully.
+PoC #3 baseline = `pyiceberg.SqlCatalog` per `docs/specs/nucleus_architecture_v4.1.md` §5.7 + Amendment 4. It validated `create_namespace → create_table → append → scan` E2E successfully.
 
 | Capability | `SqlCatalog` (PoC #3 baseline) | SeaweedFS 4.23 REST (this probe) |
 |---|---|---|
@@ -98,7 +98,7 @@ A third path (OAuth2 against `/v1/oauth/tokens` with S3-key-as-credentials) is d
 
 ## §5. Comparison to the ADR-008 / ADR-004 ladder
 
-ADR-008 already nominates `chrislusf/seaweedfs:4.23` as the documentation-default storage substrate for v0.1 (Apache-2.0, actively maintained). Adding the bundled REST catalog on top would be **architecturally consistent** — same binary, same docker-compose service, no second container. ADR-004 defines the v0.3+ catalog ladder as Lakekeeper-vs-Polaris, both behind `pyiceberg.RestCatalog`. v0.1 stays on `pyiceberg.SqlCatalog` per `nucleus_architecture_v4.1.md` §5.7 + Amendment 4.
+ADR-008 already nominates `chrislusf/seaweedfs:4.23` as the documentation-default storage substrate for v0.1 (Apache-2.0, actively maintained). Adding the bundled REST catalog on top would be **architecturally consistent** — same binary, same docker-compose service, no second container. ADR-004 defines the v0.3+ catalog ladder as Lakekeeper-vs-Polaris, both behind `pyiceberg.RestCatalog`. v0.1 stays on `pyiceberg.SqlCatalog` per `docs/specs/nucleus_architecture_v4.1.md` §5.7 + Amendment 4.
 
 **Could SeaweedFS REST collapse the ladder?**
 
@@ -148,7 +148,7 @@ ADR-008 already nominates `chrislusf/seaweedfs:4.23` as the documentation-defaul
 - **Maturity vs. PoC #3 baseline**: yellow. Catalog code is ~3 months old, no 1.0 stamp, no community CVE/patch history yet.
 
 **Recommendation**:
-1. **No ADR amendment now.** ADR-008 (storage = SeaweedFS) and ADR-004 (catalog ladder = Lakekeeper-vs-Polaris) **stand unchanged**. v0.1 continues with `pyiceberg.SqlCatalog` per `nucleus_architecture_v4.1.md` §5.7 + Amendment 4.
+1. **No ADR amendment now.** ADR-008 (storage = SeaweedFS) and ADR-004 (catalog ladder = Lakekeeper-vs-Polaris) **stand unchanged**. v0.1 continues with `pyiceberg.SqlCatalog` per `docs/specs/nucleus_architecture_v4.1.md` §5.7 + Amendment 4.
 2. **Re-probe at v0.3 readiness gate.** Allocate 2-4 hours: install `boto3` in a scratch venv, validate full SigV4 E2E, stress concurrent commits, exercise schema evolution + Iceberg-Table-Maintenance ops. If GREEN, open follow-up ADR amendment proposing **SeaweedFS REST as a third v0.3+ catalog option** alongside Lakekeeper and Polaris — NOT as a collapse of the ladder.
 3. **One-line ADR-008 / ADR-004 amendment trigger**: **No / defer.** Probe surfaced no information that invalidates either ADR.
 

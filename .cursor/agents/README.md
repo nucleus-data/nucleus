@@ -49,7 +49,7 @@ Architect role stays in foreground on the parent (Opus 4.7). We deliberately do 
 A subagent MUST escalate to foreground (architect) if:
 
 1. **Scope ambiguity** — the prompt is unclear or the task is larger than declared
-2. **Architecture invariant at risk** — any change touching `nucleus_architecture_v4.1.md` constraints (§3 in `nucleus.mdc`)
+2. **Architecture invariant at risk** — any change touching `docs/specs/nucleus_architecture_v4.1.md` constraints (§3 in `nucleus.mdc`)
 3. **8-question gate failure** — any answer "no" or "unclear" per `.cursor/rules/nucleus.mdc`
 4. **Wrap-vs-build decision needed** — every BUILD requires an ADR per §11.5
 5. **New dependency required** — must come through ADR per Constraint #11
@@ -142,8 +142,8 @@ Per Cursor docs §"Anti-patterns to avoid":
 | `AGENTS.md` §11.12 | Official docs verification (`researcher` discipline) |
 | `AGENTS.md` §11.13 | Upgrade safety discipline (`builder` discipline for dep upgrades) |
 | `.cursor/rules/nucleus.mdc` | Cursor-specific workflow tactics + 8-question gate |
-| `nucleus_architecture_v4.1.md` | The architecture every subagent must respect |
-| `nucleus_poc_plan.md` | What's being promoted; status of each PoC |
+| `docs/specs/nucleus_architecture_v4.1.md` | The architecture every subagent must respect |
+| `docs/specs/nucleus_poc_plan.md` | What's being promoted; status of each PoC |
 | `docs/FOUNDER_ACTION_QUEUE.md` | What's pending founder decision (NOT delegatable) |
 
 ---

@@ -1,7 +1,7 @@
 """The ctx SDK — Nucleus's public Python API (L4).
 
 This module is the **only** stable surface for SDK users from v1.0 onward.
-Per ``nucleus_architecture_v4.1.md`` §13.1, anything not exported here is
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §13.1, anything not exported here is
 internal and may change without notice.
 
 Typical use::
@@ -36,10 +36,10 @@ Deferred to v0.2+ (per ADR-013 + Phase D scope):
     - ``ctx.log()``      use stdlib ``logging`` module for now
     - ``ctx.params()``   use CLI / config for now
 
-See ``nucleus_ctx_sdk_spec.md`` for the full specification and the
+See ``docs/specs/nucleus_ctx_sdk_spec.md`` for the full specification and the
 Stability tier matrix (ADR-005).
 
-Dependency direction (``nucleus_architecture_v4.1.md`` §5.5):
+Dependency direction (``docs/specs/nucleus_architecture_v4.1.md`` §5.5):
     ctx may import from intelligence, coordination, engines, physics, _internal,
     and the top-level ``nucleus.errors``.
     ctx must NEVER be imported by lower layers (cycle-prevention).

@@ -41,7 +41,7 @@ Estimated disk reclaimable: < 5 MB (the major cleanup was already done on 2026-0
 | Field | Value |
 |---|---|
 | **Path** | `architecture_design_conversation.md` |
-| **Why delete** | Appears to be a planning conversation transcript used during architecture design. Superseded by the formal architecture docs (`nucleus_architecture_v4.1.md` + ADRs). Per `AGENTS.md` §2, v4.1 is the single source of truth. |
+| **Why delete** | Appears to be a planning conversation transcript used during architecture design. Superseded by the formal architecture docs (`docs/specs/nucleus_architecture_v4.1.md` + ADRs). Per `AGENTS.md` §2, v4.1 is the single source of truth. |
 | **Safety check** | `rg "architecture_design_conversation"` → verify zero inbound links before deleting |
 | **Action** | Delete if no inbound links, otherwise archive to `docs/archive/` |
 
@@ -85,7 +85,7 @@ Use `git mv` to preserve blame/log history. These files are intentionally kept p
 |---|---|
 | **Current path** | `nucleus_architecture_v3.md` (root) |
 | **Target path** | `docs/archive/architecture-v3.md` |
-| **Why archive** | Explicitly deprecated. `nucleus_architecture_v4.1.md` supersedes. `AGENTS.md §2` says "Use only as historical reference." |
+| **Why archive** | Explicitly deprecated. `docs/specs/nucleus_architecture_v4.1.md` supersedes. `AGENTS.md §2` says "Use only as historical reference." |
 | **References to update** | `AGENTS.md §2` table row (update path); `docs/decisions/` ADRs that cite "v3" may have inline mentions |
 | **Command** | `git mv nucleus_architecture_v3.md docs/archive/architecture-v3.md` |
 | **Risk** | Low — but update `AGENTS.md §2` reading list path simultaneously |
@@ -154,14 +154,14 @@ Use `git mv` to preserve blame/log history. These files are intentionally kept p
 
 ## Section 4: Stale Docs (Rewrite or Delete)
 
-### 4.1 `nucleus_project_anatomy.md` — v3-era drift
+### 4.1 `docs/specs/nucleus_project_anatomy.md` — v3-era drift
 
 | Field | Value |
 |---|---|
-| **Path** | `nucleus_project_anatomy.md` (root) |
+| **Path** | `docs/specs/nucleus_project_anatomy.md` (root) |
 | **Status** | v3-era; references `nucleus.yaml` (not `nucleus_project.yaml`); references `.nucleus/warehouse/` layout not emitted by current `nucleus init` |
 | **Impact** | MINOR per FOUNDER_ACTION_QUEUE §0 "Silent-landing audit" item 4 |
-| **Short-term action** | Add `SUPERSEDED` header: `> **STATUS — SUPERSEDED**: This doc is v3-era. See \`nucleus_architecture_v4.1.md §3.1\` and \`nucleus_cli_spec.md §3.1\` for current layout.` |
+| **Short-term action** | Add `SUPERSEDED` header: `> **STATUS — SUPERSEDED**: This doc is v3-era. See \`docs/specs/nucleus_architecture_v4.1.md §3.1\` and \`docs/specs/nucleus_cli_spec.md §3.1\` for current layout.` |
 | **Long-term action** | Full rewrite for v0.3 site docs; `docs/site/getting-started/` (Wave-1C) may already cover this |
 | **Reorg note** | If reorg PR-B runs, this moves to `docs/archive/project-anatomy-v3.md` |
 
@@ -303,7 +303,7 @@ Step 8 — Section 3: Consolidate dispatchers (v0.2.1 patch)
 | F2 | `architecture_design_conversation.md` | A: Delete (superseded) / B: Archive `docs/archive/` | **B: Archive** (retains design rationale context) |
 | F3 | PoC p1/p2/p3 stubs post-promotion | A: Archive to `docs/archive/poc/` / B: Keep in `poc/` | **A: Archive** — reduces active tree noise; git history preserved |
 | F4 | `frontend/` directory | A: Delete (pre-workbench scratch) / B: Keep until Wave-1A fully confirmed | **B: Keep** until Wave-1A verified; then delete |
-| F5 | `nucleus_project_anatomy.md` short-term action | A: Add SUPERSEDED header now (5 min) / B: Leave for reorg PR-B | **A: Add header now** — user-visible confusion risk if left as-is |
+| F5 | `docs/specs/nucleus_project_anatomy.md` short-term action | A: Add SUPERSEDED header now (5 min) / B: Leave for reorg PR-B | **A: Add header now** — user-visible confusion risk if left as-is |
 
 ---
 

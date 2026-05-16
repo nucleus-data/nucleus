@@ -2,7 +2,7 @@
 
 ## Summary
 
-Promotes the Error Translation Layer from `poc/p1_error_translation/translator.py` to `src/nucleus/coordination/error_translation.py`, satisfying `nucleus_architecture_v4.1.md` §6.4 ("Leaky Dagster errors in user-facing surface = release blocker"). Ships **17 typed handlers + 2 new fallback handlers** (`ConnectionError` + `ValueError`, extracted this session from inner-cause branches of `_dagster_step_handler`), a **two-pass match restructure** in `translate()` that prefers a specific library handler over the generic Dagster-wrapper fallback, and an `_iter_causes` walker traversing both `__cause__` and `__context__` (cycle-safe, depth-bounded at 8) so a wrapped library exception inside a Dagster `materialize()` re-raise still routes to its specific handler. Lifts `[ ] PoC #1` in `AGENTS.md` §1, unblocking ADR-003 PyIceberg `0.8.1 → 0.11.x` per ADR-002 §4.2.
+Promotes the Error Translation Layer from `poc/p1_error_translation/translator.py` to `src/nucleus/coordination/error_translation.py`, satisfying `docs/specs/nucleus_architecture_v4.1.md` §6.4 ("Leaky Dagster errors in user-facing surface = release blocker"). Ships **17 typed handlers + 2 new fallback handlers** (`ConnectionError` + `ValueError`, extracted this session from inner-cause branches of `_dagster_step_handler`), a **two-pass match restructure** in `translate()` that prefers a specific library handler over the generic Dagster-wrapper fallback, and an `_iter_causes` walker traversing both `__cause__` and `__context__` (cycle-safe, depth-bounded at 8) so a wrapped library exception inside a Dagster `materialize()` re-raise still routes to its specific handler. Lifts `[ ] PoC #1` in `AGENTS.md` §1, unblocking ADR-003 PyIceberg `0.8.1 → 0.11.x` per ADR-002 §4.2.
 
 ---
 
@@ -52,9 +52,9 @@ Two structural changes were applied to `translator.py` by the bring-up worker AF
 
 ## Files to be updated
 
-- `nucleus_poc_plan.md` §1 — PoC #1 status `IN PROGRESS` → `PROMOTED 2026-05-NN with commit <hash>`.
+- `docs/specs/nucleus_poc_plan.md` §1 — PoC #1 status `IN PROGRESS` → `PROMOTED 2026-05-NN with commit <hash>`.
 - `AGENTS.md` §1 — phase-gate row `[ ] PoC #1` → `[✓] PoC #1 (promoted YYYY-MM-DD)`.
-- `nucleus_architecture_v4.1.md` §6.4 — drop "PoC #1 validates feasibility" caveat; v4.1.2 deferral note rewritten iff ADR-006 ratifies in this PR.
+- `docs/specs/nucleus_architecture_v4.1.md` §6.4 — drop "PoC #1 validates feasibility" caveat; v4.1.2 deferral note rewritten iff ADR-006 ratifies in this PR.
 - `docs/decisions/ADR-002-positioning-decision-2026-05.md` §8.6 — apply-log row for the promotion commit.
 - `docs/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot (`AGENTS.md` §11.6).
 
@@ -106,5 +106,5 @@ issue).
 
 Downstream: ADR-003 PyIceberg 0.8.1 -> 0.11.x upgrade now unblocked.
 
-Refs: AGENTS.md §11.1, §11.7; nucleus_architecture_v4.1.md §6.4.
+Refs: AGENTS.md §11.1, §11.7; docs/specs/nucleus_architecture_v4.1.md §6.4.
 ```

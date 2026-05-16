@@ -1,7 +1,7 @@
 """Tests for ``nucleus snapshot`` CLI commands (ADR-028).
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §6.3 (coordination layer)
+    docs/specs/nucleus_architecture_v4.1.md §6.3 (coordination layer)
     ADR-028 (Iceberg branch + tag CLI verbs)
 """
 

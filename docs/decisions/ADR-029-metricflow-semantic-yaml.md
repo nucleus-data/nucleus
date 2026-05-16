@@ -68,6 +68,6 @@ Recommended: **Option A**. Implementation sequence:
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §7.3 (AI Copilot architecture)
-- `nucleus_architecture_v4.1.md` §8.3 (Intelligence layer)
-- `nucleus_ctx_sdk_spec.md` §3 (`@nucleus.asset` decorator parameters)
+- `docs/specs/nucleus_architecture_v4.1.md` §7.3 (AI Copilot architecture)
+- `docs/specs/nucleus_architecture_v4.1.md` §8.3 (Intelligence layer)
+- `docs/specs/nucleus_ctx_sdk_spec.md` §3 (`@nucleus.asset` decorator parameters)

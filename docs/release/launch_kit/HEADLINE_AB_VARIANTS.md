@@ -55,7 +55,7 @@ Each variant is 80 characters max (HN soft limit). Each carries a single rhetori
 - **Framing**: lead with the yield-to-giants strategy. Honest about being a stepping-stone, which is the inverse of the typical SaaS "lock in users forever" pitch.
 - **Audience**: engineers who have been burned by vendor lock-in; readers who value optionality.
 - **Predicted objection**: "Why would I adopt something the authors expect me to leave?"
-- **Counter (one line)**: Because Iceberg portability is the moat - your snapshots stay yours; you never pay an export tax; and Mode 1 graduation (point Databricks/Snowflake at the same S3 bucket) is a config-file edit, not a migration project (`nucleus_architecture_v4.1.md` section 10.1).
+- **Counter (one line)**: Because Iceberg portability is the moat - your snapshots stay yours; you never pay an export tax; and Mode 1 graduation (point Databricks/Snowflake at the same S3 bucket) is a config-file edit, not a migration project (`docs/specs/nucleus_architecture_v4.1.md` section 10.1).
 - **WHY THIS VARIANT**: 1. Inverts the usual SaaS framing in a way HN respects; 2. Pre-emptively kills the lock-in objection in the title.
 
 ---
@@ -189,7 +189,7 @@ HONEST disclosures, because this community deserves them:
 Try it:
 
  Repo: github.com/nucleus-data/nucleus
- Architecture: nucleus_architecture_v4.1.md (50 min read)
+ Architecture: docs/specs/nucleus_architecture_v4.1.md (50 min read)
  License: Apache 2.0
 
 If something works, tell us.
@@ -214,7 +214,7 @@ If something breaks, file an issue with the NE#### error code so we can find it 
 >
 > **What this means for a decision-maker:**
 >
-> - **You decouple the platform decision from the warehouse decision.** Iceberg bytes are portable. The day you outgrow Nucleus, you point Databricks, Snowflake, or any Iceberg catalog at the same S3 bucket and you are done. Zero migration. This is a first-class architectural principle (`nucleus_architecture_v4.1.md` section 10), not a roadmap promise.
+> - **You decouple the platform decision from the warehouse decision.** Iceberg bytes are portable. The day you outgrow Nucleus, you point Databricks, Snowflake, or any Iceberg catalog at the same S3 bucket and you are done. Zero migration. This is a first-class architectural principle (`docs/specs/nucleus_architecture_v4.1.md` section 10), not a roadmap promise.
 > - **You eliminate the integration tax.** Nucleus is 8,484 lines of proprietary code wrapping ~1.2M lines of production-grade open source (DuckDB, Polars, pyiceberg, Dagster, OpenLineage). The 30K LOC v1.0 ceiling is a Hard Constraint, not a target. Less code we maintain means less code your team has to debug.
 > - **You stay credible with senior engineers.** We publish empirical performance numbers before launch, including 11 measured failures vs aspirational targets. We translate every wrapped library exception to a stable `NE####` error code with a `docs_url`. We do not say "AI-native" or "Spark killer" - the architecture document `AGENTS.md` section 8 explicitly forbids those framings. <!-- banned-term: launch-forbidden-framings -->
 >
@@ -249,7 +249,7 @@ If something breaks, file an issue with the NE#### error code so we can find it 
 
 > /r/dataengineering - I want to do this post differently. The 30-second pitch is in the README and the launch FAQ. What you actually want is the architecture and the empirical numbers, so that is what this post is.
 >
-> **Architecture in one paragraph.** Five layers, bottom-up: L0 Physics (Apache Arrow / Iceberg / Parquet / S3 API / OpenLineage / OpenTelemetry) -> L1 Engines (DuckDB default, DataFusion swap; Polars default, DataFusion DF swap) -> L2 Coordination (asset graph wrapping Dagster, Asset Materialization Adapter ~500 LOC, Error Translation Layer, contracts, lineage, scheduling daemon, run ledger, advisory file lock) -> L3 Intelligence (Copilot v0.2 chat-only; schema-aware v0.3; lineage-aware v0.5) -> L4 Experience (`ctx` SDK + `nucleus` CLI + Workbench web IDE + Marimo from v0.3+). Source of truth: `nucleus_architecture_v4.1.md` (~50 min read, ~25K words, in the repo).
+> **Architecture in one paragraph.** Five layers, bottom-up: L0 Physics (Apache Arrow / Iceberg / Parquet / S3 API / OpenLineage / OpenTelemetry) -> L1 Engines (DuckDB default, DataFusion swap; Polars default, DataFusion DF swap) -> L2 Coordination (asset graph wrapping Dagster, Asset Materialization Adapter ~500 LOC, Error Translation Layer, contracts, lineage, scheduling daemon, run ledger, advisory file lock) -> L3 Intelligence (Copilot v0.2 chat-only; schema-aware v0.3; lineage-aware v0.5) -> L4 Experience (`ctx` SDK + `nucleus` CLI + Workbench web IDE + Marimo from v0.3+). Source of truth: `docs/specs/nucleus_architecture_v4.1.md` (~50 min read, ~25K words, in the repo).
 >
 > **The leverage math.** Proprietary code under `src/nucleus/` is **8,484 LOC** as of the v0.2.0 release-bundle commit (47.1% of the v0.5 ceiling; under the 30K LOC v1.0 hard ceiling per `AGENTS.md` section 3 #8). Wrapped OSS adds up to ~1.23M LOC behind that surface: DuckDB ~700K, Polars ~250K, Dagster ~150K, dlt ~80K (v0.3+), pyiceberg ~50K. Every line we did not write is a line we do not have to debug, secure, or carry across major-version transitions.
 >
@@ -269,9 +269,9 @@ If something breaks, file an issue with the NE#### error code so we can find it 
 >
 > **Paid testers wanted (PoC #5).** I am recruiting 20 engineers for 90-minute paid usability sessions over the next 6 weeks. Compensation is in `docs/poc/p5_beachhead/RECRUITMENT_PLAN.md` (founder is finalizing the number this week; the placeholder is `$150`). Eligibility: a working data engineer at a 5-20 engineer company, with at least one greenfield Iceberg / DuckDB / Polars production deployment under your belt. Email or DM if interested, or book directly via the Calendly link in the recruitment doc once it is live.
 >
-> **What we are not.** Not a Spark replacement. Not a Databricks/Snowflake competitor (we feed them via graduation). Not an ML training platform. Not a vector database (we use Lance). Not an identity system (we delegate to OIDC). The full Non-Goals list is `nucleus_architecture_v4.1.md` section 20.
+> **What we are not.** Not a Spark replacement. Not a Databricks/Snowflake competitor (we feed them via graduation). Not an ML training platform. Not a vector database (we use Lance). Not an identity system (we delegate to OIDC). The full Non-Goals list is `docs/specs/nucleus_architecture_v4.1.md` section 20.
 >
-> Repo: <https://github.com/nucleus-data/nucleus> | Architecture: `nucleus_architecture_v4.1.md` | License: Apache 2.0.
+> Repo: <https://github.com/nucleus-data/nucleus> | Architecture: `docs/specs/nucleus_architecture_v4.1.md` | License: Apache 2.0.
 >
 > Critical feedback welcome. Hostile-but-substantive feedback especially welcome.
 

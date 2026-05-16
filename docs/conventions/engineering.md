@@ -73,7 +73,7 @@ Engineering conventions exist to make 1,000 small decisions once so we never re-
 - **Enforcement**: Dependency direction rule (see §3.1).
 
 ### §2.5 Public API surface
-- **Decision**: **Only `nucleus.ctx.*` and `nucleus.cli.*` are public.** Everything else is internal. Imports outside these from user code violate `nucleus_architecture_v4.1.md` §13.1 (ctx SDK Contract).
+- **Decision**: **Only `nucleus.ctx.*` and `nucleus.cli.*` are public.** Everything else is internal. Imports outside these from user code violate `docs/specs/nucleus_architecture_v4.1.md` §13.1 (ctx SDK Contract).
 - **Why**: Stable surface = stable contract.
 - **Enforcement**: `__all__` in `nucleus/__init__.py` lists only public names. `scripts/check_public_api.py` validates.
 

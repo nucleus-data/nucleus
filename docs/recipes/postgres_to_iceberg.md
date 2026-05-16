@@ -2,9 +2,9 @@
 
 > **Time**: ~25 min (5-min buffer against the 30-min beachhead metric) · **Difficulty**: Junior DE · **Prereqs**: Python 3.11 / 3.12, Docker Desktop, ~2 GB disk
 > **Status**: pre-v0.1 — depends on PoCs #1 + #3 + #4 passing first; CLI lines marked `<!-- pre-v0.1 -->`
-> **Refs**: [v4.1 §1.5](../../nucleus_architecture_v4.1.md) · [`nucleus_poc_plan.md`](../../nucleus_poc_plan.md) §5 · [`nucleus_cli_spec.md`](../../nucleus_cli_spec.md) · [`csv_to_iceberg.md`](./csv_to_iceberg.md) (no-Docker variant)
+> **Refs**: [v4.1 §1.5](../specs/nucleus_architecture_v4.1.md) · [`docs/specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §5 · [`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) · [`csv_to_iceberg.md`](./csv_to_iceberg.md) (no-Docker variant)
 
-The canonical beachhead recipe — the one PoC #5 external testers run end-to-end ([`nucleus_poc_plan.md`](../../nucleus_poc_plan.md) §5). 5-engineer team, `git clone` to BI-ready Iceberg asset on a laptop in <30 minutes.
+The canonical beachhead recipe — the one PoC #5 external testers run end-to-end ([`docs/specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §5). 5-engineer team, `git clone` to BI-ready Iceberg asset on a laptop in <30 minutes.
 
 ---
 
@@ -14,7 +14,7 @@ A Northwind-style orders pipeline: local Postgres source → Iceberg `raw.orders
 
 ## Why this matters
 
-The non-negotiable v0.1 metric ([v4.1 §1.5](../../nucleus_architecture_v4.1.md)): *5-engineer startup team, MacBooks, Postgres + S3, first BI-ready Iceberg table from `git clone` in **<30 minutes**.* The data product you ship is an *asset* per [v4.1 §12.1](../../nucleus_architecture_v4.1.md) — Iceberg-backed, inferred schema, asset-level lineage, contract slot.
+The non-negotiable v0.1 metric ([v4.1 §1.5](../specs/nucleus_architecture_v4.1.md)): *5-engineer startup team, MacBooks, Postgres + S3, first BI-ready Iceberg table from `git clone` in **<30 minutes**.* The data product you ship is an *asset* per [v4.1 §12.1](../specs/nucleus_architecture_v4.1.md) — Iceberg-backed, inferred schema, asset-level lineage, contract slot.
 
 ---
 
@@ -62,12 +62,12 @@ SQL
 ## Step 3: Initialize a Nucleus project (~2 min)
 
 ```bash
-nucleus init northwind-demo --template=basic   # <!-- pre-v0.1; nucleus_cli_spec.md §3.1 -->
+nucleus init northwind-demo --template=basic   # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §3.1 -->
 cd northwind-demo
-nucleus up                                      # <!-- pre-v0.1; nucleus_cli_spec.md §3.2 -->
+nucleus up                                      # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §3.2 -->
 ```
 
-Expected ([v4.1 §11.1](../../nucleus_architecture_v4.1.md)):
+Expected ([v4.1 §11.1](../specs/nucleus_architecture_v4.1.md)):
 
 ```
 ✓ MinIO ready                  :9000
@@ -89,7 +89,7 @@ Auto-infers the Iceberg schema, atomically commits via the filesystem catalog, p
 ## Step 5: Verify (~1 min)
 
 ```bash
-nucleus sql "SELECT count(*) FROM raw.orders"   # <!-- pre-v0.1; nucleus_cli_spec.md §4.5 -->
+nucleus sql "SELECT count(*) FROM raw.orders"   # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §4.5 -->
 # Expected: 100
 ```
 
@@ -120,10 +120,10 @@ def orders_daily(ctx) -> pl.DataFrame:
 ```
 
 ```bash
-nucleus run analytics.orders_daily              # <!-- pre-v0.1; nucleus_cli_spec.md §4.1 -->
+nucleus run analytics.orders_daily              # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §4.1 -->
 ```
 
-Second Iceberg asset, downstream of `raw.orders`, asset-level lineage emitted to OpenLineage ([v4.1 §12.4](../../nucleus_architecture_v4.1.md)).
+Second Iceberg asset, downstream of `raw.orders`, asset-level lineage emitted to OpenLineage ([v4.1 §12.4](../specs/nucleus_architecture_v4.1.md)).
 
 ## Step 7: Hook a BI tool to your data (~4 min)
 
@@ -137,7 +137,7 @@ SELECT * FROM iceberg_scan('.nucleus/warehouse/analytics/orders_daily');
 -- Point your BI tool at this DuckDB connection.
 ```
 
-Post-v0.1, `nucleus enable bi-metabase` ([`nucleus_cli_spec.md`](../../nucleus_cli_spec.md) §8.1) will boot Metabase pre-wired.
+Post-v0.1, `nucleus enable bi-metabase` ([`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §8.1) will boot Metabase pre-wired.
 
 Done. Total: **<25 min** if nothing went sideways.
 
@@ -157,7 +157,7 @@ Done. Total: **<25 min** if nothing went sideways.
 
 - **`connection refused` on ingest** — Postgres not yet ready; `docker compose logs postgres` should show `database system is ready to accept connections`.
 - **Schema picks `STRING` for `amount`** — source was `VARCHAR`, not `NUMERIC`. Re-create the source table; v0.1 has no manual type override (NEEDS VERIFICATION).
-- **`nucleus sql` says "asset not defined"** — namespace mismatch; check spelling against `nucleus list` ([`nucleus_cli_spec.md`](../../nucleus_cli_spec.md) §5.1).
+- **`nucleus sql` says "asset not defined"** — namespace mismatch; check spelling against `nucleus list` ([`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §5.1).
 
 ## What's next
 
@@ -171,10 +171,10 @@ Done. Total: **<25 min** if nothing went sideways.
 
 Per [AGENTS.md §11.12](../../AGENTS.md), uncertain claims logged so PoC #5 can confirm or reject:
 
-1. **`nucleus ingest postgres://...`** is spec-only as of 2026-05; PoC #3 validates SQLite only ([`poc/p3_ingest/STATUS.md`](../../poc/p3_ingest/STATUS.md)). Postgres lands once the scaffold graduates to `src/nucleus/ctx/copy_from.py` (~200 LOC per [v4.1 §5.5.1](../../nucleus_architecture_v4.1.md)).
-2. **`nucleus init --template=basic`** scaffold content unspecified beyond the template name in [`nucleus_cli_spec.md`](../../nucleus_cli_spec.md) §3.1.
-3. **`@nucleus.asset` + `ctx.read(..., as_="polars")`** are v0.1 per the ctx SDK table ([v4.1 §13.2](../../nucleus_architecture_v4.1.md)) but no implementation lives in `src/nucleus/` yet (AGENTS.md §11.1 phase gate).
+1. **`nucleus ingest postgres://...`** is spec-only as of 2026-05; PoC #3 validates SQLite only ([`poc/p3_ingest/STATUS.md`](../../poc/p3_ingest/STATUS.md)). Postgres lands once the scaffold graduates to `src/nucleus/ctx/copy_from.py` (~200 LOC per [v4.1 §5.5.1](../specs/nucleus_architecture_v4.1.md)).
+2. **`nucleus init --template=basic`** scaffold content unspecified beyond the template name in [`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §3.1.
+3. **`@nucleus.asset` + `ctx.read(..., as_="polars")`** are v0.1 per the ctx SDK table ([v4.1 §13.2](../specs/nucleus_architecture_v4.1.md)) but no implementation lives in `src/nucleus/` yet (AGENTS.md §11.1 phase gate).
 4. **`nucleus sql` auto-resolves Iceberg asset names to DuckDB tables** — pyiceberg supports the underlying `.to_duckdb(name)` ([`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §5); the `ctx`-side glue is unimplemented.
 5. **DuckDB Iceberg extension** read coverage of newly-written tables — read-only in 1.1.3 per [`docs/internal/research/duckdb.md`](../research/duckdb.md); confirm against [`docs/compatibility.md`](../compatibility.md).
 
-Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../research/ai_hallucinations.md). Re-validate after PoC #5 (per [`nucleus_poc_plan.md`](../../nucleus_poc_plan.md) §13).
+Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../research/ai_hallucinations.md). Re-validate after PoC #5 (per [`docs/specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §13).

@@ -1,5 +1,5 @@
 # ruff: noqa: ARG002
-"""Tests for ``nucleus ingest`` — nucleus_cli_spec.md §3.5.
+"""Tests for ``nucleus ingest`` — docs/specs/nucleus_cli_spec.md §3.5.
 
 Exercises the SQLite → Iceberg ingest CLI surface end-to-end:
 

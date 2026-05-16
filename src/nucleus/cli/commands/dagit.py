@@ -18,17 +18,17 @@ ADR-018; nowhere else (per AGENTS.md §7 footnote).
 
 Architecture refs
 -----------------
-- ``nucleus_architecture_v4.1.md`` §6.5 (Dagster Replaceability Mandate —
+- ``docs/specs/nucleus_architecture_v4.1.md`` §6.5 (Dagster Replaceability Mandate —
   this command is Tier 3 of the §6.6 progressive-disclosure ladder).
-- ``nucleus_architecture_v4.1.md`` §6.6 (Tier 3 escape hatch tier:
+- ``docs/specs/nucleus_architecture_v4.1.md`` §6.6 (Tier 3 escape hatch tier:
   "exposes Dagster UI directly").
-- ``nucleus_cli_spec.md`` §3.10 (CLI surface, Beta-tier ninth command).
+- ``docs/specs/nucleus_cli_spec.md`` §3.10 (CLI surface, Beta-tier ninth command).
 - ADR-018 (escape-hatch decision + vocabulary carve-out).
 - ADR-016 §"Decision" (primary UX is the custom Workbench, not this).
 
 Subprocess wrapping discipline
 ------------------------------
-Per AGENTS.md §11.7 + ``nucleus_architecture_v4.1.md`` §6.4: every
+Per AGENTS.md §11.7 + ``docs/specs/nucleus_architecture_v4.1.md`` §6.4: every
 external exception that reaches the user is translated to a
 :class:`NucleusError` subclass. The mapping for this command:
 
@@ -290,7 +290,7 @@ def dagit(
     yet wrapped.
 
     Per [bold]ADR-018[/bold] (escape-hatch decision) +
-    [bold]nucleus_architecture_v4.1.md §6.6[/bold] (Tier 3 progressive disclosure).
+    [bold]docs/specs/nucleus_architecture_v4.1.md §6.6[/bold] (Tier 3 progressive disclosure).
     Wraps the [bold]dagster-webserver[/bold] PyPI package. If the binary is not on
     PATH the command fails fast with a one-line install command; nothing else in
     the stack is affected.

@@ -1,7 +1,7 @@
 # PoC #4 — `nucleus up` <10s Cold Boot
 
 > Validates: MinIO + filesystem catalog + Dagster in-process boot in <10s on
-> developer hardware (per `nucleus_poc_plan.md` §4 + `nucleus_architecture_v4.1.md`
+> developer hardware (per `docs/specs/nucleus_poc_plan.md` §4 + `docs/specs/nucleus_architecture_v4.1.md`
 > §5.7 / §6.3).
 
 ## What "boot" means
@@ -26,7 +26,7 @@ A `nucleus up` invocation must produce a working state where:
 | Dagster `Definitions(assets=[...])` construction | <1.5s | <0.5s | YES |
 | First asset materialization | (not in budget) | (not in budget) | NO — separate PoC |
 
-## Acceptance criteria (mirror `nucleus_poc_plan.md` §4)
+## Acceptance criteria (mirror `docs/specs/nucleus_poc_plan.md` §4)
 
 - [ ] Cold boot (fresh git clone, fresh docker): <10s
 - [ ] Warm boot (subsequent invocation): <3s
@@ -40,7 +40,7 @@ latency (separate PoC); multi-user contention (v0.5+).
 
 ## Fallback plan + hardware baseline
 
-Per `nucleus_poc_plan.md` §4 + §13: >10s but <15s → optimize startup order,
+Per `docs/specs/nucleus_poc_plan.md` §4 + §13: >10s but <15s → optimize startup order,
 lazy-init non-critical components. >15s → investigate Dagster startup
 overhead; may need to lazy-init Dagster on first asset run rather than at
 `up` time. Target hardware: M1 MacBook Pro 16GB. Acceptable degradation:

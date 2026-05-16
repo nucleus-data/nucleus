@@ -246,7 +246,7 @@ The Iceberg REST Catalog API OpenAPI file is versioned `0.0.1` but the core oper
 
 **Lakekeeper**: No cross-catalog federation in v0.12.2. Single-warehouse deployment. [NEEDS VERIFICATION on roadmap timeline]
 
-**Nucleus position**: Federation is Mode 3 (Data Mesh) scoped to v2.0+ per `nucleus_architecture_v4.1.md`. For v0.3 Lakekeeper integration, only stable operations needed: namespace + table CRUD + commit + token exchange.
+**Nucleus position**: Federation is Mode 3 (Data Mesh) scoped to v2.0+ per `docs/specs/nucleus_architecture_v4.1.md`. For v0.3 Lakekeeper integration, only stable operations needed: namespace + table CRUD + commit + token exchange.
 
 ---
 

@@ -1,7 +1,7 @@
 # PoC #3 — `nucleus ingest` one-liner — Verification Report
 
 **Date**: 2026-05-12 · **Status**: SCAFFOLDED, BLOCKED on PoC #1.
-**Spec**: `nucleus_poc_plan.md` §3 · `nucleus_architecture_v4.1.md` §5.5.1.
+**Spec**: `docs/specs/nucleus_poc_plan.md` §3 · `docs/specs/nucleus_architecture_v4.1.md` §5.5.1.
 
 ## §1. File inventory
 
@@ -32,6 +32,6 @@ Total ~457 lines. **No DuckDB or Polars dep** — SQLite stdlib + PyArrow + PyIc
 
 1. **Ship PoC #1** — produces `src/nucleus/errors.py` with the 5 `NucleusError` subclasses + `.rendered()` PoC #3 already imports.
 2. **Verify the `_open_catalog` `# NEEDS VERIFICATION` marker** against a real PyIceberg 0.8.1 install on Win + macOS + Linux (ADR-001 cross-platform mandate). Log drift in `docs/internal/research/ai_hallucinations.md`.
-3. **After ADR-003 lands**: re-run all 7 tests on 0.11.x in the upgrade smoke suite, then graduate to `src/nucleus/ctx/copy_from.py` (~200 LOC, v4.1 §5.5.1) and expand to Postgres / MySQL / CSV / Parquet / JSON per `nucleus_poc_plan.md` §3.
+3. **After ADR-003 lands**: re-run all 7 tests on 0.11.x in the upgrade smoke suite, then graduate to `src/nucleus/ctx/copy_from.py` (~200 LOC, v4.1 §5.5.1) and expand to Postgres / MySQL / CSV / Parquet / JSON per `docs/specs/nucleus_poc_plan.md` §3.
 
 *Verification report only — no PoC files modified.*

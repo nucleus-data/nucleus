@@ -1,7 +1,7 @@
 """Tests for ``@nucleus.asset(schedule=...)`` kwarg — ADR-017 §3.
 
 Validates the v0.1.1 schedule kwarg surface per:
-    - ``nucleus_ctx_sdk_spec.md`` §5 (decorator surface, schedule field)
+    - ``docs/specs/nucleus_ctx_sdk_spec.md`` §5 (decorator surface, schedule field)
     - ADR-017 §3 (cron normalisation + shorthand aliases)
     - ADR-006 §NE5005 (NucleusScheduleParseError allocation)
 

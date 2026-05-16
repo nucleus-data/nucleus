@@ -12,13 +12,13 @@
 > 6. **Tauri**: deferred to v0.5+ packaging ADR; v0.2 ships SPA + FastAPI architecture (Tauri-compatible).
 > **Tags**: workbench, frontend, fastapi, react, v0.2, layer-4-experience
 > **Supersedes**: (none — first Workbench architecture ADR)
-> **Related**: `nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §8.1 (Layer 4 Experience surface matrix) · §11.2 (perf targets) · §16.3 (Workbench RAM ≤1 GB) · §18.2 (v0.2 roadmap) · §20 (non-goals); ADR-002 §4.2 (`nucleus-mcp-server` shares OpenAPI surface); ADR-005 §2 (Internal-tier API stability); ADR-006 (NE-codes); ADR-013 (`ctx.materialize` API consumed by Workbench); `docs/internal/research/workbench.md` (companion research, this ADR's evidence base); `docs/internal/research/marimo.md` §5.5 (Workbench vs Marimo boundary); `nucleus_vs_databricks.md` §1-§4 (workspace paradigm difference); `AGENTS.md §3 #1` (No JVM) · §3 #2 (No public plugin SDK) · §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND.
+> **Related**: `docs/specs/nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §8.1 (Layer 4 Experience surface matrix) · §11.2 (perf targets) · §16.3 (Workbench RAM ≤1 GB) · §18.2 (v0.2 roadmap) · §20 (non-goals); ADR-002 §4.2 (`nucleus-mcp-server` shares OpenAPI surface); ADR-005 §2 (Internal-tier API stability); ADR-006 (NE-codes); ADR-013 (`ctx.materialize` API consumed by Workbench); `docs/internal/research/workbench.md` (companion research, this ADR's evidence base); `docs/internal/research/marimo.md` §5.5 (Workbench vs Marimo boundary); `docs/specs/nucleus_vs_databricks.md` §1-§4 (workspace paradigm difference); `AGENTS.md §3 #1` (No JVM) · §3 #2 (No public plugin SDK) · §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND.
 
 ---
 
 ## Context
 
-`nucleus_architecture_v4.1.md` §18.2 ("v0.2 — 'Developer Experience' (Month 8-14): Workbench (web IDE): Monaco editor + asset list + run history + simple AI chat") and §8.1 (Surfaces by Release matrix: Workbench `❌` v0.1 → `✅` v0.2) commit Nucleus to ship a Workbench in v0.2. The v4.1 spec stops at "web IDE + asset list + chat" — it does not pick a framework, a backend, or a delivery model. v4.1 Appendix B Question 3 ("Workbench technology — Tauri vs pure web") is the documented blocker for v0.2 design.
+`docs/specs/nucleus_architecture_v4.1.md` §18.2 ("v0.2 — 'Developer Experience' (Month 8-14): Workbench (web IDE): Monaco editor + asset list + run history + simple AI chat") and §8.1 (Surfaces by Release matrix: Workbench `❌` v0.1 → `✅` v0.2) commit Nucleus to ship a Workbench in v0.2. The v4.1 spec stops at "web IDE + asset list + chat" — it does not pick a framework, a backend, or a delivery model. v4.1 Appendix B Question 3 ("Workbench technology — Tauri vs pure web") is the documented blocker for v0.2 design.
 
 Two architectural forks are real:
 
@@ -81,7 +81,7 @@ Companion research at `docs/internal/research/workbench.md` (155 LOC, 25 distinc
 An external reviewer-feedback round used the label **"Fork A"** to mean *"embed an OSS notebook UI (Marimo / Jupyter) instead of building a React SPA"*, which maps to **Alternative D** in this ADR (Marimo as the Workbench), not the **Alternative A** above (Dagster UI + Marquez). Both routes were rejected, but for different reasons:
 
 - **Alternative A (Dagster UI + Marquez)** — rejected because Marquez is JVM (Constraint #1) and Dagster UI leaks Dagster vocabulary (v4.1 §6.4).
-- **Alternative D (Marimo / Jupyter embed)** — rejected because Marimo is a notebook runtime (right primitive: cell), not a control surface (right primitive: asset graph + materialization status + lineage). Coupling the Workbench to a notebook iframe forces every Workbench feature to ship as a Marimo extension; gives up the asset-graph-native UX advantage the platform's vocabulary is built on; and ships a notebook surface in v0.2 when notebooks themselves are deferred to v0.3 per `nucleus_architecture_v4.1.md` §18 roadmap.
+- **Alternative D (Marimo / Jupyter embed)** — rejected because Marimo is a notebook runtime (right primitive: cell), not a control surface (right primitive: asset graph + materialization status + lineage). Coupling the Workbench to a notebook iframe forces every Workbench feature to ship as a Marimo extension; gives up the asset-graph-native UX advantage the platform's vocabulary is built on; and ships a notebook surface in v0.2 when notebooks themselves are deferred to v0.3 per `docs/specs/nucleus_architecture_v4.1.md` §18 roadmap.
 
 If a future external reviewer cites "Fork A," confirm which alternative they mean before responding.
 
@@ -182,11 +182,11 @@ Sequencing (10-14 weeks; full breakdown in `docs/internal/research/workbench.md`
 ## References
 
 - `docs/internal/research/workbench.md` — companion research (this ADR's evidence base; 25 docs URLs cited).
-- `nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §8.1 (Layer 4 Experience surfaces) · §16.3 (RAM target) · §18.2 (v0.2 roadmap) · §20 (non-goals) · Appendix B Q3 (Workbench technology question — this ADR resolves the web/desktop fork).
+- `docs/specs/nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §8.1 (Layer 4 Experience surfaces) · §16.3 (RAM target) · §18.2 (v0.2 roadmap) · §20 (non-goals) · Appendix B Q3 (Workbench technology question — this ADR resolves the web/desktop fork).
 - ADR-005 §2 (Internal-tier API stability) · ADR-006 (NE-codes) · ADR-013 (`ctx.materialize` consumed by Workbench).
 - `AGENTS.md §3 #1` (No JVM in core path) · `§3 #2` (No public plugin SDK in v1) · `§4` (do-not-build list) · `§11.12` (docs-before-integration discipline).
 - `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND + Velocity Discipline.
-- `nucleus_vs_databricks.md` §1-§4 (workspace paradigm) · §11 (we are NOT a BI tool).
+- `docs/specs/nucleus_vs_databricks.md` §1-§4 (workspace paradigm) · §11 (we are NOT a BI tool).
 - External docs (full list cited in `docs/internal/research/workbench.md` §1-§14): [Vite](https://vitejs.dev/guide/), [React Flow / xyflow](https://reactflow.dev/learn), [Monaco](https://microsoft.github.io/monaco-editor/), [FastAPI](https://fastapi.tiangolo.com/), [shadcn/ui](https://ui.shadcn.com/docs), [Dagster webserver](https://docs.dagster.io/guides/operate/webserver), [Marquez](https://marquezproject.github.io/marquez/).
 
 ---

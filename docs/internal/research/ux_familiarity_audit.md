@@ -167,7 +167,7 @@ Pillar 4 (AGENTS.md §6) test: *"Are we inventing new vocabulary that doesn't ex
 
 ### 2.12 Snapshot history / time-travel / lineage / cost / RBAC / connections / notebooks / palette
 
-Compressed for size; details in `nucleus_cli_spec.md`, `nucleus_architecture_v4.1.md` §12.
+Compressed for size; details in `docs/specs/nucleus_cli_spec.md`, `docs/specs/nucleus_architecture_v4.1.md` §12.
 
 | Surface | Databricks | Snowflake | Nucleus current | Gap | Rec | Phase | 8-Q |
 |---|---|---|---|---|---|---|---|
@@ -209,7 +209,7 @@ Sorted by phase + impact. Each gated against AGENTS.md §5 8 questions; only PAS
 - **Change**: New `src/nucleus/cli/commands/profile.py` with `add / list / show / test / use` subcommands. Storage: `nucleus_project.yaml` `profiles.<name>` blocks (already in cli_spec §7). `add` is interactive (prompt for catalog / storage URL / credentials env-var).
 - **Impact**: Closes the #1 missing surface for Snowflake CLI converts. Lights up dev/staging/prod toggling without YAML editing by hand.
 - **Effort**: M (~250 LOC + tests). **Phase**: v0.3 (gated on Lakekeeper/Polaris REST catalog — without it, profile diffs only swap `warehouse_dir`). **8-Q**: PASS (Q3 wraps Typer prompts, Q5 local-prod identical, Q6 GREEN).
-- **Files**: `src/nucleus/cli/commands/profile.py` (new), `src/nucleus/cli/main.py` (~5 lines), `nucleus_cli_spec.md` (new section).
+- **Files**: `src/nucleus/cli/commands/profile.py` (new), `src/nucleus/cli/main.py` (~5 lines), `docs/specs/nucleus_cli_spec.md` (new section).
 - **Acceptance**: A Snowflake user runs `nucleus profile add staging`, answers prompts; `nucleus profile list` shows it; `nucleus run --profile staging asset.x` works.
 
 ### Rec 3 — `[NE3002]` error-code prefix in headline
@@ -219,7 +219,7 @@ Sorted by phase + impact. Each gated against AGENTS.md §5 8 questions; only PAS
 - **Change**: In `_exit_nucleus_error` change line 110 to `typer.echo(f"Error [{err.error_code}]: {err.user_message}", err=True)` (`error_code` is the ClassVar in `errors.py`). Mirror in `runs.py` line 50-56 + `schedule.py` + `snapshot.py` + `chat.py`. Update `cli_spec §5.4` example block.
 - **Impact**: Users grep `NE3002` in chat / docs / Stack Overflow without parsing the URL. Closes the "user-friendly" (we win) vs "machine-greppable" (giants win) gap.
 - **Effort**: S (~40 LOC across 5 files + spec doc + 1 snapshot test). **Phase**: v0.2 polish. **8-Q**: PASS (Q4 unaffected, Q6 negligible, Q7 founder anti-over-engineering "no black-box surfaces").
-- **Files**: `src/nucleus/cli/main.py`, `src/nucleus/cli/commands/{runs,schedule,snapshot,chat}.py`, `nucleus_cli_spec.md` §5.4, `tests/cli/test_exit_codes.py`.
+- **Files**: `src/nucleus/cli/main.py`, `src/nucleus/cli/commands/{runs,schedule,snapshot,chat}.py`, `docs/specs/nucleus_cli_spec.md` §5.4, `tests/cli/test_exit_codes.py`.
 - **Acceptance**: A Databricks user runs `nucleus run nonexistent.asset`, sees `Error [NE3002]: Asset 'nonexistent.asset' not found` and recognises the bracket pattern.
 
 ### Rec 4 — Workbench Dashboard "Getting started" 3-step card
@@ -269,7 +269,7 @@ Sorted by phase + impact. Each gated against AGENTS.md §5 8 questions; only PAS
 - **Change**: Add `--format jsonl` as a synonym of `--format json` (NDJSON behaviour preserved). Update `--help`: `text | json (NDJSON, one record per line) | jsonl (alias) | csv`. Document divergence in cli_spec §5.2.
 - **Impact**: A DB/SF user piping `nucleus runs list --format json | jq .` won't be confused — `jsonl` alias signals format up front.
 - **Effort**: S (~15 LOC + 1 spec sentence). **Phase**: v0.2 polish. **8-Q**: PASS.
-- **Files**: `src/nucleus/cli/main.py` (run + query + version commands' `format_` validation), `src/nucleus/cli/commands/runs.py`, `nucleus_cli_spec.md` §5.2.
+- **Files**: `src/nucleus/cli/main.py` (run + query + version commands' `format_` validation), `src/nucleus/cli/commands/runs.py`, `docs/specs/nucleus_cli_spec.md` §5.2.
 - **Acceptance**: `nucleus runs list --format jsonl | jq .` works identically to `--format json`.
 
 ### Rec 9 — Status overlay on AssetDAG nodes
@@ -289,7 +289,7 @@ Sorted by phase + impact. Each gated against AGENTS.md §5 8 questions; only PAS
 - **Change**: When OIDC delegation lands in v0.3 (Lakekeeper / Polaris REST catalog), add `nucleus auth env / profiles / login / logout / token` subcommands that delegate to the configured OIDC provider — never owning credentials, only proxying. Mirrors Databricks naming exactly.
 - **Impact**: Closes "where do I configure my Lakekeeper token?" question. Familiar verb tree.
 - **Effort**: M (~200 LOC for subcommand surface + tests; OIDC flow itself separate scope). **Phase**: v0.3 (gated on REST catalog). **8-Q**: PASS (Q3 we wrap an OIDC client, Q5 delegation identical local + cloud).
-- **Files**: `src/nucleus/cli/commands/auth.py` (new), `src/nucleus/cli/main.py` (~5 lines), `nucleus_cli_spec.md` §12 (clarify "owning identity" vs "surfacing OIDC delegation").
+- **Files**: `src/nucleus/cli/commands/auth.py` (new), `src/nucleus/cli/main.py` (~5 lines), `docs/specs/nucleus_cli_spec.md` §12 (clarify "owning identity" vs "surfacing OIDC delegation").
 - **Acceptance**: A Databricks user runs `nucleus auth profiles` and gets the same shape of output as `databricks auth profiles`.
 
 ### Rec 11 — Persistent CopilotPanel right-rail with Cmd-J toggle
@@ -457,8 +457,8 @@ All URLs verified live 2026-05-15. Where a primary docs URL returned 404 the rel
 ### Internal references
 
 - AGENTS.md §3 (Eleven Hard Constraints), §5 (8-Question Gate), §6 (Five Pillars), §7 (Vocabulary), §8 (Forbidden Mental Models), §11.12 (Official Documentation Discipline), §11.14 (Subagent Model Orchestration)
-- nucleus_architecture_v4.1.md §1.5 (Beachhead), §6.4 (Error Translation), §8 L4 (CLI), §8.1 (Workbench), §10 (yield-to-giants)
-- nucleus_cli_spec.md §3 (command surface), §5 (output format), §6 (flag conventions), §7 (config), §10 (NEEDS VERIFICATION), §12 (forbidden patterns)
+- docs/specs/nucleus_architecture_v4.1.md §1.5 (Beachhead), §6.4 (Error Translation), §8 L4 (CLI), §8.1 (Workbench), §10 (yield-to-giants)
+- docs/specs/nucleus_cli_spec.md §3 (command surface), §5 (output format), §6 (flag conventions), §7 (config), §10 (NEEDS VERIFICATION), §12 (forbidden patterns)
 - docs/decisions/ADR-015 (Copilot scope), ADR-016 (Workbench fork B), ADR-017 (Schedule), ADR-018 (Dagit escape-hatch), ADR-025 (Active scheduling daemon), ADR-028 (Iceberg branch + tag CLI)
 - docs/internal/research/parity_vs_databricks_snowflake.md (capability parity — different from this doc which is UX parity)
 

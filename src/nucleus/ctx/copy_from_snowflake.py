@@ -7,9 +7,9 @@ same public signature, same return type (row count), same error translation disc
 Stability: Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0  (per ADR-005 §2)
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.5 (Ingestion — Snowflake source branch)
-    nucleus_architecture_v4.1.md §6.3 (Coordination — dlt translator boundary)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_architecture_v4.1.md §5.5 (Ingestion — Snowflake source branch)
+    docs/specs/nucleus_architecture_v4.1.md §6.3 (Coordination — dlt translator boundary)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-019-snowflake-connector-via-dlt.md (scope contract)
     docs/internal/research/snowflake.md §4 (Snowflake error codes + exception hierarchy)
 

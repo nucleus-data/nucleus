@@ -9,7 +9,7 @@
 > **Closes** the "Windows `os.rename` atomicity" item in
 > `docs/internal/research/performance_reliability_targets.md` §10 #5 +
 > `docs/decisions/ADR-024-reliability-hardening-plan.md` P0-4 +
-> `nucleus_red_team_review.md` (NEEDS VERIFICATION 11.2).
+> `docs/specs/nucleus_red_team_review.md` (NEEDS VERIFICATION 11.2).
 
 ---
 
@@ -245,7 +245,7 @@ for this.
 
 If a future Nucleus user reports a torn metadata file after a hard
 power loss on Windows, the recovery path is `nucleus repair` (planned
-for v0.3, listed in the `nucleus_cli_spec.md` queue) — not a code-path
+for v0.3, listed in the `docs/specs/nucleus_cli_spec.md` queue) — not a code-path
 hardening change.
 
 ### 8.2 Cross-volume `os.replace`
@@ -256,7 +256,7 @@ If `src` and `dst` are on different volumes (e.g. `D:\src` →
 construction (project root + `.nucleus/warehouse/` are co-located),
 so this is a non-issue for our use case. The fact that we should
 *never* relocate the warehouse to a different drive than the project
-is documented in `nucleus_project_anatomy.md`.
+is documented in `docs/specs/nucleus_project_anatomy.md`.
 
 ### 8.3 Network filesystems (SMB, NFS via WSL)
 

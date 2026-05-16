@@ -3,7 +3,7 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: licensing, dependencies, governance, cloud-readiness
-> **Related**: ADR-001, ADR-002 §8.x (yield-to-giants commercial path), ADR-003, ADR-005, ADR-006, AGENTS.md §3 Hard Constraints, nucleus_architecture_v4.1.md §9 (composability), `docs/internal/research/minio.md` (Worker BB — AGPLv3), `docs/internal/research/soda.md` (Worker T — Apache-2.0 v3 vs Elastic v4)
+> **Related**: ADR-001, ADR-002 §8.x (yield-to-giants commercial path), ADR-003, ADR-005, ADR-006, AGENTS.md §3 Hard Constraints, docs/specs/nucleus_architecture_v4.1.md §9 (composability), `docs/internal/research/minio.md` (Worker BB — AGPLv3), `docs/internal/research/soda.md` (Worker T — Apache-2.0 v3 vs Elastic v4)
 
 ## Context
 

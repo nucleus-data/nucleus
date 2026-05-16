@@ -1,6 +1,6 @@
 """OpenLineage asset-level emitter (L2 Coordination).
 
-Per ``nucleus_architecture_v4.1.md`` §6.2 step 4 (post-write OpenLineage
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.2 step 4 (post-write OpenLineage
 emit) + §13.2 (asset-level lineage at v0.1; column-level deferred to
 v0.5+) + ``.cursor/rules/nucleus.mdc`` lineage row (OpenLineage + sqlglot,
 Tier 0 immortal). Companion research notes:

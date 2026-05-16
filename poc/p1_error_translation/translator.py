@@ -7,7 +7,7 @@ once the PoC acceptance criteria (README §2) pass.
 
 Pins (per AGENTS.md §11.12, see ``docs/internal/research/<lib>.md``):
 dagster==1.9.5, polars==1.18.0, duckdb==1.1.3, pyiceberg==0.8.1.
-Spec: ``nucleus_architecture_v4.1.md`` §6.4 +
+Spec: ``docs/specs/nucleus_architecture_v4.1.md`` §6.4 +
 ``docs/architecture/sequence_error_translation.md``.
 """
 

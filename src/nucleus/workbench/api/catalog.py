@@ -3,7 +3,7 @@
 Returns a filtered, paginated list of all registered assets with
 metadata suitable for the CatalogPage table view.
 
-``nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
 ADR-016 §3 — Fork B API surface.
 
 Vocabulary: "asset", "namespace", "check", "contract" per AGENTS.md §7.

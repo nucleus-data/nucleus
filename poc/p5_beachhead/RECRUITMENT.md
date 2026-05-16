@@ -9,7 +9,7 @@ where the moderator never intervened on Nucleus mechanics — see
 
 ## Target: 5 testers (over-recruit by 2; allow up to 7 if cheap)
 
-Per `nucleus_poc_plan.md` §5 criterion 1, a minimum of **3 valid sessions**
+Per `docs/specs/nucleus_poc_plan.md` §5 criterion 1, a minimum of **3 valid sessions**
 is required for the PoC to be considered run. We aim for 5 to absorb
 no-shows + invalidated sessions (moderator broke discipline).
 
@@ -17,10 +17,10 @@ no-shows + invalidated sessions (moderator broke discipline).
 
 - **Role**: data engineer (NOT software engineer, NOT analyst, NOT ML
   engineer).
-- **Experience**: 2-5 years (mid-level — matches `nucleus_poc_plan.md`
+- **Experience**: 2-5 years (mid-level — matches `docs/specs/nucleus_poc_plan.md`
   §5 "mid-level data engineers... preferred").
 - **Team context**: works at a startup or scale-up with ≤ 30 engineers
-  total (interpretive from `nucleus_architecture_v4.1.md` §1.5
+  total (interpretive from `docs/specs/nucleus_architecture_v4.1.md` §1.5
   "5-20 engineers").
 - **Background**: has shipped at least one production pipeline (Airflow /
   dbt / Dagster / Spark / Snowflake / Databricks acceptable).
@@ -53,7 +53,7 @@ no-shows + invalidated sessions (moderator broke discipline).
 
 ## Compensation
 
-- **$200-500 per 2-hour session** (per `nucleus_poc_plan.md` §5).
+- **$200-500 per 2-hour session** (per `docs/specs/nucleus_poc_plan.md` §5).
   Default: **$300** baseline; bump to $400-500 if a tester runs over
   with valuable findings.
 - Pay via Wise / Wire / Stripe payouts — choose based on tester location.
@@ -95,4 +95,4 @@ no-shows + invalidated sessions (moderator broke discipline).
 - DO NOT defend the design when challenged in the post-session interview
   — *confusion IS the data* (`AGENTS.md` §11.9).
 - DO NOT count a session if the moderator intervened on Nucleus mechanics
-  (per `nucleus_poc_plan.md` §5 criterion 2).
+  (per `docs/specs/nucleus_poc_plan.md` §5 criterion 2).

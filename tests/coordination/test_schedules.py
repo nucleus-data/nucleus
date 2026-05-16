@@ -7,7 +7,7 @@ Validates:
       unregistered or unscheduled assets.
     - :func:`to_dagster_schedule` wraps Dagster ScheduleDefinition (v0.2 path).
 
-Per ``nucleus_architecture_v4.1.md`` §6.3 (Coordination — Dagster wrap) and
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.3 (Coordination — Dagster wrap) and
 ADR-017 §1.
 
 No Dagster types must cross the outbound coordination boundary in

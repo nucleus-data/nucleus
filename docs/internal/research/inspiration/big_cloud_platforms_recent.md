@@ -337,7 +337,7 @@ Docs: [BQ Agentic Era](https://cloud.google.com/blog/products/data-analytics/unv
 
 **What problem it solves**: The last 10% of data product delivery — sharing insights with business stakeholders. A data scientist writes code in Studio; Colab Data Apps turns that into a governed business app without engineering effort.
 
-**How Nucleus currently handles this**: Workbench (v0.2+) is our equivalent of Colab Data Apps — a local-first web UI for data products. Marimo (v0.3+) is our equivalent of interactive notebooks. Git integration is native (Nucleus projects are git repos by design — per `nucleus_project_anatomy.md`).
+**How Nucleus currently handles this**: Workbench (v0.2+) is our equivalent of Colab Data Apps — a local-first web UI for data products. Marimo (v0.3+) is our equivalent of interactive notebooks. Git integration is native (Nucleus projects are git repos by design — per `docs/specs/nucleus_project_anatomy.md`).
 
 **8-question gate** (Data Science Agent specifically):
 1. Architecture layer? → Intelligence layer (v4.1 §3.4)
@@ -402,7 +402,7 @@ All three platforms are converging on the same architectural patterns. This is s
 
 8. **Credential vending as the cross-engine security pattern**: Databricks Unity (GA), Snowflake Open Catalog (GA), BigQuery BLMS (GA). Short-lived, scoped, M2M-OAuth-backed credentials are the standard for external engine access. Nucleus's OIDC delegation strategy (v0.8+ per ADR-016) aligns with this.
 
-9. **Git integration as a table-stakes developer experience**: BigQuery Studio notebooks now support GitHub/GitLab/Bitbucket/Azure DevOps. Databricks Repos has had this for years. Snowflake Notebooks in Workspaces added Git (2026). Nucleus's git-native project model (`nucleus_project_anatomy.md`) is ahead — we are git-first by design.
+9. **Git integration as a table-stakes developer experience**: BigQuery Studio notebooks now support GitHub/GitLab/Bitbucket/Azure DevOps. Databricks Repos has had this for years. Snowflake Notebooks in Workspaces added Git (2026). Nucleus's git-native project model (`docs/specs/nucleus_project_anatomy.md`) is ahead — we are git-first by design.
 
 10. **Cross-cloud lakehouse as the enterprise endgame**: BigQuery Cross-Cloud Lakehouse (AWS + Azure, preview April 2026), Databricks Delta Sharing cross-cloud, Snowflake cross-cloud replication. The large enterprises need data accessible across clouds. Nucleus's yield-to-giants Mode 3 (Iceberg REST federation, v2.0+) is the startup-friendly precursor to this.
 
@@ -440,7 +440,7 @@ Features we can replicate at 5-50 engineer scale without leaving the 30K LOC bud
 | 2 | **Snowflake Cortex Analyst semantic YAML** | `nucleus_semantic.yaml` per project — table/column descriptions, verified metrics, NL aliases — used by `nucleus chat` as grounding context | ~300 LOC | v0.3+ |
 | 3 | **Databricks DLT AUTO CDC `once` backfill** | `--mode backfill-once` flag on `nucleus ingest` — ingests a snapshot once, ignores future arrivals | ~80 LOC | v0.3 |
 | 4 | **Snowflake Iceberg v3 deletion vectors** | Tracked via pyiceberg upgrade (ADR required) — improves `--mode merge` update/delete performance with zero Nucleus-specific LOC | 0 LOC | v0.3+ (pyiceberg upgrade) |
-| 5 | **BigQuery Git integration** | Already done — Nucleus projects are git repos by design; `nucleus_project_anatomy.md` mandates git | 0 LOC | v0.1 ✅ |
+| 5 | **BigQuery Git integration** | Already done — Nucleus projects are git repos by design; `docs/specs/nucleus_project_anatomy.md` mandates git | 0 LOC | v0.1 ✅ |
 | 6 | **Databricks DLT type widening** | `nucleus migrate-schema --widen int-to-long` CLI command calling pyiceberg schema evolution API | ~150 LOC | v0.3+ |
 | 7 | **BigQuery `max_staleness` materialized view** | `max_staleness=` parameter on `@nucleus.asset` — equivalent to `TARGET_LAG` freshness contract | ~30 LOC (extends item 1) | v0.2 |
 

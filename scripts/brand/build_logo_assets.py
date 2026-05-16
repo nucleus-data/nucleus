@@ -1,5 +1,5 @@
 """Build the 5-file Nucleus brand pack (locked 2026-05-15). Visual metaphor:
-nucleus_architecture_v4.1.md §9. Tagline per ADR-002 §8.1; locks after PoC #5.
+docs/specs/nucleus_architecture_v4.1.md §9. Tagline per ADR-002 §8.1; locks after PoC #5.
 Build-time deps (not pinned): pip install resvg-py Pillow.
   https://github.com/Kludex/resvg-py | https://pillow.readthedocs.io/en/stable/
 """

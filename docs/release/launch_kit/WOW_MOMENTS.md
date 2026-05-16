@@ -19,7 +19,7 @@
 - [`scripts/beachhead_e2e.py`](../../../scripts/beachhead_e2e.py) — the 8-gate script. 8/8 PASS on WSL Linux 2026-05-14.
 - [`docs/release/e2e_results_20260514T190132.md`](../e2e_results_20260514T190132.md) — last full E2E run output.
 - [`docs/benchmarks/2026-05-15_baseline.md`](../../benchmarks/2026-05-15_baseline.md) §B5 — boot time **2.06s** warm-median console invocation (measured on a 4-core Windows host with 1 GB free RAM — the worst-case for boot, and still under 10 s).
-- [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §1.5 — the beachhead persona definition.
+- [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §1.5 — the beachhead persona definition.
 
 **Asset gap**: a 1-screenshot timer overlay showing E2E elapsed time would help on HN comment threads. **Surface to parent**: should we record a screenshot of the E2E script's final summary line for the launch-kit `assets/` folder? (~5 min effort.)
 
@@ -48,7 +48,7 @@
 
 **Backing artifact**:
 
-- Architecture spec: [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §3 (the 5-layer model) + §4 (wrap table) + §9 (composability constitution).
+- Architecture spec: [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §3 (the 5-layer model) + §4 (wrap table) + §9 (composability constitution).
 - Existing diagrams (text-form): [`docs/site/concepts/`](../../site/concepts/) and the layer enumeration in [`docs/roadmap/HANDOVER.md`](../../roadmap/HANDOVER.md) §"Five-Layer Architecture at a Glance".
 
 **Asset gap**: no **rendered SVG/PNG diagram** of the 5-layer model with wrapped engines highlighted lives in `assets/`. **Surface to parent**: a mermaid or excalidraw diagram saved to `assets/architecture/v4.1_five_layers.svg` + `_dark.svg` would let the README + docs site + press kit all reference one source. ~30 min effort with mermaid.
@@ -84,7 +84,7 @@
 
 **Backing artifact**:
 
-- [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §10.1 — Mode 1 graduation strategy.
+- [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §10.1 — Mode 1 graduation strategy.
 - [`docs/site/guides/graduate-to-databricks.md`](../../site/guides/graduate-to-databricks.md) — user-facing recipe.
 - [`docs/internal/research/parity_vs_databricks_snowflake.md`](../../research/parity_vs_databricks_snowflake.md) — capability matrix (proves Nucleus does NOT compete on breadth).
 - [`docs/release/launch_kit/comparison_vs_databricks_snowflake.md`](comparison_vs_databricks_snowflake.md) — the launch-kit comparison piece.

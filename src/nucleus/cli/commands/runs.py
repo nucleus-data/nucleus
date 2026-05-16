@@ -8,7 +8,7 @@ Exposes the durable run ledger via CLI subcommands:
     nucleus runs cancel RUN_ID
     nucleus runs tail   [-n N]             [--follow]
 
-Per ``nucleus_architecture_v4.1.md`` §8 L4 (CLI layer delegates all
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §8 L4 (CLI layer delegates all
 business logic to the coordination layer).  The durable ledger lives at
 ``<project_root>/.nucleus/runs/runs.ndjson`` (ADR-025 §P0-2).
 

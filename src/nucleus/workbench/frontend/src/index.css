@@ -4,7 +4,7 @@
  * Design system: Editorial Light theme only (dark mode descoped per founder directive).
  * Hero gradient uses deep blue → navy palette matching the reference image.
  *
- * Per ADR-016 §3 (Fork B) + nucleus_architecture_v4.1.md §8.1.
+ * Per ADR-016 §3 (Fork B) + docs/specs/nucleus_architecture_v4.1.md §8.1.
  */
 
 @tailwind base;

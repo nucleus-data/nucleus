@@ -13,7 +13,7 @@
 
 ## Context
 
-As of 2026-05-15, the repository root contains 19 markdown files. 10 of them are large technical specifications (`nucleus_architecture_v4.1.md`, `nucleus_cli_spec.md`, etc.) and one user-setup guide (`SETUP.md`) that are better served from a structured `docs/` hierarchy. Founder explicitly requested cleanup to reduce root-level noise. The issue was surfaced during the PoC #5 external-tester run: new engineers cloning the repo face an overwhelming list of files before finding `README.md`.
+As of 2026-05-15, the repository root contains 19 markdown files. 10 of them are large technical specifications (`docs/specs/nucleus_architecture_v4.1.md`, `docs/specs/nucleus_cli_spec.md`, etc.) and one user-setup guide (`SETUP.md`) that are better served from a structured `docs/` hierarchy. Founder explicitly requested cleanup to reduce root-level noise. The issue was surfaced during the PoC #5 external-tester run: new engineers cloning the repo face an overwhelming list of files before finding `README.md`.
 
 Phase 1 of the cleanup (cruft files, stale archive) was executed on 2026-05-15. Phase 2 (this ADR) is the spec-file reorg — deferred until parallel builders (ratification + UI v0.3) complete their waves, to avoid collision on locked files.
 
@@ -26,15 +26,15 @@ Move 10 root-level spec and plan files to organised subdirectories under `docs/`
 | Current path | New path |
 |---|---|
 | `SETUP.md` | `docs/onboarding/setup.md` |
-| `nucleus_architecture_v4.1.md` | `docs/architecture/architecture-v4.1.md` |
-| `nucleus_asset_model_spec.md` | `docs/architecture/asset-model.md` |
-| `nucleus_cli_spec.md` | `docs/architecture/cli-spec.md` |
-| `nucleus_ctx_sdk_spec.md` | `docs/architecture/ctx-sdk-spec.md` |
-| `nucleus_project_anatomy.md` | `docs/architecture/project-anatomy.md` |
-| `nucleus_vs_databricks.md` | `docs/architecture/vs-databricks.md` |
-| `nucleus_poc_plan.md` | `docs/poc/poc-plan.md` |
-| `nucleus_implementation_readiness.md` | `docs/architecture/implementation-readiness.md` |
-| `nucleus_red_team_review.md` | `docs/architecture/red-team-review.md` |
+| `docs/specs/nucleus_architecture_v4.1.md` | `docs/architecture/architecture-v4.1.md` |
+| `docs/specs/nucleus_asset_model_spec.md` | `docs/architecture/asset-model.md` |
+| `docs/specs/nucleus_cli_spec.md` | `docs/architecture/cli-spec.md` |
+| `docs/specs/nucleus_ctx_sdk_spec.md` | `docs/architecture/ctx-sdk-spec.md` |
+| `docs/specs/nucleus_project_anatomy.md` | `docs/architecture/project-anatomy.md` |
+| `docs/specs/nucleus_vs_databricks.md` | `docs/architecture/vs-databricks.md` |
+| `docs/specs/nucleus_poc_plan.md` | `docs/poc/poc-plan.md` |
+| `docs/specs/nucleus_implementation_readiness.md` | `docs/architecture/implementation-readiness.md` |
+| `docs/specs/nucleus_red_team_review.md` | `docs/architecture/red-team-review.md` |
 
 Use `git mv` to preserve git history. Update all cross-references in `.md`, `.mdc`, `.yml` files. Rename to kebab-case on move (pending founder confirmation — see Open Questions).
 

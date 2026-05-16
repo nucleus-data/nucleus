@@ -1,7 +1,7 @@
 # Research: dbt-duckdb (+ dbt-core)
 
 > **Component status in Nucleus**: **v0.3+ OPTIONAL adapter. NOT a v0.1 dependency.**
-> v0.1 ships **native `ctx.sql` + Jinja resolver** (≤2500 LOC ceiling, owned in-house) per `nucleus_architecture_v4.1.md` §5.6 / §5.6.0 / D13. dbt-duckdb is the *fallback* if PoC #2 (native resolver) fails (`nucleus_poc_plan.md` §2) and the *forward-leverage* path for the v0.3 "drop your existing dbt project in" promise (§18.3).
+> v0.1 ships **native `ctx.sql` + Jinja resolver** (≤2500 LOC ceiling, owned in-house) per `docs/specs/nucleus_architecture_v4.1.md` §5.6 / §5.6.0 / D13. dbt-duckdb is the *fallback* if PoC #2 (native resolver) fails (`docs/specs/nucleus_poc_plan.md` §2) and the *forward-leverage* path for the v0.3 "drop your existing dbt project in" promise (§18.3).
 > **Pin candidates (when v0.3 lands)**: `dbt-duckdb==1.10.1` (uploaded 2026-02-17, PyPI verified 2026-05-13) + `dbt-core==1.10.x` (verify minor-pairing). **Not pinned in `pyproject.toml` today and MUST NOT be added during v0.1.**
 > **License**: `dbt-duckdb` = **Apache-2.0** (PyPI field `Apache-2`). `dbt-core` PyPI `license` field is **blank** — NEEDS VERIFICATION before pin (historically Apache-2.0).
 > **JVM-free**: **YES** — pure-Python on both sides. Hard Constraint #1 satisfied.
@@ -51,7 +51,7 @@ Verified by `WebFetch` 2026-05-13.
 
 **DuckDB Iceberg extension** (for §4.3): overview https://duckdb.org/docs/current/core_extensions/iceberg/overview.html • REST catalogs https://duckdb.org/docs/current/core_extensions/iceberg/iceberg_rest_catalogs.html
 
-**The v0.1 alternative we ship instead**: `nucleus_architecture_v4.1.md` §5.6 + §5.6.0 + D13 • `nucleus_poc_plan.md` §2 • `docs/internal/research/duckdb.md` • `docs/internal/research/ducklake.md`.
+**The v0.1 alternative we ship instead**: `docs/specs/nucleus_architecture_v4.1.md` §5.6 + §5.6.0 + D13 • `docs/specs/nucleus_poc_plan.md` §2 • `docs/internal/research/duckdb.md` • `docs/internal/research/ducklake.md`.
 
 ---
 
@@ -61,7 +61,7 @@ The answer is **NOT v0.1**. The rest of this section explains why.
 
 ### §4.1 Why NOT in v0.1 — Amendment 6 / D13
 
-Per `nucleus_architecture_v4.1.md` §5.6: *"v0.1 ships native SQL transformation, NOT dbt-duckdb."* Reasons:
+Per `docs/specs/nucleus_architecture_v4.1.md` §5.6: *"v0.1 ships native SQL transformation, NOT dbt-duckdb."* Reasons:
 
 1. **LOC ownership > vendored complexity.** ~1000 LOC under our roof beats 22 direct `requires_dist` entries on `dbt-core` (PyPI 2026-05-13) plus ~20-30 more transitive — **2-3× the current Nucleus runtime surface**.
 2. **Adapter ecosystem release lag.** dbt-duckdb 1.10.1 vs dbt-core 1.11.9. Bisection on every minor bump is a tax for a one-person team.
@@ -73,7 +73,7 @@ Per `nucleus_architecture_v4.1.md` §5.6: *"v0.1 ships native SQL transformation
 
 ### §4.2 v0.3+ "drop your existing dbt project in" — the migration adapter
 
-Per `nucleus_architecture_v4.1.md` §18.3 (Tier 3 Connectors, Mo 14-20). The **single** v0.3 user story:
+Per `docs/specs/nucleus_architecture_v4.1.md` §18.3 (Tier 3 Connectors, Mo 14-20). The **single** v0.3 user story:
 
 > A team with an existing `dbt-duckdb` project graduates to Nucleus without rewriting SQL. They drop their `models/`, `macros/`, `seeds/`, and `dbt_project.yml` in. `nucleus build` runs the dbt graph alongside native Nucleus assets, with unified lineage and unified error translation.
 
@@ -108,7 +108,7 @@ Provisional stance: **(1) for safety + composability today; switch to (2)** once
 
 ### §4.4 Fallback trigger from PoC #2 (the only v0.1-relevant section here)
 
-Per `nucleus_poc_plan.md` §2: *"If LOC blows past 2500 OR DAG resolution slow OR multi-CTE breaks → fall back to dbt-duckdb as v0.1 default."*
+Per `docs/specs/nucleus_poc_plan.md` §2: *"If LOC blows past 2500 OR DAG resolution slow OR multi-CTE breaks → fall back to dbt-duckdb as v0.1 default."*
 
 | Trigger | Action |
 |---|---|
@@ -205,7 +205,7 @@ Per v4.1 D13 + §5.6.0:
 
 - **v0.1 (Mo 0-4)**: Native `ctx.sql` + Jinja (~1000 LOC target, ≤2500 LOC ceiling). dbt-duckdb explicitly excluded — reasons stacked in §4.1. **Not on the beachhead path.**
 - **v0.3 (Mo 14-20)**: optional adapter for **the migration story**. Opt-in `coordination/dbt_duckdb_adapter.py` (≤500 LOC) per §18.3. Trigger: external user demand from existing dbt-duckdb teams. ADR + smoke tests + telemetry mute mandatory; `click` upgrade is a pre-cursor PR.
-- **PoC #2 fallback (Week 3-4)**: per `nucleus_poc_plan.md` §2 (§4.4 above), dbt-duckdb becomes v0.1 default if native resolver trips its triggers.
+- **PoC #2 fallback (Week 3-4)**: per `docs/specs/nucleus_poc_plan.md` §2 (§4.4 above), dbt-duckdb becomes v0.1 default if native resolver trips its triggers.
 - **v0.5+**: re-evaluate vs SQLMesh for AI-assisted authoring fit (§17.1).
 - **Never**: build our own dbt-core competitor. Constraint #4 / Pillar #2 violation.
 
@@ -233,8 +233,8 @@ Integration ADR (when v0.3 starts): `docs/decisions/ADR-NNN-dbt-duckdb-v03-adapt
 
 - `/duckdb-setup` and `/duckdb-configs` (§3) — the two pages you re-read at every v0.3 PR.
 - https://docs.dagster.io/integrations/libraries/dbt/dbt — authoritative for `dagster-dbt`.
-- `nucleus_architecture_v4.1.md` §5.6 / §5.6.0 / D13 / §18.3 / §17.1 • `nucleus_poc_plan.md` §2 • `docs/internal/research/{duckdb,ducklake,dlt}.md`.
+- `docs/specs/nucleus_architecture_v4.1.md` §5.6 / §5.6.0 / D13 / §18.3 / §17.1 • `docs/specs/nucleus_poc_plan.md` §2 • `docs/internal/research/{duckdb,ducklake,dlt}.md`.
 
 ---
 
-*Last verified: 2026-05-13 against `dbt-duckdb==1.10.1` and `dbt-core==1.11.9`. Re-verify when opening the v0.3 ADR, before pinning either package, on any major bump (1.x → 2.x), or if PoC #2 triggers the fallback per `nucleus_poc_plan.md` §2. Log any AI-fabricated dbt or dbt-duckdb APIs caught in PR review to [`docs/internal/research/ai_hallucinations.md`](./ai_hallucinations.md).*
+*Last verified: 2026-05-13 against `dbt-duckdb==1.10.1` and `dbt-core==1.11.9`. Re-verify when opening the v0.3 ADR, before pinning either package, on any major bump (1.x → 2.x), or if PoC #2 triggers the fallback per `docs/specs/nucleus_poc_plan.md` §2. Log any AI-fabricated dbt or dbt-duckdb APIs caught in PR review to [`docs/internal/research/ai_hallucinations.md`](./ai_hallucinations.md).*

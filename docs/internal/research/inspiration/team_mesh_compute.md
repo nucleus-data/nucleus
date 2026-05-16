@@ -3,7 +3,7 @@
 > **Last verified**: 2026-05-15 against official docs, PyPI, and 2024–2026 case studies  
 > **Research tier**: AGENTS.md §11.14 — Research tier (model: Claude Sonnet 4.6, fallback per availability)  
 > **Audience**: Nucleus founder — strategic exploration; input to ADR-track or shelf decision  
-> **Related docs**: `distributed_compute_2026.md` (R6, DO NOT REPEAT — Ray/Modal/Dask landscape); `nucleus_architecture_v4.1.md` §10 (Yield-to-Giants Modes 1/2/3); AGENTS.md §3 (Hard Constraints), §6 (Five Pillars)
+> **Related docs**: `distributed_compute_2026.md` (R6, DO NOT REPEAT — Ray/Modal/Dask landscape); `docs/specs/nucleus_architecture_v4.1.md` §10 (Yield-to-Giants Modes 1/2/3); AGENTS.md §3 (Hard Constraints), §6 (Five Pillars)
 
 ---
 
@@ -22,7 +22,7 @@ No 2024–2026 data engineering tool — Databricks, Snowflake, MotherDuck, dbt 
 ### Top-3 Actions
 
 1. **Add to `docs/FOUNDER_ACTION_QUEUE.md`**: "Team Mesh Compute — revisit at v1.0 if ≥3 customer interviews request laptop-pooling AND they're explicitly frustrated by Mode 2 cost AND unwilling to buy a shared server."
-2. **Reserve `compute="mesh"` as a keyword stub** in `nucleus_cli_spec.md` — return a `NucleusError` with a roadmap link. 0 LOC implementation cost; keeps API surface open.
+2. **Reserve `compute="mesh"` as a keyword stub** in `docs/specs/nucleus_cli_spec.md` — return a `NucleusError` with a roadmap link. 0 LOC implementation cost; keeps API surface open.
 3. **Watch MotherDuck multi-player roadmap** — if they ship peer-to-peer DuckDB collaboration, that validates demand. Set 6-month review.
 
 ---
@@ -130,7 +130,7 @@ P = Probability, I = Impact; scale: LOW / MED / HIGH / CRITICAL
 
 ### 3.1 Where Mesh Sits in v4.1
 
-Current v4.1 (per `nucleus_architecture_v4.1.md` §10) defines 3 yield-to-giants modes:
+Current v4.1 (per `docs/specs/nucleus_architecture_v4.1.md` §10) defines 3 yield-to-giants modes:
 
 ```
 Proposed extension to the compute tier (v4.1 §10, NOT today):
@@ -296,7 +296,7 @@ This configuration describes a well-funded, office-first team — the exact team
 ### 6.2 Phased Monitoring Plan
 
 **Now (0 LOC)**:
-- Reserve `compute="mesh"` keyword in `nucleus_cli_spec.md` — returns `NucleusError` with roadmap link
+- Reserve `compute="mesh"` keyword in `docs/specs/nucleus_cli_spec.md` — returns `NucleusError` with roadmap link
 - Add to `docs/FOUNDER_ACTION_QUEUE.md`
 
 **v1.0 trigger gate** — begin design ONLY when:
@@ -372,7 +372,7 @@ As of 2026-05-15, team mesh compute has: zero documented customer requests, nega
 
 **Community signals**: [30] HN #42042999 (dev environments) [31] HN #43899252 (Databricks cost) [32] community.databricks.com #95172 (laptop + Databricks question) [33] contracollective.com/blog/apple-silicon-local-ai-server-engineering-team [34] sharedllm.org/blog/llama-cpp-rpc-two-macs/ [35] olliefritz.com/writing/xps-laptop-cluster.html
 
-**Internal**: [36] nucleus_architecture_v4.1.md §10 [37] AGENTS.md §3/§5/§6/§10/§11
+**Internal**: [36] docs/specs/nucleus_architecture_v4.1.md §10 [37] AGENTS.md §3/§5/§6/§10/§11
 
 ---
 

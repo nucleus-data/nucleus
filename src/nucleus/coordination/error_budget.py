@@ -1,6 +1,6 @@
 """Error-budget SLO definitions per operation type.
 
-Per ``nucleus_architecture_v4.1.md`` §6.2 (AMA) and
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.2 (AMA) and
 ``docs/decisions/ADR-024-reliability-hardening-plan.md`` P0-5.
 
 These are v0.2 *definitions* only — the enforcement layer (OpenTelemetry

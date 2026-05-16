@@ -3,7 +3,7 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: errors, governance, api-stability, error-translation
-> **Related**: ADR-001 (catalog-delegated commits emit `NucleusCommitConflictError` / `NucleusCommitUnknownError`), ADR-002 §8.1 L3 + §8.2 (codes are part of the data-product / MCP contract), ADR-005 (`ctx` SDK API freeze — citation only; this is its "errors" companion), AGENTS.md §11.7, `nucleus_architecture_v4.1.md` §3.1 + §6.4, `poc/p1_error_translation/`
+> **Related**: ADR-001 (catalog-delegated commits emit `NucleusCommitConflictError` / `NucleusCommitUnknownError`), ADR-002 §8.1 L3 + §8.2 (codes are part of the data-product / MCP contract), ADR-005 (`ctx` SDK API freeze — citation only; this is its "errors" companion), AGENTS.md §11.7, `docs/specs/nucleus_architecture_v4.1.md` §3.1 + §6.4, `poc/p1_error_translation/`
 
 ## Context
 

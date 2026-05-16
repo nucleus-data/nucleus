@@ -5,7 +5,7 @@ historic NE600x placeholder typo, parses YAML fenced blocks under ``copilot``,
 and whitelists ``export`` shell variable names to LiteLLM / Nucleus-documented keys.
 
 Promotion: cookbook added 2026-05-15 (v0.2.0 GA hardening).
-Architecture: ``nucleus_architecture_v4.1.md`` §7.x + ADR-015.
+Architecture: ``docs/specs/nucleus_architecture_v4.1.md`` §7.x + ADR-015.
 """
 
 from __future__ import annotations

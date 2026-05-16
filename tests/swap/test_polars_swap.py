@@ -1,6 +1,6 @@
 """Swap smoke tests — Polars → Apache DataFusion DataFrame API.
 
-Per AGENTS.md Hard Constraint #9 + ``nucleus_architecture_v4.1.md`` §9.3.
+Per AGENTS.md Hard Constraint #9 + ``docs/specs/nucleus_architecture_v4.1.md`` §9.3.
 Verifies the Polars wrap surface we depend on today (2 exception classes
 registered in ``coordination/error_translation.py:314-317`` + DataFrame /
 LazyFrame methods user assets return) AND that DataFusion is reachable

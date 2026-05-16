@@ -24,5 +24,5 @@ This is the only error that explicitly asks you to file a bug.
 
 - Source: `src/nucleus/errors.py` (`NucleusInternalError`)
 - Default fix hint: "If this is unexpected, please file a bug. Run with --debug to see the full traceback."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

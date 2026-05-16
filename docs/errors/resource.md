@@ -23,5 +23,5 @@ A materialization exceeded an engine resource limit and the engine aborted it. M
 
 - Source: `src/nucleus/errors.py` (`NucleusResourceError`)
 - Default fix hint: "Reduce the working set (filter / project earlier) or raise the engine `memory_limit`."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

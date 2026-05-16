@@ -1,7 +1,7 @@
 # PyArrow — In-Memory Tier-0 Substrate
 
 > **Pinned**: `pyarrow==18.1.0` (released 2024-11-26, verified on PyPI 2026-05-13)  •  **License**: Apache-2.0  •  **Docs**: <https://arrow.apache.org/docs/python/>
-> **Status in Nucleus**: **Tier 0 (immortal)** per `nucleus_architecture_v4.1.md` §3.1 / §4.1 — one of seven bedrock substrates alongside Apache Iceberg, Apache Parquet, Lance, S3 API, OpenLineage, OpenTelemetry. **No swap target ever.**
+> **Status in Nucleus**: **Tier 0 (immortal)** per `docs/specs/nucleus_architecture_v4.1.md` §3.1 / §4.1 — one of seven bedrock substrates alongside Apache Iceberg, Apache Parquet, Lance, S3 API, OpenLineage, OpenTelemetry. **No swap target ever.**
 > **Wrapping mode**: **Zero wrapping behind an interface.** Apache Arrow IS the in-memory interface; wrapping it defeats the contract. Nucleus calls `pyarrow` directly in 3-4 narrow places (§3); the rest is inherited transitively via polars / duckdb / pyiceberg / dlt.
 
 Official-docs anchor per [AGENTS.md Hard Constraint #10](../../AGENTS.md). Read before touching any L0 ↔ L1 conversion path, or whenever a downstream pin (polars, duckdb, pyiceberg, dlt) is upgraded — the highest pyarrow floor across our pinned deps is what `pip install -e .[dev]` resolves to, and `pyiceberg==0.8.1`'s `pyarrow<19.0.0` is the binding ceiling. PyArrow is the **one dependency every other Tier 1/2 component already pulls transitively**; a poor pin here propagates everywhere.
@@ -239,7 +239,7 @@ Residual items this doc cannot resolve without running real code against the pin
 - **Wes McKinney's 2017 essay** *"Apache Arrow and the '10 Things I Hate About pandas'"* (the historical North Star): <https://wesmckinney.com/blog/apache-arrow-pandas-internals/>
 - **License**: Apache-2.0 (ASF TLP policy + PyPI classifier). `https://github.com/apache/arrow/blob/main/LICENSE.txt` returns empty body via `WebFetch` (same GitHub blob-viewer quirk as Polaris / Lakekeeper repos); the license file does exist in the repo.
 - **Companion Nucleus research docs**: [`pyiceberg.md`](./pyiceberg.md) §2 (upper bound)  •  [`polars.md`](./polars.md) §8 (zero-copy boundary)  •  [`duckdb.md`](./duckdb.md) §5 (`.arrow()`)  •  [`dlt.md`](./dlt.md) §6 (floor)  •  [`openlineage.md`](./openlineage.md) §5.1 (schema facet path)  •  [`ai_hallucinations.md`](./ai_hallucinations.md).
-- **Architecture references**: `nucleus_architecture_v4.1.md` §3.1 (L0 Physics; Arrow first); §4.1 (Tier-0 immortal table); §9.2 (Composability Constitution Tier-0 list).
+- **Architecture references**: `docs/specs/nucleus_architecture_v4.1.md` §3.1 (L0 Physics; Arrow first); §4.1 (Tier-0 immortal table); §9.2 (Composability Constitution Tier-0 list).
 
 ---
 

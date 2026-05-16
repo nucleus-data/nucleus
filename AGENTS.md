@@ -9,7 +9,7 @@
 
 **Nucleus ships data products from a laptop.** A local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks — built on open Apache foundations, AI-ready by design. Grows with the team. Graduates cleanly to cloud giants (Databricks/Snowflake) — or any Iceberg catalog (Polaris, Lakekeeper, Unity, R2) — when users outgrow it.
 
-A *data product* in Nucleus terms = an Iceberg-backed asset with transformations, contracts, and lineage, consumable by BI tools, applications, or AI agents via the `ctx` SDK or the MCP server (v0.5+). See `nucleus_architecture_v4.1.md` §12.1 for the canonical *asset* definition the marketing term wraps. *(Positioning hierarchy and trade-offs documented in `docs/decisions/ADR-002-positioning-decision-2026-05.md` §8.)*
+A *data product* in Nucleus terms = an Iceberg-backed asset with transformations, contracts, and lineage, consumable by BI tools, applications, or AI agents via the `ctx` SDK or the MCP server (v0.5+). See `docs/specs/nucleus_architecture_v4.1.md` §12.1 for the canonical *asset* definition the marketing term wraps. *(Positioning hierarchy and trade-offs documented in `docs/decisions/ADR-002-positioning-decision-2026-05.md` §8.)*
 
 It is **not** a database, a SQL engine, a DataFrame engine, an orchestrator, a Spark replacement, a Databricks competitor, a "Data OS", an ML platform, an "AI-native data CLI", an "agent data substrate", or a vector database. Treat any drift toward those framings as a bug. <!-- banned-term: multiple -->
 
@@ -69,19 +69,19 @@ v0.2.0 source under `src/nucleus/` ships Workbench v0.3, 4 new connectors, 11-sc
 
 | # | Document | Purpose |
 |---|---|---|
-| 1 | `nucleus_architecture_v4.1.md` | **THE single source of truth** (supersedes v4.0 and v3) |
-| 2 | `nucleus_vs_databricks.md` | What we are and aren't (feature parity) |
-| 3 | `nucleus_ctx_sdk_spec.md` | The stable API surface — **THE product** |
-| 4 | `nucleus_asset_model_spec.md` | Fundamental data primitive |
-| 5 | `nucleus_project_anatomy.md` | User project layout standard |
-| 6 | `nucleus_cli_spec.md` | CLI command surface |
-| 7 | `nucleus_poc_plan.md` | PoCs to run before v0.1 (PoC #1 = Dagster Error Translation) |
-| 8 | `nucleus_implementation_readiness.md` | Master go/no-go checklist |
-| 9 | `nucleus_red_team_review.md` | Adversarial review with mitigations |
+| 1 | `docs/specs/nucleus_architecture_v4.1.md` | **THE single source of truth** (supersedes v4.0 and v3) |
+| 2 | `docs/specs/nucleus_vs_databricks.md` | What we are and aren't (feature parity) |
+| 3 | `docs/specs/nucleus_ctx_sdk_spec.md` | The stable API surface — **THE product** |
+| 4 | `docs/specs/nucleus_asset_model_spec.md` | Fundamental data primitive |
+| 5 | `docs/specs/nucleus_project_anatomy.md` | User project layout standard |
+| 6 | `docs/specs/nucleus_cli_spec.md` | CLI command surface |
+| 7 | `docs/specs/nucleus_poc_plan.md` | PoCs to run before v0.1 (PoC #1 = Dagster Error Translation) |
+| 8 | `docs/specs/nucleus_implementation_readiness.md` | Master go/no-go checklist |
+| 9 | `docs/specs/nucleus_red_team_review.md` | Adversarial review with mitigations |
 
 Total reading time: ~3 hours. **Required** before any non-trivial contribution.
 
-If any doc conflicts with `nucleus_architecture_v4.1.md`, **architecture v4.1 wins.**
+If any doc conflicts with `docs/specs/nucleus_architecture_v4.1.md`, **architecture v4.1 wins.**
 
 `docs/archive/architecture-v4.md` and `docs/archive/architecture-v3.md` are **deprecated** (archived 2026-05-15). Use only as historical reference; do not cite in new code or docs.
 
@@ -106,13 +106,13 @@ If any doc conflicts with `nucleus_architecture_v4.1.md`, **architecture v4.1 wi
 10. **Read official documentation before integration.** Never rely on AI memory or assumed API behavior. Every wrapped component (Dagster, DuckDB, Polars, dlt, pyiceberg, SQLAlchemy, etc.) requires reading official docs before first integration AND before any version upgrade. See §11.12.
 11. **Upgrade-safe stack design.** Every wrapped component MUST have: exact version pin in `pyproject.toml`, upgrade smoke tests in CI, single-component upgrade PRs (no bulk upgrades), documented rollback command, and major-version-upgrade ADR requirement. See §11.13.
 
-Violating any of these requires explicit amendment to `nucleus_architecture_v4.1.md`.
+Violating any of these requires explicit amendment to `docs/specs/nucleus_architecture_v4.1.md`.
 
 ---
 
 ## 4. The "Do NOT Build" List
 
-These are wrapped, never built. See `nucleus_architecture_v4.1.md` §20 for full list.
+These are wrapped, never built. See `docs/specs/nucleus_architecture_v4.1.md` §20 for full list.
 
 - ❌ Custom scheduler → use **Dagster** (embedded, hidden); mini-scheduler as fallback only
 - ❌ Custom orchestration → use **Dagster**
@@ -233,7 +233,7 @@ Trigger an explicit human review if any of these happen:
 - AI Copilot economics break (token cost > 30% of Cloud margin)
 - A pillar in §6 is violated to serve another pillar
 
-These are not failures — they are signals to revisit `nucleus_architecture_v4.1.md`.
+These are not failures — they are signals to revisit `docs/specs/nucleus_architecture_v4.1.md`.
 
 ---
 
@@ -247,7 +247,7 @@ When you (an AI agent) propose changes:
 4. **Resist scope creep.** If a user request implies building something on the "do not build" list, surface the conflict before complying.
 5. **Use the vocabulary.** Never silently translate to other terms.
 6. **Match the philosophy.** Friction elimination > feature accumulation.
-7. **Keep docs in sync.** Any architectural change requires updating `nucleus_architecture_v4.1.md` and a note in `nucleus_implementation_readiness.md`.
+7. **Keep docs in sync.** Any architectural change requires updating `docs/specs/nucleus_architecture_v4.1.md` and a note in `docs/specs/nucleus_implementation_readiness.md`.
 8. **Be brutally honest about scope.** Overpromising scope is the #1 killer of OSS projects.
 9. **Respect the composability constitution.** Never introduce a non-swappable Tier 1/2 dependency.
 10. **Cite official documentation URLs** when suggesting any code that uses a wrapped library. If you cannot cite, write `# NEEDS VERIFICATION` and ask the user to confirm. **Never fabricate APIs that "should exist".** See §11.12.
@@ -437,7 +437,7 @@ Every 4 weeks, run a Drift Detection Pass:
 
 ```
 Prompt to AI:
-"Read nucleus_architecture_v4.1.md and AGENTS.md.
+"Read docs/specs/nucleus_architecture_v4.1.md and AGENTS.md.
 Then review the last 4 weeks of commits.
 
 For each commit, flag any drift:
@@ -690,12 +690,12 @@ Anti-pattern: defining a generic `dispatcher.md` or `orchestrator.md` — the Cu
 
 ## 12. When in Doubt
 
-1. Re-read `nucleus_architecture_v4.1.md` (the locked architecture).
+1. Re-read `docs/specs/nucleus_architecture_v4.1.md` (the locked architecture).
 2. Re-read v4.1 §1.5 (beachhead persona + 30-min metric).
 3. Re-read v4.1 §18 (roadmap — is the feature even in v0.1?).
 4. Apply §11.4 per-feature workflow (don't skip the wrap-vs-build check).
 5. Check the AI Boundary Map in §11.3 (am I in a "Risky" or "Bad" category?).
-6. Re-read `nucleus_implementation_readiness.md` §4 (the 7 questions).
+6. Re-read `docs/specs/nucleus_implementation_readiness.md` §4 (the 7 questions).
 7. Ask: "Is this in §20 of architecture v4.1?" (Non-Goals)
 8. Ask: "Does this serve one of the 5 pillars without harming another?"
 9. If still unclear: stop and ask the human.

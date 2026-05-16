@@ -11,7 +11,7 @@ In v0.1.1, exposes read-only schedule metadata:
     - :func:`to_dagster_schedule` — wraps a ``ScheduleDefinition`` for the
       v0.2 active-scheduling path (PROPOSED; stub in v0.1.1).
 
-Per ``nucleus_architecture_v4.1.md`` §6.3 (Coordination layer) and
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.3 (Coordination layer) and
 ADR-017 §1 (wrap Dagster, don't build a custom scheduler).
 
 # Stability: Internal
@@ -154,7 +154,7 @@ def to_dagster_schedule(defn: _AssetDefinition) -> Any:
     Dagster types do NOT cross the outbound coordination boundary (never
     stored in ``ScheduleEntry`` or passed to CLI callers).
 
-    Per ``nucleus_architecture_v4.1.md`` §6.3 (Coordination — Dagster wrap)
+    Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.3 (Coordination — Dagster wrap)
     and ADR-017 §1 (wrap, don't build).
 
     Docs (ScheduleDefinition):

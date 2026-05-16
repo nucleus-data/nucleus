@@ -5,7 +5,7 @@
 > **Decider(s)**: Solo founder (graduation-pathways workstream, v0.2.0 close-out polish).
 > **Tags**: yield-to-giants, layer-2-coordination, layer-4-experience, mode-2, hybrid-compute, sdk-surface, deferred-implementation
 > **Supersedes**: (none -- first ADR scoping a Mode 2 dispatch surface)
-> **Related**: `nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) - section 10.2 (Mode 2: Hybrid Compute) - section 6 (Coordination layer) - section 6.4 (Error Translation Discipline) - section 13 (`ctx` SDK Contract); `AGENTS.md` section 4 (Do-Not-Build list -- distributed compute) - section 3 #6 (No custom auth -- always delegate to OIDC); ADR-006 (NE-prefixed error codes); ADR-015 (AI Copilot single-turn chat); ADR-040 (Layer-4 peer imports); `docs/internal/research/parity_vs_databricks_snowflake.md` section 1, section 6 (gap-closure plan); `docs/cookbook/graduate-to-databricks.md`, `graduate-to-snowflake.md`, `graduate-to-bigquery.md` (the manual hybrid recipes ADR-041 automates).
+> **Related**: `docs/specs/nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) - section 10.2 (Mode 2: Hybrid Compute) - section 6 (Coordination layer) - section 6.4 (Error Translation Discipline) - section 13 (`ctx` SDK Contract); `AGENTS.md` section 4 (Do-Not-Build list -- distributed compute) - section 3 #6 (No custom auth -- always delegate to OIDC); ADR-006 (NE-prefixed error codes); ADR-015 (AI Copilot single-turn chat); ADR-040 (Layer-4 peer imports); `docs/internal/research/parity_vs_databricks_snowflake.md` section 1, section 6 (gap-closure plan); `docs/cookbook/graduate-to-databricks.md`, `graduate-to-snowflake.md`, `graduate-to-bigquery.md` (the manual hybrid recipes ADR-041 automates).
 
 ---
 
@@ -13,7 +13,7 @@
 
 ### 1.1 The current state
 
-Nucleus v0.2.0 runs **all** asset compute in-process via DuckDB and Polars (`nucleus_architecture_v4.1.md` section 5.1, section 5.2). This is exactly right for the beachhead persona -- a 5-20-engineer startup team, 100 GB to 5 TB total, greenfield (`v4.1` section 1.5). Cold boot ~ 6 s; idle RAM ~ 117 MB; queries on 100M-row Parquet finish in seconds (per `docs/benchmarks/2026-05-15_baseline.md`).
+Nucleus v0.2.0 runs **all** asset compute in-process via DuckDB and Polars (`docs/specs/nucleus_architecture_v4.1.md` section 5.1, section 5.2). This is exactly right for the beachhead persona -- a 5-20-engineer startup team, 100 GB to 5 TB total, greenfield (`v4.1` section 1.5). Cold boot ~ 6 s; idle RAM ~ 117 MB; queries on 100M-row Parquet finish in seconds (per `docs/benchmarks/2026-05-15_baseline.md`).
 
 The **honest evaluation pinned in `docs/internal/research/parity_vs_databricks_snowflake.md` section 1** flagged a documentation gap and an implementation gap:
 
@@ -33,13 +33,13 @@ A concrete pattern emerging from beachhead user conversations and from the parit
 
 The minimum-viable Nucleus answer is a **thin dispatch decorator** that issues the SQL or Python statement on the remote engine and writes the resulting Iceberg snapshot back to the **same catalog**. The asset graph, the Workbench, the Asset Materialization Adapter (AMA), the contract enforcement, the error-translation layer -- all stay local. Only the heavy *one* step yields.
 
-This is exactly Mode 2 as described in `nucleus_architecture_v4.1.md` section 10.2:
+This is exactly Mode 2 as described in `docs/specs/nucleus_architecture_v4.1.md` section 10.2:
 
 > *Nucleus orchestrates; Databricks executes; result committed back to Iceberg.*
 
 ### 1.3 Why the API is undocumented today
 
-`v4.1` section 10.2 sketches the syntax (`@nucleus.sql_asset(compute="databricks")`) and `nucleus_architecture_v4.1.md` section 18.6 lists "Hybrid compute Mode 2 (Databricks/Snowflake dispatch)" as a **v1.5+** deliverable. The existing `docs/site/guides/graduate-to-databricks.md` says "v0.5+ planned syntax". `docs/roadmap/overview.md` says "v0.5+ (Hybrid dispatch ADR)". The README says "v1.5+".
+`v4.1` section 10.2 sketches the syntax (`@nucleus.sql_asset(compute="databricks")`) and `docs/specs/nucleus_architecture_v4.1.md` section 18.6 lists "Hybrid compute Mode 2 (Databricks/Snowflake dispatch)" as a **v1.5+** deliverable. The existing `docs/site/guides/graduate-to-databricks.md` says "v0.5+ planned syntax". `docs/roadmap/overview.md` says "v0.5+ (Hybrid dispatch ADR)". The README says "v1.5+".
 
 That is **drift between documents**. The spec was never written. This ADR locks the spec; the founder decides separately whether to pull implementation into v0.3, v0.5, or v1.5.
 
@@ -205,7 +205,7 @@ If the precondition is not met, `health_check` fails fast with `NucleusComputeDi
 Per Force E above and `AGENTS.md` section 3 #6: **Nucleus does NOT own credentials for remote engines.** Credentials are supplied via:
 
 - **Local dev**: `.env` file with provider-specific keys (e.g. `DATABRICKS_TOKEN`, `SNOWFLAKE_PASSWORD`, `GOOGLE_APPLICATION_CREDENTIALS`). The provider plugin reads these via `os.environ` only.
-- **Production**: existing OIDC / vault delegation per `nucleus_architecture_v4.1.md` section 15.1 (Lakekeeper / Authentik / Keycloak / Okta / Azure AD). The provider plugin asks `ctx.secrets.get(...)` (v0.2+ surface per `v4.1` section 13.2).
+- **Production**: existing OIDC / vault delegation per `docs/specs/nucleus_architecture_v4.1.md` section 15.1 (Lakekeeper / Authentik / Keycloak / Okta / Azure AD). The provider plugin asks `ctx.secrets.get(...)` (v0.2+ surface per `v4.1` section 13.2).
 - **Service-account / workload-identity** patterns: documented per provider; Nucleus does not enforce a specific pattern.
 
 Open question: per-user OAuth flows (Databricks personal access tokens via OIDC, Snowflake key-pair, GCP application-default-credentials). See section 5.
@@ -279,7 +279,7 @@ In priority order. Each must be answered before the implementation milestone clo
 
 This ADR is a **specification**. The following are explicitly NOT decided here:
 
-- **Implementation timeline.** Recommended pull-forward target: **v0.3+** (per founder direction in the graduation-pathways workstream brief). The original architecture target is v1.5+ (`v4.1` section 10.2, section 18.6). Implementation tracked by the milestone tag `wave-3-mode2-implementation`. Pulling implementation forward from v1.5 to v0.3 requires a follow-up amendment to `nucleus_architecture_v4.1.md` section 18.6 per `AGENTS.md` section 10.7.
+- **Implementation timeline.** Recommended pull-forward target: **v0.3+** (per founder direction in the graduation-pathways workstream brief). The original architecture target is v1.5+ (`v4.1` section 10.2, section 18.6). Implementation tracked by the milestone tag `wave-3-mode2-implementation`. Pulling implementation forward from v1.5 to v0.3 requires a follow-up amendment to `docs/specs/nucleus_architecture_v4.1.md` section 18.6 per `AGENTS.md` section 10.7.
 - **Provider plugin code.** Each provider (Databricks first, then Snowflake, then BigQuery) will arrive as its own ADR + PR per `AGENTS.md` section 11.10 single-file discipline.
 - **Performance targets.** Per `v4.1` section 16, local performance targets are documented; remote performance is the remote engine's responsibility.
 - **Exact `nucleus_project.yaml` schema.** Specifics of the `[compute.databricks.<slug>]` block or its alternatives wait until the first provider implementation.
@@ -371,7 +371,7 @@ Pre-implementation (when v0.3+ wave starts):
 
 ### Internal
 
-- `nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy), section 10.2 (Mode 2: Hybrid Compute), section 6 (Coordination layer), section 6.4 (Error Translation), section 9 (Composability by Constitution), section 13 (`ctx` SDK Contract), section 15.1 (Authentication -- OIDC delegation), section 18.6 (v1.5 Hybrid Compute Mode 2 line).
+- `docs/specs/nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy), section 10.2 (Mode 2: Hybrid Compute), section 6 (Coordination layer), section 6.4 (Error Translation), section 9 (Composability by Constitution), section 13 (`ctx` SDK Contract), section 15.1 (Authentication -- OIDC delegation), section 18.6 (v1.5 Hybrid Compute Mode 2 line).
 - `AGENTS.md` section 3 (Eleven Hard Constraints), section 4 (Do-Not-Build list), section 5 (8-Question Gate), section 6 (Five Pillars), section 10 (AI agent disciplines), section 11.5 (ADR template), section 11.7 (Error Translation Enforcement), section 11.10 (single-file discipline).
 - `.cursor/rules/nucleus.mdc` (Anti-Over-Engineering BIND, Velocity Discipline, Subagent Model Orchestration).
 - ADR-006 (NE-prefixed error codes -- defines the NE3xxx Coordination range that NE3008 lands in).

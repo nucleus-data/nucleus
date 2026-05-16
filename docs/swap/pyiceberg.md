@@ -1,6 +1,6 @@
 # Swap target: PyIceberg → iceberg-rust (via PyO3 binding)
 
-> **Component status**: Tier 0 per `nucleus_architecture_v4.1.md` §3, §4. Iceberg the **format** is immortal; *the Python binding* is the swap unit.
+> **Component status**: Tier 0 per `docs/specs/nucleus_architecture_v4.1.md` §3, §4. Iceberg the **format** is immortal; *the Python binding* is the swap unit.
 > **Current default**: `pyiceberg[sql-sqlite,s3fs,duckdb]==0.11.1` per [ADR-012](../decisions/ADR-012-runtime-dependency-pin-matrix-v01.md) (the `0.8.1 → 0.11.x` migration tracked by ADR-003 landed during PoC #1 promotion).
 > **Swap target**: [iceberg-rust](https://github.com/apache/iceberg-rust) via PyO3. Candidate: `iceberg>=0.4` Rust crate; Python entrypoint TBD — **NEEDS VERIFICATION** (§7).
 > **Doc status**: INTERFACE-ONLY. Full adapter is built on-demand only per v4.1 §9.3.

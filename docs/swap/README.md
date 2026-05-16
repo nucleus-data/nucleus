@@ -1,8 +1,8 @@
 # Swap Index
 
-Per `nucleus_architecture_v4.1.md` §9.3 + AGENTS.md Hard Constraint #9 ("Composability by Constitution"), every Tier 1/2 wrapped component has a swap interface + smoke tests documented here. **Full adapters are built on-demand only** — when a trigger condition fires (vendor death, license pivot, perf regression >2×, community demand), not pre-emptively.
+Per `docs/specs/nucleus_architecture_v4.1.md` §9.3 + AGENTS.md Hard Constraint #9 ("Composability by Constitution"), every Tier 1/2 wrapped component has a swap interface + smoke tests documented here. **Full adapters are built on-demand only** — when a trigger condition fires (vendor death, license pivot, perf regression >2×, community demand), not pre-emptively.
 
-This file is a navigation index. Read the linked swap doc for the actual interface Protocol, trigger conditions, and migration steps. Smoke tests for v0.1 deps live at `tests/swap/` (duckdb/polars/dagster landed 2026-05-13); v0.3+ deps land their smoke tests there when promoted. Order below matches the composability constitution table in `nucleus_architecture_v4.1.md` §9.2 (Tier 0 substrate → Tier 1 engines → Tier 2 wrapped capabilities).
+This file is a navigation index. Read the linked swap doc for the actual interface Protocol, trigger conditions, and migration steps. Smoke tests for v0.1 deps live at `tests/swap/` (duckdb/polars/dagster landed 2026-05-13); v0.3+ deps land their smoke tests there when promoted. Order below matches the composability constitution table in `docs/specs/nucleus_architecture_v4.1.md` §9.2 (Tier 0 substrate → Tier 1 engines → Tier 2 wrapped capabilities).
 
 ---
 
@@ -28,6 +28,6 @@ This file is a navigation index. Read the linked swap doc for the actual interfa
 
 ---
 
-[← `nucleus_architecture_v4.1.md` §9](../../nucleus_architecture_v4.1.md) · [ADR-002 §6 (catalog co-default)](../decisions/ADR-002-positioning-decision-2026-05.md) · [ADR-004 (catalog migration)](../decisions/ADR-004-catalog-migration-v01-to-v03.md) · [ADR-015 (AI Chat MVP)](../decisions/ADR-015-ai-chat-mvp.md) · [ADR-016 (Workbench MVP)](../decisions/ADR-016-workbench-mvp.md)
+[← `docs/specs/nucleus_architecture_v4.1.md` §9](../specs/nucleus_architecture_v4.1.md) · [ADR-002 §6 (catalog co-default)](../decisions/ADR-002-positioning-decision-2026-05.md) · [ADR-004 (catalog migration)](../decisions/ADR-004-catalog-migration-v01-to-v03.md) · [ADR-015 (AI Chat MVP)](../decisions/ADR-015-ai-chat-mvp.md) · [ADR-016 (Workbench MVP)](../decisions/ADR-016-workbench-mvp.md)
 
 *Last updated 2026-05-14 (alignment sweep #3 — added `workbench.md` (Tier 2, Fork B sub-component swaps) and `litellm.md` (Tier 3, v0.2 AI Copilot wrapper) to the index after they landed in `docs/swap/` but were not referenced here). Add new swap docs here as they land. Tier 0 substrates (Arrow, Iceberg the format, Parquet, Lance, S3 API, OpenLineage, OpenTelemetry) deliberately have no swap doc — they are the substrate, not the wrap.*

@@ -1,7 +1,7 @@
 """PoC #4 measurement harness — `nucleus up` cold-boot timing.
 
-Validates ``nucleus_poc_plan.md`` §4 acceptance against
-``nucleus_architecture_v4.1.md`` §5.7 / §6.3: cold boot <10s, warm <3s,
+Validates ``docs/specs/nucleus_poc_plan.md`` §4 acceptance against
+``docs/specs/nucleus_architecture_v4.1.md`` §5.7 / §6.3: cold boot <10s, warm <3s,
 idle RAM <500MB, all components reachable. Standalone runner:
 ``python poc/p4_boot_time/measure.py`` (exit 0=PASS, 1=FAIL, 2=INCOMPLETE).
 Promotes to ``src/nucleus/cli/up.py`` after PoC #1 (``AGENTS.md`` §11.1).

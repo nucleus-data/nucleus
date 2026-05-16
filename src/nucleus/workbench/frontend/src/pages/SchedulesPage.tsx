@@ -8,7 +8,7 @@
  *
  * Per ADR-016 §3 — Fork B layout spec.
  * ADR-017 — Schedule exposure v0.1.
- * nucleus_architecture_v4.1.md §8.1 — Layer 4 Experience.
+ * docs/specs/nucleus_architecture_v4.1.md §8.1 — Layer 4 Experience.
  *
  * # Stability: Internal @ v0.2
  */

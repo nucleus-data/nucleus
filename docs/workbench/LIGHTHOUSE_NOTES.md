@@ -7,7 +7,7 @@
 > **Scope**: `src/nucleus/workbench/static/index.html` after the 2026-05-15
 > empty/error/loading-state polish pass.
 >
-> **Reference**: `nucleus_architecture_v4.1.md` sec.6.5 (Experience Layer / Workbench),
+> **Reference**: `docs/specs/nucleus_architecture_v4.1.md` sec.6.5 (Experience Layer / Workbench),
 > ADR-016 (Workbench Fork B static SPA), ADR-040 (Workbench peer of CLI).
 
 ---
@@ -246,4 +246,4 @@ Privacy / data handling:
 ---
 
 *Last updated: 2026-05-15 by the Workbench UX Final Polish workstream.*
-*Architecture refs: `nucleus_architecture_v4.1.md` sec.6.5, ADR-016 sec.3, ADR-040.*
+*Architecture refs: `docs/specs/nucleus_architecture_v4.1.md` sec.6.5, ADR-016 sec.3, ADR-040.*

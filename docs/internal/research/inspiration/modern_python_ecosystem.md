@@ -448,7 +448,7 @@ Even if Nucleus added 3.13 support:
 
 **Concurrent run safety in Nucleus** — The primary concurrency concern in Nucleus is **not**
 thread-safety of Python objects but the atomicity of Iceberg snapshot commits. Per
-`nucleus_architecture_v4.1.md §5.5`, Nucleus delegates transaction coordination to the
+`docs/specs/nucleus_architecture_v4.1.md §5.5`, Nucleus delegates transaction coordination to the
 Iceberg catalog (filesystem-based at v0.1, Lakekeeper at v0.3+). This is catalog-side
 atomicity, not GIL-related.
 

@@ -15,7 +15,7 @@ Suites B–H, J, K are STUBBED with # TODO: implement post-Wave-1 markers.
 
 Refs:
     docs/release/E2E_TEST_PLAN.md
-    nucleus_cli_spec.md §3–§8
+    docs/specs/nucleus_cli_spec.md §3–§8
     AGENTS.md §11.8 (beachhead metric)
     scripts/beachhead_e2e.py (existing E2E baseline)
 """
@@ -62,7 +62,7 @@ TEMPLATE_FILES = (
     "data/.gitkeep",
 )
 COLD_BOOT_THRESHOLD_S = 1.5  # Suite A1 / K1
-UP_BOOT_THRESHOLD_S = 10.0  # Suite A5 per nucleus_cli_spec.md §3.2
+UP_BOOT_THRESHOLD_S = 10.0  # Suite A5 per docs/specs/nucleus_cli_spec.md §3.2
 VERSION_THRESHOLD_S = 1.5  # Suite A2 / K1
 
 
@@ -234,7 +234,7 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     """Suite A: Boot + Lifecycle (10 scenarios).
 
     Per docs/release/E2E_TEST_PLAN.md §"Suite A".
-    Ref: nucleus_cli_spec.md §3.1–§3.3, §3.7; v4.1 §11.2.
+    Ref: docs/specs/nucleus_cli_spec.md §3.1–§3.3, §3.7; v4.1 §11.2.
     """
     suite = SuiteResult("A", "Boot + Lifecycle")
     suite.started_at = datetime.now(UTC).isoformat()
@@ -655,7 +655,7 @@ def run_suite_e(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     suite.finished_at = datetime.now(UTC).isoformat()
     # TODO: implement post-Wave-1
     # E3: python -c "import nucleus; @nucleus.asset(table='t', schedule='* * * * * *') def t(ctx): pass"
-    #   assert NucleusScheduleParseError raised; see nucleus_ctx_sdk_spec.md §2.1
+    #   assert NucleusScheduleParseError raised; see docs/specs/nucleus_ctx_sdk_spec.md §2.1
     return suite
 
 

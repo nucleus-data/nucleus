@@ -1,6 +1,6 @@
 # Pattern Reference
 
-Per [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.3 (Coordination Layer) — and the L0 type-mapping contract called out in §5.5 — Iceberg lifecycle and cross-cutting operational patterns live here. Each pattern is a **how-to + why** reference, not a runnable walkthrough — read the linked file before writing or reviewing code that touches `Table.append`, `Table.overwrite`, partition specs, schema diffs, or anything credential-shaped.
+Per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.3 (Coordination Layer) — and the L0 type-mapping contract called out in §5.5 — Iceberg lifecycle and cross-cutting operational patterns live here. Each pattern is a **how-to + why** reference, not a runnable walkthrough — read the linked file before writing or reviewing code that touches `Table.append`, `Table.overwrite`, partition specs, schema diffs, or anything credential-shaped.
 
 This file is a navigation index. Patterns are versioned to the pinned wrapped-library release in [`../compatibility.md`](../compatibility.md); when a pin moves, the affected pattern is re-reviewed before the upgrade lands per [`AGENTS.md`](../../AGENTS.md) Hard Constraint #11.
 
@@ -35,6 +35,6 @@ This file is a navigation index. Patterns are versioned to the pinned wrapped-li
 
 ---
 
-[← `nucleus_architecture_v4.1.md` §6.3](../../nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — research/](../research/README.md) · [Sibling — recipes/](../recipes/README.md) · [Sibling — security/](../security/README.md)
+[← `docs/specs/nucleus_architecture_v4.1.md` §6.3](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — research/](../research/README.md) · [Sibling — recipes/](../recipes/README.md) · [Sibling — security/](../security/README.md)
 
 *Last updated 2026-05-13. Add new patterns by appending to the matching group; the group is set by which architecture section the pattern serves. One file per pattern — do not bundle.*

@@ -6,7 +6,7 @@ time into a single response to power the Editorial Hero stat chips.
 Also returns recent_runs from the in-process run store so the
 DashboardPage makes only ONE round-trip instead of two.
 
-``nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
 ADR-016 §3 — Fork B API surface.
 
 Vocabulary: "asset", "materialization", "check" per AGENTS.md §7.

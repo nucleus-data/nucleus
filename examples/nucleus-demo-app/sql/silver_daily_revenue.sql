@@ -1,6 +1,6 @@
 -- Silver: daily revenue from completed orders.
 -- Reads bronze.orders via ctx.sql {{ ref() }} resolution
--- (per nucleus_architecture_v4.1.md §5.6.0 native ctx.sql Jinja resolver).
+-- (per docs/specs/nucleus_architecture_v4.1.md §5.6.0 native ctx.sql Jinja resolver).
 
 SELECT
     cast(order_ts AS DATE) AS day,

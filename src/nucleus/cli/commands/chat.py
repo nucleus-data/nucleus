@@ -1,9 +1,9 @@
 """``nucleus chat`` — AI Copilot single-turn chat command (v0.2, Beta).
 
-Per ADR-015 §1 + nucleus_cli_spec.md §3.8 (eighth command, Beta tier).
+Per ADR-015 §1 + docs/specs/nucleus_cli_spec.md §3.8 (eighth command, Beta tier).
 Delegates all logic to :func:`nucleus.intelligence.chat`.
 
-Architecture ref: ``nucleus_architecture_v4.1.md`` §7.2 + ADR-015
+Architecture ref: ``docs/specs/nucleus_architecture_v4.1.md`` §7.2 + ADR-015
 """
 
 from __future__ import annotations
@@ -59,7 +59,7 @@ def chat(
       [bold]OPENAI_API_KEY[/bold]       — for OpenAI
       [bold]OLLAMA_HOST[/bold]          — for local Ollama (default: http://localhost:11434)
 
-    Per [bold]nucleus_cli_spec.md §3.8[/bold]. Beta tier (ADR-005 §2):
+    Per [bold]docs/specs/nucleus_cli_spec.md §3.8[/bold]. Beta tier (ADR-005 §2):
     single-turn synchronous; multi-turn and streaming deferred to v0.3+.
 
     [bold]Examples[/bold]

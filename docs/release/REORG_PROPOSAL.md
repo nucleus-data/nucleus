@@ -32,15 +32,15 @@ my-data-stack/                          ← repo root
 │
 ├── nucleus_architecture_v3.md         ← ARCHIVE to docs/archive/
 ├── nucleus_architecture_v4.md         ← ARCHIVE to docs/archive/
-├── nucleus_architecture_v4.1.md       ← MOVE to docs/architecture/overview.md (PR-B)
-├── nucleus_cli_spec.md                ← MOVE to docs/architecture/cli-spec.md (PR-B)
-├── nucleus_ctx_sdk_spec.md            ← MOVE to docs/architecture/ctx-sdk-spec.md (PR-B)
-├── nucleus_asset_model_spec.md        ← MOVE to docs/architecture/asset-model-spec.md (PR-B)
-├── nucleus_project_anatomy.md         ← MOVE to docs/architecture/project-anatomy.md (PR-B)
-├── nucleus_poc_plan.md                ← MOVE to docs/architecture/poc-plan.md (PR-B)
-├── nucleus_implementation_readiness.md ← MOVE to docs/architecture/implementation-readiness.md (PR-B)
-├── nucleus_red_team_review.md         ← MOVE to docs/architecture/red-team-review.md (PR-B)
-├── nucleus_vs_databricks.md           ← MOVE to docs/architecture/vs-databricks.md (PR-B)
+├── docs/specs/nucleus_architecture_v4.1.md       ← MOVE to docs/architecture/overview.md (PR-B)
+├── docs/specs/nucleus_cli_spec.md                ← MOVE to docs/architecture/cli-spec.md (PR-B)
+├── docs/specs/nucleus_ctx_sdk_spec.md            ← MOVE to docs/architecture/ctx-sdk-spec.md (PR-B)
+├── docs/specs/nucleus_asset_model_spec.md        ← MOVE to docs/architecture/asset-model-spec.md (PR-B)
+├── docs/specs/nucleus_project_anatomy.md         ← MOVE to docs/architecture/project-anatomy.md (PR-B)
+├── docs/specs/nucleus_poc_plan.md                ← MOVE to docs/architecture/poc-plan.md (PR-B)
+├── docs/specs/nucleus_implementation_readiness.md ← MOVE to docs/architecture/implementation-readiness.md (PR-B)
+├── docs/specs/nucleus_red_team_review.md         ← MOVE to docs/architecture/red-team-review.md (PR-B)
+├── docs/specs/nucleus_vs_databricks.md           ← MOVE to docs/architecture/vs-databricks.md (PR-B)
 │
 ├── SESSION_STATE_2026-05-13.md        ← DELETE (see CLEANUP_INVENTORY §1.1)
 ├── architecture_design_conversation.md ← ARCHIVE to docs/archive/ (see CLEANUP_INVENTORY §1.2)
@@ -85,15 +85,15 @@ my-data-stack/                          ← repo root
 │   │   ├── sequence_*.md              ← EXISTING (5 sequence diagrams)
 │   │   ├── nucleus_overview.excalidraw ← EXISTING
 │   │   │
-│   │   ├── overview.md                ← NEW: was nucleus_architecture_v4.1.md
-│   │   ├── cli-spec.md                ← NEW: was nucleus_cli_spec.md
-│   │   ├── ctx-sdk-spec.md            ← NEW: was nucleus_ctx_sdk_spec.md
-│   │   ├── asset-model-spec.md        ← NEW: was nucleus_asset_model_spec.md
-│   │   ├── project-anatomy.md         ← NEW: was nucleus_project_anatomy.md
-│   │   ├── poc-plan.md                ← NEW: was nucleus_poc_plan.md
-│   │   ├── implementation-readiness.md ← NEW: was nucleus_implementation_readiness.md
-│   │   ├── red-team-review.md         ← NEW: was nucleus_red_team_review.md
-│   │   └── vs-databricks.md           ← NEW: was nucleus_vs_databricks.md
+│   │   ├── overview.md                ← NEW: was docs/specs/nucleus_architecture_v4.1.md
+│   │   ├── cli-spec.md                ← NEW: was docs/specs/nucleus_cli_spec.md
+│   │   ├── ctx-sdk-spec.md            ← NEW: was docs/specs/nucleus_ctx_sdk_spec.md
+│   │   ├── asset-model-spec.md        ← NEW: was docs/specs/nucleus_asset_model_spec.md
+│   │   ├── project-anatomy.md         ← NEW: was docs/specs/nucleus_project_anatomy.md
+│   │   ├── poc-plan.md                ← NEW: was docs/specs/nucleus_poc_plan.md
+│   │   ├── implementation-readiness.md ← NEW: was docs/specs/nucleus_implementation_readiness.md
+│   │   ├── red-team-review.md         ← NEW: was docs/specs/nucleus_red_team_review.md
+│   │   └── vs-databricks.md           ← NEW: was docs/specs/nucleus_vs_databricks.md
 │   │
 │   ├── audits/                        ← EXISTING
 │   ├── decisions/                     ← EXISTING (ADRs 001–018+)
@@ -171,7 +171,7 @@ All other citations (e.g., in ADRs) can remain as `nucleus_architecture_v3.md` w
 **Recommendation**: **DEFER PR-B to v0.3** unless strong reason to do it now. Rationale:
 1. v0.2 is already feature-heavy (Workbench, connectors, Wave-1 landing)
 2. ~50 cross-ref updates = moderate breakage risk
-3. Python docstrings with `# Per nucleus_architecture_v4.1.md §X.Y` are in ~50 places (estimate from FOUNDER_ACTION_QUEUE references)
+3. Python docstrings with `# Per docs/specs/nucleus_architecture_v4.1.md §X.Y` are in ~50 places (estimate from FOUNDER_ACTION_QUEUE references)
 4. `.cursor/rules/nucleus.mdc` cites the v4.1 path explicitly 3+ times
 5. No user-visible benefit (user-facing docs are in `docs/site/`)
 
@@ -184,20 +184,20 @@ If deferred: add a `# TODO: reorg PR-B deferred to v0.3` comment in this doc.
 # No mkdir needed
 
 # Step 2: Git-move all 9 spec files
-git mv nucleus_architecture_v4.1.md docs/architecture/overview.md
-git mv nucleus_cli_spec.md docs/architecture/cli-spec.md
-git mv nucleus_ctx_sdk_spec.md docs/architecture/ctx-sdk-spec.md
-git mv nucleus_asset_model_spec.md docs/architecture/asset-model-spec.md
-git mv nucleus_project_anatomy.md docs/architecture/project-anatomy.md
-git mv nucleus_poc_plan.md docs/architecture/poc-plan.md
-git mv nucleus_implementation_readiness.md docs/architecture/implementation-readiness.md
-git mv nucleus_red_team_review.md docs/architecture/red-team-review.md
-git mv nucleus_vs_databricks.md docs/architecture/vs-databricks.md
+git mv docs/specs/nucleus_architecture_v4.1.md docs/architecture/overview.md
+git mv docs/specs/nucleus_cli_spec.md docs/architecture/cli-spec.md
+git mv docs/specs/nucleus_ctx_sdk_spec.md docs/architecture/ctx-sdk-spec.md
+git mv docs/specs/nucleus_asset_model_spec.md docs/architecture/asset-model-spec.md
+git mv docs/specs/nucleus_project_anatomy.md docs/architecture/project-anatomy.md
+git mv docs/specs/nucleus_poc_plan.md docs/architecture/poc-plan.md
+git mv docs/specs/nucleus_implementation_readiness.md docs/architecture/implementation-readiness.md
+git mv docs/specs/nucleus_red_team_review.md docs/architecture/red-team-review.md
+git mv docs/specs/nucleus_vs_databricks.md docs/architecture/vs-databricks.md
 
 # Step 3: Cross-reference sweep (the dangerous step)
 # A. Python docstrings (estimate ~50 occurrences)
 rg "nucleus_architecture_v4\.1\.md" --type py -l
-# For each file found: replace "nucleus_architecture_v4.1.md" with "docs/architecture/overview.md"
+# For each file found: replace "docs/specs/nucleus_architecture_v4.1.md" with "docs/architecture/overview.md"
 
 # B. Markdown docs
 rg "nucleus_architecture_v4\.1\.md|nucleus_cli_spec\.md|nucleus_ctx_sdk_spec\.md" --type md -l
@@ -230,15 +230,15 @@ Complete map of files requiring path updates. Survey run 2026-05-15 (approximate
 
 | Old path | New path | Files that reference it |
 |---|---|---|
-| `nucleus_architecture_v4.1.md` | `docs/architecture/overview.md` | `AGENTS.md`, `.cursor/rules/nucleus.mdc`, ~50 Python docstrings in `src/nucleus/`, all ADRs, `CHANGELOG.md`, `docs/FOUNDER_ACTION_QUEUE.md`, `README.md` |
-| `nucleus_cli_spec.md` | `docs/architecture/cli-spec.md` | `AGENTS.md §2`, `src/nucleus/cli/main.py` docstrings, `tests/cli/`, ADR-005, ADR-017 |
-| `nucleus_ctx_sdk_spec.md` | `docs/architecture/ctx-sdk-spec.md` | `AGENTS.md §2`, `src/nucleus/sdk/`, `src/nucleus/ctx/`, ADR-005, ADR-013 |
-| `nucleus_asset_model_spec.md` | `docs/architecture/asset-model-spec.md` | `AGENTS.md §2`, ADR-013, v4.1 references |
-| `nucleus_project_anatomy.md` | `docs/architecture/project-anatomy.md` | `AGENTS.md §2`, `nucleus_cli_spec.md §3.1` |
-| `nucleus_poc_plan.md` | `docs/architecture/poc-plan.md` | `AGENTS.md §2`, `FOUNDER_ACTION_QUEUE.md`, ADR docs |
-| `nucleus_implementation_readiness.md` | `docs/architecture/implementation-readiness.md` | `AGENTS.md §2`, `FOUNDER_ACTION_QUEUE.md` |
-| `nucleus_red_team_review.md` | `docs/architecture/red-team-review.md` | `AGENTS.md §2` |
-| `nucleus_vs_databricks.md` | `docs/architecture/vs-databricks.md` | `AGENTS.md §2`, `README.md` |
+| `docs/specs/nucleus_architecture_v4.1.md` | `docs/architecture/overview.md` | `AGENTS.md`, `.cursor/rules/nucleus.mdc`, ~50 Python docstrings in `src/nucleus/`, all ADRs, `CHANGELOG.md`, `docs/FOUNDER_ACTION_QUEUE.md`, `README.md` |
+| `docs/specs/nucleus_cli_spec.md` | `docs/architecture/cli-spec.md` | `AGENTS.md §2`, `src/nucleus/cli/main.py` docstrings, `tests/cli/`, ADR-005, ADR-017 |
+| `docs/specs/nucleus_ctx_sdk_spec.md` | `docs/architecture/ctx-sdk-spec.md` | `AGENTS.md §2`, `src/nucleus/sdk/`, `src/nucleus/ctx/`, ADR-005, ADR-013 |
+| `docs/specs/nucleus_asset_model_spec.md` | `docs/architecture/asset-model-spec.md` | `AGENTS.md §2`, ADR-013, v4.1 references |
+| `docs/specs/nucleus_project_anatomy.md` | `docs/architecture/project-anatomy.md` | `AGENTS.md §2`, `docs/specs/nucleus_cli_spec.md §3.1` |
+| `docs/specs/nucleus_poc_plan.md` | `docs/architecture/poc-plan.md` | `AGENTS.md §2`, `FOUNDER_ACTION_QUEUE.md`, ADR docs |
+| `docs/specs/nucleus_implementation_readiness.md` | `docs/architecture/implementation-readiness.md` | `AGENTS.md §2`, `FOUNDER_ACTION_QUEUE.md` |
+| `docs/specs/nucleus_red_team_review.md` | `docs/architecture/red-team-review.md` | `AGENTS.md §2` |
+| `docs/specs/nucleus_vs_databricks.md` | `docs/architecture/vs-databricks.md` | `AGENTS.md §2`, `README.md` |
 
 **Estimated count**: ~50 Python docstrings + ~30 Markdown links + 3 cursor rule citations = ~83 references total.  
 **Automation**: use `rg` + `sd` (or PowerShell `Get-Content | ForEach-Object { $_ -replace ... }`) for bulk replace.
@@ -265,7 +265,7 @@ src/nucleus/
   physics/            ← Arrow physics layer (stub)
 ```
 
-This layout directly mirrors the 5-layer architecture (Physics/Engines/Coordination/Intelligence/Experience) per `nucleus_architecture_v4.1.md` §3. Do not restructure.
+This layout directly mirrors the 5-layer architecture (Physics/Engines/Coordination/Intelligence/Experience) per `docs/specs/nucleus_architecture_v4.1.md` §3. Do not restructure.
 
 ---
 
@@ -335,9 +335,9 @@ scripts/
 |---|---|
 | ~83 broken cross-references | Full `rg` sweep + automated replace before merge |
 | `.cursor/rules/nucleus.mdc` @-references broken | Update 3 explicit path citations in the rules file |
-| Python `# Per nucleus_architecture_v4.1.md §X.Y` comments broken | These are citation comments, not import paths — they won't break CI but will be stale; do a `rg` sweep to update all |
+| Python `# Per docs/specs/nucleus_architecture_v4.1.md §X.Y` comments broken | These are citation comments, not import paths — they won't break CI but will be stale; do a `rg` sweep to update all |
 | mkdocs.yml nav paths | Update `nav:` entries in `mkdocs.yml` if they reference root-level spec files |
-| Cursor context-attach `@nucleus_architecture_v4.1.md` in existing chat history | Non-issue — historical chats are not affected |
+| Cursor context-attach `@docs/specs/nucleus_architecture_v4.1.md` in existing chat history | Non-issue — historical chats are not affected |
 
 **Rollback PR-B**: `git revert HEAD` (entire commit can be reverted cleanly if all moves are in one commit).
 

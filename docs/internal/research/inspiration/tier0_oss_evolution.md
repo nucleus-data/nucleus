@@ -51,8 +51,8 @@
 
 - **Version**: Available in 1.x (core extension `fts`)
 - **Docs**: https://duckdb.org/docs/current/core_extensions/full_text_search.html
-- **Why it serves the beachhead**: Per `nucleus_ctx_sdk_spec.md`, `ctx.sql()` is the primary query surface. FTS lets beachhead users do `ctx.sql("SELECT ... FROM assets.match_bm25('keyword')")` with zero extra infrastructure, replacing expensive PG full-text or Elasticsearch setup — directly cuts `git clone → first query` time for text-heavy sources.
-- **Estimated LOC**: 0 new LOC in Nucleus (it's a DuckDB extension). Document in `docs/internal/research/duckdb_fts.md` + add example to `nucleus_project_anatomy.md`. Total: ~30 LOC docs.
+- **Why it serves the beachhead**: Per `docs/specs/nucleus_ctx_sdk_spec.md`, `ctx.sql()` is the primary query surface. FTS lets beachhead users do `ctx.sql("SELECT ... FROM assets.match_bm25('keyword')")` with zero extra infrastructure, replacing expensive PG full-text or Elasticsearch setup — directly cuts `git clone → first query` time for text-heavy sources.
+- **Estimated LOC**: 0 new LOC in Nucleus (it's a DuckDB extension). Document in `docs/internal/research/duckdb_fts.md` + add example to `docs/specs/nucleus_project_anatomy.md`. Total: ~30 LOC docs.
 - **8-question gate**: ✅ Yes × 8 — no new dep, no JVM, serves beachhead, existing `ctx.sql` path.
 - **Wave**: Wave 2 documentation-only task.
 
@@ -70,7 +70,7 @@ ctx.sql("""
 
 - **Version**: Core extension since 1.3+; promoted in 1.5.0
 - **Docs**: https://duckdb.org/docs/current/core_extensions/vss.html
-- **Why it serves the beachhead**: Per `nucleus_architecture_v4.1.md §12.1`, v0.5+ plans AI Copilot with embedding store. DuckDB VSS (`CREATE INDEX USING HNSW`) gives Nucleus a zero-dependency embedding store on the laptop, directly inside the same DuckDB connection used for `ctx.sql`. This defers the Lance/LanceDB dependency to when data scales past single-machine.
+- **Why it serves the beachhead**: Per `docs/specs/nucleus_architecture_v4.1.md §12.1`, v0.5+ plans AI Copilot with embedding store. DuckDB VSS (`CREATE INDEX USING HNSW`) gives Nucleus a zero-dependency embedding store on the laptop, directly inside the same DuckDB connection used for `ctx.sql`. This defers the Lance/LanceDB dependency to when data scales past single-machine.
 - **Estimated LOC**: 10 LOC in `intelligence/copilot.py` to register HNSW on the embedding column; 10 tests. Gated behind `[ai]` extra until v0.5.
 - **8-question gate**: ✅ Yes × 7; Question 8: Required for v0.1? No — deferred to v0.5. Flag for `FOUNDER_ACTION_QUEUE.md`.
 - **Wave**: v0.5+ — note in queue, do not implement now.
@@ -183,7 +183,7 @@ def my_asset(ctx):
 
 - **Version**: 1.26.0 (streaming AsOf node), matured in 1.40.0 (grouped AsOf streaming)
 - **Docs**: https://github.com/pola-rs/polars/pull/26398
-- **Why it serves the beachhead**: Per `nucleus_ctx_sdk_spec.md`, `ctx.sql()` supports ASOF JOIN syntax. Polars' streaming AsOf join means large time-series assets (IoT, financial) can be joined lazily without OOM. This is a free performance improvement from upgrading.
+- **Why it serves the beachhead**: Per `docs/specs/nucleus_ctx_sdk_spec.md`, `ctx.sql()` supports ASOF JOIN syntax. Polars' streaming AsOf join means large time-series assets (IoT, financial) can be joined lazily without OOM. This is a free performance improvement from upgrading.
 - **Estimated LOC**: 0 new code.
 - **Wave**: Wave 2 (free from Polars upgrade).
 
@@ -200,7 +200,7 @@ def my_asset(ctx):
 
 - **Version**: 1.40.0 — Polars now ships OpenLineage docs/integration
 - **Docs**: https://github.com/pola-rs/polars/pull/27334 (split out OpenLineage docs into guide)
-- **Why it serves the beachhead**: Nucleus uses `openlineage-python==1.47.1` for asset-level lineage per `nucleus_architecture_v4.1.md §6.2`. If Polars natively emits OpenLineage events, we could close the Polars→AMA→OpenLineage gap with less Nucleus custom code.
+- **Why it serves the beachhead**: Nucleus uses `openlineage-python==1.47.1` for asset-level lineage per `docs/specs/nucleus_architecture_v4.1.md §6.2`. If Polars natively emits OpenLineage events, we could close the Polars→AMA→OpenLineage gap with less Nucleus custom code.
 - **Estimated LOC**: Needs investigation. [NEEDS VERIFICATION — what OpenLineage events does Polars 1.40 emit? Check https://docs.pola.rs/user-guide/misc/openlineage/ ]
 - **8-question gate**: Conditionally yes — depends on what Polars actually emits.
 - **Wave**: v0.5 research task. Do not implement without verifying exact event schema.

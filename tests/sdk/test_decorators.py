@@ -1,7 +1,7 @@
 """Tests for :mod:`nucleus.sdk.decorators` — ``@nucleus.asset`` + ``@nucleus.check``.
 
-Validates the v0.1 surface per ``nucleus_ctx_sdk_spec.md`` §2.1 + §2.4 +
-``nucleus_asset_model_spec.md`` §3 + §10. Decoration-time validation
+Validates the v0.1 surface per ``docs/specs/nucleus_ctx_sdk_spec.md`` §2.1 + §2.4 +
+``docs/specs/nucleus_asset_model_spec.md`` §3 + §10. Decoration-time validation
 (NucleusInvalidAssetDefinition) is exercised on every malformed input
 shape so users see errors on import, not at runtime.
 

@@ -71,7 +71,7 @@ This code was allocated by the v0.2 close-out checklist
 (`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.7 — pre-sprint
 blocker #6) to close the chaos J3 / CF-1 translate() gap. Prior to
 v0.2.0 the same condition leaked a raw `FileExistsError` traceback
-through the CLI, violating `nucleus_architecture_v4.1.md` §6.4 +
+through the CLI, violating `docs/specs/nucleus_architecture_v4.1.md` §6.4 +
 `AGENTS.md` §11.7. The `dagster_leak_check.py` governance script did
 not catch the leak because it targets Dagster classnames only; the
 v0.2.1 governance hardening item is to extend it to flag any stdlib

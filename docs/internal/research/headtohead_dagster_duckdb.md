@@ -23,7 +23,7 @@ report says so plainly.
   Nucleus = **36 LOC**; raw Dagster + DuckDB + pyiceberg = **68 LOC**.
   **Raw is 89% larger** -- every line of difference is hand-rolled
   Iceberg catalog setup + commit ceremony that Nucleus inherits from
-  the Asset Materialization Adapter (`nucleus_architecture_v4.1.md`
+  the Asset Materialization Adapter (`docs/specs/nucleus_architecture_v4.1.md`
   Section 6.2).
 * **Boot-to-first-materialisation wall-clock** (n=3):
   Nucleus median = **12.43 s** (sigma 1.36 s);
@@ -137,7 +137,7 @@ nucleus.materialize("marts.daily_revenue", warehouse_dir=WAREHOUSE)
 
 **Nothing about Iceberg, Dagster, DuckDB, or pyiceberg appears in the
 user code.** All of that is hidden behind `ctx` per
-`nucleus_architecture_v4.1.md` Section 6.
+`docs/specs/nucleus_architecture_v4.1.md` Section 6.
 
 ### 2.2 Raw Dagster + DuckDB + pyiceberg (68 LOC)
 
@@ -236,7 +236,7 @@ host described in Section 1.1, captured by
 | Raw Dagster + DuckDB + pyiceberg | **68** | **+32 (+89%)** |
 
 **Verdict**: Nucleus wins decisively. The win is structural -- the
-Asset Materialization Adapter (`nucleus_architecture_v4.1.md`
+Asset Materialization Adapter (`docs/specs/nucleus_architecture_v4.1.md`
 Section 6.2) owns the Iceberg commit ceremony so user code never
 imports pyiceberg. Closing this gap on the raw side requires writing
 a private wrap layer with much of the same surface as the AMA.
@@ -304,7 +304,7 @@ duckdb.duckdb.BinderException: Binder Error: Referenced column
 ```
 
 **Verdict**: PASS for Nucleus. The error translation layer
-(`nucleus_architecture_v4.1.md` Section 6.4 + `coordination/
+(`docs/specs/nucleus_architecture_v4.1.md` Section 6.4 + `coordination/
 error_translation.py`, validated by `scripts/dagster_leak_check.py`)
 catches the underlying `duckdb.duckdb.BinderException`, preserves the
 root cause text verbatim ("Referenced column \"amount\" not found in
@@ -326,7 +326,7 @@ For a 5-engineer startup team this matters because:
    Dagster, pyiceberg) -- junior engineers debug faster.
 2. Error catalogue stays stable as Nucleus swaps engines (DuckDB ->
    DataFusion, etc.) per the Composability Constitution
-   (`nucleus_architecture_v4.1.md` Section 9).
+   (`docs/specs/nucleus_architecture_v4.1.md` Section 9).
 3. AI Copilot (`nucleus chat`) can map every NucleusError to a known
    fix path; mapping arbitrary substrate exceptions is much harder.
 
@@ -363,7 +363,7 @@ For a 5-engineer startup team this matters because:
 
 `nucleus enable dagster` (roadmap v0.5+) lets a Nucleus project hand
 off heavy assets to a Dagster cluster via the `compute=` dispatch
-hint per `nucleus_architecture_v4.1.md` Section 6.7. You keep
+hint per `docs/specs/nucleus_architecture_v4.1.md` Section 6.7. You keep
 Nucleus's developer ergonomics on the laptop and yield to your
 existing Dagster fleet for production heavy lifting. Not in v0.2;
 tracked.
@@ -410,11 +410,11 @@ python -m scripts.benchmarks.headtohead_dagster_duckdb --runs 5 --rows 10000
 * Harness: `scripts/benchmarks/headtohead_dagster_duckdb.py`
 * Common utilities: `scripts/benchmarks/_common.py`
 * Result JSON: `docs/benchmarks/_results/headtohead_dagster_duckdb.json`
-* Nucleus AMA pipeline: `nucleus_architecture_v4.1.md` Section 6.2
-* Nucleus error translation: `nucleus_architecture_v4.1.md`
+* Nucleus AMA pipeline: `docs/specs/nucleus_architecture_v4.1.md` Section 6.2
+* Nucleus error translation: `docs/specs/nucleus_architecture_v4.1.md`
   Section 6.4 + `src/nucleus/coordination/error_translation.py`
 * Dagster leak check: `scripts/dagster_leak_check.py` +
-  `nucleus_architecture_v4.1.md` Section 6.4
+  `docs/specs/nucleus_architecture_v4.1.md` Section 6.4
 * Single-engine baseline: `docs/internal/research/benchmarks_v0.2.0.md`
 * Companion report: `docs/internal/research/headtohead_dbt_duckdb.md`
 * Executive summary: `docs/internal/research/headtohead_summary.md`

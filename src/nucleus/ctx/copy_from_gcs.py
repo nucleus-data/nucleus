@@ -11,8 +11,8 @@ Arrow table → pyiceberg append.
 Stability: Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0  (per ADR-005 §2)
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.5 (Ingestion — object storage branch)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_architecture_v4.1.md §5.5 (Ingestion — object storage branch)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-020-object-storage-connectors-via-duckdb.md (scope)
     docs/internal/research/gcs_duckdb.md §3 (gcsfs + register_filesystem integration)
 

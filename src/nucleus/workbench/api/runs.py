@@ -5,7 +5,7 @@ persistence is deferred to v0.3 when the orchestration event log integration lan
 The buffer is populated by ``nucleus.coordination.asset_materialization`` via
 :func:`record_run` called at materialization commit.
 
-``nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
 ADR-016 §3 — Fork B API surface.
 
 Log streaming uses FastAPI ``StreamingResponse`` with ``text/event-stream``

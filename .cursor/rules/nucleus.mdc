@@ -7,7 +7,7 @@ alwaysApply: true
 
 **Status**: Design locked at v4.1, pre-implementation. PoC #1 (Dagster Error Translation) starts next. No production code yet.
 
-**Source of truth**: `nucleus_architecture_v4.1.md` (supersedes v4.0 and v3; both deprecated). Read `AGENTS.md` at repo root for full required reading order.
+**Source of truth**: `docs/specs/nucleus_architecture_v4.1.md` (supersedes v4.0 and v3; both deprecated). Read `AGENTS.md` at repo root for full required reading order.
 
 ## Project Identity (1 sentence)
 
@@ -145,19 +145,19 @@ Correct: **"Ship data products from a laptop — a local-first Python SDK + CLI 
 
 When making recommendations, cite the doc + section explicitly:
 
-- ✅ "Per `nucleus_architecture_v4.1.md` §6.3, we hide Dagster behind `ctx`."
+- ✅ "Per `docs/specs/nucleus_architecture_v4.1.md` §6.3, we hide Dagster behind `ctx`."
 - ✅ "Per v4.1 §6.4, Error Translation Layer is mandatory."
 - ✅ "Per v4.1 §9.3, swap is interface + smoke tests, full adapter on-demand."
 - ❌ "I think we should use Dagster."
 
 ## When in Doubt
 
-1. Re-read `nucleus_architecture_v4.1.md`
+1. Re-read `docs/specs/nucleus_architecture_v4.1.md`
 2. Check beachhead metric (§1.5): does this serve the 30-min target?
 3. Check roadmap (§18): is this v0.1 Hello World, or can it defer?
 4. Apply the 8-question gate above
 5. Check the Five Pillars test
-6. Check `nucleus_implementation_readiness.md` §4
+6. Check `docs/specs/nucleus_implementation_readiness.md` §4
 7. If still unclear → stop and ask the user
 
 ---
@@ -286,15 +286,15 @@ When asking AI for help, REQUIRED @-references for any v0.1 code task:
 ```
 @AGENTS.md
 @.cursor/rules/nucleus.mdc (auto via alwaysApply)
-@nucleus_architecture_v4.1.md
-@<spec file>  (e.g., @nucleus_ctx_sdk_spec.md, @nucleus_asset_model_spec.md)
+@docs/specs/nucleus_architecture_v4.1.md
+@<spec file>  (e.g., @docs/specs/nucleus_ctx_sdk_spec.md, @docs/specs/nucleus_asset_model_spec.md)
 @<test file>  (the test spec that defines what passes)
 ```
 
 For PoC work, also include:
 
 ```
-@nucleus_poc_plan.md
+@docs/specs/nucleus_poc_plan.md
 ```
 
 Missing the spec file = AI invents APIs that don't exist. Always reference the spec.
@@ -370,7 +370,7 @@ Reason: architectural review requires reading each file diff individually. A 12-
 
 ```
 Read these files for context:
-@nucleus_architecture_v4.1.md §<section>
+@docs/specs/nucleus_architecture_v4.1.md §<section>
 @<spec_file>.md
 @<existing_file>.py (the pattern to follow)
 @<test_file>.py (the spec to satisfy)
@@ -409,7 +409,7 @@ For architectural questions, use Chat (not Composer):
 Question: "Should we add X for Y use case?"
 
 Required context:
-@nucleus_architecture_v4.1.md
+@docs/specs/nucleus_architecture_v4.1.md
 @AGENTS.md (§3, §4, §5)
 
 Required AI response structure:
@@ -445,7 +445,7 @@ When in doubt about tab completion, use Chat instead.
 Drift Detection Pass.
 
 Context:
-@nucleus_architecture_v4.1.md
+@docs/specs/nucleus_architecture_v4.1.md
 @AGENTS.md
 @CHANGELOG.md (last 4 weeks of commits)
 @/nucleus (current state of code)

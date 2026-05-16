@@ -2,7 +2,7 @@
 
 Per ``docs/decisions/ADR-013-ctx-materialize-api.md`` §1 (signature) +
 §2 (return type) + §4 (NE-code allocations) +
-``nucleus_architecture_v4.1.md`` §6.2 (Asset Materialization Adapter,
+``docs/specs/nucleus_architecture_v4.1.md`` §6.2 (Asset Materialization Adapter,
 the runtime this function front-runs) + §13.2 (the Surface Summary row
 this module publishes).
 
@@ -81,7 +81,7 @@ def _coerce_asset_key(asset: str | AssetRef) -> str:
         fix_hint=(
             "Pass the canonical 2-level key, e.g. "
             "nucleus.materialize('staging.orders'). "
-            "AssetRef is also accepted (nucleus_ctx_sdk_spec.md §3.1)."
+            "AssetRef is also accepted (docs/specs/nucleus_ctx_sdk_spec.md §3.1)."
         ),
     )
 
@@ -139,7 +139,7 @@ def materialize(
 
     Public entry point per
     ``docs/decisions/ADR-013-ctx-materialize-api.md`` §1 +
-    ``nucleus_architecture_v4.1.md`` §6.2 (the AMA five-step pipeline:
+    ``docs/specs/nucleus_architecture_v4.1.md`` §6.2 (the AMA five-step pipeline:
     validate → partition-enforce → catalog atomic commit (ADR-001) →
     OpenLineage emit → registry update).
 

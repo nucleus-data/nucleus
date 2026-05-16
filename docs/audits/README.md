@@ -29,7 +29,7 @@ This file is a navigation index. Audits are append-only artifacts: they record r
 - **Monthly** — Drift Detection Pass per [`AGENTS.md`](../../AGENTS.md) §11.11 (sweeps the last 4 weeks of commits across all listed concerns).
 - **Quarterly** — Composability swap drill per [`../architecture/sequence_swap_drill.md`](../architecture/sequence_swap_drill.md) + v4.1 §9.3. Drill results land here as `swap_drill_<component>_<YYYY-MM-DD>.md`.
 - **On stop-condition** — Per [`AGENTS.md`](../../AGENTS.md) §9, any of the nine stop conditions triggers an immediate audit, scope-tagged in the filename.
-- **On positioning amendment** — Whenever an ADR amends `nucleus_architecture_v4.1.md` §1, run a positioning-drift sweep (template: `positioning_drift_2026-05-12.md`).
+- **On positioning amendment** — Whenever an ADR amends `docs/specs/nucleus_architecture_v4.1.md` §1, run a positioning-drift sweep (template: `positioning_drift_2026-05-12.md`).
 
 ---
 

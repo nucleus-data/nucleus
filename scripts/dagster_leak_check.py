@@ -316,7 +316,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"      reason: {leak.reason}\n")
         print("Move Dagster usage inside src/nucleus/coordination/ or remove it.")
         print(
-            "See nucleus_architecture_v4.1.md §6.4 and docs/architecture/sequence_error_translation.md."
+            "See docs/specs/nucleus_architecture_v4.1.md §6.4 and docs/architecture/sequence_error_translation.md."
         )
     return 1 if leaks else 0
 

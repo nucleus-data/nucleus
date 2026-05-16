@@ -4,13 +4,13 @@
 > **Scope**: How `ctx.sql("SELECT … {{ ref('schema.asset') }} …")` becomes Arrow batches and a Polars `DataFrame`
 > **Audience**: Anyone touching `coordination/sql_resolver.py` (v0.1) or `engines/duckdb_engine.py`
 > **Status**: v0.1 native `ctx.sql` + Jinja path under the §5.6.0 ceiling. Prototyped by **PoC #2** (`poc/p2_ctx_sql/resolver.py`); graduates to `src/nucleus/coordination/sql_resolver.py` only after PoC #1 ships `nucleus.errors`.
-> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md) (TEMPLATE), [`sequence_ingestion.md`](sequence_ingestion.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §5.6 + §5.6.0, [`../research/duckdb.md`](../research/duckdb.md)
+> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md) (TEMPLATE), [`sequence_ingestion.md`](sequence_ingestion.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5.6 + §5.6.0, [`../research/duckdb.md`](../research/duckdb.md)
 
 ---
 
 ## §1. Why this matters
 
-Per `nucleus_architecture_v4.1.md` §5.6 (Amendment 6), v0.1 ships **native** SQL transformation, not dbt-duckdb. The resolver renders `{{ ref('schema.asset') }}` against the asset registry, hands the resolved SQL to DuckDB, and streams Arrow batches back. The user sees no rendering details — they call `ctx.sql(template)` and receive a `pl.DataFrame` (or an Arrow `Table`, or a lazy `DuckDBPyRelation`).
+Per `docs/specs/nucleus_architecture_v4.1.md` §5.6 (Amendment 6), v0.1 ships **native** SQL transformation, not dbt-duckdb. The resolver renders `{{ ref('schema.asset') }}` against the asset registry, hands the resolved SQL to DuckDB, and streams Arrow batches back. The user sees no rendering details — they call `ctx.sql(template)` and receive a `pl.DataFrame` (or an Arrow `Table`, or a lazy `DuckDBPyRelation`).
 
 If `ctx.sql` ever leaks a `jinja2`, `duckdb`, `pyiceberg`, or `polars` classname, the wrap thesis (`AGENTS.md` §3, §11.7) is broken — same way Dagster leaks break it in [`sequence_error_translation.md`](sequence_error_translation.md). Translators live in the same registry; the resolver does not own its own translation logic.
 
@@ -175,7 +175,7 @@ The distinction `sequence_error_translation.md` §4.4 enforces: **not defined** 
 
 ## §4. v0.1 scope envelope
 
-Per `nucleus_architecture_v4.1.md` §5.6.0 and `nucleus_poc_plan.md` §2:
+Per `docs/specs/nucleus_architecture_v4.1.md` §5.6.0 and `docs/specs/nucleus_poc_plan.md` §2:
 
 | Aspect | v0.1 in-scope | Deferred |
 |---|---|---|
@@ -185,7 +185,7 @@ Per `nucleus_architecture_v4.1.md` §5.6.0 and `nucleus_poc_plan.md` §2:
 | Output | `pl.DataFrame`, `pyarrow.Table`, `DuckDBPyRelation` | Streaming `RecordBatchReader` for >100 MB → v0.3 |
 | Materialization strategies | `table`, `view` | `incremental` → v0.3; `snapshot` (SCD2) → v0.5 |
 | Checks | `@nucleus.check` on the output asset | dbt-style test framework — **never** in native path (§5.6.0) |
-| Lineage | Asset-level (OpenLineage) | Column-level via sqlglot → v0.5 (`nucleus_architecture_v4.1.md` §12.4) |
+| Lineage | Asset-level (OpenLineage) | Column-level via sqlglot → v0.5 (`docs/specs/nucleus_architecture_v4.1.md` §12.4) |
 | LOC budget | ≤ 2500 (v4.1 §5.6.0 ceiling) | — |
 
 Past the §5.6.0 ceiling the answer is **wrap dbt-duckdb (v0.3 optional adapter)**, not "grow the native resolver". Non-negotiable per AGENTS.md §11.7.
@@ -194,7 +194,7 @@ Past the §5.6.0 ceiling the answer is **wrap dbt-duckdb (v0.3 optional adapter)
 
 ## §5. Acceptance criteria (PoC #2 → v0.1 `ctx.sql`)
 
-From `nucleus_poc_plan.md` §2 and the PoC #2 hardening pass (`poc/p2_ctx_sql/test_resolver.py`):
+From `docs/specs/nucleus_poc_plan.md` §2 and the PoC #2 hardening pass (`poc/p2_ctx_sql/test_resolver.py`):
 
 1. `ctx.sql("SELECT * FROM {{ ref('staging.orders') }}")` returns a `pl.DataFrame` with the expected rows and columns.
 2. Multiple refs in one template render in encounter order; `refs` deduplicates while preserving order.
@@ -234,8 +234,8 @@ Per AGENTS.md §11.12, before graduating PoC #2 → `src/nucleus/coordination/sq
 
 - New built-in macro (e.g., `current_date`): PR + unit test, stays under §5.6.0 ceiling.
 - `source()` resolution (v0.3 candidate): ADR required — semantically distinct from `ref()`.
-- dbt-duckdb optional adapter (v0.3): ADR required. Per `nucleus_architecture_v4.1.md` §5.6, dbt-duckdb stays optional, never default.
-- Change to `SqlResult` shape: PR + spec note (public surface per `nucleus_architecture_v4.1.md` §13.1).
+- dbt-duckdb optional adapter (v0.3): ADR required. Per `docs/specs/nucleus_architecture_v4.1.md` §5.6, dbt-duckdb stays optional, never default.
+- Change to `SqlResult` shape: PR + spec note (public surface per `docs/specs/nucleus_architecture_v4.1.md` §13.1).
 - Remove a NucleusError translator used here: ADR required (breaking — user catches may exist).
 
 ---

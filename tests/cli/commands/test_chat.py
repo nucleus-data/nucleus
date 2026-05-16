@@ -1,5 +1,5 @@
 # ruff: noqa: ARG002
-"""Tests for ``nucleus chat`` — nucleus_cli_spec.md §3.8 + ADR-015 §1.
+"""Tests for ``nucleus chat`` — docs/specs/nucleus_cli_spec.md §3.8 + ADR-015 §1.
 
 Exercises the chat command surface end-to-end:
 

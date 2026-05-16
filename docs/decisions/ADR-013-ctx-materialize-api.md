@@ -3,11 +3,11 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: ctx-sdk, materialize, api-surface, error-translation
-> **Related**: ADR-001 (catalog owns commits); ADR-005 §1+§2 (tier ladder); ADR-006 §Decision+§Initial+§NV (NE-codes); ADR-012 (`dagster==1.9.5` underwrites the wrap); AGENTS.md §0+§7+§11.5; v4.1 §6.2+§6.4+§6.5+§13.2; `nucleus_ctx_sdk_spec.md` §0+§3.1+§12; `cli_spec` §3.4+§8; `sequence_asset_materialization.md` §1+§5; `v01_skeleton_plan.md` §6 Q2+§7 NV #1+§3.1.
+> **Related**: ADR-001 (catalog owns commits); ADR-005 §1+§2 (tier ladder); ADR-006 §Decision+§Initial+§NV (NE-codes); ADR-012 (`dagster==1.9.5` underwrites the wrap); AGENTS.md §0+§7+§11.5; v4.1 §6.2+§6.4+§6.5+§13.2; `docs/specs/nucleus_ctx_sdk_spec.md` §0+§3.1+§12; `cli_spec` §3.4+§8; `sequence_asset_materialization.md` §1+§5; `v01_skeleton_plan.md` §6 Q2+§7 NV #1+§3.1.
 
 ## Context
 
-`v01_skeleton_plan.md` §6 Q2 + §7 NV #1 surfaced a citation gap: **`ctx.materialize(...)` is consumed by two locked specs but absent from the frozen `ctx` surface.** Consumers: `cli_spec` §3.4 (*"`nucleus run [ASSET_KEY...]` … equivalent to `ctx.materialize(...)`"*; same paragraph drifts to plural `ctx.materialize_assets([...])` — NV #1) + `sequence_asset_materialization.md` §1 step 2 (canonical happy-path; §5 r1 flags spelling open). Producers: v4.1 §13.2 (lines 1079-1092) + `nucleus_ctx_sdk_spec.md` §12 (lines 422-439) — neither lists it.
+`v01_skeleton_plan.md` §6 Q2 + §7 NV #1 surfaced a citation gap: **`ctx.materialize(...)` is consumed by two locked specs but absent from the frozen `ctx` surface.** Consumers: `cli_spec` §3.4 (*"`nucleus run [ASSET_KEY...]` … equivalent to `ctx.materialize(...)`"*; same paragraph drifts to plural `ctx.materialize_assets([...])` — NV #1) + `sequence_asset_materialization.md` §1 step 2 (canonical happy-path; §5 r1 flags spelling open). Producers: v4.1 §13.2 (lines 1079-1092) + `docs/specs/nucleus_ctx_sdk_spec.md` §12 (lines 422-439) — neither lists it.
 
 `cli/commands/run.py` (skeleton plan §3.2 r6, 300 LOC) cannot land until this resolves. Per AGENTS.md §0 `ctx` is one of three things Nucleus owns forever; an undeclared public name is the worst form of premature freezing.
 
@@ -39,13 +39,13 @@ def materialize(
 ) -> MaterializationResult:
     """Materialize a Nucleus asset to its declared destination.
 
-    Per `nucleus_architecture_v4.1.md` §6.2 (Asset Materialization Adapter).
+    Per `docs/specs/nucleus_architecture_v4.1.md` §6.2 (Asset Materialization Adapter).
     """
 ```
 
 Argument semantics:
 
-- `asset` — 2-level v0.1 key (cli_spec §10 NV #6) or `AssetRef` (`nucleus_ctx_sdk_spec.md` §3.1+§12; **not** `NucleusAsset` from skeleton plan §6 Q2 — NV #5). Unknown → `NucleusAssetNotFound`/`NE3002`.
+- `asset` — 2-level v0.1 key (cli_spec §10 NV #6) or `AssetRef` (`docs/specs/nucleus_ctx_sdk_spec.md` §3.1+§12; **not** `NucleusAsset` from skeleton plan §6 Q2 — NV #5). Unknown → `NucleusAssetNotFound`/`NE3002`.
 - `partition` — single-string (`"2026-05-13"`); `None` = all eligible partitions; tuple form deferred (Q2).
 - `upstream` — `"skip"` (default; fail loud via `NE3003`), `"materialize"`, `"validate"`. No `recursive=` (AGENTS.md §7).
 - `timeout_seconds` — wall-clock; `None` = no timeout; exceeded → `NucleusTimeoutError` (NE-code per NV #2).
@@ -97,7 +97,7 @@ ADR-006 §Initial has 12 codes; this ADR adds **2 new** (`NE3004`, `NE3005`) →
 - **Maintenance ownership**: @founder (AGENTS.md §0).
 - **Swap**: `docs/swap/dagster.md` (existing). `nucleus-mini-scheduler` (v4.1 §6.7, ~3-5K LOC) MUST honour signature unchanged.
 - **Tests**: `tests/sdk/test_materialize.py` (~10-15 cases: happy, each `upstream=` mode, timeout, partition forms, both `asset` forms, unknown-key); `tests/api_stability/test_signatures.py` snapshot; `scripts/dagster_leak_check.py` asserts zero Dagster strings in `MaterializationResult` + `NucleusMaterializationError.user_message`.
-- **Sections to update on acceptance** (AGENTS.md §10 r7): v4.1 §13.2 — add `ctx.materialize` row (✅ v0.1+); `nucleus_ctx_sdk_spec.md` §12 + new §5.4 "Materialize API" (NV #4); `cli_spec` §3.4 — reconcile plural drift (NV #1); `sequence_asset_materialization.md` §5 r1 — close; `v01_skeleton_plan.md` §6 Q2 + §7 NV #1 — mark resolved.
+- **Sections to update on acceptance** (AGENTS.md §10 r7): v4.1 §13.2 — add `ctx.materialize` row (✅ v0.1+); `docs/specs/nucleus_ctx_sdk_spec.md` §12 + new §5.4 "Materialize API" (NV #4); `cli_spec` §3.4 — reconcile plural drift (NV #1); `sequence_asset_materialization.md` §5 r1 — close; `v01_skeleton_plan.md` §6 Q2 + §7 NV #1 — mark resolved.
 - **Downstream**: unblocks `cli/commands/run.py` (§3.2 r6); unblocks `coordination/asset_materialization.py` public-surface tests (§4 step 7); locks `nucleus-mini-scheduler` input contract.
 
 ## Risks & mitigations
@@ -121,7 +121,7 @@ v4.1 **§6.2** (AMA runtime — primary; user prompt cited §6.3 which is off-by
 
 ## Trigger · Downstream
 
-**Trigger** (PROPOSED → ACCEPTED when all four hold): (1) Founder resolves NV #1–#6 + Q1–Q5; (2) ADR-005 ACCEPTED (tier); (3) ADR-006 ACCEPTED with §NV #2 resolved (`NE3004`+`NE3005`) — OR co-acceptance with ADR-006a; (4) PoC #1 promotion PR co-lands `errors.py +1` subclass + new `sdk/types.py` + v4.1 §13.2 + `nucleus_ctx_sdk_spec.md` §12 amendments. Not calendar-gated — pauses with PoC #1 / ADR-005 / ADR-006.
+**Trigger** (PROPOSED → ACCEPTED when all four hold): (1) Founder resolves NV #1–#6 + Q1–Q5; (2) ADR-005 ACCEPTED (tier); (3) ADR-006 ACCEPTED with §NV #2 resolved (`NE3004`+`NE3005`) — OR co-acceptance with ADR-006a; (4) PoC #1 promotion PR co-lands `errors.py +1` subclass + new `sdk/types.py` + v4.1 §13.2 + `docs/specs/nucleus_ctx_sdk_spec.md` §12 amendments. Not calendar-gated — pauses with PoC #1 / ADR-005 / ADR-006.
 
 **Downstream**: `cli/commands/run.py` (skeleton plan §3.2 r6, Mo 4-6) delegates `ASSET_KEY...` → `ctx.materialize(key)`, emits NE3001/NE2001/NE1002/NE3004/NE3005 per cli_spec §3.4+§8. `coordination/asset_materialization.py` (§3.1 r3, Mo 2-3) owns `RunResult → MaterializationResult` transform. `nucleus-mini-scheduler` (v4.1 §6.7, by v1.0) MUST honour signature unchanged. `nucleus-mcp-server` (ADR-002 §4.2, v0.5+) maps `materialize_asset` tool 1:1. `ctx.agent.*` (v0.5+, ADR-005 §4 carve-out) Beta-tier callers per v4.1 §7.3 sandbox.
 
@@ -130,8 +130,8 @@ v4.1 **§6.2** (AMA runtime — primary; user prompt cited §6.3 which is off-by
 1. **`ctx.materialize` vs `ctx.materialize_assets` plural drift in cli_spec §3.4** (both in one paragraph). Recommend: drop `_assets` from v0.1; multi-asset is the CLI's job (`nucleus run a b c` iterates singular); list-variant → v0.3+. cli_spec §3.4 patched same acceptance PR.
 2. **NE-code for `NucleusTimeoutError`.** Provisional `NE3005`; ADR-006 §NV #2 candidates were `NE2004`/`NE3004`. This ADR's `NE3004` for `NucleusMaterializationError` forces `NE3005` for timeout. **Resolve in tandem with ADR-006 §NV #2.** Founder may swap labels — purely cosmetic.
 3. **v4.1 §6.2 vs §6.3 citation.** User prompt cited *"§6.3 asset materialization runtime"* — **§6.3 is "What We Add on Top of Dagster"** (capability list); AMA five-step lives in **§6.2 "Asset Materialization Adapter (Amendment 1)"**. This ADR cites §6.2 throughout.
-4. **Placement of signature in `nucleus_ctx_sdk_spec.md`** (§4=Read, §5=Write, §6=SQL, §10=Snapshot). Recommend new **§5.4 "Materialize API"** (materialization is the verb that writes).
-5. **`AssetRef` vs `NucleusAsset`.** Skeleton plan §6 Q2 prose used `NucleusAsset`; this ADR uses **`AssetRef`** per `nucleus_ctx_sdk_spec.md` §12 line 432 + §3.1. Rename = separate ADR.
+4. **Placement of signature in `docs/specs/nucleus_ctx_sdk_spec.md`** (§4=Read, §5=Write, §6=SQL, §10=Snapshot). Recommend new **§5.4 "Materialize API"** (materialization is the verb that writes).
+5. **`AssetRef` vs `NucleusAsset`.** Skeleton plan §6 Q2 prose used `NucleusAsset`; this ADR uses **`AssetRef`** per `docs/specs/nucleus_ctx_sdk_spec.md` §12 line 432 + §3.1. Rename = separate ADR.
 6. **`upstream="materialize"` recursion-depth ceiling.** Recursive materialization fans out unboundedly; v4.1 §14.4 covers concurrency, not recursion. Recommend: v0.1 accepts `upstream="skip"` **only**; `"materialize"`/`"validate"` deferred to v0.3+ once telemetry sets safe-depth threshold. If accepted, `Literal[...]` narrows to `Literal["skip"]` for v0.1; additive widening at v0.3+ is Beta-tier-free per ADR-005 §3.
 
 ## Open Questions (founder review)

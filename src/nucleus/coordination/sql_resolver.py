@@ -13,8 +13,8 @@ Scope (deliberately minimal — v4.1 §5.6.0):
 
 Pins/docs (per AGENTS.md §11.12):
     - jinja2==3.1.5
-    - ``nucleus_architecture_v4.1.md`` §5.6.0 — native ctx.sql scope ceiling
-    - ``nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
+    - ``docs/specs/nucleus_architecture_v4.1.md`` §5.6.0 — native ctx.sql scope ceiling
+    - ``docs/specs/nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
 """
 
 from __future__ import annotations

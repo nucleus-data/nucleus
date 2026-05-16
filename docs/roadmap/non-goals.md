@@ -1,6 +1,6 @@
 # Non-Goals — What Nucleus Will NEVER Build
 
-> **Authority**: `nucleus_architecture_v4.1.md` §20 (superseding source of truth).
+> **Authority**: `docs/specs/nucleus_architecture_v4.1.md` §20 (superseding source of truth).
 > **Purpose**: Definitive list of what Nucleus does NOT build — with rationale. Prevents scope creep, prevents contribution effort going to waste, and guides architectural decisions when "should we build X?" is unclear.
 
 Any contribution that builds something on this list will be declined, regardless of how well it's implemented. If you believe an item should be reconsidered, open a GitHub Discussion, not a PR.
@@ -176,4 +176,4 @@ The default answer is "no." The bar for moving something off the non-goals list 
 
 ---
 
-*Source: `nucleus_architecture_v4.1.md` §20, `AGENTS.md §4`, `AGENTS.md §8`. ADR-001 (no Iceberg commit service), ADR-010 (no custom auth).*
+*Source: `docs/specs/nucleus_architecture_v4.1.md` §20, `AGENTS.md §4`, `AGENTS.md §8`. ADR-001 (no Iceberg commit service), ADR-010 (no custom auth).*

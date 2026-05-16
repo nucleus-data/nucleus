@@ -68,5 +68,5 @@ Key implementation notes:
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §3 (Experience layer)
-- `nucleus_architecture_v4.1.md` §1.5 (beachhead <30-min metric)
+- `docs/specs/nucleus_architecture_v4.1.md` §3 (Experience layer)
+- `docs/specs/nucleus_architecture_v4.1.md` §1.5 (beachhead <30-min metric)

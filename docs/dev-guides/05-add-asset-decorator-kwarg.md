@@ -23,11 +23,11 @@ If any answer is "no" or "unclear": defer.
 
 Every new kwarg must:
 1. Have a concrete v0.1 caller in a user-facing use case (not "v0.5 might need this").
-2. Not duplicate an existing kwarg or a planned kwarg in `nucleus_ctx_sdk_spec.md`.
+2. Not duplicate an existing kwarg or a planned kwarg in `docs/specs/nucleus_ctx_sdk_spec.md`.
 3. Have a sensible default that preserves backward compatibility (existing code still works without the kwarg).
 4. Not collide with reserved kwarg names (`table`, `materialization`, `key` are reserved).
 
-Check `nucleus_ctx_sdk_spec.md` for the full kwarg surface before proposing.
+Check `docs/specs/nucleus_ctx_sdk_spec.md` for the full kwarg surface before proposing.
 
 ---
 
@@ -63,7 +63,7 @@ Type rules:
 ```python
 # src/nucleus/sdk/decorators.py
 
-# Per nucleus_architecture_v4.1.md §13 (ctx SDK contract) and ADR-005.
+# Per docs/specs/nucleus_architecture_v4.1.md §13 (ctx SDK contract) and ADR-005.
 
 _VALID_COMPUTE_VALUES = frozenset({"local"})   # add "databricks" in v0.5
 
@@ -157,7 +157,7 @@ Per ADR-005, all new kwargs in v0.1 are Beta until explicitly promoted.
 
 ---
 
-## Step 6: Update `nucleus_ctx_sdk_spec.md`
+## Step 6: Update `docs/specs/nucleus_ctx_sdk_spec.md`
 
 Add the kwarg to the `@nucleus.asset` specification section:
 
@@ -236,7 +236,7 @@ def test_new_kwarg_help_text_no_jargon():
 [ ] New kwarg validates correctly at decoration time
 [ ] Invalid value raises NucleusInvalidAssetDefinition with NE-code
 [ ] check_api_stability.py EXIT 0 (stability tier tagged)
-[ ] nucleus_ctx_sdk_spec.md updated
+[ ] docs/specs/nucleus_ctx_sdk_spec.md updated
 [ ] CHANGELOG updated
 ```
 
@@ -248,7 +248,7 @@ def test_new_kwarg_help_text_no_jargon():
 - **Missing default**: existing code breaks if there's no default for the new kwarg.
 - **Using `dict` as the type**: use explicit types. `dict` kwargs become unmaintainable.
 - **Forgetting the stability tag**: `check_api_stability.py` will fail without it.
-- **Not updating `nucleus_ctx_sdk_spec.md`**: the spec is the contract; code without spec is a hidden API.
+- **Not updating `docs/specs/nucleus_ctx_sdk_spec.md`**: the spec is the contract; code without spec is a hidden API.
 
 ---
 
@@ -280,5 +280,5 @@ Deprecated kwargs must stay in the signature for the full deprecation cycle.
 
 - ADR-005: `docs/decisions/ADR-005-ctx-sdk-api-freeze-policy.md` — stability tier policy
 - `src/nucleus/sdk/decorators.py` — the `@nucleus.asset` implementation
-- `nucleus_ctx_sdk_spec.md` — the API surface specification
+- `docs/specs/nucleus_ctx_sdk_spec.md` — the API surface specification
 - Schedule kwarg example: `src/nucleus/sdk/decorators.py` (schedule parameter added in v0.1.1)

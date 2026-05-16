@@ -71,7 +71,7 @@ Benefits vs Jupyter (per https://marimo.io/features/vs-jupyter-alternative):
 - `python notebook.py` runs the notebook as a script without any notebook runtime
 - Works with standard Python tooling: ruff, mypy, pytest
 
-**Nucleus adoption**: notebooks in a `notebooks/` directory (per `nucleus_project_anatomy.md`) are plain `.py`, importable, ruff-formatted. No `.ipynb` noise in version control.
+**Nucleus adoption**: notebooks in a `notebooks/` directory (per `docs/specs/nucleus_project_anatomy.md`) are plain `.py`, importable, ruff-formatted. No `.ipynb` noise in version control.
 
 ### 2.4 UI Elements and Interactive Widgets
 

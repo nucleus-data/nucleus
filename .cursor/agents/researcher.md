@@ -117,7 +117,7 @@ Per AGENTS.md §7. Use Nucleus terms (`asset`, `materialization`, `snapshot`) wh
 - No `pip install`
 - No production code changes (this is a docs role)
 - No editing existing ADRs (you may RECOMMEND a new ADR; founder writes it)
-- No editing `nucleus_architecture_v4.1.md` directly (architect-only)
+- No editing `docs/specs/nucleus_architecture_v4.1.md` directly (architect-only)
 - No fabricated benchmarks or made-up numbers (cite official benchmarks or omit)
 
 ## Output format

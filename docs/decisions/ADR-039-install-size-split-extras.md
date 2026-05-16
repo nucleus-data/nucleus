@@ -185,8 +185,8 @@ The split is fully reversible because every extra is additive — uninstalling a
 
 ## Architecture sections touched
 
-- `nucleus_architecture_v4.1.md` §3 Pillar 1 (high performance on minimal resources) — install time is part of perf.
-- `nucleus_architecture_v4.1.md` §4 (wrapped dependencies — each Tier 1/2 lib is now opt-in).
+- `docs/specs/nucleus_architecture_v4.1.md` §3 Pillar 1 (high performance on minimal resources) — install time is part of perf.
+- `docs/specs/nucleus_architecture_v4.1.md` §4 (wrapped dependencies — each Tier 1/2 lib is now opt-in).
 - `AGENTS.md` §11.13 (one component per PR, exact pins — every extra is its own upgrade lane).
 - `AGENTS.md` §11.8 (beachhead 30-min metric — install time is the long-pole).
 

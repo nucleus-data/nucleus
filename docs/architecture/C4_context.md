@@ -4,7 +4,7 @@
 > **Scope**: Nucleus as a whole, in its environment
 > **Audience**: New contributors, prospective users, potential acquirers
 > **Last updated**: Month 0 (Pre-Heartbeat)
-> **Companion docs**: [`C4_container.md`](C4_container.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)
+> **Companion docs**: [`C4_container.md`](C4_container.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md)
 
 The C4 model has 4 levels (Context → Container → Component → Code). This document is **Level 1**: what Nucleus is, who uses it, and what systems it talks to. Read this first to orient yourself.
 
@@ -180,7 +180,7 @@ Nucleus does not "serve" data — the Iceberg tables we write are queryable by *
 
 ### §3.5 Hyperscalers (the giants)
 
-We **yield to** Databricks/Snowflake/BigQuery/Athena in three modes (per [`v4.1` §8](../../nucleus_architecture_v4.1.md)):
+We **yield to** Databricks/Snowflake/BigQuery/Athena in three modes (per [`v4.1` §8](../specs/nucleus_architecture_v4.1.md)):
 
 - **Mode 1 — Graduation**: Customer outgrows us. Iceberg tables move untouched. Zero migration.
 - **Mode 2 — Hybrid Dispatch** (v0.5+): `@nucleus.sql_asset(compute="databricks")` ships heavy queries to Databricks (per v4.1 §10.2); rest stays local.
@@ -284,7 +284,7 @@ Cross-cutting concerns Nucleus optimizes for, in priority order:
 
 - **[`C4_container.md`](C4_container.md)** — Level 2: what containers/processes compose Nucleus internally.
 - **[`sequence_error_translation.md`](sequence_error_translation.md)** — Critical-path sequence: how a Dagster failure becomes a NucleusError.
-- **[`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)** — Full 1678-line source-of-truth doc.
+- **[`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md)** — Full 1678-line source-of-truth doc.
 - **[`../decisions/`](../decisions/)** — ADRs explaining "why this, not that".
 
 ---

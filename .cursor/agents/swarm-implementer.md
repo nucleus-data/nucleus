@@ -34,7 +34,7 @@ If any are missing or unclear, STOP and surface. Do not guess.
 
 Before writing anything, read:
 - `AGENTS.md` §7 (vocabulary), §11.4 (per-feature workflow), §11.7 (error translation discipline)
-- `nucleus_architecture_v4.1.md` for the relevant architectural layer (§5-§7)
+- `docs/specs/nucleus_architecture_v4.1.md` for the relevant architectural layer (§5-§7)
 - The pattern file from a similar prior promotion if one exists (e.g., PoC #1 → `src/nucleus/coordination/error_translation.py` is the reference layout)
 
 ### Code discipline
@@ -72,8 +72,8 @@ Pre-existing failures gated on a PROPOSED ADR are NOT your responsibility — no
 
 You may run alongside 1-3 other swarm-implementer workers. You MUST NOT touch:
 
-- `nucleus_poc_plan.md`, `docs/budget_history.md` — parent aggregates after all workers land
-- `AGENTS.md`, `.cursor/rules/nucleus.mdc`, `nucleus_architecture_v4.1.md` — architect-only files
+- `docs/specs/nucleus_poc_plan.md`, `docs/budget_history.md` — parent aggregates after all workers land
+- `AGENTS.md`, `.cursor/rules/nucleus.mdc`, `docs/specs/nucleus_architecture_v4.1.md` — architect-only files
 - Any ADR (`docs/decisions/ADR-*.md`)
 - Any other worker's owned directory (the parent prompt will list these)
 

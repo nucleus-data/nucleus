@@ -17,7 +17,7 @@ Verifies ``ingest_s3_to_iceberg()``:
 
 Architecture refs:
     docs/internal/research/s3_duckdb.md §6 (error classification)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
 """
 
 from __future__ import annotations

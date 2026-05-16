@@ -16,8 +16,8 @@ Covers ``copy_from()`` in ``src/nucleus/ctx/_dispatch.py``:
     12. Integration: sqlite end-to-end round-trip via the unified copy_from().
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.5.1 (ctx.copy_from ingestion helper)
-    nucleus_ctx_sdk_spec.md §0 Principle 1 (ctx is the only thing users import)
+    docs/specs/nucleus_architecture_v4.1.md §5.5.1 (ctx.copy_from ingestion helper)
+    docs/specs/nucleus_ctx_sdk_spec.md §0 Principle 1 (ctx is the only thing users import)
     docs/decisions/ADR-005-api-stability-tiering.md §2 (Beta tier)
     docs/decisions/ADR-014-dlt-postgres-source.md §"MySQL parity (2026-05-14)"
 """

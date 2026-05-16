@@ -20,14 +20,14 @@
 
 > **Date**: 2026-05-15
 > **Researcher**: Sonnet 4.6 (Researcher tier, Gemini 3.1 Pro unavailable — fallback per AGENTS.md §11.14)
-> **Verified against**: docs/compatibility.md (2026-05-14), nucleus_architecture_v4.1.md (locked), all external URLs cited below
+> **Verified against**: docs/compatibility.md (2026-05-14), docs/specs/nucleus_architecture_v4.1.md (locked), all external URLs cited below
 > **AI memory caveat**: External docs verified as of 2026-05-15. Exact query times may shift across DuckDB patch releases; re-measure at each upgrade per AGENTS.md §11.13.
 
 ---
 
 ## 1. Beachhead Persona Constraints (Drives All Targets)
 
-Per `nucleus_architecture_v4.1.md` §1.5:
+Per `docs/specs/nucleus_architecture_v4.1.md` §1.5:
 
 | Dimension | Constraint | Source |
 |---|---|---|
@@ -362,7 +362,7 @@ POSIX `rename(2)` is atomic; NTFS `os.rename()` is NOT — requires delete-then-
 
 All URLs verified reachable as of 2026-05-15.
 
-**Nucleus-internal**: `nucleus_architecture_v4.1.md` §1.5/§2/§5.1/§6.2/§10/§16/§19; `docs/compatibility.md`; `docs/decisions/ADR-012`; `docs/decisions/ADR-014`; `scripts/beachhead_e2e.py`; `scripts/benchmark_regression.py`; `scripts/upgrade_smoke.py`; `AGENTS.md` §1/§11.12/§11.13.
+**Nucleus-internal**: `docs/specs/nucleus_architecture_v4.1.md` §1.5/§2/§5.1/§6.2/§10/§16/§19; `docs/compatibility.md`; `docs/decisions/ADR-012`; `docs/decisions/ADR-014`; `scripts/beachhead_e2e.py`; `scripts/benchmark_regression.py`; `scripts/upgrade_smoke.py`; `AGENTS.md` §1/§11.12/§11.13.
 
 | Component | Key doc URL (verified) |
 |---|---|

@@ -1,6 +1,6 @@
 """Raw-layer assets: copy operational sources into Iceberg (demo).
 
-Uses ``ctx.copy_from`` (Beta) per ``nucleus_ctx_sdk_spec.md`` §5.3.
+Uses ``ctx.copy_from`` (Beta) per ``docs/specs/nucleus_ctx_sdk_spec.md`` §5.3.
 Postgres URLs: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
 SQLite URIs: https://docs.python.org/3/library/sqlite3.html#sqlite3.connect
 """

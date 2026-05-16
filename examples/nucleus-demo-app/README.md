@@ -147,10 +147,10 @@ nucleus-demo-app/
 ## Where this fits
 
 This project follows the layout described in
-[`nucleus_project_anatomy.md`](../../nucleus_project_anatomy.md) and the
+[`docs/specs/nucleus_project_anatomy.md`](../specs/nucleus_project_anatomy.md) and the
 v0.1 CLI surface defined in
-[`nucleus_cli_spec.md`](../../nucleus_cli_spec.md). The asset model is
-locked in [`nucleus_asset_model_spec.md`](../../nucleus_asset_model_spec.md).
+[`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md). The asset model is
+locked in [`docs/specs/nucleus_asset_model_spec.md`](../specs/nucleus_asset_model_spec.md).
 None of the bronze / silver / gold patterns are Nucleus-specific — they
 follow the same medallion convention used by Databricks, dbt, and most
 modern lakehouse pipelines, so a graduating team can lift this graph

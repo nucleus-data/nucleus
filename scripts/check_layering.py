@@ -9,7 +9,7 @@ Layer depth (lowest to highest)::
     physics  →  engines  →  coordination  →  intelligence  →  {ctx, cli, workbench}
 
 Layers at the **same depth** are peers and may import freely from each
-other. Per ``nucleus_architecture_v4.1.md`` §8.1, ``ctx`` (SDK),
+other. Per ``docs/specs/nucleus_architecture_v4.1.md`` §8.1, ``ctx`` (SDK),
 ``cli`` (operator surface), and ``workbench`` (GUI surface) are all
 Layer 4 (Experience) surfaces, not stacked sub-layers — see ADR-040.
 
@@ -57,7 +57,7 @@ SRC_ROOT = REPO_ROOT / "src" / "nucleus"
 # Imports may flow within or down the stack, never up.
 # Layers at the SAME depth are peers and may import freely from each
 # other (e.g. ``cli ↔ workbench`` per ADR-040 — both Experience-layer
-# surfaces per nucleus_architecture_v4.1.md §8.1).
+# surfaces per docs/specs/nucleus_architecture_v4.1.md §8.1).
 LAYER_DEPTH: dict[str, int] = {
     "_internal": -1,  # shared toolbox; sits below all real layers
     "physics": 0,  # L0

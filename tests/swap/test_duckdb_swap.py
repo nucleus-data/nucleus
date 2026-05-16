@@ -1,6 +1,6 @@
 """Swap smoke tests — DuckDB → Apache DataFusion.
 
-Per AGENTS.md Hard Constraint #9 + ``nucleus_architecture_v4.1.md`` §9.3.
+Per AGENTS.md Hard Constraint #9 + ``docs/specs/nucleus_architecture_v4.1.md`` §9.3.
 Verifies the DuckDB wrap surface we depend on today (5 exception classes
 in ``coordination/error_translation.py:326-330`` + future engine method
 surface) AND that DataFusion is reachable via ``find_spec`` (no install

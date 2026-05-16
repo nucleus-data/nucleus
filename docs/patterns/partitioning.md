@@ -17,7 +17,7 @@ Read this **before** writing Tier 0 Heartbeat code that calls `Table.append` or 
   1. Too coarse → readers full-scan multi-GB files for a 1-day query.
   2. Too fine → millions of tiny files; manifest reads dominate; commit latency balloons.
 - The **default if you do nothing** = no partition spec = one big file per write, no pruning. Acceptable for tables <1 GB; catastrophic past that.
-- The 30-minute beachhead metric in [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §1.5 relies on the default being safe: `ctx.copy_from` will set a sensible time-column partition if the source has one.
+- The 30-minute beachhead metric in [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §1.5 relies on the default being safe: `ctx.copy_from` will set a sensible time-column partition if the source has one.
 
 ---
 
@@ -127,7 +127,7 @@ with table.update_spec() as update:
   - `partition_by="day(event_ts)"` → single time transform.
   - `partition_by=["day(event_ts)", "bucket(16, customer_id)"]` → multi-column spec (v0.5+).
 - v0.1 Heartbeat: **ONE partition transform per asset, maximum**. No multi-field specs in the first write. Multi-field is fine, but it lands in v0.5+ once the Asset Materialization Adapter (per ADR-001) has been exercised on real workloads.
-- The `@nucleus.asset` decorator translates the string DSL to a real PyIceberg `PartitionSpec` under the hood; users **never import `pyiceberg.partitioning` themselves** (per `nucleus_architecture_v4.1.md` §13.1 — the `ctx` SDK is the only stable public surface; wrapped library names do not appear in user code).
+- The `@nucleus.asset` decorator translates the string DSL to a real PyIceberg `PartitionSpec` under the hood; users **never import `pyiceberg.partitioning` themselves** (per `docs/specs/nucleus_architecture_v4.1.md` §13.1 — the `ctx` SDK is the only stable public surface; wrapped library names do not appear in user code).
 - Lineage emits the partition spec at materialization time (asset-level metadata only in v0.1; column-level lineage including partition columns lands in v0.5+).
 - Schema contracts (`@nucleus.check`) can assert "this column has a partition transform applied"; useful for catching accidental partition-spec drops on schema updates.
 

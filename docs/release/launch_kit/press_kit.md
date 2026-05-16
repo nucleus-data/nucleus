@@ -45,7 +45,7 @@
 | Wrapped runtime dependencies (exact-pinned) | **23 mandatory + 2 optional-runtime** | `pyproject.toml`; `CHANGELOG.md` v0.1.0 entry |
 | Governance scripts in CI | **11** | `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §3.3 |
 | ADRs (architecture decision records) ratified | **016 ACCEPTED + 12 PROPOSED at tag time** | `docs/decisions/` |
-| CLI commands (v0.2) | **8** (init/up/down/run/ingest/query/chat/version) | `src/nucleus/cli/main.py`; `nucleus_cli_spec.md` |
+| CLI commands (v0.2) | **8** (init/up/down/run/ingest/query/chat/version) | `src/nucleus/cli/main.py`; `docs/specs/nucleus_cli_spec.md` |
 | Connectors (v0.2) | **7** (Postgres / MySQL / SQLite / Snowflake / S3 / GCS / filesystem) | `src/nucleus/ctx/copy_from_*.py` |
 | Workbench routes (v0.3 frontend) | **7 interactive** (Dashboard / Assets / Asset detail / Runs / Run detail / Schedules / Catalog / Query) | `CHANGELOG.md` v0.2.0 entry |
 | Public docs pages (MkDocs Material) | **~55** | `docs/site/` |
@@ -89,7 +89,7 @@
 
 > "Nucleus ships data products from a laptop — local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks, AI-ready by design, graduating cleanly to any Iceberg catalog when users outgrow their laptop." — *official tagline per ADR-002 §8.1; final tagline locks after PoC #5 external-tester field test.*
 
-> "We do not build a database, a SQL engine, a DataFrame engine, an orchestrator, a Spark replacement, or a Databricks competitor. We integrate best-of-breed open source into one coherent product." — *`nucleus_architecture_v4.1.md` TL;DR.*
+> "We do not build a database, a SQL engine, a DataFrame engine, an orchestrator, a Spark replacement, or a Databricks competitor. We integrate best-of-breed open source into one coherent product." — *`docs/specs/nucleus_architecture_v4.1.md` TL;DR.*
 
 > "30 minutes from `git clone` to a BI-ready Iceberg table for a five-engineer startup team." — *v4.1 §1.5 beachhead metric; validated 2026-05-14 via WSL E2E.*
 
@@ -101,7 +101,7 @@
 
 ## Forbidden framings (do NOT use in coverage)
 
-For accuracy, please avoid these characterizations of Nucleus. They are explicitly disclaimed in `AGENTS.md` §8 and `nucleus_architecture_v4.1.md` §1.6:
+For accuracy, please avoid these characterizations of Nucleus. They are explicitly disclaimed in `AGENTS.md` §8 and `docs/specs/nucleus_architecture_v4.1.md` §1.6:
 
 - ❌ "Data OS" / "universal compute platform" <!-- banned-term: Data OS --> <!-- banned-term: universal compute -->
 - ❌ "Spark killer" / "Databricks killer / replacement" / "better Databricks" <!-- banned-term: Spark killer --> <!-- banned-term: Databricks killer --> <!-- banned-term: better Databricks -->
@@ -121,7 +121,7 @@ Correct framing in one line: *"a modern, composable data engineering platform th
 
 > Five layers, bottom-up: **Physics** (Apache Arrow, Iceberg, Parquet, Lance, S3, OpenLineage, OpenTelemetry — immortal) → **Engines** (DuckDB, Polars; Daft optional v0.5+) → **Coordination** (asset graph, AMA, error translation, contracts, lineage, run ledger, scheduling daemon) → **Intelligence** (Copilot v0.2 chat; lineage-aware v0.5; agent runtime v0.5) → **Experience** (`ctx` SDK, CLI, Workbench, Marimo).
 
-Full diagram + sequence: `docs/architecture/`. Source of truth: `nucleus_architecture_v4.1.md`.
+Full diagram + sequence: `docs/architecture/`. Source of truth: `docs/specs/nucleus_architecture_v4.1.md`.
 
 ---
 

@@ -1,6 +1,6 @@
 # Swap Target: DuckDB → Apache DataFusion
 
-**Tier**: 1 (engines, default SQL engine, per `nucleus_architecture_v4.1.md` §5.1, §9.2) · **Default**: `duckdb==1.1.3` (`pyproject.toml:42`) · **Swap target**: Apache DataFusion (Python bindings — candidate `datafusion>=43.0`; **NEEDS VERIFICATION** at trigger time per `AGENTS.md` §11.12) · **Status (2026-05-13)**: Interface documented + smoke tests in CI; full swap on-demand only per v4.1 §9.3.
+**Tier**: 1 (engines, default SQL engine, per `docs/specs/nucleus_architecture_v4.1.md` §5.1, §9.2) · **Default**: `duckdb==1.1.3` (`pyproject.toml:42`) · **Swap target**: Apache DataFusion (Python bindings — candidate `datafusion>=43.0`; **NEEDS VERIFICATION** at trigger time per `AGENTS.md` §11.12) · **Status (2026-05-13)**: Interface documented + smoke tests in CI; full swap on-demand only per v4.1 §9.3.
 
 ## What we use DuckDB for
 
@@ -93,5 +93,5 @@ Until one fires, we maintain interface + smoke tests only, never a full second i
 - DataFusion home: https://datafusion.apache.org/
 - DataFusion Python: https://datafusion.apache.org/python/  (re-verify on PyPI at trigger time per `AGENTS.md` §11.12)
 - `datafusion-iceberg`: https://github.com/apache/datafusion-iceberg
-- Architecture: `nucleus_architecture_v4.1.md` §5.1 (Engines), §9.2 (composability tier table), §9.3 (swap discipline)
+- Architecture: `docs/specs/nucleus_architecture_v4.1.md` §5.1 (Engines), §9.2 (composability tier table), §9.3 (swap discipline)
 - Research notes: `docs/internal/research/duckdb.md`

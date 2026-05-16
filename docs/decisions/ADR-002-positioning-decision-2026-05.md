@@ -3,7 +3,7 @@
 **Status:** **ACCEPTED with amendments — 2026-05-12** (founder review, two independent reviewer passes converged)
 **Date:** 2026-05-12 · **Amended:** 2026-05-12 (see §8)
 **Author:** AI assistant. **Decision-maker:** solo founder.
-**Supersedes:** none. **Amends:** `nucleus_architecture_v4.1.md` §1 (positioning thesis), §5.7 (catalog table), §17.2 (timeline framing), §18.4 (v0.5 roadmap), changelog (v4.1.3 entry). Reflected in `README.md`, `AGENTS.md §0`, `.cursor/rules/nucleus.mdc`.
+**Supersedes:** none. **Amends:** `docs/specs/nucleus_architecture_v4.1.md` §1 (positioning thesis), §5.7 (catalog table), §17.2 (timeline framing), §18.4 (v0.5 roadmap), changelog (v4.1.3 entry). Reflected in `README.md`, `AGENTS.md §0`, `.cursor/rules/nucleus.mdc`.
 
 ---
 
@@ -64,7 +64,7 @@ All three independently concluded:
 
 | Change | Section | Cost |
 |---|---|---|
-| **v0.5 deliverable: `nucleus-mcp-server` (~500 LOC).** Exposes assets, contracts, lineage to MCP-compatible agents via `ctx`. Hedge against the agent-substrate scenario without pivoting. | `nucleus_architecture_v4.1.md` §18.5 | +500 LOC against 30K ceiling |
+| **v0.5 deliverable: `nucleus-mcp-server` (~500 LOC).** Exposes assets, contracts, lineage to MCP-compatible agents via `ctx`. Hedge against the agent-substrate scenario without pivoting. | `docs/specs/nucleus_architecture_v4.1.md` §18.5 | +500 LOC against 30K ceiling |
 | **Elevate Apache Polaris to co-default with Lakekeeper** for v0.3 catalog. Reason: ASF TLP Feb 18, 2026 satisfies v4.1 §9.2 Tier 0 criterion. Lakekeeper remains for Rust-fit deployments. | §5.7 (catalog table) | 0 LOC (intent change) |
 | **DuckLake = watch flank threat, not yet a swap target.** DuckLake targets exactly Nucleus's beachhead (small-team DuckDB stacks). Tier-0 formats don't swap, but we monitor. | New `docs/internal/research/ducklake.md` stub before v0.3 (Mo 14) | 0 LOC for v0.1 |
 | **PyIceberg upgrade 0.8.1 → 0.11.x** scheduled as the first dependency-upgrade ADR immediately after PoC #1 passes (Mo 2-3). Skipping minors is supported; gets `ExpireSnapshots` for free. | New ADR-003 (separate PR) | ~1-2 days work, ~0 net LOC |
@@ -112,7 +112,7 @@ All three independently concluded:
 
 This ADR is **PROPOSED**, not **ACCEPTED**. The founder selects one of:
 
-1. **ACCEPT as-is.** I apply the changes across `README.md`, `nucleus_architecture_v4.1.md` (4 sections), `AGENTS.md` §0, `.cursor/rules/nucleus.mdc`. Estimated: 5 file edits, ~15 minutes. Then we schedule ADR-003 (PyIceberg upgrade) immediately after PoC #1 lands.
+1. **ACCEPT as-is.** I apply the changes across `README.md`, `docs/specs/nucleus_architecture_v4.1.md` (4 sections), `AGENTS.md` §0, `.cursor/rules/nucleus.mdc`. Estimated: 5 file edits, ~15 minutes. Then we schedule ADR-003 (PyIceberg upgrade) immediately after PoC #1 lands.
 2. **ACCEPT with modifications.** Founder names changes; I draft an amended version.
 3. **REJECT.** Keep current positioning; document the disagreement here for future audit.
 4. **DEFER.** Park the decision; revisit after PoC #1 passes (~Mo 2-3).
@@ -126,7 +126,7 @@ The risk of (3) and (4) is that the README and tagline continue to read as "AI-a
 - `docs/internal/research/strategic/competitive_landscape_2026.md` — 5-angle competitive scan
 - `docs/internal/research/strategic/ai_agent_data_infra_2026.md` — AI / agent infra market scan
 - `docs/internal/research/strategic/solo_oss_patterns_and_iceberg_2026.md` — solo execution + Iceberg ecosystem
-- `nucleus_architecture_v4.1.md` §1.0, §2.1, §5.7, §17.2, §18, §20 — current architecture sections this ADR touches
+- `docs/specs/nucleus_architecture_v4.1.md` §1.0, §2.1, §5.7, §17.2, §18, §20 — current architecture sections this ADR touches
 - `AGENTS.md` §3 (constraints), §4 (do-not-build), §8 (forbidden mental models)
 
 ---
@@ -150,7 +150,7 @@ Rationale (reviewer #1): laptop = emotional · local-first = experiential · Ice
 
 ### §8.2 "Data product" — explicit definition
 
-The term "data product" is overloaded in 2026 (Data Mesh, ML feature stores, semantic-layer vendors all claim it). Adopted definition, anchored in `nucleus_architecture_v4.1.md` §12.1:
+The term "data product" is overloaded in 2026 (Data Mesh, ML feature stores, semantic-layer vendors all claim it). Adopted definition, anchored in `docs/specs/nucleus_architecture_v4.1.md` §12.1:
 
 > **For Nucleus, a *data product* = an Iceberg-backed asset with transformations, contracts, and lineage, consumable by BI tools, applications, or AI agents via the `ctx` SDK or the MCP server.**
 
@@ -158,7 +158,7 @@ This definition appears in `README.md` near the headline, and in any external-fa
 
 ### §8.3 Mo 24 decision gate — explicit trigger checklist
 
-The §4.2 framing said "Mo 24 = decision gate" but left the trigger ambiguous (it would otherwise be a calendar date the founder rationalizes away). Reviewer #2 required specific firing conditions. Adopted into `nucleus_architecture_v4.1.md` §17.2:
+The §4.2 framing said "Mo 24 = decision gate" but left the trigger ambiguous (it would otherwise be a calendar date the founder rationalizes away). Reviewer #2 required specific firing conditions. Adopted into `docs/specs/nucleus_architecture_v4.1.md` §17.2:
 
 The Mo 24 decision **fires automatically** if any of these hold:
 
@@ -176,7 +176,7 @@ The (a)/(b)/(c) options remain:
 
 ### §8.4 Tagline field-test gate — don't lock final wording until real users
 
-The §8.1 wording is the **default** that ships in v0.1. It is not the *locked* tagline. Per reviewer #2, the actual locked version is decided at **PoC #5** (the End-to-End 30-Minute Beachhead Validation, see `nucleus_poc_plan.md` §5), when external testers field-test:
+The §8.1 wording is the **default** that ships in v0.1. It is not the *locked* tagline. Per reviewer #2, the actual locked version is decided at **PoC #5** (the End-to-End 30-Minute Beachhead Validation, see `docs/specs/nucleus_poc_plan.md` §5), when external testers field-test:
 
 - The current default vs. alternatives (e.g. *"The Python SDK for Iceberg data engineering"* or *"Your entire data stack, local in 10 seconds"*)
 - Whether "data products" terminology lands or confuses
@@ -198,11 +198,11 @@ Tracking the edit fan-out for audit:
 
 | File | Section | Edit |
 |---|---|---|
-| `nucleus_architecture_v4.1.md` | Document epigraph (line 5) | Replace thesis with §8.1 L1+L2 hierarchy |
-| `nucleus_architecture_v4.1.md` | Changelog | Add `v4.1.3 patches (post-positioning-review)` row block |
-| `nucleus_architecture_v4.1.md` | §5.7 (catalog table) | Polaris co-default with Lakekeeper at v0.3+ |
-| `nucleus_architecture_v4.1.md` | §17.2 (trajectory) | Append Mo 24 trigger checklist (§8.3) |
-| `nucleus_architecture_v4.1.md` | §18.4 (v0.5 roadmap) | Add `nucleus-mcp-server` bullet |
+| `docs/specs/nucleus_architecture_v4.1.md` | Document epigraph (line 5) | Replace thesis with §8.1 L1+L2 hierarchy |
+| `docs/specs/nucleus_architecture_v4.1.md` | Changelog | Add `v4.1.3 patches (post-positioning-review)` row block |
+| `docs/specs/nucleus_architecture_v4.1.md` | §5.7 (catalog table) | Polaris co-default with Lakekeeper at v0.3+ |
+| `docs/specs/nucleus_architecture_v4.1.md` | §17.2 (trajectory) | Append Mo 24 trigger checklist (§8.3) |
+| `docs/specs/nucleus_architecture_v4.1.md` | §18.4 (v0.5 roadmap) | Add `nucleus-mcp-server` bullet |
 | `README.md` | h1 + byline + What-is + Pillar #3 | New tagline hierarchy + data product definition + de-emphasize AI-assisted headline |
 | `AGENTS.md` | §0 Project Identity + §8 Forbidden Mental Models + Correct framing | New thesis statement matching §8.1; add Angle C/D + "Iceberg company" retirements |
 | `.cursor/rules/nucleus.mdc` | Project Identity + Forbidden framings + Correct line | Same as AGENTS.md changes |
@@ -219,8 +219,8 @@ Worker B's drift sweep (`docs/audits/positioning_drift_2026-05-12.md`) surfaced 
 | File | Edit | Classification |
 |---|---|---|
 | `docs/architecture/C4_context.md:29` | Mermaid label replaced with §8.1 thesis (`Ship data products from a laptop / Local-first Python SDK + CLI / for Iceberg-native pipelines`) | **Patch-introduced** — C4 diagrams were absent from initial §8.6 apply log |
-| `nucleus_architecture_v4.1.md:170` | §1.2 trend row 6 `"AI-native data contracts"` → `"AI-assisted contract authoring"` (right column adjusted) | **Pre-existing** (not caused by v4.1.3) — but a vocab-check ban-list violation that the sweep made visible; fixed opportunistically since v4.1 was being touched anyway |
-| `scripts/check_vocabulary.py` + 5 primary docs (`nucleus_architecture_v4.1.md`, `AGENTS.md`, `README.md`, `.cursor/rules/nucleus.mdc`) | **Option A vocab-check hygiene pass** (per `docs/audits/positioning_drift_2026-05-12.md` §3 + this §8.6.1 follow-up): (1) extended `SKIP_PATTERNS` with 5 whole-file exemptions covering retirement-narrative docs — deprecated `nucleus_architecture_v3.md` / `v4.md`, `docs/audits/`, `docs/decisions/`, `docs/internal/research/strategic/`; (2) added inline `<!-- banned-term: ... -->` exemptions to legitimate retirement-narrative lines in primary docs (v4.1 §1.6 + evening-pass note; `AGENTS.md` §0 + vocabulary contract + forbidden-framings list; README pillar #3; `.cursor/rules/nucleus.mdc` vocabulary + forbidden-framings list); C4 diagrams verified clean (no banned terms after the §8.6.1 Mermaid label fix above). | **Patch — CI hygiene**, no semantic / architectural change. Closes the gap the drift audit surfaced where the script would FAIL on its own primary-doc retirement narratives once `.github/workflows/ci.yml:82` is wired live. |
+| `docs/specs/nucleus_architecture_v4.1.md:170` | §1.2 trend row 6 `"AI-native data contracts"` → `"AI-assisted contract authoring"` (right column adjusted) | **Pre-existing** (not caused by v4.1.3) — but a vocab-check ban-list violation that the sweep made visible; fixed opportunistically since v4.1 was being touched anyway |
+| `scripts/check_vocabulary.py` + 5 primary docs (`docs/specs/nucleus_architecture_v4.1.md`, `AGENTS.md`, `README.md`, `.cursor/rules/nucleus.mdc`) | **Option A vocab-check hygiene pass** (per `docs/audits/positioning_drift_2026-05-12.md` §3 + this §8.6.1 follow-up): (1) extended `SKIP_PATTERNS` with 5 whole-file exemptions covering retirement-narrative docs — deprecated `nucleus_architecture_v3.md` / `v4.md`, `docs/audits/`, `docs/decisions/`, `docs/internal/research/strategic/`; (2) added inline `<!-- banned-term: ... -->` exemptions to legitimate retirement-narrative lines in primary docs (v4.1 §1.6 + evening-pass note; `AGENTS.md` §0 + vocabulary contract + forbidden-framings list; README pillar #3; `.cursor/rules/nucleus.mdc` vocabulary + forbidden-framings list); C4 diagrams verified clean (no banned terms after the §8.6.1 Mermaid label fix above). | **Patch — CI hygiene**, no semantic / architectural change. Closes the gap the drift audit surfaced where the script would FAIL on its own primary-doc retirement narratives once `.github/workflows/ci.yml:82` is wired live. |
 
 **§8.6.2 Residual vocab-check cleanup (2026-05-12 late evening pass)**
 
@@ -232,7 +232,7 @@ Worker B's §8.6.1 pass intentionally scope-restricted to "Option A within the a
 | `docs/conventions/engineering.md` §15.1 ban-list | 5 inline `<!-- banned-term: ... -->` exemptions (one per banned-term list item). Whole-file skip rejected: would let future legit drift in other §s of the conventions doc go undetected. | CI hygiene |
 | `.github/workflows/ci.yml:82` | 1 inline exemption on the YAML comment that names the check's banned terms | CI hygiene |
 | `SETUP.md:231` | 1 inline exemption on the troubleshooting paragraph explaining the check itself | CI hygiene |
-| `nucleus_vs_databricks.md:347` | 1 inline exemption on the "Data OS" warning paragraph | CI hygiene |
+| `docs/specs/nucleus_vs_databricks.md:347` | 1 inline exemption on the "Data OS" warning paragraph | CI hygiene |
 | `poc/p3_ingest/ingest.py:8, 103` | 2 **renames** (`"SQLite metastore"` → `"SQLite-backed catalog"`) — preferred over exemption because vocab discipline AGENTS.md §7 actually maps `metastore` → `catalog`; we should *follow* the discipline, not just exempt | Vocab compliance |
 
 **Predicted exit code of `python scripts/check_vocabulary.py` now: 0 (PASS).** All 22 audit-listed LEGITIMATE matches + the 7 Worker-B-flagged residuals are now either SKIP_PATTERNS-covered or inline-exempted, except `ingest.py` which is renamed compliant. The vocab-check hygiene gap is fully closed; CI wiring of `scripts/check_vocabulary.py` is unblocked.

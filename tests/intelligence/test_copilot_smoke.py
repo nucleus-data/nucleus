@@ -8,7 +8,7 @@ One mocked round-trip per provider; asserts the ``model=`` kwarg flows
 through to ``litellm.completion`` and the response shape is consumed
 correctly. No network calls.
 
-Architecture ref: ``nucleus_architecture_v4.1.md`` §9.3 + ADR-015 §5
+Architecture ref: ``docs/specs/nucleus_architecture_v4.1.md`` §9.3 + ADR-015 §5
 """
 
 from __future__ import annotations

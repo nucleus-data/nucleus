@@ -23,5 +23,5 @@ A SQL string in your project failed to parse. The engine could not interpret the
 
 - Source: `src/nucleus/errors.py` (`NucleusSQLSyntaxError`)
 - Default fix hint: "Check the SQL for typos, missing FROM clauses, or unclosed quotes. The dialect is not Postgres."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

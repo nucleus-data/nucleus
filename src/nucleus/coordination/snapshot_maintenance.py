@@ -1,6 +1,6 @@
 """Post-commit Iceberg snapshot maintenance — keep snapshot counts manageable.
 
-Per ``nucleus_architecture_v4.1.md`` §6.2 (AMA step 3 post-commit cleanup)
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.2 (AMA step 3 post-commit cleanup)
 and ``docs/decisions/ADR-024-reliability-hardening-plan.md`` P0-3.
 
 Without periodic expiry, every ``nucleus run`` appends a new Iceberg snapshot.

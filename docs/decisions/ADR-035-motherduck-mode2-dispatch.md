@@ -14,7 +14,7 @@
 
 MotherDuck is a serverless cloud analytics service built on DuckDB. Its architectural contribution is **Dual Execution**: a query planner that automatically routes query stages between local DuckDB and cloud DuckDB ("Ducklings") based on where data lives. Per R2 §6.2: `SELECT * FROM local_parquet JOIN md:cloud_table ON id=id` runs the local scan locally and the cloud scan in the cloud, joined optimally.
 
-This is the most concrete production implementation of `nucleus_architecture_v4.1.md §10.2` Mode 2 (hybrid compute). The integration path for Nucleus v0.3+: `compute="md"` on `ctx.run()` ATTACHes MotherDuck via `duckdb.connect("md:token")` — zero new Nucleus LOC.
+This is the most concrete production implementation of `docs/specs/nucleus_architecture_v4.1.md §10.2` Mode 2 (hybrid compute). The integration path for Nucleus v0.3+: `compute="md"` on `ctx.run()` ATTACHes MotherDuck via `duckdb.connect("md:token")` — zero new Nucleus LOC.
 
 **Open question before implementation** (R2 NV-6): Are Nucleus's Iceberg files directly attachable to MotherDuck? MotherDuck uses DuckLake as its native lakehouse format. If Iceberg assets are not directly readable via MotherDuck's DuckDB instance, a format bridge is needed. This question must be resolved before any integration work begins.
 
@@ -60,5 +60,5 @@ At v1.5+:
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §10.2 (Mode 2 hybrid compute)
-- `nucleus_architecture_v4.1.md` §14 (yield-to-giants strategy)
+- `docs/specs/nucleus_architecture_v4.1.md` §10.2 (Mode 2 hybrid compute)
+- `docs/specs/nucleus_architecture_v4.1.md` §14 (yield-to-giants strategy)

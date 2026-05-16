@@ -1,5 +1,5 @@
 # ruff: noqa: ARG001
-"""Tests for ``nucleus up`` — nucleus_cli_spec.md §3.2."""
+"""Tests for ``nucleus up`` — docs/specs/nucleus_cli_spec.md §3.2."""
 
 from __future__ import annotations
 

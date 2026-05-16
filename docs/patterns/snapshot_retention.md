@@ -78,7 +78,7 @@ Snapshot retention has a direct user-facing consequence: queries against expired
 
 - After expiration, any of these fail with `NoSuchSnapshotException` (or its NucleusError-translated form):
   - Time-travel SQL: `SELECT * FROM orders FOR SYSTEM_VERSION AS OF <expired_snapshot_id>`.
-  - Replay debugging via the v0.5+ time-travel debugger (per `nucleus_architecture_v4.1.md` §6.3).
+  - Replay debugging via the v0.5+ time-travel debugger (per `docs/specs/nucleus_architecture_v4.1.md` §6.3).
   - Audit trails that pinned a specific snapshot_id.
 - This is **intentional and correct** — you cannot read data files that no longer exist.
 - **Tagged snapshots are protected from expiration.** Iceberg v2 supports named tags (`table.manage_snapshots().create_tag(...)`) that pin a specific snapshot indefinitely, regardless of policy. Use these for: monthly board-report cuts, regulatory snapshots, release pins.
@@ -129,7 +129,7 @@ Until orphan-file cleanup runs, expired snapshots' files **still occupy storage*
 |---|---|
 | v0.1 (Heartbeat) | Not exposed. No automatic expiration. Default Iceberg properties unset (= no expiration policy). Documented here for human awareness. |
 | v0.3 | `nucleus expire-snapshots <asset>` CLI command + `nucleus maintenance --schedule daily` Dagster schedule. |
-| v0.5+ | Default policy applied automatically to all Tier 2 assets (per `nucleus_architecture_v4.1.md` §6.3). Telemetry-driven exceptions. |
+| v0.5+ | Default policy applied automatically to all Tier 2 assets (per `docs/specs/nucleus_architecture_v4.1.md` §6.3). Telemetry-driven exceptions. |
 
 **Default policy (Tier 2 / v0.5+)**:
 
@@ -137,7 +137,7 @@ Until orphan-file cleanup runs, expired snapshots' files **still occupy storage*
 - Min 10 snapshots retained.
 - Tagged snapshots retained indefinitely (release tags, audit pins).
 - Expire + orphan-file cleanup run as a single Dagster maintenance schedule, low-traffic window.
-- All expirations logged as OpenLineage events with `op=expire_snapshots` + counts (per `nucleus_architecture_v4.1.md` §6.2 AMA responsibility 5).
+- All expirations logged as OpenLineage events with `op=expire_snapshots` + counts (per `docs/specs/nucleus_architecture_v4.1.md` §6.2 AMA responsibility 5).
 
 **Asset-level overrides** (v0.3+ syntax):
 

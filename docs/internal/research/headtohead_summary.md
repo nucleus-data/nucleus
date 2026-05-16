@@ -15,7 +15,7 @@ the deep-dive** -- the honest disclaimers live there.
 ## TL;DR
 
 * Nucleus is **not** trying to be faster than DuckDB on raw query
-  speed (DuckDB is already the engine -- `nucleus_architecture_v4.1.md`
+  speed (DuckDB is already the engine -- `docs/specs/nucleus_architecture_v4.1.md`
   Section 5).
 * Nucleus IS trying to be **faster to develop with**, **friendlier on
   errors**, and **portable** at the storage layer via Iceberg.
@@ -38,7 +38,7 @@ the deep-dive** -- the honest disclaimers live there.
 
 | Tool | Why no benchmark |
 |---|---|
-| Spark / Databricks | Different category -- distributed cluster vs single laptop. Per `nucleus_architecture_v4.1.md` Section 10 (yield to giants), Nucleus does not compete here. The comparison would mislead. |
+| Spark / Databricks | Different category -- distributed cluster vs single laptop. Per `docs/specs/nucleus_architecture_v4.1.md` Section 10 (yield to giants), Nucleus does not compete here. The comparison would mislead. |
 | Snowflake / BigQuery | Same -- managed cloud warehouses. Nucleus graduates TO them via Iceberg portability rather than competes WITH them. |
 | Airflow | Different shape -- task-centric vs asset-centric. Migration guide tracked at `docs/swap/airflow.md`; benchmark would compare apples to oranges. |
 | Prefect | Different shape -- flow/task vs asset. See `docs/internal/research/parity_vs_dbt_dagster_airflow.md` Section 3.5. |
@@ -60,7 +60,7 @@ Every claim above:
   the result JSON for audit.
 * **Honest disclaimer**: single-machine benchmark; production
   workloads vary; the **<30 minutes from clone to first Iceberg
-  table** beachhead metric (`nucleus_architecture_v4.1.md`
+  table** beachhead metric (`docs/specs/nucleus_architecture_v4.1.md`
   Section 1.5) is the user-facing claim. Raw transformation speed is
   **secondary** and largely inherited from DuckDB / Polars --
   Nucleus does not win on that axis by being clever with compute,
@@ -112,7 +112,7 @@ For the full pick-which matrix see each deep-dive's Section 4 / 5.
 * `docs/internal/research/headtohead_dagster_duckdb.md`
 * `docs/internal/research/benchmarks_v0.2.0.md` -- single-engine v0.2.0 baseline
 * `docs/internal/research/parity_vs_dbt_dagster_airflow.md` -- full parity matrix
-* `nucleus_architecture_v4.1.md` Section 1.5 (beachhead metric),
+* `docs/specs/nucleus_architecture_v4.1.md` Section 1.5 (beachhead metric),
   Section 6.4 (error translation), Section 9 (composability),
   Section 10 (yield to giants)
 * `AGENTS.md` Section 10.8 (be brutally honest about scope)

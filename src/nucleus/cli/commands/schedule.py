@@ -9,11 +9,11 @@ Exposes schedule metadata and the mini-scheduler daemon lifecycle:
     nucleus schedule trigger <key>      one-shot materialization (no daemon)
     nucleus schedule status             show daemon state + active schedules
 
-Per ``nucleus_architecture_v4.1.md`` §8 L4 (CLI layer delegates all
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §8 L4 (CLI layer delegates all
 business logic to the coordination layer). Active scheduling now wires
 the mini-scheduler fallback per ADR-017 §v0.2.1 amendment.
 
-Stability tier: **Beta** — governed by ``nucleus_cli_spec.md`` §3.
+Stability tier: **Beta** — governed by ``docs/specs/nucleus_cli_spec.md`` §3.
 """
 
 from __future__ import annotations

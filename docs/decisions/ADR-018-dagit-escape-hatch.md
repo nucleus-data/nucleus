@@ -4,7 +4,7 @@
 > **Date**: 2026-05-14 · **Decider(s)**: Solo founder.
 > **Tags**: cli, dagster, escape-hatch, vocabulary-carveout, v0.1.1, layer-4-experience
 > **Supersedes**: (none — first escape-hatch ADR)
-> **Related**: `nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §6.6 (Tier 3 progressive disclosure: "exposes Dagster UI directly") · §8.1 (Layer 4 Experience surfaces); ADR-016 (Workbench MVP — Fork B) — primary UX; ADR-017 (Schedule exposure) — companion Beta-tier v0.1.1 work; ADR-006 (NE-codes); ADR-005 (CLI carve-out from SDK freeze schedule); `nucleus_cli_spec.md` §3.10 + §12 (forbidden patterns + escape-hatch carve-out); `AGENTS.md` §7 (vocabulary table + footnote carve-out) · §11.7 (error translation) · §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND.
+> **Related**: `docs/specs/nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §6.6 (Tier 3 progressive disclosure: "exposes Dagster UI directly") · §8.1 (Layer 4 Experience surfaces); ADR-016 (Workbench MVP — Fork B) — primary UX; ADR-017 (Schedule exposure) — companion Beta-tier v0.1.1 work; ADR-006 (NE-codes); ADR-005 (CLI carve-out from SDK freeze schedule); `docs/specs/nucleus_cli_spec.md` §3.10 + §12 (forbidden patterns + escape-hatch carve-out); `AGENTS.md` §7 (vocabulary table + footnote carve-out) · §11.7 (error translation) · §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND.
 
 ---
 
@@ -41,7 +41,7 @@ Specifically:
 - **Graceful shutdown** — Ctrl+C calls `proc.terminate()`; if the child does not exit within 10 s, escalates to `proc.kill()`. Always reaps the child to prevent the next `nucleus dagit` invocation from hitting "port already in use".
 - **Error translation per AGENTS.md §11.7** — `FileNotFoundError` → `NucleusDagitLaunchError` (NE5009); all ports taken → `NucleusPortUnavailableError` (NE5010); `subprocess.SubprocessError` → `NucleusDagitSubprocessError` (NE5011, original cause preserved).
 - **Vocabulary carve-out** — the literal token `dagit` is allowed in this command name, in this command's `--help` text, in the user-facing strings of `NE5009`/`NE5010`/`NE5011`, and in this ADR. **Nowhere else** in the codebase. AGENTS.md §7 footnote codifies the carve-out.
-- **Stability tier** — Beta per ADR-005 §2 + `nucleus_cli_spec.md` §3.10. Frozen by v1.0.
+- **Stability tier** — Beta per ADR-005 §2 + `docs/specs/nucleus_cli_spec.md` §3.10. Frozen by v1.0.
 
 ---
 
@@ -105,7 +105,7 @@ All 8 questions answered YES or NEUTRAL. The decision passes the gate.
 
 ### Alternative D: Ship as `nucleus enable compat-dagster` (per v4.1 §6.6 Tier 3)
 
-**Pros**: matches the v4.1 §6.6 wording exactly; future-compatible with the `nucleus enable` v0.3+ machinery (per `nucleus_cli_spec.md` §4.4).
+**Pros**: matches the v4.1 §6.6 wording exactly; future-compatible with the `nucleus enable` v0.3+ machinery (per `docs/specs/nucleus_cli_spec.md` §4.4).
 
 **Cons**: `nucleus enable` is a v0.3+ command (writes a toggle to `nucleus_project.yaml`, gates RED-tier license features, etc.). Building the enable machinery now to land one feature is over-engineering. The v0.1.1 escape hatch only needs a one-line CLI command.
 
@@ -151,7 +151,7 @@ All 8 questions answered YES or NEUTRAL. The decision passes the gate.
 
 - `src/nucleus/errors.py` — three new classes (NE5009, NE5010, NE5011) appended after the NE5005-NE5008 schedule block; `__all__` extended.
 - `src/nucleus/cli/main.py` — registers the command via `app.command(name="dagit")(_dagit_cmd)`.
-- `nucleus_cli_spec.md` — adds §3.10 (full command spec); extends §2 stability table; extends §12 forbidden-patterns to carve out the one allowed exception.
+- `docs/specs/nucleus_cli_spec.md` — adds §3.10 (full command spec); extends §2 stability table; extends §12 forbidden-patterns to carve out the one allowed exception.
 - `AGENTS.md` §7 — adds the vocabulary footnote.
 - `CHANGELOG.md` `[Unreleased]` — adds the bullet for the command.
 
@@ -162,7 +162,7 @@ All 8 questions answered YES or NEUTRAL. The decision passes the gate.
 ## Compliance / verification
 
 - [x] Test added: `tests/cli/commands/test_dagit.py` — 29 tests, all PASS, hermetic (no real subprocess spawned).
-- [x] Spec updated: `nucleus_cli_spec.md` §3.10 + §2 stability table + §12 carve-out.
+- [x] Spec updated: `docs/specs/nucleus_cli_spec.md` §3.10 + §2 stability table + §12 carve-out.
 - [x] Vocabulary carve-out documented: AGENTS.md §7 footnote (this PR's swarm work).
 - [ ] Upgrade smoke pending: when `dagster-webserver` is added to the install matrix (separate ADR), `tests/upgrade_smoke/test_dagster_webserver.py` must verify the `--workspace` / `--port` / `--host` flag names remain stable.
 - [x] Error codes registered: `scripts/check_error_codes.py` enumerates NE5009-NE5011 alongside the prior NE5005-NE5008 block.
@@ -181,11 +181,11 @@ All 8 questions answered YES or NEUTRAL. The decision passes the gate.
 
 ## References
 
-- `nucleus_architecture_v4.1.md` §6.5 (Dagster Replaceability Mandate) · §6.6 (Tier 3 progressive disclosure ladder — this ADR is its v0.1.1 implementation) · §8.1 (Layer 4 Experience surface matrix).
+- `docs/specs/nucleus_architecture_v4.1.md` §6.5 (Dagster Replaceability Mandate) · §6.6 (Tier 3 progressive disclosure ladder — this ADR is its v0.1.1 implementation) · §8.1 (Layer 4 Experience surface matrix).
 - ADR-016 (Workbench MVP — Fork B) — primary UX that this command complements.
 - ADR-017 (Schedule exposure) — companion v0.1.1 Beta-tier work.
 - ADR-006 (NE-codes) · ADR-005 (CLI carve-out from SDK freeze schedule).
-- `nucleus_cli_spec.md` §3.10 (full command spec) · §12 (forbidden-patterns carve-out).
+- `docs/specs/nucleus_cli_spec.md` §3.10 (full command spec) · §12 (forbidden-patterns carve-out).
 - `AGENTS.md` §7 (vocabulary footnote) · §11.7 (error translation discipline) · §11.12 (docs-before-integration).
 - External docs: `dagster-webserver` PyPI <https://pypi.org/project/dagster-webserver/>, dagster docs <https://docs.dagster.io/concepts/webserver/ui>.
 

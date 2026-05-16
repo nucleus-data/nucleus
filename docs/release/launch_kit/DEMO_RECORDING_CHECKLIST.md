@@ -152,7 +152,7 @@ If 2 or more triggers fire, **stop, reset (`nucleus down && rm -rf my-stack`), r
 - Asciinema cast: `demo.cast`
 - README hero patch (where the video embed lives): `README_HERO_PATCH.md`
 - Forbidden framings: `AGENTS.md` section 8
-- Beachhead source-of-truth: `nucleus_architecture_v4.1.md` section 1.5
+- Beachhead source-of-truth: `docs/specs/nucleus_architecture_v4.1.md` section 1.5
 - Benchmark numbers cited in the voiceover: `docs/benchmarks/2026-05-15_baseline.md`
 
 *If you ship and a retake is needed post-launch, log the trigger in `docs/release/v0.2.0_POST_LAUNCH_NOTES.md` so the next demo recording can include the lesson.*

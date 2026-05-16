@@ -496,8 +496,8 @@ Total supporting infrastructure for one asset: ~1,500 LOC.
 
 ```python
 # nucleus_dim_order.py — equivalent @nucleus.asset
-# Per nucleus_architecture_v4.1.md §6.2 (Asset Materialization Adapter)
-# Per nucleus_ctx_sdk_spec.md §2.1 (@nucleus.asset pattern)
+# Per docs/specs/nucleus_architecture_v4.1.md §6.2 (Asset Materialization Adapter)
+# Per docs/specs/nucleus_ctx_sdk_spec.md §2.1 (@nucleus.asset pattern)
 
 import nucleus
 import polars as pl  # Docs: https://docs.pola.rs/api/python/stable/reference/
@@ -515,7 +515,7 @@ def silver_dim_order() -> pl.DataFrame:
     Source: bronze.test_general_leepa_orders (JSON array of order structs)
     Target: silver.dim_order
 
-    Per nucleus_architecture_v4.1.md §6.2: returns DataFrame, AMA writes to Iceberg.
+    Per docs/specs/nucleus_architecture_v4.1.md §6.2: returns DataFrame, AMA writes to Iceberg.
     """
     raw_orders = ctx.read("bronze.test_general_leepa_orders")
 

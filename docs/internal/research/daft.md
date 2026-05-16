@@ -1,6 +1,6 @@
 # Research: Daft (multimodal / distributed dataframe engine)
 
-> **Component status in Nucleus**: **v0.5+ optional engine.** Not in v0.1–v0.3. Per `nucleus_architecture_v4.1.md` §5.3, §3.2 layer L1, §18.4. Default workloads stay on DuckDB + Polars; Daft opts in for multimodal columns (images / audio / video / embeddings / tensors) and distributed execution via Ray.
+> **Component status in Nucleus**: **v0.5+ optional engine.** Not in v0.1–v0.3. Per `docs/specs/nucleus_architecture_v4.1.md` §5.3, §3.2 layer L1, §18.4. Default workloads stay on DuckDB + Polars; Daft opts in for multimodal columns (images / audio / video / embeddings / tensors) and distributed execution via Ray.
 > **Pin candidate (provisional)**: `daft==0.7.11` (released **2026-05-12**, verified PyPI 2026-05-13). **Not pinned in `pyproject.toml` today.** Daft is **pre-1.0** with monthly minor releases — actual v0.5 pin = whatever ships at v0.5 ADR time (Mo 20-28; expect 0.10+ or 1.0+).
 > **License**: **Apache-2.0** ([PyPI](https://pypi.org/project/daft/0.7.11/), README §License). **JVM-free**: **YES** — Python frontend, Rust core (Tokio, Arrow). Hard Constraint #1 satisfied.
 > **Research date**: 2026-05-13  •  **Used in**: nowhere yet — pre-research artifact for the v0.5 ADR.

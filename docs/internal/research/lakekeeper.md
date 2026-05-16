@@ -1,6 +1,6 @@
 # Research: Lakekeeper (Rust-native Iceberg REST Catalog)
 
-> **Component status in Nucleus**: **v0.3+ catalog co-default (alongside Apache Polaris).** Not in v0.1. v0.1 ships with the filesystem-backed `pyiceberg.SqlCatalog` per `nucleus_architecture_v4.1.md` §5.7 + Amendment 4. At `nucleus init` time (v0.3+), the user picks Lakekeeper or Polaris; Nucleus speaks to either via `pyiceberg.RestCatalog`. Tier 2 (wrappable, swappable) per v4.1 §9.
+> **Component status in Nucleus**: **v0.3+ catalog co-default (alongside Apache Polaris).** Not in v0.1. v0.1 ships with the filesystem-backed `pyiceberg.SqlCatalog` per `docs/specs/nucleus_architecture_v4.1.md` §5.7 + Amendment 4. At `nucleus init` time (v0.3+), the user picks Lakekeeper or Polaris; Nucleus speaks to either via `pyiceberg.RestCatalog`. Tier 2 (wrappable, swappable) per v4.1 §9.
 > **Pin candidate**: Lakekeeper server **`0.12.2`** (released **2026-05-10**, GitHub release verified 2026-05-13). **Not pinned in `pyproject.toml`** — Lakekeeper is an external service binary, not a Python dep. Python integration is **`pyiceberg==0.8.1` `RestCatalog`** (already pinned).
 > **License**: **Apache-2.0**  •  **JVM-free**: **YES** — single Rust binary; no JVM, no Python runtime required by the server itself ("Single binary executable for all major platforms; no JVM or Python environment required" — https://docs.lakekeeper.io/). Hard Constraint #1 satisfied. *Polaris satisfies the ASF-governance criterion; Lakekeeper satisfies the no-JVM-trajectory criterion.*
 > **Research date**: 2026-05-13
@@ -280,7 +280,7 @@ Integration ADR: `docs/decisions/ADR-NNN-lakekeeper-polaris-v03-catalog.md` (ope
 - https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml — the spec Lakekeeper implements.
 - `docs/internal/research/pyiceberg.md` §6 — error-translation contract v0.3 inherits.
 - `docs/decisions/ADR-002-positioning-decision-2026-05.md` §6 — Polaris co-default rationale.
-- `nucleus_architecture_v4.1.md` §5.7 — catalog stage table. ADR-001 — Hard Constraint #5 anchor.
+- `docs/specs/nucleus_architecture_v4.1.md` §5.7 — catalog stage table. ADR-001 — Hard Constraint #5 anchor.
 
 ---
 
