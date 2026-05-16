@@ -37,6 +37,52 @@
 
 ---
 
+## §0.4 — 2026-05-16 — Brutal audit caveat closure + ultimate upgrade research wave 2
+
+**Status**: All 5 ultimate-upgrade research artifacts + UI walkthrough now committed. 3 fix-able caveats from the brutal audit's verdict ("GO-WITH-CAVEATS for v0.2.0 launch") are closed; 2 remaining are explicitly deferred to v0.2.1.
+
+### What happened (foreground, 2026-05-16 13:00–13:30 UTC+7)
+
+| # | Action | Result | Commit |
+|---|---|---|---|
+| 1 | Commit ultimate-upgrade research wave 2 — `02_technical_source_mining_v2.md` (Daft + sqlglot narrow refire after first attempt errored), `04_brutal_internal_audit.md` (44 KB, 21 findings, both governance gates PASS), `ULTIMATE_UPGRADE_PLAN.md` (master priority matrix, 32 items, 10 must-do / 5 maybe / 5 explicit-no, 5 founder open questions OQ-1 through OQ-5) | All 4 files land in `docs/internal/research/`; `ai_hallucinations.md` updated with sqlglot fabrication caught | `600d013` |
+| 2 | Close brutal audit caveat F1 — Windows concurrent-run docs warning (Beta Tier 2 marker) | `README.md` "Known limitations" + `docs/site/troubleshooting/common-errors.md` §"Concurrent runs on Windows" cite `docs/internal/benchmarks/2026-05-15_baseline.md` lines 148–152; workarounds: serialize / external lock / Linux+macOS; fix to v0.2.1 | `0a207ab` |
+| 3 | Close brutal audit caveat F2 — README boot-time reconciliation | `README.md` boot/CLI numbers reconciled to baseline lines 107–117 with Windows contention caveat (5–7 s `nucleus up`, 1.67 s CLI cold, 5.98 s `python -m`) | `0a207ab` |
+| 4 | Close brutal audit caveat F10 — Hybrid compute ETA harmonisation | Both `README.md` L74 + L188 now wording-aligned on "PROPOSED in `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md`; design v0.3, implementation v1.5" | `0a207ab` |
+
+### Founder decisions required (5 ultimate-plan open questions)
+
+| # | OQ | Recommended default | Founder action |
+|---|---|---|---|
+| 1 | OQ-1: Tagline + positioning | Per `ULTIMATE_UPGRADE_PLAN.md` recommended tagline (single-sentence value prop); do NOT chase "#1 of the month" hype | Read plan section "Single most important recommendation"; ratify or counter-propose |
+| 2 | OQ-2 through OQ-5 | Anti-over-engineering defaults documented inline in plan | Read plan §"Open questions for founder" (4 questions) and tick yes/no |
+| 3 | F1 fix scheduling — choose between (a) msvcrt.locking redesign on Windows, (b) `pyiceberg.commit_atomic` idempotent-key adoption per `02_technical_source_mining_v2.md` §2.B D-A2 | Recommended: (b) — wraps the OSS commit primitive, smaller surface area, aligns with Constraint #5 ("no custom Iceberg commit service"). Defer to v0.2.1 sprint planning. | Schedule v0.2.1 sprint or assign owner |
+| 4 | F11 + F12 — 3 red chaos tests + idle RAM re-measurement | Defer both to v0.2.1 per audit section 7 (chaos: missing `_classify_ne_code` + `_extract_raw_exception` helpers in `scripts/release_e2e/run_chaos.py`; RAM: ~117 MB claim is v0.1-vintage, needs re-measure post-Workbench + Wave 2 reliability hardening) | Already deferred; no action this launch |
+
+### What did NOT close (deferred to v0.2.1)
+
+- **F1 architectural fix** (Windows concurrent-run race) — docs warning shipped; code fix deferred. Founder may opt to ship a `0.2.1.dev0` patch within 2 weeks if HN traffic surfaces the issue.
+- **F11** — 3 chaos `AttributeError` tests in `tests/chaos/test_chaos_smoke.py` need 2 helper functions in `scripts/release_e2e/run_chaos.py` (`_classify_ne_code`, `_extract_raw_exception`). 30-min fix per audit; informational tests, do NOT gate v0.2.0 PyPI publish.
+- **F12** — idle RAM re-measurement against v0.2.0 (last measured at PoC #4, 117.3 MB on v0.1). Honest number expected to be higher post-Workbench + reliability daemons; founder should approve "we will update README after v0.2.0 if measurement materially diverges".
+
+### Verification
+
+- `python scripts/check_vocabulary.py` → PASS (6 terms watched)
+- `python scripts/dagster_leak_check.py` → PASS (3 roots scanned)
+- `python scripts/check_pinning.py` → PASS (16 mandatory + extras tracked)
+- `python scripts/loc_budget.py` → PASS (src/nucleus unchanged at 8,506 LOC = 47.3 % v0.2 ceiling GREEN)
+- Diff: +28 / −5 across 4 files (README.md + nucleus_cli_spec.md + common-errors.md + troubleshooting/index.md); LOC budget under 150-line ceiling.
+
+### Cross-references
+
+- Audit doc: `docs/internal/research/ultimate_upgrade/04_brutal_internal_audit.md`
+- Master plan: `docs/internal/research/ultimate_upgrade/ULTIMATE_UPGRADE_PLAN.md`
+- Research wave 2 commit: `600d013` (4 files, +897 lines)
+- Caveat-closure commit: `0a207ab` (4 files, +28 / −5)
+- v0.2.0 final state: `docs/release/v0.2.0_FINAL_STATE.md` (see "Post-Phase-7 polish" addendum at the bottom)
+
+---
+
 ## §0.2 — 2026-05-15 — GitHub repo Dependabot setup audit
 
 ### What happened
