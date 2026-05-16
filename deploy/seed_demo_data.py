@@ -178,9 +178,7 @@ def _gen_products(n: int, rng: random.Random) -> list[dict[str, object]]:
     return products
 
 
-def _gen_customers(
-    n: int, rng: random.Random, anchor: datetime
-) -> list[dict[str, object]]:
+def _gen_customers(n: int, rng: random.Random, anchor: datetime) -> list[dict[str, object]]:
     """Return n synthetic customers with signup dates within the last 2 years."""
     customers: list[dict[str, object]] = []
     for i in range(1, n + 1):

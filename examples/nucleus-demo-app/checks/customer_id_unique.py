@@ -27,7 +27,6 @@ def customer_id_unique():
         passed=duplicates == 0,
         metric=float(duplicates),
         message=(
-            f"{duplicates} duplicate customer_id row(s) found "
-            f"(total={total}, distinct={distinct})."
+            f"{duplicates} duplicate customer_id row(s) found (total={total}, distinct={distinct})."
         ),
     )

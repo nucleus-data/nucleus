@@ -239,7 +239,10 @@ class RunLedger:
     # mypy resolves bare ``list`` in this class body to the ``list`` method
     # defined above (shadowing the builtin); fully-qualify via ``builtins``
     # to keep the public method name without renaming.
-    def tail(self, n: int = 20) -> "builtins.list[RunRecord]":
+    # Safe to drop quotes because `from __future__ import annotations` (line 24)
+    # makes every annotation a lazy string at runtime; `builtins` is only
+    # imported under TYPE_CHECKING but mypy still resolves the path.
+    def tail(self, n: int = 20) -> builtins.list[RunRecord]:
         """Return the ``n`` most-recent runs (newest first)."""
         with self._lock:
             self._load()

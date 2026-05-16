@@ -130,9 +130,10 @@ def main() -> None:
                 cur.execute(f"TRUNCATE TABLE public.{table} CASCADE")
                 col_list = ", ".join(columns)
                 copy_sql = f"COPY public.{table} ({col_list}) FROM STDIN WITH CSV HEADER"
-                with csv_path.open("r", encoding="utf-8", newline="") as fh, cur.copy(
-                    copy_sql
-                ) as copy:
+                with (
+                    csv_path.open("r", encoding="utf-8", newline="") as fh,
+                    cur.copy(copy_sql) as copy,
+                ):
                     reader = csv.reader(fh)
                     next(reader, None)
                     for row in reader:

@@ -49,17 +49,17 @@ from typing import Any
 
 PALETTE: dict[str, str] = {
     "stroke": "#1e1e1e",
-    "wrapped": "#a5d8ff",   # light blue: DuckDB / Polars / Dagster / dlt / pyiceberg / LiteLLM
-    "built": "#ffc9c9",     # light red: ctx SDK / AMA / Error Translation / CLI / Workbench / Copilot
-    "storage": "#b2f2bb",   # light green: Iceberg / Parquet / S3 / MinIO / SeaweedFS
-    "user": "#ffec99",      # light yellow: User personas / surfaces seen by humans
+    "wrapped": "#a5d8ff",  # light blue: DuckDB / Polars / Dagster / dlt / pyiceberg / LiteLLM
+    "built": "#ffc9c9",  # light red: ctx SDK / AMA / Error Translation / CLI / Workbench / Copilot
+    "storage": "#b2f2bb",  # light green: Iceberg / Parquet / S3 / MinIO / SeaweedFS
+    "user": "#ffec99",  # light yellow: User personas / surfaces seen by humans
     "immortal": "#d0bfff",  # light purple: Tier 0 substrate (Arrow / Iceberg / Parquet / Lance)
-    "muted": "#dee2e6",     # neutral grey for deferred / faded items
+    "muted": "#dee2e6",  # neutral grey for deferred / faded items
     "transparent": "transparent",
     "bg": "#ffffff",
 }
 
-FONT_BODY = 5      # Excalidraw "Hand-drawn" font index; matches existing repo files
+FONT_BODY = 5  # Excalidraw "Hand-drawn" font index; matches existing repo files
 SIZE_TITLE = 28
 SIZE_SUBTITLE = 16
 SIZE_LABEL = 16
@@ -443,11 +443,11 @@ def elbow_arrow(
         "lastCommittedPoint": None,
         "startBinding": (
             {"elementId": bind_start["id"], "focus": 0, "gap": 4}
-            if bind_start is not None else None
+            if bind_start is not None
+            else None
         ),
         "endBinding": (
-            {"elementId": bind_end["id"], "focus": 0, "gap": 4}
-            if bind_end is not None else None
+            {"elementId": bind_end["id"], "focus": 0, "gap": 4} if bind_end is not None else None
         ),
         "startArrowhead": start_arrowhead,
         "endArrowhead": end_arrowhead,
@@ -472,16 +472,18 @@ def elbow_arrow(
                 best_mid = ((x1 + x2) / 2, (y1 + y2) / 2)
         lbl_x = best_mid[0] + label_offset[0]
         lbl_y = best_mid[1] + label_offset[1]
-        out.append(text(
-            idg,
-            idg.make(f"alabel_{eid.split('_', 1)[-1]}"),
-            lbl_x,
-            lbl_y,
-            label,
-            size=SIZE_SMALL,
-            color="#495057",
-            align="left",
-        ))
+        out.append(
+            text(
+                idg,
+                idg.make(f"alabel_{eid.split('_', 1)[-1]}"),
+                lbl_x,
+                lbl_y,
+                label,
+                size=SIZE_SMALL,
+                color="#495057",
+                align="left",
+            )
+        )
     return out
 
 
@@ -564,15 +566,28 @@ def background_band(
     pass over them. They are detected by the check via opacity < 100 AND
     width >= 400 px."""
     b = rect(
-        idg, idg.make(f"bgband_{slug}"), x, y, w, h,
-        fill=fill, stroke_width=1, rounded=True, opacity=opacity,
+        idg,
+        idg.make(f"bgband_{slug}"),
+        x,
+        y,
+        w,
+        h,
+        fill=fill,
+        stroke_width=1,
+        rounded=True,
+        opacity=opacity,
     )
     out = [b]
     if label:
         lbl = text(
-            idg, idg.make(f"bgband_lbl_{slug}"),
-            x + 14, y + 10, label,
-            size=SIZE_SMALL, color="#495057", align="left",
+            idg,
+            idg.make(f"bgband_lbl_{slug}"),
+            x + 14,
+            y + 10,
+            label,
+            size=SIZE_SMALL,
+            color="#495057",
+            align="left",
         )
         out.append(lbl)
     return out
@@ -581,7 +596,10 @@ def background_band(
 def legend_block(idg: IdGen, x: float, y: float) -> list[dict[str, Any]]:
     items = [
         ("wrapped", "wrapped OSS (DuckDB / Polars / Dagster / pyiceberg / dlt / LiteLLM)"),
-        ("built", "built by Nucleus (ctx SDK / AMA / Error Translation / CLI / Workbench / Copilot)"),
+        (
+            "built",
+            "built by Nucleus (ctx SDK / AMA / Error Translation / CLI / Workbench / Copilot)",
+        ),
         ("storage", "storage substrate (S3 / MinIO / SeaweedFS / Iceberg files)"),
         ("user", "user-facing surface (CLI prompt / Workbench / persona)"),
         ("immortal", "Tier 0 immortal (Arrow / Iceberg / Parquet / Lance / OpenLineage)"),
@@ -593,9 +611,14 @@ def legend_block(idg: IdGen, x: float, y: float) -> list[dict[str, Any]]:
         row_y = y + 24 + i * 26
         sw = rect(idg, idg.make(f"legend_sw_{kind}"), x, row_y, 20, 20, fill=kind)
         lbl = text(
-            idg, idg.make(f"legend_lbl_{kind}"),
-            x + 30, row_y + 2, desc,
-            size=SIZE_SMALL, color="#343a40", align="left",
+            idg,
+            idg.make(f"legend_lbl_{kind}"),
+            x + 30,
+            row_y + 2,
+            desc,
+            size=SIZE_SMALL,
+            color="#343a40",
+            align="left",
         )
         out.extend([sw, lbl])
     return out
@@ -626,20 +649,27 @@ def mk_overview() -> dict[str, Any]:
     idg = IdGen("d01")
     elems: list[dict[str, Any]] = []
 
-    elems.extend(title_block(
-        idg, 40, 30,
-        "Nucleus - Full Stack Overview",
-        "Five horizontal layers; persona on top, storage at the bottom, graduation arrow on the right",
-    ))
+    elems.extend(
+        title_block(
+            idg,
+            40,
+            30,
+            "Nucleus - Full Stack Overview",
+            "Five horizontal layers; persona on top, storage at the bottom, graduation arrow on the right",
+        )
+    )
     elems.append(section_label(idg, "overview", 40, 80, "v4.1 Section 3.1 (locked numbering)"))
 
     persona_x, persona_y = 540, 110
     persona = ellipse(idg, idg.make("persona"), persona_x, persona_y, 720, 60, fill="user")
     persona_lbl = text(
-        idg, idg.make("persona_lbl"),
-        persona_x + 30, persona_y + 18,
+        idg,
+        idg.make("persona_lbl"),
+        persona_x + 30,
+        persona_y + 18,
         "5-engineer startup data team (greenfield, 100GB-5TB, MacBooks)",
-        size=SIZE_LABEL, align="left",
+        size=SIZE_LABEL,
+        align="left",
     )
     elems.extend([persona, persona_lbl])
 
@@ -652,22 +682,42 @@ def mk_overview() -> dict[str, Any]:
     bands_meta = [
         ("L4_EXPERIENCE", "L4  EXPERIENCE  (CLI + Workbench + ctx SDK + Marimo)", "user"),
         ("L3_INTELLIGENCE", "L3  INTELLIGENCE  (AI Copilot v0.2+, ctx.agent v0.5+)", "built"),
-        ("L2_COORDINATION", "L2  COORDINATION  (AMA + Error Translation + Run Ledger + Locks + Daemon - the wrap-not-build crown jewel)", "built"),
-        ("L1_ENGINES", "L1  ENGINES  (DuckDB + Polars + pyiceberg + dlt + LiteLLM ; all wrapped, all swappable)", "wrapped"),
-        ("L0_PHYSICS", "L0  PHYSICS  (Apache Arrow + Iceberg + Parquet + S3 / MinIO / SeaweedFS + OpenLineage / OpenTelemetry)", "immortal"),
+        (
+            "L2_COORDINATION",
+            "L2  COORDINATION  (AMA + Error Translation + Run Ledger + Locks + Daemon - the wrap-not-build crown jewel)",
+            "built",
+        ),
+        (
+            "L1_ENGINES",
+            "L1  ENGINES  (DuckDB + Polars + pyiceberg + dlt + LiteLLM ; all wrapped, all swappable)",
+            "wrapped",
+        ),
+        (
+            "L0_PHYSICS",
+            "L0  PHYSICS  (Apache Arrow + Iceberg + Parquet + S3 / MinIO / SeaweedFS + OpenLineage / OpenTelemetry)",
+            "immortal",
+        ),
     ]
     band_rects: dict[str, dict[str, Any]] = {}
     for i, (slug, label_text, fill) in enumerate(bands_meta):
         y = band_y0 + i * (band_h + gap)
-        b = rect(idg, idg.make(f"band_{slug}"), band_x, y, band_w, band_h,
-                 fill=fill, stroke_width=2)
+        b = rect(
+            idg, idg.make(f"band_{slug}"), band_x, y, band_w, band_h, fill=fill, stroke_width=2
+        )
         band_rects[slug] = b
         elems.append(b)
-        elems.append(text(
-            idg, idg.make(f"bandlbl_{slug}"),
-            band_x + 22, y + 16, label_text,
-            size=SIZE_BADGE, color="#212529", align="left",
-        ))
+        elems.append(
+            text(
+                idg,
+                idg.make(f"bandlbl_{slug}"),
+                band_x + 22,
+                y + 16,
+                label_text,
+                size=SIZE_BADGE,
+                color="#212529",
+                align="left",
+            )
+        )
 
     # Each band gets a short bullet line below the title to anchor the content
     band_bullets = {
@@ -679,11 +729,18 @@ def mk_overview() -> dict[str, Any]:
     }
     for slug, bullet in band_bullets.items():
         b = band_rects[slug]
-        elems.append(text(
-            idg, idg.make(f"bandbody_{slug}"),
-            b["x"] + 22, b["y"] + 56, bullet,
-            size=SIZE_SMALL, color="#212529", align="left",
-        ))
+        elems.append(
+            text(
+                idg,
+                idg.make(f"bandbody_{slug}"),
+                b["x"] + 22,
+                b["y"] + 56,
+                bullet,
+                size=SIZE_SMALL,
+                color="#212529",
+                align="left",
+            )
+        )
 
     # Adjacent-band arrows route in the LEFT gap lane (x ~= 40-70). The arrow
     # leaves each band on its left edge, drops into the gap below, and enters
@@ -694,44 +751,57 @@ def mk_overview() -> dict[str, Any]:
         lower = band_rects[bands_meta[i + 1][0]]
         start = box_anchor(upper, "left", frac=0.7)
         end = box_anchor(lower, "left", frac=0.3)
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_band_{i}"),
-            start=start, end=end,
-            via=[(arrows_left_lane_x, start[1]),
-                 (arrows_left_lane_x, end[1])],
-            color="#1864ab",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_band_{i}"),
+                start=start,
+                end=end,
+                via=[(arrows_left_lane_x, start[1]), (arrows_left_lane_x, end[1])],
+                color="#1864ab",
+            )
+        )
 
     # Persona connects to the top experience band via a short straight arrow on
     # the centre line - clear of all band labels.
     exp_band = band_rects["L4_EXPERIENCE"]
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_persona_exp"),
-        start=(persona_x + 360, persona_y + 60),
-        end=(exp_band["x"] + exp_band["width"] / 2, exp_band["y"]),
-        color="#5f3dc4",
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_persona_exp"),
+            start=(persona_x + 360, persona_y + 60),
+            end=(exp_band["x"] + exp_band["width"] / 2, exp_band["y"]),
+            color="#5f3dc4",
+        )
+    )
 
     # Yield-to-giants box hangs off the right of the L0 PHYSICS band; the arrow
     # exits the right side of L0 PHYSICS and enters the giants box on its left
     # - both anchors are on the right side of the canvas, no obstructions.
     giants_box, giants_lbl = labeled_box(
-        idg, "giants",
-        band_x + band_w + 60, band_y0 + 4 * (band_h + gap) + 20,
-        320, 90,
+        idg,
+        "giants",
+        band_x + band_w + 60,
+        band_y0 + 4 * (band_h + gap) + 20,
+        320,
+        90,
         "YIELD TO GIANTS\nDatabricks / Snowflake / Polaris / Trino / R2\n(Iceberg portability, zero migration)",
-        fill="wrapped", label_size=SIZE_SMALL,
+        fill="wrapped",
+        label_size=SIZE_SMALL,
     )
     elems.extend([giants_box, giants_lbl])
     physics_band = band_rects["L0_PHYSICS"]
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_physics_giants"),
-        start=box_anchor(physics_band, "right", frac=0.5),
-        end=box_anchor(giants_box, "left", frac=0.5),
-        color="#1864ab",
-        label="Mode 1\ngraduation",
-        label_offset=(8, -28),
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_physics_giants"),
+            start=box_anchor(physics_band, "right", frac=0.5),
+            end=box_anchor(giants_box, "left", frac=0.5),
+            color="#1864ab",
+            label="Mode 1\ngraduation",
+            label_offset=(8, -28),
+        )
+    )
 
     elems.extend(legend_block(idg, 40, band_y0 + 5 * (band_h + gap) + 40))
     assert_no_arrow_overlap("01_overview", elems)
@@ -764,38 +834,65 @@ def mk_physics() -> dict[str, Any]:
     idg = IdGen("d02")
     elems: list[dict[str, Any]] = []
 
-    elems.extend(title_block(
-        idg, 40, 30,
-        "Layer 0 - Physics: Iceberg Metadata Tree + Snapshot Evolution",
-        "Catalog -> metadata.json -> manifest list -> manifests -> Parquet files; new snapshot = new metadata head, same data files",
-    ))
-    elems.append(section_label(idg, "physics", 40, 80, "v4.1 Section 4 + ADR-008 (storage substrate)"))
+    elems.extend(
+        title_block(
+            idg,
+            40,
+            30,
+            "Layer 0 - Physics: Iceberg Metadata Tree + Snapshot Evolution",
+            "Catalog -> metadata.json -> manifest list -> manifests -> Parquet files; new snapshot = new metadata head, same data files",
+        )
+    )
+    elems.append(
+        section_label(idg, "physics", 40, 80, "v4.1 Section 4 + ADR-008 (storage substrate)")
+    )
 
-    elems.extend(badge(
-        idg, "tier0", 1340, 40, 360, 60,
-        "Tier 0 immortal: never swap;\nApache / CNCF / LF-backed standards.",
-        fill="immortal",
-    ))
+    elems.extend(
+        badge(
+            idg,
+            "tier0",
+            1340,
+            40,
+            360,
+            60,
+            "Tier 0 immortal: never swap;\nApache / CNCF / LF-backed standards.",
+            fill="immortal",
+        )
+    )
 
     # --- LEFT SIDE: vertical metadata tree -----------------------------------
     tree_x = 220
     tree_w = 360
     nodes_meta = [
-        ("catalog", 130,
-         "pyiceberg Catalog\n(SqlCatalog v0.1 / RestCatalog v0.3+)\nholds the latest metadata pointer", "wrapped"),
-        ("metadata", 280,
-         "metadata.json\nschema, partition spec, snapshot list", "immortal"),
-        ("manifest_list", 430,
-         "manifest list (.avro)\npointers to per-snapshot manifests", "immortal"),
-        ("manifest", 580,
-         "manifest file (.avro)\ndata file paths + column statistics", "immortal"),
-        ("data", 730,
-         "Parquet data files\n(columnar, immutable, S3 objects)", "immortal"),
+        (
+            "catalog",
+            130,
+            "pyiceberg Catalog\n(SqlCatalog v0.1 / RestCatalog v0.3+)\nholds the latest metadata pointer",
+            "wrapped",
+        ),
+        ("metadata", 280, "metadata.json\nschema, partition spec, snapshot list", "immortal"),
+        (
+            "manifest_list",
+            430,
+            "manifest list (.avro)\npointers to per-snapshot manifests",
+            "immortal",
+        ),
+        ("manifest", 580, "manifest file (.avro)\ndata file paths + column statistics", "immortal"),
+        ("data", 730, "Parquet data files\n(columnar, immutable, S3 objects)", "immortal"),
     ]
     tree_boxes: dict[str, dict[str, Any]] = {}
     for slug, y, label_text, fill in nodes_meta:
-        b, l = labeled_box(idg, f"tree_{slug}", tree_x, y, tree_w, 100,
-                           label_text, fill=fill, label_size=SIZE_SMALL)
+        b, l = labeled_box(
+            idg,
+            f"tree_{slug}",
+            tree_x,
+            y,
+            tree_w,
+            100,
+            label_text,
+            fill=fill,
+            label_size=SIZE_SMALL,
+        )
         tree_boxes[slug] = b
         elems.extend([b, l])
 
@@ -804,12 +901,15 @@ def mk_physics() -> dict[str, Any]:
     for i in range(len(chain) - 1):
         upper = tree_boxes[chain[i]]
         lower = tree_boxes[chain[i + 1]]
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_chain_{chain[i]}"),
-            start=box_anchor(upper, "bottom", frac=0.5),
-            end=box_anchor(lower, "top", frac=0.5),
-            color="#1864ab",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_chain_{chain[i]}"),
+                start=box_anchor(upper, "bottom", frac=0.5),
+                end=box_anchor(lower, "top", frac=0.5),
+                color="#1864ab",
+            )
+        )
 
     # --- RIGHT SIDE: snapshot timeline (S1 -> S2 -> S3) ----------------------
     snap_y = 240
@@ -820,86 +920,136 @@ def mk_physics() -> dict[str, Any]:
     snaps: list[dict[str, Any]] = []
     for i, sx in enumerate(snap_xs):
         b, l = labeled_box(
-            idg, f"snap_{i+1}", sx, snap_y, snap_w, snap_h,
-            f"snapshot-{i+1}\n@ t{i+1}\n{['initial load', '+1 commit', '+1 commit'][i]}",
-            fill="immortal", label_size=SIZE_SMALL,
+            idg,
+            f"snap_{i + 1}",
+            sx,
+            snap_y,
+            snap_w,
+            snap_h,
+            f"snapshot-{i + 1}\n@ t{i + 1}\n{['initial load', '+1 commit', '+1 commit'][i]}",
+            fill="immortal",
+            label_size=SIZE_SMALL,
         )
         snaps.append(b)
         elems.extend([b, l])
     for i in range(2):
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_snap_{i+1}"),
-            start=box_anchor(snaps[i], "right", frac=0.5),
-            end=box_anchor(snaps[i + 1], "left", frac=0.5),
-            color="#2b8a3e",
-            label="atomic\ncatalog\ncommit",
-            label_offset=(0, -36),
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_snap_{i + 1}"),
+                start=box_anchor(snaps[i], "right", frac=0.5),
+                end=box_anchor(snaps[i + 1], "left", frac=0.5),
+                color="#2b8a3e",
+                label="atomic\ncatalog\ncommit",
+                label_offset=(0, -36),
+            )
+        )
 
     # The metadata.json node is the visual hinge between the tree and the
     # snapshot timeline. Rather than draw 3 advisory arrows back into the
     # metadata box (which would have to cross either the tree or the snapshot
     # row, both of which would violate the overlap discipline), we use a
     # text note: the conceptual link is clear from the labels.
-    elems.append(text(
-        idg, idg.make("snap_md_note"),
-        700, snap_y + snap_h + 30,
-        "each snapshot is a NEW metadata.json head + a NEW manifest list;\n"
-        "the underlying Parquet data files are REUSED across snapshots (immutable).",
-        size=SIZE_SMALL, color="#495057", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("snap_md_note"),
+            700,
+            snap_y + snap_h + 30,
+            "each snapshot is a NEW metadata.json head + a NEW manifest list;\n"
+            "the underlying Parquet data files are REUSED across snapshots (immutable).",
+            size=SIZE_SMALL,
+            color="#495057",
+            align="left",
+        )
+    )
 
     # --- BOTTOM: write-path strip + S3 substrate band -----------------------
     write_box, write_lbl = labeled_box(
-        idg, "write_flow", 220, 870, 880, 80,
+        idg,
+        "write_flow",
+        220,
+        870,
+        880,
+        80,
         "WRITE PATH (per snapshot, all-or-nothing per ADR-001)\n"
         "1) write Parquet data file -> 2) write manifest -> 3) write manifest list -> 4) catalog atomic commit -> snapshot+1",
-        fill="muted", label_size=SIZE_SMALL,
+        fill="muted",
+        label_size=SIZE_SMALL,
     )
     elems.extend([write_box, write_lbl])
 
     s3_box, s3_lbl = labeled_box(
-        idg, "s3", 220, 980, 880, 110,
+        idg,
+        "s3",
+        220,
+        980,
+        880,
+        110,
         "S3 / MinIO / SeaweedFS  (S3-API substrate)\n"
         "Every metadata.avro / metadata.json / manifest / Parquet file lives here as an object",
-        fill="storage", label_size=SIZE_SMALL,
+        fill="storage",
+        label_size=SIZE_SMALL,
     )
     elems.extend([s3_box, s3_lbl])
     # Route data -> S3 via the LEFT lane (x=180) so the arrow goes around the
     # write_flow strip rather than through it. Lane is at x=180, well clear of
     # the tree's left edge (tree_x=220).
     data_box = tree_boxes["data"]
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_data_s3"),
-        start=(data_box["x"], data_box["y"] + data_box["height"] / 2),
-        end=box_anchor(s3_box, "left", frac=0.5),
-        via=[(180, data_box["y"] + data_box["height"] / 2),
-             (180, s3_box["y"] + s3_box["height"] / 2)],
-        color="#2b8a3e",
-        label="all files\n= S3 objects",
-        label_offset=(-72, -10),
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_data_s3"),
+            start=(data_box["x"], data_box["y"] + data_box["height"] / 2),
+            end=box_anchor(s3_box, "left", frac=0.5),
+            via=[
+                (180, data_box["y"] + data_box["height"] / 2),
+                (180, s3_box["y"] + s3_box["height"] / 2),
+            ],
+            color="#2b8a3e",
+            label="all files\n= S3 objects",
+            label_offset=(-72, -10),
+        )
+    )
 
     # --- Lance sidebar (v0.5+) ---------------------------------------------
     lance_box, lance_lbl = labeled_box(
-        idg, "lance", 1180, 870, 360, 110,
+        idg,
+        "lance",
+        1180,
+        870,
+        360,
+        110,
         "Lance (v0.5+)\nmultimodal + vector tables (images,\nembeddings, tensors)",
-        fill="muted", label_size=SIZE_SMALL,
+        fill="muted",
+        label_size=SIZE_SMALL,
     )
     elems.extend([lance_box, lance_lbl])
-    elems.append(text(
-        idg, idg.make("lance_note"),
-        1180, 990,
-        "Lance lives next to Iceberg, NOT on top of it.\nDifferent table format, same S3 substrate.",
-        size=SIZE_SMALL, color="#495057", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("lance_note"),
+            1180,
+            990,
+            "Lance lives next to Iceberg, NOT on top of it.\nDifferent table format, same S3 substrate.",
+            size=SIZE_SMALL,
+            color="#495057",
+            align="left",
+        )
+    )
 
     # Observability protocols strip (Tier 0 standard)
     proto_box, proto_lbl = labeled_box(
-        idg, "proto", 220, 1110, 1320, 70,
+        idg,
+        "proto",
+        220,
+        1110,
+        1320,
+        70,
         "OBSERVABILITY PROTOCOLS (Tier 0)   |   "
         "OpenLineage events emitted per materialization   |   OpenTelemetry traces / metrics / logs",
-        fill="immortal", label_size=SIZE_SMALL,
+        fill="immortal",
+        label_size=SIZE_SMALL,
     )
     elems.extend([proto_box, proto_lbl])
 
@@ -933,27 +1083,61 @@ def mk_engines() -> dict[str, Any]:
     idg = IdGen("d03")
     elems: list[dict[str, Any]] = []
 
-    elems.extend(title_block(
-        idg, 40, 30,
-        "Layer 1 - Engines: Wrap, Not Build",
-        "Five wrapped engines plug into one Apache Arrow zero-copy bridge; each has a swap target",
-    ))
-    elems.append(section_label(idg, "engines", 40, 80,
-                               "v4.1 Section 5 + Hard Constraints #1 and #4 + Composability Constitution"))
+    elems.extend(
+        title_block(
+            idg,
+            40,
+            30,
+            "Layer 1 - Engines: Wrap, Not Build",
+            "Five wrapped engines plug into one Apache Arrow zero-copy bridge; each has a swap target",
+        )
+    )
+    elems.append(
+        section_label(
+            idg,
+            "engines",
+            40,
+            80,
+            "v4.1 Section 5 + Hard Constraints #1 and #4 + Composability Constitution",
+        )
+    )
 
     # Two corner badges drive the message before the eye reaches the columns.
-    elems.extend(badge(idg, "no_jvm", 40, 110, 280, 60,
-                       "NO JVM\nin the always-on hot path", fill="immortal"))
-    elems.extend(badge(idg, "wrap", 1420, 110, 320, 60,
-                       "WRAP NOT BUILD\n5 engines, 0 forks, 0 patches", fill="immortal"))
+    elems.extend(
+        badge(idg, "no_jvm", 40, 110, 280, 60, "NO JVM\nin the always-on hot path", fill="immortal")
+    )
+    elems.extend(
+        badge(
+            idg,
+            "wrap",
+            1420,
+            110,
+            320,
+            60,
+            "WRAP NOT BUILD\n5 engines, 0 forks, 0 patches",
+            fill="immortal",
+        )
+    )
 
     # --- 5 parallel engine columns ------------------------------------------
     engines = [
-        ("duckdb", "DuckDB",       "C++ / MIT",        "iceberg_scan + httpfs",       "DataFusion (Apache, Rust)"),
-        ("polars", "Polars",       "Rust / MIT",       "Lazy + Eager + streaming",    "DataFusion DF (Apache)"),
-        ("pyiceberg", "pyiceberg", "Python / Apache 2","append / overwrite / expire", "iceberg-rust / iceberg-go"),
-        ("dlt",    "dlt",          "Python / Apache 2","100+ source connectors",      "Sling / Singer / custom"),
-        ("litellm", "LiteLLM",     "Python / MIT",     "OpenAI / Anthropic / Azure / Ollama", "direct provider SDKs"),
+        ("duckdb", "DuckDB", "C++ / MIT", "iceberg_scan + httpfs", "DataFusion (Apache, Rust)"),
+        ("polars", "Polars", "Rust / MIT", "Lazy + Eager + streaming", "DataFusion DF (Apache)"),
+        (
+            "pyiceberg",
+            "pyiceberg",
+            "Python / Apache 2",
+            "append / overwrite / expire",
+            "iceberg-rust / iceberg-go",
+        ),
+        ("dlt", "dlt", "Python / Apache 2", "100+ source connectors", "Sling / Singer / custom"),
+        (
+            "litellm",
+            "LiteLLM",
+            "Python / MIT",
+            "OpenAI / Anthropic / Azure / Ollama",
+            "direct provider SDKs",
+        ),
     ]
     col_w = 300
     col_gap = 36
@@ -970,36 +1154,60 @@ def mk_engines() -> dict[str, Any]:
     for i, (slug, name, lic, cap, swap) in enumerate(engines):
         cx = start_x + i * (col_w + col_gap)
         eb, el_lbl = labeled_box(
-            idg, f"en_{slug}", cx, engine_y, col_w, engine_h,
+            idg,
+            f"en_{slug}",
+            cx,
+            engine_y,
+            col_w,
+            engine_h,
             f"{name}\n{lic}\n{cap}",
-            fill="wrapped", label_size=SIZE_SMALL,
+            fill="wrapped",
+            label_size=SIZE_SMALL,
         )
         engine_boxes[slug] = eb
         elems.extend([eb, el_lbl])
         sb, sb_lbl = labeled_box(
-            idg, f"swap_{slug}", cx + 30, swap_y, col_w - 60, swap_h,
-            f"swap target:\n{swap}", fill="muted", label_size=SIZE_SMALL,
+            idg,
+            f"swap_{slug}",
+            cx + 30,
+            swap_y,
+            col_w - 60,
+            swap_h,
+            f"swap target:\n{swap}",
+            fill="muted",
+            label_size=SIZE_SMALL,
         )
         swap_boxes[slug] = sb
         elems.extend([sb, sb_lbl])
         # Dashed downward swap connector with explicit "<-->" symbol annotation
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_swap_{slug}"),
-            start=box_anchor(eb, "bottom", frac=0.5),
-            end=box_anchor(sb, "top", frac=0.5),
-            color="#868e96", style="dashed",
-            end_arrowhead="arrow", start_arrowhead="arrow",
-            label="<-->\nswap on demand",
-            label_offset=(-44, -32),
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_swap_{slug}"),
+                start=box_anchor(eb, "bottom", frac=0.5),
+                end=box_anchor(sb, "top", frac=0.5),
+                color="#868e96",
+                style="dashed",
+                end_arrowhead="arrow",
+                start_arrowhead="arrow",
+                label="<-->\nswap on demand",
+                label_offset=(-44, -32),
+            )
+        )
 
     # --- Apache Arrow zero-copy bridge band ---------------------------------
     bridge_y = swap_y + swap_h + 60
     bridge_box, bridge_lbl = labeled_box(
-        idg, "arrow_bridge", start_x, bridge_y, total_w, 110,
+        idg,
+        "arrow_bridge",
+        start_x,
+        bridge_y,
+        total_w,
+        110,
         "Apache Arrow  (Tier 0 immortal)\n"
         "zero-copy columnar IPC bridge - DuckDB, Polars, pyiceberg, LiteLLM all speak Arrow natively",
-        fill="immortal", label_size=SIZE_SMALL,
+        fill="immortal",
+        label_size=SIZE_SMALL,
     )
     elems.extend([bridge_box, bridge_lbl])
     # Each engine gets a vertical "plug" arrow into the bridge from underneath
@@ -1010,20 +1218,29 @@ def mk_engines() -> dict[str, Any]:
         cx = start_x + i * (col_w + col_gap)
         sb = swap_boxes[slug]
         plug_x = cx + plug_x_offsets[0]
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_plug_{slug}"),
-            start=(plug_x, sb["y"] + sb["height"]),
-            end=(plug_x, bridge_y),
-            color="#0b7285",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_plug_{slug}"),
+                start=(plug_x, sb["y"] + sb["height"]),
+                end=(plug_x, bridge_y),
+                color="#0b7285",
+            )
+        )
 
     # --- Iceberg substrate band underneath the bridge -----------------------
     iceberg_y = bridge_y + 130 + 50
     iceberg_box, iceberg_lbl = labeled_box(
-        idg, "iceberg_strip", start_x, iceberg_y, total_w, 90,
+        idg,
+        "iceberg_strip",
+        start_x,
+        iceberg_y,
+        total_w,
+        90,
         "Apache Iceberg  (Tier 0 immortal)\n"
         "structured table format - written by pyiceberg, read by DuckDB iceberg_scan",
-        fill="immortal", label_size=SIZE_SMALL,
+        fill="immortal",
+        label_size=SIZE_SMALL,
     )
     elems.extend([iceberg_box, iceberg_lbl])
     # The bridge -> Iceberg vertical connection lives at the centre column -
@@ -1031,27 +1248,34 @@ def mk_engines() -> dict[str, Any]:
     # Iceberg via the Arrow bridge".
     pyice_eb = engine_boxes["pyiceberg"]
     pyice_x = pyice_eb["x"] + pyice_eb["width"] / 2
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_bridge_iceberg"),
-        start=(pyice_x, bridge_y + 110),
-        end=(pyice_x, iceberg_y),
-        color="#1864ab",
-        label="commit",
-        label_offset=(8, -22),
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_bridge_iceberg"),
+            start=(pyice_x, bridge_y + 110),
+            end=(pyice_x, iceberg_y),
+            color="#1864ab",
+            label="commit",
+            label_offset=(8, -22),
+        )
+    )
 
     # --- Discipline footer (rules of engagement) ----------------------------
     rules_y = iceberg_y + 110 + 30
     rules_box = rect(idg, idg.make("rules_box"), start_x, rules_y, total_w, 130, fill="muted")
     rules_lbl = text(
-        idg, idg.make("rules_lbl"),
-        start_x + 14, rules_y + 14,
+        idg,
+        idg.make("rules_lbl"),
+        start_x + 14,
+        rules_y + 14,
         "Wrap-not-build discipline (v4.1 Section 5):\n"
         " 1. Read official docs before integration (AGENTS.md Section 11.12)\n"
         " 2. Exact-pin in pyproject.toml (Constraint #11): duckdb==1.1.3, polars==1.18.0, pyiceberg==0.11.1, dagster==1.9.5, litellm==1.83.14\n"
         " 3. One-component-per-PR upgrades; major versions require an ADR\n"
         " 4. Each Tier 1 engine: clean swap interface + 5-10 smoke tests in CI; full adapter built ON-DEMAND (Composability Tax avoided)",
-        size=SIZE_SMALL, color="#212529", align="left",
+        size=SIZE_SMALL,
+        color="#212529",
+        align="left",
     )
     elems.extend([rules_box, rules_lbl])
 
@@ -1085,51 +1309,77 @@ def mk_coordination() -> dict[str, Any]:
     idg = IdGen("d04")
     elems: list[dict[str, Any]] = []
 
-    elems.extend(title_block(
-        idg, 40, 30,
-        "Layer 2 - Coordination: AMA + Error Translation Layer",
-        "Two tracks share AMA: success ends in an Iceberg snapshot; failure ends in a typed NucleusError",
-    ))
-    elems.append(section_label(idg, "coord", 40, 80,
-                               "v4.1 Sections 6.2 (AMA) + 6.4 (Error Translation, mandatory release blocker) + 6.5 (replaceability)"))
+    elems.extend(
+        title_block(
+            idg,
+            40,
+            30,
+            "Layer 2 - Coordination: AMA + Error Translation Layer",
+            "Two tracks share AMA: success ends in an Iceberg snapshot; failure ends in a typed NucleusError",
+        )
+    )
+    elems.append(
+        section_label(
+            idg,
+            "coord",
+            40,
+            80,
+            "v4.1 Sections 6.2 (AMA) + 6.4 (Error Translation, mandatory release blocker) + 6.5 (replaceability)",
+        )
+    )
 
     # --- TOP TRACK: success path --------------------------------------------
     top_y = 180
     top_h = 80
     bg_top = background_band(
-        idg, "track_top", 60, top_y - 30, 1490, top_h + 60,
-        fill="storage", opacity=18,
+        idg,
+        "track_top",
+        60,
+        top_y - 30,
+        1490,
+        top_h + 60,
+        fill="storage",
+        opacity=18,
         label="SUCCESS TRACK   nucleus run -> AMA -> commit -> ledger",
     )
     elems.extend(bg_top)
     success_steps = [
-        ("user_call",  90,  "nucleus run\n(or ctx SDK)",       "user",     180),
-        ("ama",        330, "ASSET MATERIALIZATION\nADAPTER (~500 LOC)",  "built",    260),
-        ("asset_fn",   650, "asset function\n(user code body)", "user",     180),
-        ("pyice",      870, "pyiceberg\n.commit_table()",       "wrapped",  200),
-        ("snapshot",   1110, "Iceberg snapshot\nCOMMITTED",     "immortal", 200),
-        ("ledger",     1340, "Run Ledger\nappend NDJSON",       "built",    180),
+        ("user_call", 90, "nucleus run\n(or ctx SDK)", "user", 180),
+        ("ama", 330, "ASSET MATERIALIZATION\nADAPTER (~500 LOC)", "built", 260),
+        ("asset_fn", 650, "asset function\n(user code body)", "user", 180),
+        ("pyice", 870, "pyiceberg\n.commit_table()", "wrapped", 200),
+        ("snapshot", 1110, "Iceberg snapshot\nCOMMITTED", "immortal", 200),
+        ("ledger", 1340, "Run Ledger\nappend NDJSON", "built", 180),
     ]
     success_boxes: dict[str, dict[str, Any]] = {}
     for slug, sx, label_text, fill, w in success_steps:
         h = 100 if slug == "ama" else top_h
         y = top_y - 12 if slug == "ama" else top_y
-        b, l = labeled_box(idg, f"top_{slug}", sx, y, w, h,
-                           label_text, fill=fill, label_size=SIZE_SMALL)
+        b, l = labeled_box(
+            idg, f"top_{slug}", sx, y, w, h, label_text, fill=fill, label_size=SIZE_SMALL
+        )
         success_boxes[slug] = b
         elems.extend([b, l])
     # Straight horizontal arrows along the success track (boxes are aligned, no overlap risk)
-    pairs = [("user_call", "ama"), ("ama", "asset_fn"), ("asset_fn", "pyice"),
-             ("pyice", "snapshot"), ("snapshot", "ledger")]
+    pairs = [
+        ("user_call", "ama"),
+        ("ama", "asset_fn"),
+        ("asset_fn", "pyice"),
+        ("pyice", "snapshot"),
+        ("snapshot", "ledger"),
+    ]
     for s, d in pairs:
         sb = success_boxes[s]
         db = success_boxes[d]
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_top_{s}_{d}"),
-            start=box_anchor(sb, "right", frac=0.5),
-            end=box_anchor(db, "left", frac=0.5),
-            color="#2b8a3e",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_top_{s}_{d}"),
+                start=box_anchor(sb, "right", frac=0.5),
+                end=box_anchor(db, "left", frac=0.5),
+                color="#2b8a3e",
+            )
+        )
 
     # --- BOTTOM TRACK: error path -------------------------------------------
     bot_y = 540
@@ -1139,64 +1389,108 @@ def mk_coordination() -> dict[str, Any]:
     err_track_top = bot_y - 30
     err_track_h = err_count * err_step + 60
     bg_bot = background_band(
-        idg, "track_bot", 60, err_track_top, 1490, err_track_h,
-        fill="built", opacity=14,
+        idg,
+        "track_bot",
+        60,
+        err_track_top,
+        1490,
+        err_track_h,
+        fill="built",
+        opacity=14,
         label="ERROR TRACK   any wrapped exception -> Error Translation -> typed NucleusError",
     )
     elems.extend(bg_bot)
     sources = [
-        ("dagster_err",   "dagster.DagsterStepExecutionError",   "wrapped"),
-        ("duckdb_err",    "duckdb.OutOfMemoryException",         "wrapped"),
-        ("pyice_err",     "pyiceberg.CommitFailedException",     "wrapped"),
-        ("polars_err",    "polars.SchemaError",                  "wrapped"),
-        ("py_err",        "stdlib FileExistsError (race)",       "muted"),
+        ("dagster_err", "dagster.DagsterStepExecutionError", "wrapped"),
+        ("duckdb_err", "duckdb.OutOfMemoryException", "wrapped"),
+        ("pyice_err", "pyiceberg.CommitFailedException", "wrapped"),
+        ("polars_err", "polars.SchemaError", "wrapped"),
+        ("py_err", "stdlib FileExistsError (race)", "muted"),
     ]
     src_boxes: list[dict[str, Any]] = []
     for i, (slug, label_text, fill) in enumerate(sources):
-        b, l = labeled_box(idg, f"src_{slug}", 90, bot_y + i * err_step, 280, bot_h,
-                           label_text, fill=fill, label_size=SIZE_SMALL)
+        b, l = labeled_box(
+            idg,
+            f"src_{slug}",
+            90,
+            bot_y + i * err_step,
+            280,
+            bot_h,
+            label_text,
+            fill=fill,
+            label_size=SIZE_SMALL,
+        )
         src_boxes.append(b)
         elems.extend([b, l])
 
     # Error translator big box (the centre of the bottom track)
     err_box, err_lbl = labeled_box(
-        idg, "err_translator", 460, bot_y - 10,
-        320, err_count * err_step + 20,
+        idg,
+        "err_translator",
+        460,
+        bot_y - 10,
+        320,
+        err_count * err_step + 20,
         "ERROR TRANSLATION LAYER\ncoordination/error_translation.py\n"
         "Every external exception ->\ntyped NucleusError(NE-code,\nuser_message, fix_hint, docs_url)",
-        fill="built", label_size=SIZE_SMALL,
+        fill="built",
+        label_size=SIZE_SMALL,
     )
     elems.extend([err_box, err_lbl])
 
     # 5 incoming arrows from sources to err_box (left edge), each at the right height
     for i, sb in enumerate(src_boxes):
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_err_in_{i}"),
-            start=box_anchor(sb, "right", frac=0.5),
-            end=(err_box["x"], err_box["y"] + 30 + i * err_step),
-            color="#c92a2a",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_err_in_{i}"),
+                start=box_anchor(sb, "right", frac=0.5),
+                end=(err_box["x"], err_box["y"] + 30 + i * err_step),
+                color="#c92a2a",
+            )
+        )
 
     # 5 NE-code outputs on the right side of the error translator
     outputs = [
-        ("ne1", "NucleusInternalError (NE3000)\n[asset:fct_orders] user_message + fix_hint + docs_url"),
-        ("ne2", "NucleusResourceError (NE2007)\nout-of-memory; suggest partition or compute=databricks"),
-        ("ne3", "NucleusCommitConflictError (NE3001)\nconcurrent write; suggest retry or schedule check"),
+        (
+            "ne1",
+            "NucleusInternalError (NE3000)\n[asset:fct_orders] user_message + fix_hint + docs_url",
+        ),
+        (
+            "ne2",
+            "NucleusResourceError (NE2007)\nout-of-memory; suggest partition or compute=databricks",
+        ),
+        (
+            "ne3",
+            "NucleusCommitConflictError (NE3001)\nconcurrent write; suggest retry or schedule check",
+        ),
         ("ne4", "NucleusSchemaError (NE3003)\ncontract violation; suggest schema sync"),
         ("ne5", "NucleusConcurrentRunError (NE3008)\nadvisory lock conflict per ADR-024"),
     ]
     out_boxes: list[dict[str, Any]] = []
     for i, (slug, label_text) in enumerate(outputs):
-        b, l = labeled_box(idg, slug, 870, bot_y + i * err_step, 660, bot_h,
-                           label_text, fill="built", label_size=SIZE_SMALL)
+        b, l = labeled_box(
+            idg,
+            slug,
+            870,
+            bot_y + i * err_step,
+            660,
+            bot_h,
+            label_text,
+            fill="built",
+            label_size=SIZE_SMALL,
+        )
         out_boxes.append(b)
         elems.extend([b, l])
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_err_out_{i}"),
-            start=(err_box["x"] + err_box["width"], err_box["y"] + 30 + i * err_step),
-            end=box_anchor(b, "left", frac=0.5),
-            color="#2b8a3e",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_err_out_{i}"),
+                start=(err_box["x"] + err_box["width"], err_box["y"] + 30 + i * err_step),
+                end=box_anchor(b, "left", frac=0.5),
+                color="#2b8a3e",
+            )
+        )
 
     # --- CROSS-TRACK: dashed elbow showing exception capture ----------------
     # When the asset function or pyiceberg.commit_table raises, the success
@@ -1210,58 +1504,88 @@ def mk_coordination() -> dict[str, Any]:
         target = src_boxes[src_idx]
         s_x = sb["x"] + sb["width"] / 2
         target_y = target["y"] + target["height"] / 2
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_cross_{src_slug}"),
-            start=(s_x, sb["y"] + sb["height"]),
-            end=(target["x"], target_y),
-            via=[(s_x, cross_lane_y),
-                 (cross_left_lane_x, cross_lane_y),
-                 (cross_left_lane_x, target_y)],
-            color="#c92a2a", style="dashed",
-            label="raise -> caught",
-            label_offset=(8, -18),
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_cross_{src_slug}"),
+                start=(s_x, sb["y"] + sb["height"]),
+                end=(target["x"], target_y),
+                via=[
+                    (s_x, cross_lane_y),
+                    (cross_left_lane_x, cross_lane_y),
+                    (cross_left_lane_x, target_y),
+                ],
+                color="#c92a2a",
+                style="dashed",
+                label="raise -> caught",
+                label_offset=(8, -18),
+            )
+        )
 
     # --- SIDE PANEL: cross-cutting concerns wired into AMA ------------------
     side_x = 1570
     side_y = 180
-    side_box = rect(idg, idg.make("side_panel"), side_x, side_y, 220, 480,
-                    fill="muted", stroke_width=1)
+    side_box = rect(
+        idg, idg.make("side_panel"), side_x, side_y, 220, 480, fill="muted", stroke_width=1
+    )
     elems.append(side_box)
-    elems.append(text(
-        idg, idg.make("side_lbl"), side_x + 14, side_y + 12,
-        "AMA wires in:\n\n"
-        "Locks\n  per-asset advisory FileLock\n  ADR-024 / NE3008\n\n"
-        "Scheduling daemon\n  cron + sensors\n  v4.1 Section 6.7\n\n"
-        "memory_limit guard\n  60% RAM cap on DuckDB\n  P0-1 / NE2007\n\n"
-        "expire_old_snapshots\n  after every commit\n  P0-3 / ADR-024",
-        size=SIZE_SMALL, color="#212529", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("side_lbl"),
+            side_x + 14,
+            side_y + 12,
+            "AMA wires in:\n\n"
+            "Locks\n  per-asset advisory FileLock\n  ADR-024 / NE3008\n\n"
+            "Scheduling daemon\n  cron + sensors\n  v4.1 Section 6.7\n\n"
+            "memory_limit guard\n  60% RAM cap on DuckDB\n  P0-1 / NE2007\n\n"
+            "expire_old_snapshots\n  after every commit\n  P0-3 / ADR-024",
+            size=SIZE_SMALL,
+            color="#212529",
+            align="left",
+        )
+    )
 
     # Dagster-hidden marker (the box BELOW the success track - stays inside
     # the success-track background band because it's part of the success path)
     dagster_x = 330
     dagster_y = 320
     dagster_box, dagster_lbl = labeled_box(
-        idg, "dagster_hidden", dagster_x, dagster_y, 260, 70,
+        idg,
+        "dagster_hidden",
+        dagster_x,
+        dagster_y,
+        260,
+        70,
         "Dagster (substrate, hidden)\nasset graph + sensors + retries",
-        fill="wrapped", label_size=SIZE_SMALL,
+        fill="wrapped",
+        label_size=SIZE_SMALL,
     )
     elems.extend([dagster_box, dagster_lbl])
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_ama_dagster"),
-        start=box_anchor(success_boxes["ama"], "bottom", frac=0.5),
-        end=box_anchor(dagster_box, "top", frac=0.5),
-        color="#868e96", style="dashed",
-        end_arrowhead=None,
-        stroke_width=1,
-    ))
-    elems.append(text(
-        idg, idg.make("dagster_note"),
-        dagster_x + 270, dagster_y + 22,
-        "scripts/dagster_leak_check.py\nguards: zero 'dagster.' strings\nin user-facing output (Section 6.5)",
-        size=SIZE_SMALL, color="#868e96", align="left",
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_ama_dagster"),
+            start=box_anchor(success_boxes["ama"], "bottom", frac=0.5),
+            end=box_anchor(dagster_box, "top", frac=0.5),
+            color="#868e96",
+            style="dashed",
+            end_arrowhead=None,
+            stroke_width=1,
+        )
+    )
+    elems.append(
+        text(
+            idg,
+            idg.make("dagster_note"),
+            dagster_x + 270,
+            dagster_y + 22,
+            "scripts/dagster_leak_check.py\nguards: zero 'dagster.' strings\nin user-facing output (Section 6.5)",
+            size=SIZE_SMALL,
+            color="#868e96",
+            align="left",
+        )
+    )
 
     elems.extend(legend_block(idg, 60, 1010))
     assert_no_arrow_overlap("04_coordination", elems)
@@ -1294,53 +1618,89 @@ def mk_intelligence() -> dict[str, Any]:
     idg = IdGen("d05")
     elems: list[dict[str, Any]] = []
 
-    elems.extend(title_block(
-        idg, 40, 30,
-        "Layer 3 - Intelligence: Pipeline + Context Injection (v0.2 chat MVP)",
-        # Counter-frames the retired ADR-002 angles below.
-        "AI-assisted by design (NOT AI-first / NOT AI-native): we are USERS of LLMs, never hosts",  # <!-- banned-term: AI-first --> <!-- banned-term: AI-native -->
-    ))
-    elems.append(section_label(idg, "intel", 40, 80,
-                               "v4.1 Section 7 (staging) + ADR-015 (chat MVP) + ADR-011 (privacy)"))
+    elems.extend(
+        title_block(
+            idg,
+            40,
+            30,
+            "Layer 3 - Intelligence: Pipeline + Context Injection (v0.2 chat MVP)",
+            # Counter-frames the retired ADR-002 angles below.
+            "AI-assisted by design (NOT AI-first / NOT AI-native): we are USERS of LLMs, never hosts",  # <!-- banned-term: AI-first --> <!-- banned-term: AI-native -->
+        )
+    )
+    elems.append(
+        section_label(
+            idg,
+            "intel",
+            40,
+            80,
+            "v4.1 Section 7 (staging) + ADR-015 (chat MVP) + ADR-011 (privacy)",
+        )
+    )
 
-    elems.extend(badge(
-        idg, "stance", 1280, 40, 460, 60,
-        # Counter-frames the retired ADR-002 angle below.
-        "Pillar #3 (engineering, not marketing).\nNot a category pivot to 'AI-native data platform'.",  # <!-- banned-term: AI-native -->
-        fill="muted",
-    ))
+    elems.extend(
+        badge(
+            idg,
+            "stance",
+            1280,
+            40,
+            460,
+            60,
+            # Counter-frames the retired ADR-002 angle below.
+            "Pillar #3 (engineering, not marketing).\nNot a category pivot to 'AI-native data platform'.",  # <!-- banned-term: AI-native -->
+            fill="muted",
+        )
+    )
 
     # --- Horizontal pipeline (spine) ---------------------------------------
     spine_y = 320
     spine_h = 100
     spine_steps = [
-        ("user_msg", 80,   "User message\n'why did fct_orders fail?'", "user",   220),
-        ("router",   340,  "Router\nintelligence/copilot.py",          "built",  220),
-        ("inject",   600,  "CONTEXT INJECTOR\n(redact + inline schema /\nrecent NE-codes)",
-                                                                       "built",  280),
-        ("litellm",  940,  "LiteLLM\n(provider router)",                "wrapped", 220),
-        ("response", 1200, "Response transform\nCopilotReply{ text,\nsuggested_command, cost }",
-                                                                       "built",  240),
-        ("user_out", 1500, "User\n(CLI / Workbench)",                   "user",   220),
+        ("user_msg", 80, "User message\n'why did fct_orders fail?'", "user", 220),
+        ("router", 340, "Router\nintelligence/copilot.py", "built", 220),
+        (
+            "inject",
+            600,
+            "CONTEXT INJECTOR\n(redact + inline schema /\nrecent NE-codes)",
+            "built",
+            280,
+        ),
+        ("litellm", 940, "LiteLLM\n(provider router)", "wrapped", 220),
+        (
+            "response",
+            1200,
+            "Response transform\nCopilotReply{ text,\nsuggested_command, cost }",
+            "built",
+            240,
+        ),
+        ("user_out", 1500, "User\n(CLI / Workbench)", "user", 220),
     ]
     spine_boxes: dict[str, dict[str, Any]] = {}
     for slug, sx, label_text, fill, w in spine_steps:
-        b, l = labeled_box(idg, f"sp_{slug}", sx, spine_y, w, spine_h,
-                           label_text, fill=fill, label_size=SIZE_SMALL)
+        b, l = labeled_box(
+            idg, f"sp_{slug}", sx, spine_y, w, spine_h, label_text, fill=fill, label_size=SIZE_SMALL
+        )
         spine_boxes[slug] = b
         elems.extend([b, l])
-    spine_pairs = [("user_msg", "router"), ("router", "inject"),
-                   ("inject", "litellm"), ("litellm", "response"),
-                   ("response", "user_out")]
+    spine_pairs = [
+        ("user_msg", "router"),
+        ("router", "inject"),
+        ("inject", "litellm"),
+        ("litellm", "response"),
+        ("response", "user_out"),
+    ]
     for s, d in spine_pairs:
         sb = spine_boxes[s]
         db = spine_boxes[d]
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_sp_{s}_{d}"),
-            start=box_anchor(sb, "right", frac=0.5),
-            end=box_anchor(db, "left", frac=0.5),
-            color="#1864ab",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_sp_{s}_{d}"),
+                start=box_anchor(sb, "right", frac=0.5),
+                end=box_anchor(db, "left", frac=0.5),
+                color="#1864ab",
+            )
+        )
 
     # --- Context-injection legs (3 inputs from BELOW the inject node) ------
     # ctx-inputs sit in their own y band (460-540) DIRECTLY below the spine;
@@ -1354,29 +1714,37 @@ def mk_intelligence() -> dict[str, Any]:
     ctx_inputs_h = 80
     ctx_inputs_w = 200
     ctx_inputs = [
-        ("schema",  inject_box["x"] + 50,
-         "Project schema\nnucleus_project.yaml +\nasset registry"),
-        ("lineage", inject_box["x"] + inject_box["width"] / 2,
-         "Lineage graph\n(v0.5+, faded\nfor v0.2)"),
-        ("err",     inject_box["x"] + inject_box["width"] - 50,
-         "Recent NE-codes\nfrom Run Ledger"),
+        ("schema", inject_box["x"] + 50, "Project schema\nnucleus_project.yaml +\nasset registry"),
+        (
+            "lineage",
+            inject_box["x"] + inject_box["width"] / 2,
+            "Lineage graph\n(v0.5+, faded\nfor v0.2)",
+        ),
+        ("err", inject_box["x"] + inject_box["width"] - 50, "Recent NE-codes\nfrom Run Ledger"),
     ]
     for slug, lane_x, body in ctx_inputs:
         ctx_box, ctx_lbl = labeled_box(
-            idg, f"ctx_{slug}",
-            lane_x - ctx_inputs_w / 2, ctx_inputs_y, ctx_inputs_w, ctx_inputs_h,
+            idg,
+            f"ctx_{slug}",
+            lane_x - ctx_inputs_w / 2,
+            ctx_inputs_y,
+            ctx_inputs_w,
+            ctx_inputs_h,
             body,
             fill=("muted" if slug == "lineage" else "user"),
             label_size=SIZE_SMALL,
         )
         elems.extend([ctx_box, ctx_lbl])
         # Short vertical leg from ctx box top up to inject box bottom
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_ctx_{slug}"),
-            start=(lane_x, ctx_inputs_y),
-            end=(lane_x, inject_box["y"] + inject_box["height"]),
-            color="#5f3dc4",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_ctx_{slug}"),
+                start=(lane_x, ctx_inputs_y),
+                end=(lane_x, inject_box["y"] + inject_box["height"]),
+                color="#5f3dc4",
+            )
+        )
 
     # --- Provider fanout (4 providers in a single row BELOW the ctx-band) ---
     # Each provider routes UP to the LiteLLM bottom edge via the y=590 clean
@@ -1387,9 +1755,9 @@ def mk_intelligence() -> dict[str, Any]:
     pv_h = 100
     providers = [
         ("anthropic", "Anthropic\nclaude-3-5-haiku"),
-        ("openai",    "OpenAI\ngpt-4o-mini"),
-        ("azure",     "Azure OpenAI\n(BYOK)"),
-        ("ollama",    "Ollama (local)\nllama3.1:8b - offline"),
+        ("openai", "OpenAI\ngpt-4o-mini"),
+        ("azure", "Azure OpenAI\n(BYOK)"),
+        ("ollama", "Ollama (local)\nllama3.1:8b - offline"),
     ]
     pv_w = 170
     pv_gap = 18
@@ -1399,26 +1767,28 @@ def mk_intelligence() -> dict[str, Any]:
     # Compute 4 evenly-spaced target xs along LiteLLM's bottom edge so each
     # provider has a unique landing spot.
     litellm_bottom_xs = [
-        litellm_box["x"] + litellm_box["width"] * frac
-        for frac in (0.18, 0.40, 0.62, 0.84)
+        litellm_box["x"] + litellm_box["width"] * frac for frac in (0.18, 0.40, 0.62, 0.84)
     ]
     for i, (slug, body) in enumerate(providers):
         px = pv_start_x + i * (pv_w + pv_gap)
-        b, l = labeled_box(idg, f"pv_{slug}", px, pv_y, pv_w, pv_h,
-                           body, fill="wrapped", label_size=SIZE_SMALL)
+        b, l = labeled_box(
+            idg, f"pv_{slug}", px, pv_y, pv_w, pv_h, body, fill="wrapped", label_size=SIZE_SMALL
+        )
         elems.extend([b, l])
         provider_center_x = px + pv_w / 2
         target_x = litellm_bottom_xs[i]
         litellm_bottom_y = litellm_box["y"] + litellm_box["height"]
         # 4-point elbow: provider top -> up to lane -> across to target -> up to LiteLLM bottom
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_pv_{slug}"),
-            start=(provider_center_x, pv_y),
-            end=(target_x, litellm_bottom_y),
-            via=[(provider_center_x, pv_lane_y),
-                 (target_x, pv_lane_y)],
-            color="#0b7285",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_pv_{slug}"),
+                start=(provider_center_x, pv_y),
+                end=(target_x, litellm_bottom_y),
+                via=[(provider_center_x, pv_lane_y), (target_x, pv_lane_y)],
+                color="#0b7285",
+            )
+        )
 
     # --- Token budget guard (ABOVE litellm) ---------------------------------
     budget_x = litellm_box["x"] - 40
@@ -1426,20 +1796,30 @@ def mk_intelligence() -> dict[str, Any]:
     budget_w = 300
     budget_h = 130
     budget_box, budget_lbl = labeled_box(
-        idg, "budget", budget_x, budget_y, budget_w, budget_h,
+        idg,
+        "budget",
+        budget_x,
+        budget_y,
+        budget_w,
+        budget_h,
         "Token budget guard\n(ADR-015 Section 4)\n"
         "default 2000 in / 1000 out / 0.10 USD\nNE5012 on exceed",
-        fill="built", label_size=SIZE_SMALL,
+        fill="built",
+        label_size=SIZE_SMALL,
     )
     elems.extend([budget_box, budget_lbl])
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_budget_litellm"),
-        start=(budget_x + budget_w / 2, budget_y + budget_h),
-        end=(budget_x + budget_w / 2, litellm_box["y"]),
-        color="#5f3dc4", style="dashed",
-        label="enforce",
-        label_offset=(6, -16),
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_budget_litellm"),
+            start=(budget_x + budget_w / 2, budget_y + budget_h),
+            end=(budget_x + budget_w / 2, litellm_box["y"]),
+            color="#5f3dc4",
+            style="dashed",
+            label="enforce",
+            label_offset=(6, -16),
+        )
+    )
 
     # --- Privacy opt-in gate (ABOVE user_msg / router) ---------------------
     privacy_x = 80
@@ -1447,54 +1827,84 @@ def mk_intelligence() -> dict[str, Any]:
     privacy_w = 480
     privacy_h = 130
     privacy_box, privacy_lbl = labeled_box(
-        idg, "privacy", privacy_x, privacy_y, privacy_w, privacy_h,
+        idg,
+        "privacy",
+        privacy_x,
+        privacy_y,
+        privacy_w,
+        privacy_h,
         "Privacy gate (ADR-011 + ADR-015 Section 5)\n"
         "5 redactions: SQL strings, row counts, user/host, abs paths, stack vars\n"
         "Hard cap 4 KB outbound | NO bytes leave laptop until user opt-in",
-        fill="built", label_size=SIZE_SMALL,
+        fill="built",
+        label_size=SIZE_SMALL,
     )
     elems.extend([privacy_box, privacy_lbl])
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_privacy_inject"),
-        start=(privacy_x + privacy_w / 2, privacy_y + privacy_h),
-        end=(inject_box["x"] + inject_box["width"] / 2, inject_box["y"]),
-        via=[(privacy_x + privacy_w / 2, inject_box["y"] - 40),
-             (inject_box["x"] + inject_box["width"] / 2, inject_box["y"] - 40)],
-        color="#5f3dc4", style="dashed",
-        label="apply\nbefore inject",
-        label_offset=(8, -28),
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_privacy_inject"),
+            start=(privacy_x + privacy_w / 2, privacy_y + privacy_h),
+            end=(inject_box["x"] + inject_box["width"] / 2, inject_box["y"]),
+            via=[
+                (privacy_x + privacy_w / 2, inject_box["y"] - 40),
+                (inject_box["x"] + inject_box["width"] / 2, inject_box["y"] - 40),
+            ],
+            color="#5f3dc4",
+            style="dashed",
+            label="apply\nbefore inject",
+            label_offset=(8, -28),
+        )
+    )
 
     # --- Conversation persistence (BELOW user_msg) -------------------------
     persist_x = 80
     persist_y = pv_y
     persist_box, persist_lbl = labeled_box(
-        idg, "persist", persist_x, persist_y, 220, 90,
+        idg,
+        "persist",
+        persist_x,
+        persist_y,
+        220,
+        90,
         "Conversation history\n.nucleus/copilot/turns.ndjson\n(append-only, redacted)",
-        fill="built", label_size=SIZE_SMALL,
+        fill="built",
+        label_size=SIZE_SMALL,
     )
     elems.extend([persist_box, persist_lbl])
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_user_persist"),
-        start=(spine_boxes["user_msg"]["x"] + spine_boxes["user_msg"]["width"] / 2,
-               spine_boxes["user_msg"]["y"] + spine_h),
-        end=(persist_x + 110, persist_y),
-        color="#868e96", style="dashed",
-        end_arrowhead="arrow",
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_user_persist"),
+            start=(
+                spine_boxes["user_msg"]["x"] + spine_boxes["user_msg"]["width"] / 2,
+                spine_boxes["user_msg"]["y"] + spine_h,
+            ),
+            end=(persist_x + 110, persist_y),
+            color="#868e96",
+            style="dashed",
+            end_arrowhead="arrow",
+        )
+    )
 
     # --- Staging strip (footer with v0.2 / v0.3 / v0.5 / v0.7) -------------
     staging_y = pv_y + 130
     staging_box = rect(idg, idg.make("staging_box"), 60, staging_y, 1700, 100, fill="muted")
     elems.append(staging_box)
-    elems.append(text(
-        idg, idg.make("staging_lbl"),
-        74, staging_y + 14,
-        "Realistic staging (v4.1 Section 7.2 - Amendment 2 vs over-promised v4.0):\n"
-        "  v0.1 = none  |  v0.2 = inline chat (this diagram)  |  v0.3 = schema-aware completion  |  "
-        "v0.5 = lineage-aware refactoring + ctx.agent runtime + nucleus-mcp-server  |  v0.7 = doc generation + semantic graph queries",
-        size=SIZE_SMALL, color="#212529", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("staging_lbl"),
+            74,
+            staging_y + 14,
+            "Realistic staging (v4.1 Section 7.2 - Amendment 2 vs over-promised v4.0):\n"
+            "  v0.1 = none  |  v0.2 = inline chat (this diagram)  |  v0.3 = schema-aware completion  |  "
+            "v0.5 = lineage-aware refactoring + ctx.agent runtime + nucleus-mcp-server  |  v0.7 = doc generation + semantic graph queries",
+            size=SIZE_SMALL,
+            color="#212529",
+            align="left",
+        )
+    )
 
     elems.extend(legend_block(idg, 60, staging_y + 130))
     assert_no_arrow_overlap("05_intelligence", elems)
@@ -1525,23 +1935,37 @@ def mk_experience() -> dict[str, Any]:
     idg = IdGen("d06")
     elems: list[dict[str, Any]] = []
 
-    elems.extend(title_block(
-        idg, 40, 30,
-        "Layer 4 - Experience: 3 Equal Surfaces, 1 Coordination Hub",
-        "CLI + Workbench + ctx SDK are co-equal front doors; all delegate to one Coordination layer",
-    ))
-    elems.append(section_label(idg, "exp", 40, 80,
-                               "v4.1 Section 8 + nucleus_cli_spec.md + nucleus_ctx_sdk_spec.md + ADR-016 (Workbench)"))
+    elems.extend(
+        title_block(
+            idg,
+            40,
+            30,
+            "Layer 4 - Experience: 3 Equal Surfaces, 1 Coordination Hub",
+            "CLI + Workbench + ctx SDK are co-equal front doors; all delegate to one Coordination layer",
+        )
+    )
+    elems.append(
+        section_label(
+            idg,
+            "exp",
+            40,
+            80,
+            "v4.1 Section 8 + nucleus_cli_spec.md + nucleus_ctx_sdk_spec.md + ADR-016 (Workbench)",
+        )
+    )
 
     # --- Persona ellipse ---------------------------------------------------
     persona_x = 760
     persona_y = 110
     persona = ellipse(idg, idg.make("persona"), persona_x, persona_y, 380, 60, fill="user")
     persona_lbl = text(
-        idg, idg.make("persona_lbl"),
-        persona_x + 28, persona_y + 18,
+        idg,
+        idg.make("persona_lbl"),
+        persona_x + 28,
+        persona_y + 18,
         "User: data engineer in 5-engineer startup",
-        size=SIZE_LABEL, align="left",
+        size=SIZE_LABEL,
+        align="left",
     )
     elems.extend([persona, persona_lbl])
 
@@ -1551,10 +1975,16 @@ def mk_experience() -> dict[str, Any]:
     hub_w = 700
     hub_h = 200
     hub_box, hub_lbl = labeled_box(
-        idg, "hub", hub_x, hub_y, hub_w, hub_h,
+        idg,
+        "hub",
+        hub_x,
+        hub_y,
+        hub_w,
+        hub_h,
         "L2 COORDINATION  (single source of truth)\n"
         "AMA + Error Translation + Run Ledger +\nLocks + Scheduling daemon",
-        fill="built", label_size=SIZE_SUBTITLE,
+        fill="built",
+        label_size=SIZE_SUBTITLE,
     )
     elems.extend([hub_box, hub_lbl])
 
@@ -1562,46 +1992,74 @@ def mk_experience() -> dict[str, Any]:
     # ctx SDK on top (developer surface), CLI lower-left, Workbench lower-right.
     spokes_meta = [
         # (slug, x, y, w, h, label_lines, fill, side_to_hub_anchor)
-        ("sdk", 700, 220, 500, 230,
-         "ctx SDK (Python)   developer surface\n\n"
-         "@nucleus.asset(key, deps, partitions, schedule)\n"
-         "@nucleus.check(asset, severity)\n"
-         "nucleus.materialize(asset_key) -> MaterializationResult\n"
-         "ctx.read(asset_key) -> LazyFrame\n"
-         "ctx.sql(\"... {{ ref('a') }} ...\")\n"
-         "ctx.copy_from(source, target=...) - postgres / s3 / parquet ...",
-         "built", "bottom"),
-        ("cli", 60, 820, 600, 280,
-         "nucleus CLI   operator surface\n\n"
-         "nucleus init my-warehouse\n"
-         "nucleus up   /   nucleus down\n"
-         "nucleus run <asset_key>\n"
-         "nucleus ingest postgres://... --table T --as raw.T\n"
-         "nucleus query \"SELECT ... FROM raw.T LIMIT 10\"\n"
-         "nucleus list   /   nucleus runs (ledger)\n"
-         "nucleus chat \"why did fct_orders fail?\"\n"
-         "nucleus workbench   /   nucleus snapshot",
-         "user", "top"),
-        ("wb", 1240, 820, 600, 280,
-         "Workbench (v0.2+)   browser surface\n\n"
-         "FastAPI backend (workbench/app.py)\n"
-         "  /api/health  /api/version  /api/assets\n"
-         "  /api/runs (with SSE log stream)\n"
-         "  /api/query (POST: ctx.sql + DuckDB)\n"
-         "  /api/chat (POST: AI Copilot)\n\n"
-         "React + Vite + Tailwind frontend\n"
-         "  asset graph view, catalog, query editor, chat",
-         "user", "top"),
+        (
+            "sdk",
+            700,
+            220,
+            500,
+            230,
+            "ctx SDK (Python)   developer surface\n\n"
+            "@nucleus.asset(key, deps, partitions, schedule)\n"
+            "@nucleus.check(asset, severity)\n"
+            "nucleus.materialize(asset_key) -> MaterializationResult\n"
+            "ctx.read(asset_key) -> LazyFrame\n"
+            "ctx.sql(\"... {{ ref('a') }} ...\")\n"
+            "ctx.copy_from(source, target=...) - postgres / s3 / parquet ...",
+            "built",
+            "bottom",
+        ),
+        (
+            "cli",
+            60,
+            820,
+            600,
+            280,
+            "nucleus CLI   operator surface\n\n"
+            "nucleus init my-warehouse\n"
+            "nucleus up   /   nucleus down\n"
+            "nucleus run <asset_key>\n"
+            "nucleus ingest postgres://... --table T --as raw.T\n"
+            'nucleus query "SELECT ... FROM raw.T LIMIT 10"\n'
+            "nucleus list   /   nucleus runs (ledger)\n"
+            'nucleus chat "why did fct_orders fail?"\n'
+            "nucleus workbench   /   nucleus snapshot",
+            "user",
+            "top",
+        ),
+        (
+            "wb",
+            1240,
+            820,
+            600,
+            280,
+            "Workbench (v0.2+)   browser surface\n\n"
+            "FastAPI backend (workbench/app.py)\n"
+            "  /api/health  /api/version  /api/assets\n"
+            "  /api/runs (with SSE log stream)\n"
+            "  /api/query (POST: ctx.sql + DuckDB)\n"
+            "  /api/chat (POST: AI Copilot)\n\n"
+            "React + Vite + Tailwind frontend\n"
+            "  asset graph view, catalog, query editor, chat",
+            "user",
+            "top",
+        ),
     ]
     spoke_boxes: dict[str, dict[str, Any]] = {}
     for slug, sx, sy, sw, sh, body, fill, side in spokes_meta:
         b = rect(idg, idg.make(f"spoke_{slug}"), sx, sy, sw, sh, fill=fill)
         elems.append(b)
-        elems.append(text(
-            idg, idg.make(f"spoke_lbl_{slug}"),
-            sx + 18, sy + 12, body,
-            size=SIZE_SMALL, color="#212529", align="left",
-        ))
+        elems.append(
+            text(
+                idg,
+                idg.make(f"spoke_lbl_{slug}"),
+                sx + 18,
+                sy + 12,
+                body,
+                size=SIZE_SMALL,
+                color="#212529",
+                align="left",
+            )
+        )
         spoke_boxes[slug] = b
 
     # Bidirectional arrows: spoke <-> hub. Each spoke connects to a different
@@ -1611,100 +2069,138 @@ def mk_experience() -> dict[str, Any]:
     wb_box = spoke_boxes["wb"]
 
     # SDK <-> hub (vertical above hub)
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_sdk_hub_down"),
-        start=box_anchor(sdk_box, "bottom", frac=0.5),
-        end=box_anchor(hub_box, "top", frac=0.5),
-        color="#1864ab",
-    ))
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_sdk_hub_up"),
-        start=(hub_box["x"] + hub_box["width"] * 0.55, hub_box["y"]),
-        end=(sdk_box["x"] + sdk_box["width"] * 0.55, sdk_box["y"] + sdk_box["height"]),
-        color="#2b8a3e",
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_sdk_hub_down"),
+            start=box_anchor(sdk_box, "bottom", frac=0.5),
+            end=box_anchor(hub_box, "top", frac=0.5),
+            color="#1864ab",
+        )
+    )
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_sdk_hub_up"),
+            start=(hub_box["x"] + hub_box["width"] * 0.55, hub_box["y"]),
+            end=(sdk_box["x"] + sdk_box["width"] * 0.55, sdk_box["y"] + sdk_box["height"]),
+            color="#2b8a3e",
+        )
+    )
 
     # CLI <-> hub (lower-left); arrow leaves hub from its bottom-left corner
     cli_anchor = box_anchor(cli_box, "top", frac=0.7)
-    cli_to_hub_via = [(cli_anchor[0], cli_anchor[1] - 40),
-                      (hub_box["x"] + 80, cli_anchor[1] - 40)]
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_cli_hub_up"),
-        start=cli_anchor,
-        end=(hub_box["x"] + 80, hub_box["y"] + hub_box["height"]),
-        via=cli_to_hub_via,
-        color="#1864ab",
-    ))
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_cli_hub_dn"),
-        start=(hub_box["x"] + 120, hub_box["y"] + hub_box["height"]),
-        end=(cli_anchor[0] + 40, cli_anchor[1]),
-        via=[(hub_box["x"] + 120, cli_anchor[1] - 60),
-             (cli_anchor[0] + 40, cli_anchor[1] - 60)],
-        color="#2b8a3e",
-    ))
+    cli_to_hub_via = [(cli_anchor[0], cli_anchor[1] - 40), (hub_box["x"] + 80, cli_anchor[1] - 40)]
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_cli_hub_up"),
+            start=cli_anchor,
+            end=(hub_box["x"] + 80, hub_box["y"] + hub_box["height"]),
+            via=cli_to_hub_via,
+            color="#1864ab",
+        )
+    )
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_cli_hub_dn"),
+            start=(hub_box["x"] + 120, hub_box["y"] + hub_box["height"]),
+            end=(cli_anchor[0] + 40, cli_anchor[1]),
+            via=[
+                (hub_box["x"] + 120, cli_anchor[1] - 60),
+                (cli_anchor[0] + 40, cli_anchor[1] - 60),
+            ],
+            color="#2b8a3e",
+        )
+    )
 
     # WB <-> hub (lower-right)
     wb_anchor = box_anchor(wb_box, "top", frac=0.3)
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_wb_hub_up"),
-        start=wb_anchor,
-        end=(hub_box["x"] + hub_box["width"] - 80, hub_box["y"] + hub_box["height"]),
-        via=[(wb_anchor[0], wb_anchor[1] - 40),
-             (hub_box["x"] + hub_box["width"] - 80, wb_anchor[1] - 40)],
-        color="#1864ab",
-    ))
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_wb_hub_dn"),
-        start=(hub_box["x"] + hub_box["width"] - 120, hub_box["y"] + hub_box["height"]),
-        end=(wb_anchor[0] + 40, wb_anchor[1]),
-        via=[(hub_box["x"] + hub_box["width"] - 120, wb_anchor[1] - 60),
-             (wb_anchor[0] + 40, wb_anchor[1] - 60)],
-        color="#2b8a3e",
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_wb_hub_up"),
+            start=wb_anchor,
+            end=(hub_box["x"] + hub_box["width"] - 80, hub_box["y"] + hub_box["height"]),
+            via=[
+                (wb_anchor[0], wb_anchor[1] - 40),
+                (hub_box["x"] + hub_box["width"] - 80, wb_anchor[1] - 40),
+            ],
+            color="#1864ab",
+        )
+    )
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_wb_hub_dn"),
+            start=(hub_box["x"] + hub_box["width"] - 120, hub_box["y"] + hub_box["height"]),
+            end=(wb_anchor[0] + 40, wb_anchor[1]),
+            via=[
+                (hub_box["x"] + hub_box["width"] - 120, wb_anchor[1] - 60),
+                (wb_anchor[0] + 40, wb_anchor[1] - 60),
+            ],
+            color="#2b8a3e",
+        )
+    )
 
     # Persona -> SDK (hint: persona drives all 3, but we only draw to the
     # nearest spoke to avoid clutter; the visual is "user touches surfaces")
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_persona_sdk"),
-        start=(persona_x + 190, persona_y + 60),
-        end=(sdk_box["x"] + sdk_box["width"] / 2, sdk_box["y"]),
-        color="#5f3dc4", style="dashed",
-        end_arrowhead="arrow",
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_persona_sdk"),
+            start=(persona_x + 190, persona_y + 60),
+            end=(sdk_box["x"] + sdk_box["width"] / 2, sdk_box["y"]),
+            color="#5f3dc4",
+            style="dashed",
+            end_arrowhead="arrow",
+        )
+    )
 
     # --- ERROR-DISPLAY SIDE PANEL (consumed by all 3 surfaces) -------------
     err_panel_x = 60
     err_panel_y = 220
-    err_panel = rect(idg, idg.make("err_panel"), err_panel_x, err_panel_y,
-                     560, 230, fill="built")
+    err_panel = rect(idg, idg.make("err_panel"), err_panel_x, err_panel_y, 560, 230, fill="built")
     elems.append(err_panel)
-    elems.append(text(
-        idg, idg.make("err_panel_lbl"),
-        err_panel_x + 18, err_panel_y + 14,
-        "ERROR DISPLAY  (uniform across all 3 surfaces)\n"
-        "  per nucleus_cli_spec.md Section 5.4\n\n"
-        "[NE2007] NucleusResourceError:\n"
-        "  Out of memory while processing 'sales.fct_orders'\n"
-        "  fix_hint: add a partition filter, increase memory,\n"
-        "            or use compute=databricks\n"
-        "  docs:    nucleus.dev/errors/resource\n\n"
-        "Same NE-code. Same user_message. Same fix_hint.\n"
-        "No DuckDB / Dagster / pyiceberg classnames - ever.",
-        size=SIZE_SMALL, color="#212529", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("err_panel_lbl"),
+            err_panel_x + 18,
+            err_panel_y + 14,
+            "ERROR DISPLAY  (uniform across all 3 surfaces)\n"
+            "  per nucleus_cli_spec.md Section 5.4\n\n"
+            "[NE2007] NucleusResourceError:\n"
+            "  Out of memory while processing 'sales.fct_orders'\n"
+            "  fix_hint: add a partition filter, increase memory,\n"
+            "            or use compute=databricks\n"
+            "  docs:    nucleus.dev/errors/resource\n\n"
+            "Same NE-code. Same user_message. Same fix_hint.\n"
+            "No DuckDB / Dagster / pyiceberg classnames - ever.",
+            size=SIZE_SMALL,
+            color="#212529",
+            align="left",
+        )
+    )
     # The relationship "errors flow OUT of Coordination IN to all 3 surfaces"
     # is conveyed by the text annotation below; we deliberately do NOT draw
     # an arrow from the error panel to the hub (any such line would have to
     # cross the SDK spoke or another node) - the hub-and-spoke paradigm reads
     # cleanly without it.
-    elems.append(text(
-        idg, idg.make("err_panel_hint"),
-        err_panel_x + 18, err_panel_y + 240,
-        "Coordination produces NucleusError; CLI / Workbench / ctx SDK\n"
-        "all render it identically. Same NE-code, same fix_hint, every surface.",
-        size=SIZE_SMALL, color="#868e96", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("err_panel_hint"),
+            err_panel_x + 18,
+            err_panel_y + 240,
+            "Coordination produces NucleusError; CLI / Workbench / ctx SDK\n"
+            "all render it identically. Same NE-code, same fix_hint, every surface.",
+            size=SIZE_SMALL,
+            color="#868e96",
+            align="left",
+        )
+    )
 
     elems.extend(legend_block(idg, 1480, 1130))
     assert_no_arrow_overlap("06_experience", elems)
@@ -1737,35 +2233,63 @@ def mk_user_journey() -> dict[str, Any]:
     idg = IdGen("d07")
     elems: list[dict[str, Any]] = []
 
-    elems.extend(title_block(
-        idg, 40, 30,
-        "30-Minute Beachhead Journey - First BI-Ready Iceberg Table",
-        "v0.1 success metric: 5-engineer startup, MacBooks, git clone -> first BI-ready Iceberg table in <30 minutes",
-    ))
-    elems.append(section_label(idg, "journey", 40, 80,
-                               "v4.1 Section 1.5 (beachhead) + Section 11 (local-first promise)"))
+    elems.extend(
+        title_block(
+            idg,
+            40,
+            30,
+            "30-Minute Beachhead Journey - First BI-Ready Iceberg Table",
+            "v0.1 success metric: 5-engineer startup, MacBooks, git clone -> first BI-ready Iceberg table in <30 minutes",
+        )
+    )
+    elems.append(
+        section_label(
+            idg,
+            "journey",
+            40,
+            80,
+            "v4.1 Section 1.5 (beachhead) + Section 11 (local-first promise)",
+        )
+    )
 
     # --- TIMELINE AXIS ------------------------------------------------------
     axis_y = 200
     axis_x0 = 100
     axis_x1 = 1620
-    elems.append(line(
-        idg, idg.make("axis"), axis_x0, axis_y, axis_x1, axis_y,
-        stroke_width=3,
-    ))
+    elems.append(
+        line(
+            idg,
+            idg.make("axis"),
+            axis_x0,
+            axis_y,
+            axis_x1,
+            axis_y,
+            stroke_width=3,
+        )
+    )
     # Arrowhead on the right end (drawn as an arrow with a tiny tail to mimic axis)
-    elems.extend(elbow_arrow(
-        idg, idg.make("axis_arrowhead"),
-        start=(axis_x1 - 4, axis_y),
-        end=(axis_x1 + 60, axis_y),
-        color="stroke",
-        stroke_width=3,
-    ))
-    elems.append(text(
-        idg, idg.make("axis_lbl"),
-        axis_x1 + 70, axis_y - 10,
-        "time", size=SIZE_LABEL, color="stroke", align="left",
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("axis_arrowhead"),
+            start=(axis_x1 - 4, axis_y),
+            end=(axis_x1 + 60, axis_y),
+            color="stroke",
+            stroke_width=3,
+        )
+    )
+    elems.append(
+        text(
+            idg,
+            idg.make("axis_lbl"),
+            axis_x1 + 70,
+            axis_y - 10,
+            "time",
+            size=SIZE_LABEL,
+            color="stroke",
+            align="left",
+        )
+    )
 
     # Tick marks at 0, 5, 10, 15, 20, 25, 30 min. Map minute -> x linearly.
     def x_at(minutes: float) -> float:
@@ -1773,33 +2297,82 @@ def mk_user_journey() -> dict[str, Any]:
 
     for tick_min in (0, 5, 10, 15, 20, 25, 30):
         tx = x_at(tick_min)
-        elems.append(line(
-            idg, idg.make(f"tick_{tick_min}"),
-            tx, axis_y - 10, tx, axis_y + 10, stroke_width=2,
-        ))
-        elems.append(text(
-            idg, idg.make(f"tick_lbl_{tick_min}"),
-            tx - 18, axis_y - 36,
-            f"00:{tick_min:02d}", size=SIZE_SMALL, color="#495057", align="left",
-        ))
+        elems.append(
+            line(
+                idg,
+                idg.make(f"tick_{tick_min}"),
+                tx,
+                axis_y - 10,
+                tx,
+                axis_y + 10,
+                stroke_width=2,
+            )
+        )
+        elems.append(
+            text(
+                idg,
+                idg.make(f"tick_lbl_{tick_min}"),
+                tx - 18,
+                axis_y - 36,
+                f"00:{tick_min:02d}",
+                size=SIZE_SMALL,
+                color="#495057",
+                align="left",
+            )
+        )
 
     # --- 7 MILESTONES at their actual minute ------------------------------
     # (slug, minute, top label, fill, terminal snippet)
     milestones = [
-        ("install", 1,  "1. pip install\nnucleus[core]",        "user",
-         "$ pip install nucleus[core]\n  ... 24 packages installed"),
-        ("init",    2,  "2. nucleus init\nmy-warehouse",        "user",
-         "$ nucleus init my-warehouse\n  scaffolded assets/ + nucleus_project.yaml"),
-        ("up",      5,  "3. nucleus up\n(SeaweedFS + catalog)", "wrapped",
-         "$ nucleus up\n  warehouse ready in 5.8s"),
-        ("write",   10, "4. write\n@nucleus.asset",             "built",
-         "# assets/example.py\n@nucleus.asset\ndef hello(ctx): ..."),
-        ("run",     18, "5. nucleus run\nhello",                "built",
-         "$ nucleus run hello\n  snapshot 1 committed (0.4s)"),
-        ("query",   22, "6. nucleus query\n'SELECT * ...'",     "user",
-         "$ nucleus query \"SELECT * FROM hello LIMIT 10\"\n  10 rows in 18ms"),
-        ("wb",      25, "7. nucleus\nworkbench",                "user",
-         "$ nucleus workbench\n  serving http://localhost:8765"),
+        (
+            "install",
+            1,
+            "1. pip install\nnucleus[core]",
+            "user",
+            "$ pip install nucleus[core]\n  ... 24 packages installed",
+        ),
+        (
+            "init",
+            2,
+            "2. nucleus init\nmy-warehouse",
+            "user",
+            "$ nucleus init my-warehouse\n  scaffolded assets/ + nucleus_project.yaml",
+        ),
+        (
+            "up",
+            5,
+            "3. nucleus up\n(SeaweedFS + catalog)",
+            "wrapped",
+            "$ nucleus up\n  warehouse ready in 5.8s",
+        ),
+        (
+            "write",
+            10,
+            "4. write\n@nucleus.asset",
+            "built",
+            "# assets/example.py\n@nucleus.asset\ndef hello(ctx): ...",
+        ),
+        (
+            "run",
+            18,
+            "5. nucleus run\nhello",
+            "built",
+            "$ nucleus run hello\n  snapshot 1 committed (0.4s)",
+        ),
+        (
+            "query",
+            22,
+            "6. nucleus query\n'SELECT * ...'",
+            "user",
+            '$ nucleus query "SELECT * FROM hello LIMIT 10"\n  10 rows in 18ms',
+        ),
+        (
+            "wb",
+            25,
+            "7. nucleus\nworkbench",
+            "user",
+            "$ nucleus workbench\n  serving http://localhost:8765",
+        ),
     ]
 
     # Milestones alternate between two y bands BELOW the axis. Even-index
@@ -1811,60 +2384,116 @@ def mk_user_journey() -> dict[str, Any]:
     milestone_h = 95
     snippet_h = 70
     snippet_pad = 14
-    row_close_y = axis_y + 50         # row 1 (closer to axis): even-index
-    row_far_y = axis_y + 320          # row 2 (farther from axis): odd-index
+    row_close_y = axis_y + 50  # row 1 (closer to axis): even-index
+    row_far_y = axis_y + 320  # row 2 (farther from axis): odd-index
     milestone_boxes: dict[str, dict[str, Any]] = {}
     for i, (slug, minute, label_text, fill, snippet) in enumerate(milestones):
-        is_close = (i % 2 == 0)
+        is_close = i % 2 == 0
         my = row_close_y if is_close else row_far_y
         mx = x_at(minute) - milestone_w / 2
         snip_y = my + milestone_h + snippet_pad
         leader_x = x_at(minute)
         # Dashed leader line from the axis tick all the way down to milestone top
-        elems.append(line(
-            idg, idg.make(f"leader_{slug}"),
-            leader_x, axis_y + 10, leader_x, my,
-            style="dashed", color="#868e96", stroke_width=1,
-        ))
-        b, l = labeled_box(idg, f"ms_{slug}", mx, my, milestone_w, milestone_h,
-                           label_text, fill=fill, label_size=SIZE_SMALL)
+        elems.append(
+            line(
+                idg,
+                idg.make(f"leader_{slug}"),
+                leader_x,
+                axis_y + 10,
+                leader_x,
+                my,
+                style="dashed",
+                color="#868e96",
+                stroke_width=1,
+            )
+        )
+        b, l = labeled_box(
+            idg,
+            f"ms_{slug}",
+            mx,
+            my,
+            milestone_w,
+            milestone_h,
+            label_text,
+            fill=fill,
+            label_size=SIZE_SMALL,
+        )
         milestone_boxes[slug] = b
         elems.extend([b, l])
-        snip_box = rect(idg, idg.make(f"snip_box_{slug}"), mx, snip_y,
-                        milestone_w, snippet_h, fill="muted", stroke_width=1)
+        snip_box = rect(
+            idg,
+            idg.make(f"snip_box_{slug}"),
+            mx,
+            snip_y,
+            milestone_w,
+            snippet_h,
+            fill="muted",
+            stroke_width=1,
+        )
         elems.append(snip_box)
-        elems.append(text(
-            idg, idg.make(f"snip_lbl_{slug}"),
-            mx + 8, snip_y + 6, snippet,
-            size=SIZE_SMALL, color="#212529", align="left",
-        ))
-        durations = {"install": "~30s", "init": "~5s", "up": "~10s",
-                     "write": "~5min", "run": "~15s", "query": "~5s", "wb": "~5s"}
+        elems.append(
+            text(
+                idg,
+                idg.make(f"snip_lbl_{slug}"),
+                mx + 8,
+                snip_y + 6,
+                snippet,
+                size=SIZE_SMALL,
+                color="#212529",
+                align="left",
+            )
+        )
+        durations = {
+            "install": "~30s",
+            "init": "~5s",
+            "up": "~10s",
+            "write": "~5min",
+            "run": "~15s",
+            "query": "~5s",
+            "wb": "~5s",
+        }
         dur_y = snip_y + snippet_h + 4
-        elems.append(text(
-            idg, idg.make(f"dur_{slug}"),
-            mx + 8, dur_y, f"step time: {durations[slug]}",
-            size=SIZE_SMALL, color="#1864ab", align="left",
-        ))
+        elems.append(
+            text(
+                idg,
+                idg.make(f"dur_{slug}"),
+                mx + 8,
+                dur_y,
+                f"step time: {durations[slug]}",
+                size=SIZE_SMALL,
+                color="#1864ab",
+                align="left",
+            )
+        )
 
     # --- GRADUATION milestone (right-edge stretch goal beyond 30:00) -------
     # Graduation aligns with the row-close (even-index) row since the last
     # actual milestone (wb, idx=6) sits there.
     grad_box, grad_lbl = labeled_box(
-        idg, "grad", axis_x1 + 100, row_close_y - 20, 280, milestone_h + 40,
+        idg,
+        "grad",
+        axis_x1 + 100,
+        row_close_y - 20,
+        280,
+        milestone_h + 40,
         "(stretch)\nGraduate to Databricks\nvia Iceberg portability\nMode 1 - zero migration",
-        fill="immortal", label_size=SIZE_SMALL,
+        fill="immortal",
+        label_size=SIZE_SMALL,
     )
     elems.extend([grad_box, grad_lbl])
     last_ms = milestone_boxes["wb"]
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_wb_grad"),
-        start=box_anchor(last_ms, "right", frac=0.5),
-        end=box_anchor(grad_box, "left", frac=0.5),
-        color="#1864ab", style="dashed",
-        label="later",
-        label_offset=(8, -22),
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_wb_grad"),
+            start=box_anchor(last_ms, "right", frac=0.5),
+            end=box_anchor(grad_box, "left", frac=0.5),
+            color="#1864ab",
+            style="dashed",
+            label="later",
+            label_offset=(8, -22),
+        )
+    )
 
     # --- ERROR BRANCH (offshoot from `nucleus run` -> NE-translated -> resume) ---
     # The error branch box sits BELOW the far-row dur text. Distance budget:
@@ -1875,10 +2504,16 @@ def mk_user_journey() -> dict[str, Any]:
     err_branch_x = run_ms["x"] - 60
     err_branch_y = 770
     err_box, err_lbl = labeled_box(
-        idg, "err_branch", err_branch_x, err_branch_y, 540, 90,
+        idg,
+        "err_branch",
+        err_branch_x,
+        err_branch_y,
+        540,
+        90,
         "ERROR BRANCH (any wrapped exception)\n"
         "[NE3001] NucleusCommitConflictError -> fix_hint: retry or check schedule",
-        fill="built", label_size=SIZE_SMALL,
+        fill="built",
+        label_size=SIZE_SMALL,
     )
     elems.extend([err_box, err_lbl])
     # Dashed elbow from `nucleus run` snippet+dur DOWN to err_box top.
@@ -1888,51 +2523,66 @@ def mk_user_journey() -> dict[str, Any]:
     # milestone boxes whose centers are at very different x.
     run_dur_bottom = run_ms["y"] + milestone_h + snippet_pad + snippet_h + 28
     err_lane_y = 735
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_run_err"),
-        start=(run_ms["x"] + run_ms["width"] / 2, run_dur_bottom),
-        end=(err_box["x"] + 60, err_branch_y),
-        via=[(run_ms["x"] + run_ms["width"] / 2, err_lane_y),
-             (err_box["x"] + 60, err_lane_y)],
-        color="#c92a2a", style="dashed",
-        label="raise",
-        label_offset=(8, -16),
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_run_err"),
+            start=(run_ms["x"] + run_ms["width"] / 2, run_dur_bottom),
+            end=(err_box["x"] + 60, err_branch_y),
+            via=[(run_ms["x"] + run_ms["width"] / 2, err_lane_y), (err_box["x"] + 60, err_lane_y)],
+            color="#c92a2a",
+            style="dashed",
+            label="raise",
+            label_offset=(8, -16),
+        )
+    )
     # Resume arrow back UP to the `query` milestone.  Routes:
     #   err_box right -> right exit -> UP to lane y=475 (between row_close
     #   bottom ~455 and row_far top 520) -> left to query center x ->
     #   DOWN into query's TOP edge.
     resume_lane_y = 480
     query_center_x = next_ms["x"] + next_ms["width"] / 2
-    elems.extend(elbow_arrow(
-        idg, idg.make("ar_err_resume"),
-        start=box_anchor(err_box, "right", frac=0.5),
-        end=(query_center_x, next_ms["y"]),
-        via=[(err_box["x"] + err_box["width"] + 60, err_branch_y + 45),
-             (err_box["x"] + err_box["width"] + 60, resume_lane_y),
-             (query_center_x, resume_lane_y)],
-        color="#2b8a3e", style="dashed",
-        label="fix, resume",
-        label_offset=(8, -18),
-    ))
+    elems.extend(
+        elbow_arrow(
+            idg,
+            idg.make("ar_err_resume"),
+            start=box_anchor(err_box, "right", frac=0.5),
+            end=(query_center_x, next_ms["y"]),
+            via=[
+                (err_box["x"] + err_box["width"] + 60, err_branch_y + 45),
+                (err_box["x"] + err_box["width"] + 60, resume_lane_y),
+                (query_center_x, resume_lane_y),
+            ],
+            color="#2b8a3e",
+            style="dashed",
+            label="fix, resume",
+            label_offset=(8, -18),
+        )
+    )
 
     # --- DETAIL FOOTER -----------------------------------------------------
     detail_y = err_branch_y + 120
     detail_box = rect(idg, idg.make("detail_box"), 60, detail_y, 1700, 200, fill="muted")
     elems.append(detail_box)
-    elems.append(text(
-        idg, idg.make("detail_lbl"),
-        74, detail_y + 14,
-        "What happens behind the scenes (per v4.1 Section 11.1 + ADR-008 storage):\n"
-        "  step 3: docker compose up brings SeaweedFS (default per ADR-008) + Lakekeeper-or-filesystem-catalog + nucleus warehouse;\n"
-        "          MinIO is preserved as alternate via docker-compose.minio.yml. Health-poll until S3 endpoint responds.\n"
-        "  step 4: @nucleus.asset registers the function in an in-process dict; no Dagster import in user code (Constraint #1 + Section 6.5).\n"
-        "  step 5: AMA validates contract -> acquires advisory lock (P0-2) -> pyiceberg catalog.commit_table() (ADR-001 atomic) ->\n"
-        "          emit OpenLineage event -> append to .nucleus/runs/runs.ndjson -> expire_old_snapshots (P0-3).\n"
-        "  step 6: ctx.sql() jinja-resolves {{ ref('hello') }} -> DuckDB iceberg_scan -> Arrow result -> Rich table to terminal.\n"
-        "  graduation: Mode 1 - same s3://warehouse + same Iceberg metadata; Databricks reads it natively. Zero migration.",
-        size=SIZE_SMALL, color="#212529", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("detail_lbl"),
+            74,
+            detail_y + 14,
+            "What happens behind the scenes (per v4.1 Section 11.1 + ADR-008 storage):\n"
+            "  step 3: docker compose up brings SeaweedFS (default per ADR-008) + Lakekeeper-or-filesystem-catalog + nucleus warehouse;\n"
+            "          MinIO is preserved as alternate via docker-compose.minio.yml. Health-poll until S3 endpoint responds.\n"
+            "  step 4: @nucleus.asset registers the function in an in-process dict; no Dagster import in user code (Constraint #1 + Section 6.5).\n"
+            "  step 5: AMA validates contract -> acquires advisory lock (P0-2) -> pyiceberg catalog.commit_table() (ADR-001 atomic) ->\n"
+            "          emit OpenLineage event -> append to .nucleus/runs/runs.ndjson -> expire_old_snapshots (P0-3).\n"
+            "  step 6: ctx.sql() jinja-resolves {{ ref('hello') }} -> DuckDB iceberg_scan -> Arrow result -> Rich table to terminal.\n"
+            "  graduation: Mode 1 - same s3://warehouse + same Iceberg metadata; Databricks reads it natively. Zero migration.",
+            size=SIZE_SMALL,
+            color="#212529",
+            align="left",
+        )
+    )
 
     elems.extend(legend_block(idg, 60, detail_y + 220))
     assert_no_arrow_overlap("07_dataflow_user_journey", elems)
@@ -1963,21 +2613,38 @@ def mk_composability_yield() -> dict[str, Any]:
     idg = IdGen("d08")
     elems: list[dict[str, Any]] = []
 
-    elems.extend(title_block(
-        idg, 40, 30,
-        "Composability Constitution + Yield to Giants",
-        "Top: 3-tier composability stack with swap interfaces. Bottom: 3 modes of integration with cloud giants.",
-    ))
-    elems.append(section_label(idg, "comp", 40, 80,
-                               "v4.1 Sections 9 (composability) + 10 (yield to giants) + ADR-002 (positioning)"))
+    elems.extend(
+        title_block(
+            idg,
+            40,
+            30,
+            "Composability Constitution + Yield to Giants",
+            "Top: 3-tier composability stack with swap interfaces. Bottom: 3 modes of integration with cloud giants.",
+        )
+    )
+    elems.append(
+        section_label(
+            idg,
+            "comp",
+            40,
+            80,
+            "v4.1 Sections 9 (composability) + 10 (yield to giants) + ADR-002 (positioning)",
+        )
+    )
 
     # ===================== TOP HALF: tier stack ==========================
-    elems.append(text(
-        idg, idg.make("tier_header"),
-        60, 110,
-        "COMPOSABILITY STACK   (v4.1 Section 9.3 - swap interface + smoke tests, full adapter ON-DEMAND)",
-        size=SIZE_SUBTITLE, color="#212529", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("tier_header"),
+            60,
+            110,
+            "COMPOSABILITY STACK   (v4.1 Section 9.3 - swap interface + smoke tests, full adapter ON-DEMAND)",
+            size=SIZE_SUBTITLE,
+            color="#212529",
+            align="left",
+        )
+    )
 
     # Tier 2 at top (wrapped capabilities)
     tier_x = 60
@@ -1987,22 +2654,34 @@ def mk_composability_yield() -> dict[str, Any]:
 
     t2_y = 150
     t2_box, t2_lbl = labeled_box(
-        idg, "t2", tier_x, t2_y, tier_w, tier_h,
+        idg,
+        "t2",
+        tier_x,
+        t2_y,
+        tier_w,
+        tier_h,
         "Tier 2 - WRAPPED capabilities (fully replaceable)\n"
         "Connectors: ctx.copy_from / dlt v0.3+   |   Transformations: native ctx.sql + Jinja\n"
         "Notebooks: Marimo (v0.3+)              |   LLM router: LiteLLM   |   Streaming (v1.5+): Benthos / Redpanda",
-        fill="wrapped", label_size=SIZE_SMALL,
+        fill="wrapped",
+        label_size=SIZE_SMALL,
     )
     elems.extend([t2_box, t2_lbl])
 
     # Tier 1 in middle (with swap interfaces - these get <-> arrows to swap targets)
     t1_y = t2_y + tier_h + tier_gap
     t1_box, t1_lbl = labeled_box(
-        idg, "t1", tier_x, t1_y, tier_w, tier_h,
+        idg,
+        "t1",
+        tier_x,
+        t1_y,
+        tier_w,
+        tier_h,
         "Tier 1 - first-class default + clean swap interface\n"
         "DuckDB   |   Polars   |   Dagster (hidden)   |   pyiceberg + Lakekeeper / SqlCatalog\n"
         "(swap targets shown to the right; full adapter built ON-DEMAND when trigger fires)",
-        fill="wrapped", label_size=SIZE_SMALL,
+        fill="wrapped",
+        label_size=SIZE_SMALL,
     )
     elems.extend([t1_box, t1_lbl])
 
@@ -2020,61 +2699,108 @@ def mk_composability_yield() -> dict[str, Any]:
     swap_y0 = t1_y + (tier_h - swap_total_h) / 2
     for i, (default, target) in enumerate(swaps):
         sy = swap_y0 + i * (swap_h + 12)
-        sb, sl = labeled_box(idg, f"swap_t1_{i}", swap_x, sy, swap_w, swap_h,
-                             f"swap: {target}", fill="muted", label_size=SIZE_SMALL)
+        sb, sl = labeled_box(
+            idg,
+            f"swap_t1_{i}",
+            swap_x,
+            sy,
+            swap_w,
+            swap_h,
+            f"swap: {target}",
+            fill="muted",
+            label_size=SIZE_SMALL,
+        )
         elems.extend([sb, sl])
         # <-> arrow from T1 right edge to swap target left edge, at component-row height
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_swap_t1_{i}"),
-            start=(t1_box["x"] + t1_box["width"], sy + swap_h / 2),
-            end=(swap_x, sy + swap_h / 2),
-            color="#868e96", style="dashed",
-            start_arrowhead="arrow", end_arrowhead="arrow",
-            label=f"{default} <->",
-            label_offset=(0, -16),
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_swap_t1_{i}"),
+                start=(t1_box["x"] + t1_box["width"], sy + swap_h / 2),
+                end=(swap_x, sy + swap_h / 2),
+                color="#868e96",
+                style="dashed",
+                start_arrowhead="arrow",
+                end_arrowhead="arrow",
+                label=f"{default} <->",
+                label_offset=(0, -16),
+            )
+        )
 
     # Tier 0 at bottom (immortal foundations)
     t0_y = t1_y + tier_h + tier_gap
     t0_box, t0_lbl = labeled_box(
-        idg, "t0", tier_x, t0_y, tier_w, tier_h,
+        idg,
+        "t0",
+        tier_x,
+        t0_y,
+        tier_w,
+        tier_h,
         "Tier 0 - IMMORTAL foundations (never swap)\n"
         "Apache Arrow   |   Apache Iceberg   |   Apache Parquet   |   Lance (v0.5+)\n"
         "S3 API   |   OpenLineage   |   OpenTelemetry",
-        fill="immortal", label_size=SIZE_SMALL,
+        fill="immortal",
+        label_size=SIZE_SMALL,
     )
     elems.extend([t0_box, t0_lbl])
 
     # Note next to T0 (no swap target column)
-    elems.append(text(
-        idg, idg.make("t0_note"),
-        swap_x, t0_y + 30,
-        "Tier 0 has no\nswap target.\nThese are the\nlaws of physics.",
-        size=SIZE_SMALL, color="#5f3dc4", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("t0_note"),
+            swap_x,
+            t0_y + 30,
+            "Tier 0 has no\nswap target.\nThese are the\nlaws of physics.",
+            size=SIZE_SMALL,
+            color="#5f3dc4",
+            align="left",
+        )
+    )
 
     # ===================== DIVIDER ========================================
     div_y = t0_y + tier_h + 50
-    elems.append(line(
-        idg, idg.make("divider"), 60, div_y, 1740, div_y,
-        style="dashed", color="#868e96", stroke_width=2,
-    ))
+    elems.append(
+        line(
+            idg,
+            idg.make("divider"),
+            60,
+            div_y,
+            1740,
+            div_y,
+            style="dashed",
+            color="#868e96",
+            stroke_width=2,
+        )
+    )
 
     # ===================== BOTTOM HALF: 3-mode panel =====================
     bottom_header_y = div_y + 14
-    elems.append(text(
-        idg, idg.make("yield_header"),
-        60, bottom_header_y,
-        "YIELD TO GIANTS   (v4.1 Section 10 - we do NOT compete; we INTEGRATE via 3 modes)",
-        size=SIZE_SUBTITLE, color="#212529", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("yield_header"),
+            60,
+            bottom_header_y,
+            "YIELD TO GIANTS   (v4.1 Section 10 - we do NOT compete; we INTEGRATE via 3 modes)",
+            size=SIZE_SUBTITLE,
+            color="#212529",
+            align="left",
+        )
+    )
 
     # Source: Nucleus Iceberg lake (left)
     lake_y = bottom_header_y + 60
     lake_box, lake_lbl = labeled_box(
-        idg, "nuc_lake", 60, lake_y, 320, 110,
+        idg,
+        "nuc_lake",
+        60,
+        lake_y,
+        320,
+        110,
         "Nucleus Iceberg lake\n(s3://warehouse + catalog)\nsource of truth",
-        fill="built", label_size=SIZE_SMALL,
+        fill="built",
+        label_size=SIZE_SMALL,
     )
     elems.extend([lake_box, lake_lbl])
 
@@ -2084,57 +2810,95 @@ def mk_composability_yield() -> dict[str, Any]:
     mode_h = 110
     mode_gap = 20
     mode_meta = [
-        ("mode1", "Mode 1: Iceberg PORTABILITY",
-         "User points Databricks / Snowflake / Polaris / Trino / R2 at the SAME s3://warehouse.\n"
-         "Same Iceberg metadata. ZERO application-code migration. The killer graduation path."),
-        ("mode2", "Mode 2: HYBRID COMPUTE   (v1.5+)",
-         "@nucleus.sql_asset(compute='databricks')   |   @nucleus.python_asset(compute='snowflake')\n"
-         "Heavy assets are dispatched off-laptop; result committed back to the same Iceberg lake."),
-        ("mode3", "Mode 3: FEDERATION   (v2.0+)",
-         "Iceberg REST catalog cross-account federation. Data Mesh: each domain runs its own\n"
-         "Nucleus, all federated through a shared Iceberg REST catalog. No central control plane needed."),
+        (
+            "mode1",
+            "Mode 1: Iceberg PORTABILITY",
+            "User points Databricks / Snowflake / Polaris / Trino / R2 at the SAME s3://warehouse.\n"
+            "Same Iceberg metadata. ZERO application-code migration. The killer graduation path.",
+        ),
+        (
+            "mode2",
+            "Mode 2: HYBRID COMPUTE   (v1.5+)",
+            "@nucleus.sql_asset(compute='databricks')   |   @nucleus.python_asset(compute='snowflake')\n"
+            "Heavy assets are dispatched off-laptop; result committed back to the same Iceberg lake.",
+        ),
+        (
+            "mode3",
+            "Mode 3: FEDERATION   (v2.0+)",
+            "Iceberg REST catalog cross-account federation. Data Mesh: each domain runs its own\n"
+            "Nucleus, all federated through a shared Iceberg REST catalog. No central control plane needed.",
+        ),
     ]
     mode_boxes: list[dict[str, Any]] = []
     for i, (slug, header, body) in enumerate(mode_meta):
         my = lake_y + i * (mode_h + mode_gap)
-        mb = rect(idg, idg.make(f"mode_{slug}"), mode_x, my, mode_w, mode_h,
-                  fill=("muted" if i > 0 else "wrapped"))
+        mb = rect(
+            idg,
+            idg.make(f"mode_{slug}"),
+            mode_x,
+            my,
+            mode_w,
+            mode_h,
+            fill=("muted" if i > 0 else "wrapped"),
+        )
         elems.append(mb)
-        elems.append(text(
-            idg, idg.make(f"mode_h_{slug}"),
-            mode_x + 18, my + 10, header,
-            size=SIZE_BADGE, color="#1864ab", align="left",
-        ))
-        elems.append(text(
-            idg, idg.make(f"mode_b_{slug}"),
-            mode_x + 18, my + 38, body,
-            size=SIZE_SMALL, color="#212529", align="left",
-        ))
+        elems.append(
+            text(
+                idg,
+                idg.make(f"mode_h_{slug}"),
+                mode_x + 18,
+                my + 10,
+                header,
+                size=SIZE_BADGE,
+                color="#1864ab",
+                align="left",
+            )
+        )
+        elems.append(
+            text(
+                idg,
+                idg.make(f"mode_b_{slug}"),
+                mode_x + 18,
+                my + 38,
+                body,
+                size=SIZE_SMALL,
+                color="#212529",
+                align="left",
+            )
+        )
         mode_boxes.append(mb)
         # Connector from lake to this mode
-        elems.extend(elbow_arrow(
-            idg, idg.make(f"ar_lake_{slug}"),
-            start=box_anchor(lake_box, "right", frac=0.5),
-            end=box_anchor(mb, "left", frac=0.5),
-            via=[(420, lake_y + 55),
-                 (420, my + mode_h / 2)],
-            color="#1864ab",
-        ))
+        elems.extend(
+            elbow_arrow(
+                idg,
+                idg.make(f"ar_lake_{slug}"),
+                start=box_anchor(lake_box, "right", frac=0.5),
+                end=box_anchor(mb, "left", frac=0.5),
+                via=[(420, lake_y + 55), (420, my + mode_h / 2)],
+                color="#1864ab",
+            )
+        )
 
     # Why-this-strategy-wins note (bottom-right corner of the bottom half)
     why_y = mode_boxes[-1]["y"] + mode_h + 20
     why_box = rect(idg, idg.make("why_box"), 60, why_y, 1680, 130, fill="muted")
     elems.append(why_box)
-    elems.append(text(
-        idg, idg.make("why_lbl"),
-        76, why_y + 14,
-        "Why this strategy wins:\n"
-        "  - acquisition-friendly: giants see Nucleus as a feeder, not a threat\n"
-        "  - no data lock-in: Iceberg portability removes the #1 procurement objection\n"
-        "  - smaller scope: we don't build distributed compute, we don't build a control plane\n"
-        "  - customer trust: 'if we outgrow you, we can leave' - users stay LONGER, not shorter",
-        size=SIZE_SMALL, color="#212529", align="left",
-    ))
+    elems.append(
+        text(
+            idg,
+            idg.make("why_lbl"),
+            76,
+            why_y + 14,
+            "Why this strategy wins:\n"
+            "  - acquisition-friendly: giants see Nucleus as a feeder, not a threat\n"
+            "  - no data lock-in: Iceberg portability removes the #1 procurement objection\n"
+            "  - smaller scope: we don't build distributed compute, we don't build a control plane\n"
+            "  - customer trust: 'if we outgrow you, we can leave' - users stay LONGER, not shorter",
+            size=SIZE_SMALL,
+            color="#212529",
+            align="left",
+        )
+    )
 
     elems.extend(legend_block(idg, 60, why_y + 150))
     assert_no_arrow_overlap("08_composability_yield_to_giants", elems)
