@@ -10,6 +10,10 @@ __pycache__/
 *$py.class
 *.so
 .Python
+
+# Release E2E timestamped artifacts (per-run reports, not git-tracked)
+docs/internal/release-process/e2e_results_*.json
+docs/internal/release-process/e2e_results_*.md
 build/
 develop-eggs/
 dist/
