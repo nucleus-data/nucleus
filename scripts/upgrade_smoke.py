@@ -41,7 +41,7 @@ Companion docs
 --------------
     AGENTS.md Sec 11.13 (Upgrade Safety Discipline)
     docs/decisions/ADR-012-runtime-dependency-pin-matrix-v01.md
-    docs/compatibility.md
+    docs/internal/compatibility.md
     scripts/check_pinning.py (complement; this script does NOT duplicate it)
 """
 

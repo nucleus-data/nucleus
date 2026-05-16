@@ -18,7 +18,7 @@ Enforces (in order of severity):
    default, those deps may use compatible-release (``~=``) since minor-flex
    on linters and test runners is benign; ``--strict`` disables that.
 4. Each pinned runtime package (core or runtime-extras) appears in
-   ``docs/compatibility.md`` and the pinned version matches (keeps the
+   ``docs/internal/compatibility.md`` and the pinned version matches (keeps the
    human-readable matrix in sync with the install spec; ADR-012 calls
    ``compatibility.md`` the derived view).
 
@@ -59,13 +59,13 @@ Exit codes
        exemption and ``--strict`` is not set)
     1  pinning violation (loose pin without exemption, missing matrix
        row, or version mismatch between pyproject.toml and
-       docs/compatibility.md)
+       docs/internal/compatibility.md)
     2  invocation / parse error (pyproject.toml unreadable / malformed)
 
 Docs:
     AGENTS.md Sec 11.13 (Hard Constraint #11)
     docs/decisions/ADR-012-runtime-dependency-pin-matrix-v01.md
-    docs/compatibility.md
+    docs/internal/compatibility.md
 """
 
 from __future__ import annotations
@@ -80,7 +80,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PYPROJECT = REPO_ROOT / "pyproject.toml"
-COMPAT_DOC = REPO_ROOT / "docs" / "compatibility.md"
+COMPAT_DOC = REPO_ROOT / "docs" / "internal" / "compatibility.md"
 
 # Runtime-extras groups: opt-in install buckets (e.g. `pip install
 # nucleus[observability]`) that ship real runtime libraries -- not
@@ -333,7 +333,7 @@ def _record_matrix_rules(
     compat: dict[str, str],
     report: PinningReport,
 ) -> None:
-    """Each pinned runtime dep must match docs/compatibility.md (ADR-012).
+    """Each pinned runtime dep must match docs/internal/compatibility.md (ADR-012).
 
     Accepts the union of core runtime + runtime-extras pins -- both tiers
     are tracked in the compatibility matrix per ADR-012 amendment 2026-05-14.
@@ -371,7 +371,7 @@ def check_pinning(strict: bool = False) -> PinningReport:
     )
     _record_dev_rules(dev, exemptions, strict, report)
     # Matrix-rule covers both core + runtime-extras (both tracked in
-    # docs/compatibility.md per ADR-012 amendment 2026-05-14).
+    # docs/internal/compatibility.md per ADR-012 amendment 2026-05-14).
     matrix_runtime = {**runtime, **runtime_extras}
     _record_matrix_rules(matrix_runtime, compat, report)
     return report
@@ -417,17 +417,17 @@ def _render(report: PinningReport) -> str:
     _append_bullet_block(lines, "Dev dependency violations:", report.dev_violations)
 
     if report.matrix_missing:
-        lines.append("Packages missing from docs/compatibility.md:")
+        lines.append("Packages missing from docs/internal/compatibility.md:")
         lines.extend(f"  - {pkg}" for pkg in report.matrix_missing)
         lines.extend(
             [
-                "  (add a row in the relevant Sec 1.x table of docs/compatibility.md)",
+                "  (add a row in the relevant Sec 1.x table of docs/internal/compatibility.md)",
                 "",
             ]
         )
 
     if report.matrix_mismatches:
-        lines.append("Version mismatches between pyproject.toml and docs/compatibility.md:")
+        lines.append("Version mismatches between pyproject.toml and docs/internal/compatibility.md:")
         lines.extend(
             f"  - {pkg}: pyproject={pyproj_v}  docs={doc_v}"
             for pkg, pyproj_v, doc_v in report.matrix_mismatches

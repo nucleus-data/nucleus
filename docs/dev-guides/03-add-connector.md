@@ -65,7 +65,7 @@ Then run:
 pip install -e ".[<source>,dev]"
 ```
 
-Update `docs/compatibility.md` with a new row for each new package. Update `docs/decisions/ADR-012-runtime-dependency-pin-matrix-v01.md` if the pin is mandatory (core, not optional).
+Update `docs/internal/compatibility.md` with a new row for each new package. Update `docs/decisions/ADR-012-runtime-dependency-pin-matrix-v01.md` if the pin is mandatory (core, not optional).
 
 ---
 
@@ -305,7 +305,7 @@ All must pass.
 
 ---
 
-## Step 13: Update `docs/compatibility.md`
+## Step 13: Update `docs/internal/compatibility.md`
 
 Add rows for each new package:
 ```markdown
@@ -354,7 +354,7 @@ After all 14 steps:
 [ ] beachhead_e2e.py 8/8 PASS (connector didn't break existing paths)
 [ ] ADR authored and linked from ADR-012
 [ ] CHANGELOG updated
-[ ] docs/compatibility.md updated
+[ ] docs/internal/compatibility.md updated
 [ ] User guide created in docs/site/guides/
 ```
 

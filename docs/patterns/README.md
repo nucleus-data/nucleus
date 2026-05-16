@@ -2,7 +2,7 @@
 
 Per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.3 (Coordination Layer) — and the L0 type-mapping contract called out in §5.5 — Iceberg lifecycle and cross-cutting operational patterns live here. Each pattern is a **how-to + why** reference, not a runnable walkthrough — read the linked file before writing or reviewing code that touches `Table.append`, `Table.overwrite`, partition specs, schema diffs, or anything credential-shaped.
 
-This file is a navigation index. Patterns are versioned to the pinned wrapped-library release in [`../compatibility.md`](../compatibility.md); when a pin moves, the affected pattern is re-reviewed before the upgrade lands per [`AGENTS.md`](../../AGENTS.md) Hard Constraint #11.
+This file is a navigation index. Patterns are versioned to the pinned wrapped-library release in [`../internal/compatibility.md`](../internal/compatibility.md); when a pin moves, the affected pattern is re-reviewed before the upgrade lands per [`AGENTS.md`](../../AGENTS.md) Hard Constraint #11.
 
 ---
 
@@ -28,7 +28,7 @@ This file is a navigation index. Patterns are versioned to the pinned wrapped-li
 ## Conventions
 
 - **Pattern, not recipe.** Patterns explain the *why* and the *Nucleus wrap*. End-to-end runnable walkthroughs live in [`../recipes/`](../recipes/).
-- **Cite the wrapped library.** Every pattern links to its [`../research/<lib>.md`](../research/) anchor and the pinned release per [`../compatibility.md`](../compatibility.md).
+- **Cite the wrapped library.** Every pattern links to its [`../research/<lib>.md`](../research/) anchor and the pinned release per [`../internal/compatibility.md`](../internal/compatibility.md).
 - **No bare `pyiceberg` in user-facing examples.** Code samples always wrap through `ctx` — patterns demonstrate the abstraction users actually see.
 - **Vocabulary** per [`AGENTS.md`](../../AGENTS.md) §7: *asset*, *snapshot*, *contract*, *check*, *materialization*. Never *table* (as primitive), *version* (for snapshots), *test* (for asset checks).
 - **Property tests enforce.** Where a pattern is mechanically verifiable (`type_mapping.md`), property tests in `tests/patterns/` are the contract; doc and tests evolve together.

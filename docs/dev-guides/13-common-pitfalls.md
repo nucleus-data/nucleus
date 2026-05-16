@@ -218,7 +218,7 @@ from nucleus.ctx import sql
 
 **Symptom**: LOC budget creeping up with code that has no v0.1 caller.
 
-**Fix**: Per Anti-Over-Engineering: "If there is no v0.1 caller today, the code is not added today." Delete speculative code. Document the imagined need in `docs/FOUNDER_ACTION_QUEUE.md`.
+**Fix**: Per Anti-Over-Engineering: "If there is no v0.1 caller today, the code is not added today." Delete speculative code. Document the imagined need in `docs/internal/FOUNDER_ACTION_QUEUE.md`.
 
 ---
 
@@ -286,11 +286,11 @@ docs_url = "https://nucleus.dev/errors/source-connection"
 
 ---
 
-### Pitfall 23: Not Updating `docs/compatibility.md` After Adding a Dep
+### Pitfall 23: Not Updating `docs/internal/compatibility.md` After Adding a Dep
 
 **Symptom**: `upgrade_smoke.py` fails: "ADR-012 cross-check: package not in compatibility.md."
 
-**Fix**: Every new dep in `pyproject.toml` gets a row in `docs/compatibility.md` on the same PR.
+**Fix**: Every new dep in `pyproject.toml` gets a row in `docs/internal/compatibility.md` on the same PR.
 
 ---
 

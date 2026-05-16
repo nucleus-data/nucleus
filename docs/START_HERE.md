@@ -105,7 +105,7 @@ If you write docs, contribute code, or open an Issue with one of the "Not" terms
 
 ## Beta status
 
-**v0.2 is beta.** The `ctx` SDK API surface is stabilising but **not yet locked under semver** — that happens at v1.0 per the [versioning policy](../CHANGELOG.md#versioning-policy). Breaking changes within `0.y.z` are explicitly permitted per Keep a Changelog. Pin your installs (`pip install nucleus==0.2.0`) and read [`docs/compatibility.md`](compatibility.md) before upgrading.
+**v0.2 is beta.** The `ctx` SDK API surface is stabilising but **not yet locked under semver** — that happens at v1.0 per the [versioning policy](../CHANGELOG.md#versioning-policy). Breaking changes within `0.y.z` are explicitly permitted per Keep a Changelog. Pin your installs (`pip install nucleus==0.2.0`) and read [`docs/internal/compatibility.md`](compatibility.md) before upgrading.
 
 ---
 

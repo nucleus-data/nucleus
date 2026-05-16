@@ -22,7 +22,7 @@ This does NOT change the trigger condition (still: PoC #1 passes). It tightens t
 
 What 0.11.x buys, per `docs/internal/research/pyiceberg.md` §B.3: `ExpireSnapshots` API, the O(N²) manifest cache fix, generator-based writes, full ORC read, sort-order evolution, REST scan planning, Python 3.13. Skipping 0.9/0.10 is supported and explicitly endorsed by §B.3.
 
-Single dedicated PR: (1) bump `pyproject.toml` to `==0.11.1` (no other dep changes); (2) read all 3 minor changelogs and summarize behavioral changes in the PR description (§11.13); (3) add `tests/upgrade_smoke/test_iceberg_upgrade.py` per Verification below; (4) re-validate PoC #3 (`poc/p3_ingest/`) **unchanged** — most exposed PoC; (5) update `docs/compatibility.md`; (6) **24 h cool-down** before the next dep upgrade.
+Single dedicated PR: (1) bump `pyproject.toml` to `==0.11.1` (no other dep changes); (2) read all 3 minor changelogs and summarize behavioral changes in the PR description (§11.13); (3) add `tests/upgrade_smoke/test_iceberg_upgrade.py` per Verification below; (4) re-validate PoC #3 (`poc/p3_ingest/`) **unchanged** — most exposed PoC; (5) update `docs/internal/compatibility.md`; (6) **24 h cool-down** before the next dep upgrade.
 
 ## Risks & mitigations
 

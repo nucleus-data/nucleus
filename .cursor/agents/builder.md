@@ -101,7 +101,7 @@ python scripts/benchmark_regression.py # if perf-sensitive
 - No `git` operations
 - No `pip install` without parent approval (and even with approval, only via PR description, not directly)
 - No deletions of `poc/` reference code
-- No touching tracking docs (`docs/specs/nucleus_poc_plan.md`, `docs/budget_history.md`) — parent aggregates
+- No touching tracking docs (`docs/specs/nucleus_poc_plan.md`, `docs/internal/budget_history.md`) — parent aggregates
 - No bypassing the 8-question gate (per `.cursor/rules/nucleus.mdc`) for "just this once" features
 
 ## Output format

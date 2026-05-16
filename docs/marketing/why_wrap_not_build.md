@@ -1,6 +1,6 @@
 # Why "Wrap, Not Build" Is the Moat
 
-*One page. Numbers cited come from `docs/specs/nucleus_architecture_v4.1.md` section 3, section 9, section 10 and `docs/budget_history.md`. Last updated 2026-05-15.*
+*One page. Numbers cited come from `docs/specs/nucleus_architecture_v4.1.md` section 3, section 9, section 10 and `docs/internal/budget_history.md`. Last updated 2026-05-15.*
 
 ---
 

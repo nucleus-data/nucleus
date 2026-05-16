@@ -140,7 +140,7 @@ Total: ~785 LOC, well within the v0.2 phase ceiling.
 | `tests/test_install_extras.py` | New smoke test (`pip install nucleus[core/postgres/ai/workbench/all]`) |
 | `src/nucleus/cli/main.py` | Lazy-imported `psycopg`, `fastapi`, `litellm`, `dlt`, `httpx` (in command bodies) |
 | `docs/onboarding/quickstart.md` | Install patterns section |
-| `docs/compatibility.md` | Per-extra version pin rows |
+| `docs/internal/compatibility.md` | Per-extra version pin rows |
 | `README.md` | Install section shows extras |
 
 ---

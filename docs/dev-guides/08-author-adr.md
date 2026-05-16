@@ -164,7 +164,7 @@ Rules:
 When an ADR moves to ACCEPTED, update:
 1. `docs/decisions/README.md` — add a row to the ADR table.
 2. `docs/specs/nucleus_architecture_v4.1.md` — add a citation in the relevant section (e.g., §6.3 "See ADR-014 for dlt integration").
-3. `docs/compatibility.md` — if the ADR adds a new dependency.
+3. `docs/internal/compatibility.md` — if the ADR adds a new dependency.
 4. `CHANGELOG.md` — in the next release's entry.
 
 ---

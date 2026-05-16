@@ -55,12 +55,12 @@ python scripts/loc_budget.py             # must show GREEN
 | Project layout | `docs/specs/nucleus_project_anatomy.md` |
 | All ADRs (why decisions were made) | `docs/decisions/ADR-*.md` |
 | What shipped (version history) | `CHANGELOG.md` |
-| Dependency pins + upgrade history | `docs/compatibility.md` |
+| Dependency pins + upgrade history | `docs/internal/compatibility.md` |
 | Research notes on wrapped libs | `docs/internal/research/<lib>.md` |
 | Swap interfaces + migration paths | `docs/internal/swap/<lib>.md` |
 | AI hallucination log | `docs/internal/research/ai_hallucinations.md` |
-| LOC budget history | `docs/budget_history.md` |
-| Known open decisions | `docs/FOUNDER_ACTION_QUEUE.md` |
+| LOC budget history | `docs/internal/budget_history.md` |
+| Known open decisions | `docs/internal/FOUNDER_ACTION_QUEUE.md` |
 | Roadmap (this directory) | `docs/roadmap/` |
 | Developer runbooks | `docs/dev-guides/` |
 | Source code | `src/nucleus/` |
@@ -87,7 +87,7 @@ Each layer ONLY imports from the layer below it. `scripts/check_layering.py` enf
 
 ### Pick a task
 
-1. Check `docs/FOUNDER_ACTION_QUEUE.md` — deferred items waiting for a PR.
+1. Check `docs/internal/FOUNDER_ACTION_QUEUE.md` — deferred items waiting for a PR.
 2. Check GitHub Issues labeled `good-first-issue` or `v0.2`.
 3. Avoid touching these files without architecture review: `src/nucleus/coordination/error_translation.py`, `src/nucleus/sdk/`, `src/nucleus/ctx/__init__.py`.
 

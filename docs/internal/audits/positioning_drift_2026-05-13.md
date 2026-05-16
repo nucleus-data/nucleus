@@ -34,7 +34,7 @@
 |---|---|---|
 | `NucleusAssetNotFound` vs `…NotFoundError` | Zero `…NotFoundError` matches workspace-wide. | Clean. |
 | `AssetRef` vs `NucleusAsset` | ADR-013 §1 + NV #5 binds `AssetRef`; only outlier is skeleton plan §6 Q2 prose (owed FAQ §C3.3). | Self-disclosed. |
-| `ctx.materialize` vs `ctx.materialize_assets` | Plural drift at [`docs/specs/nucleus_cli_spec.md:52`](../../specs/nucleus_cli_spec.md) inside the same paragraph that cites singular `ctx.materialize(...)`. | Self-disclosed ADR-013 NV #1 + [FAQ §C3.3](../../FOUNDER_ACTION_QUEUE.md). Founder. |
+| `ctx.materialize` vs `ctx.materialize_assets` | Plural drift at [`docs/specs/nucleus_cli_spec.md:52`](../../specs/nucleus_cli_spec.md) inside the same paragraph that cites singular `ctx.materialize(...)`. | Self-disclosed ADR-013 NV #1 + [FAQ §C3.3](../FOUNDER_ACTION_QUEUE.md). Founder. |
 | `nucleus run` vs `nucleus materialize` | CLI = `nucleus run`; SDK = `ctx.materialize`. Documented split (`sequence_asset_materialization.md:75`). | Clean (intentional). |
 | `NE3004` vs `NE.3004` vs `NE-3004` | Zero `NE-\d{4}` or `NE\.\d{4}` matches. Only canonical `NE[1-5]\d{3}`. | Clean. |
 | `Iceberg REST catalog` vs `Iceberg catalog` vs `REST catalog` | Disciplined: REST form for transport-specific (`seaweedfs.md`, lakekeeper row); bare form for the generic primitive (`README.md:7`, `errors.py:195`). | Clean (intentional). |
@@ -47,7 +47,7 @@
 
 **Method**: `Grep "^>\s*\*\*Status\*\*:" docs/decisions/ADR-*.md` + read of `AGENTS.md` §1 + `docs/specs/nucleus_poc_plan.md` + `loc_budget.py` verdict.
 
-**Clean.** ADRs 002–013 all PROPOSED (ADR-001 = Accepted, pre-existing); `docs/specs/nucleus_poc_plan.md` zero `PROMOTED` / `ACCEPTED` matches; [`AGENTS.md:42-46`](../../../AGENTS.md) phase-gate rows still `[ ] PoC #1 …` through `[ ] v0.1 implementation`; LOC budget GREEN (227 / 8000 = 2.8 %). Informational only: [`budget_history.md:64`](../../budget_history.md) records PoC total `1,344 LOC` (point-in-time); live `loc_budget.py` reports `1,644 LOC` (+300 from same-day PROMOTION_PR_DRAFTs / REVIEW_NOTES). Not drift; reconciles next monthly snapshot.
+**Clean.** ADRs 002–013 all PROPOSED (ADR-001 = Accepted, pre-existing); `docs/specs/nucleus_poc_plan.md` zero `PROMOTED` / `ACCEPTED` matches; [`AGENTS.md:42-46`](../../../AGENTS.md) phase-gate rows still `[ ] PoC #1 …` through `[ ] v0.1 implementation`; LOC budget GREEN (227 / 8000 = 2.8 %). Informational only: [`budget_history.md:64`](../budget_history.md) records PoC total `1,344 LOC` (point-in-time); live `loc_budget.py` reports `1,644 LOC` (+300 from same-day PROMOTION_PR_DRAFTs / REVIEW_NOTES). Not drift; reconciles next monthly snapshot.
 
 ---
 
@@ -67,7 +67,7 @@
 - [`docs/specs/nucleus_architecture_v4.1.md:47`](../../specs/nucleus_architecture_v4.1.md) — MinIO tag (alignment-sweep-#2 prose) · **MEDIUM** (critical doc, founder-only).
 - `docs/specs/nucleus_architecture_v4.1.md:529` — MinIO tag + SeaweedFS year (storage-substrate paragraph) · MEDIUM.
 - [`docs/internal/research/README.md:39`](../research/README.md) — MinIO row pin string · LOW (FAQ §E5.3 flags as optional polish).
-- [`docs/NEEDS_VERIFICATION_INDEX.md:216`](../../NEEDS_VERIFICATION_INDEX.md) — *"pin candidate post-**2026**-05-04 per ADR-008"* · LOW. Brief cited `:185`; actual location is `:216`.
+- [`docs/NEEDS_VERIFICATION_INDEX.md:216`](../NEEDS_VERIFICATION_INDEX.md) — *"pin candidate post-**2026**-05-04 per ADR-008"* · LOW. Brief cited `:185`; actual location is `:216`.
 
 **Confirmed corrected** (no action): `minio.md:3,25,65,217,237` · `docker-compose.yml:8` (SeaweedFS `4.23`/`2025-05-04`, Worker B sha-verified) · `docker-compose.minio.yml:8` (MinIO `RELEASE.2025-09-07T16-13-09Z`, sha-verified). **Meta-commentary** (DO NOT fix): `ai_hallucinations.md:41-47` · `nucleus-wrapped-api-verify/SKILL.md:59` · `compatibility.md:109` · `FOUNDER_ACTION_QUEUE.md:163` · `minio.md:245`.
 

@@ -13,7 +13,7 @@ If a user (or automated tool like Dependabot) asks you to "upgrade all dependenc
 
 **Refuse.**
 
-> "Per `AGENTS.md §11.13`, we upgrade one component per PR. Which would you like first? Suggested order based on staleness: [list from `docs/compatibility.md`]"
+> "Per `AGENTS.md §11.13`, we upgrade one component per PR. Which would you like first? Suggested order based on staleness: [list from `docs/internal/compatibility.md`]"
 
 Bulk upgrades create multi-variable debugging nightmares. One component, one PR.
 
@@ -60,7 +60,7 @@ Do NOT use ranges (`>=`, `~=`). Always exact `==` pins. Per Constraint #11.
 
 ---
 
-## Step 3: Update `docs/compatibility.md`
+## Step 3: Update `docs/internal/compatibility.md`
 
 Update the row for the upgraded component:
 
@@ -245,7 +245,7 @@ If the upgrade introduces a regression that can't be quickly fixed:
 ```bash
 # 1. Update pyproject.toml back to old pin
 # 2. pip install -e ".[dev]"
-# 3. Update docs/compatibility.md
+# 3. Update docs/internal/compatibility.md
 # 4. Update ADR-012
 # 5. If already merged: git revert <merge-commit>
 ```
@@ -258,7 +258,7 @@ The rollback command must be in the PR description before merging (so it's trivi
 
 - **Upgrading without reading the changelog**: behavioral changes break things silently.
 - **Testing only the happy path**: upgrade may have changed error behavior; test error cases too.
-- **Forgetting to update `docs/compatibility.md`**: the matrix drifts from reality.
+- **Forgetting to update `docs/internal/compatibility.md`**: the matrix drifts from reality.
 - **Multiple upgrades in one PR**: "while I was upgrading DuckDB I also bumped Polars" — always separate PRs.
 - **Not updating `ADR-012`**: the ADR is the source of truth for the pin matrix.
 
@@ -269,7 +269,7 @@ The rollback command must be in the PR description before merging (so it's trivi
 ```
 [ ] Only one dependency upgraded in this PR
 [ ] pyproject.toml exact pin updated
-[ ] docs/compatibility.md updated (new version, new Last verified date)
+[ ] docs/internal/compatibility.md updated (new version, new Last verified date)
 [ ] ADR-012 updated
 [ ] upgrade_smoke.py PASS
 [ ] pytest tests/ 0 failures
@@ -285,7 +285,7 @@ The rollback command must be in the PR description before merging (so it's trivi
 ## References
 
 - `AGENTS.md §11.13` — upgrade safety discipline (Hard Constraint #11)
-- `docs/compatibility.md` — the living compatibility matrix
+- `docs/internal/compatibility.md` — the living compatibility matrix
 - `docs/decisions/ADR-012-runtime-dependency-pin-matrix-v01.md` — canonical pin matrix
 - `docs/decisions/ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md` — reference major upgrade ADR
 - `scripts/upgrade_smoke.py` — automated upgrade gate

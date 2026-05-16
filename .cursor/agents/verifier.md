@@ -94,7 +94,7 @@ This is where most "fake done" lives. Inspect carefully.
 
 Did the worker stay in its declared scope, or did it sneak edits into off-limits files?
 - Read git status (via `Shell` if available, or inspect the recently-viewed file list)
-- Check tracking docs (`docs/specs/nucleus_poc_plan.md`, `docs/budget_history.md`) — workers should NOT have touched these
+- Check tracking docs (`docs/specs/nucleus_poc_plan.md`, `docs/internal/budget_history.md`) — workers should NOT have touched these
 - Check ADRs — workers should NOT have edited
 - Check `AGENTS.md`, `.cursor/rules/nucleus.mdc`, `docs/specs/nucleus_architecture_v4.1.md` — architect-only files
 

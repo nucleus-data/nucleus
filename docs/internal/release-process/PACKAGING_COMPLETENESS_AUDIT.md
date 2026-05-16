@@ -183,7 +183,7 @@ Plus runtime-quality scripts (not pre-merge blockers but invoked in CI on dep-bu
 | Release workflow (OIDC publish) | PRESENT | [`.github/workflows/release.yml`](../../../.github/workflows/release.yml) |
 | Docs workflow (mkdocs build + GitHub Pages deploy) | PRESENT | [`.github/workflows/docs.yml`](../../../.github/workflows/docs.yml) |
 | Stale-issue workflow | PRESENT | [`.github/workflows/stale.yml`](../../../.github/workflows/stale.yml) |
-| Compatibility matrix | PARTIAL | [`docs/compatibility.md`](../../compatibility.md) exists; founder updates each quarterly upgrade audit per [`AGENTS.md`](../../../AGENTS.md) §11.13 |
+| Compatibility matrix | PARTIAL | [`docs/compatibility.md`](../compatibility.md) exists; founder updates each quarterly upgrade audit per [`AGENTS.md`](../../../AGENTS.md) §11.13 |
 | **Branch protection on `main`** | FOUNDER-ONLY | Ruleset at `.scratch/main_ruleset.json` applied after founder upgrades to GitHub Pro/Team per Runbook Phase 1 |
 
 ---

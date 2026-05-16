@@ -215,7 +215,7 @@ Expect this to take 30-60s the first time (it builds isolated environments for e
 
 ### `check_pinning.py` reports "matrix_mismatches"
 
-This means a pinned version in `pyproject.toml` doesn't match the version listed in `docs/compatibility.md`. They were authored sequentially; small drift is expected.
+This means a pinned version in `pyproject.toml` doesn't match the version listed in `docs/internal/compatibility.md`. They were authored sequentially; small drift is expected.
 
 **Fix**: Decide which version is correct (typically the actual installed one), then update the other doc to match. Tell me which package and I'll patch both.
 

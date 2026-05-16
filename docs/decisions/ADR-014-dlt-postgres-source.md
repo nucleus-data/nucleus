@@ -1,6 +1,6 @@
 # ADR-014: Postgres source via dlt wrap (Stage 1 wave) — *+ MySQL co-default (2026-05-14)*
 
-> **Status**: ACCEPTED — 2026-05-13 (founder ratified all 5 Open Questions per recommendations; see `docs/FOUNDER_ACTION_QUEUE.md §0 2026-05-13` ratification record). **Amended 2026-05-14 — MySQL parity added** (see §"MySQL parity (2026-05-14)" below).
+> **Status**: ACCEPTED — 2026-05-13 (founder ratified all 5 Open Questions per recommendations; see `docs/internal/FOUNDER_ACTION_QUEUE.md §0 2026-05-13` ratification record). **Amended 2026-05-14 — MySQL parity added** (see §"MySQL parity (2026-05-14)" below).
 > **Date**: 2026-05-13 (Postgres) · **Amended**: 2026-05-14 (MySQL parity) · **Decider**: Solo founder
 
 > **Founder ratification (2026-05-13)** — Open Questions resolved per ADR recommendations:

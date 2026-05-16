@@ -1,6 +1,6 @@
 # ADR-015: AI Copilot Chat MVP (v0.2)
 
-> **Status**: ACCEPTED — 2026-05-13 (founder ratified all 8 Open Questions per ADR recommendations; see `docs/FOUNDER_ACTION_QUEUE.md §0` ratification record)
+> **Status**: ACCEPTED — 2026-05-13 (founder ratified all 8 Open Questions per ADR recommendations; see `docs/internal/FOUNDER_ACTION_QUEUE.md §0` ratification record)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 
 > **Founder ratification (2026-05-13)** — Open Questions resolved per ADR recommendations:
@@ -184,7 +184,7 @@ LOC impact: ~390 LOC across `src/nucleus/intelligence/copilot.py` (≤ 150), `sr
 
 **Trigger** (PROPOSED → ACCEPTED when all four hold): (1) founder resolves Open Questions #1-#8; (2) ADR-006 §NV co-accepts `NE4xxx` range; (3) v0.1 ship gate per AGENTS.md §1 (`[ ] v0.1 implementation` flipped to `[x]`); (4) re-verification of LLM SDK versions + pricing + model IDs at ratification time per research §15 NEEDS VERIFICATION (LLM SDK landscape moves fast).
 
-**Downstream**: `src/nucleus/intelligence/copilot.py` (~150 LOC), `src/nucleus/intelligence/context.py` (~100 LOC), `src/nucleus/intelligence/prompts/system.j2` (~60 LOC), `src/nucleus/cli/commands/chat.py` (~80 LOC), `tests/intelligence/test_copilot*.py`, `tests/upgrade_smoke/test_litellm.py`, `scripts/dagster_leak_check.py` extension, `pyproject.toml` `litellm==1.83.14` line, `docs/specs/nucleus_cli_spec.md` chat-command amendment, `docs/internal/swap/litellm.md`, `docs/errors/copilot.md`. Compatibility matrix update in `docs/compatibility.md`. ADR-012 pin matrix update.
+**Downstream**: `src/nucleus/intelligence/copilot.py` (~150 LOC), `src/nucleus/intelligence/context.py` (~100 LOC), `src/nucleus/intelligence/prompts/system.j2` (~60 LOC), `src/nucleus/cli/commands/chat.py` (~80 LOC), `tests/intelligence/test_copilot*.py`, `tests/upgrade_smoke/test_litellm.py`, `scripts/dagster_leak_check.py` extension, `pyproject.toml` `litellm==1.83.14` line, `docs/specs/nucleus_cli_spec.md` chat-command amendment, `docs/internal/swap/litellm.md`, `docs/errors/copilot.md`. Compatibility matrix update in `docs/internal/compatibility.md`. ADR-012 pin matrix update.
 
 ## Docs URLs
 

@@ -64,7 +64,7 @@ Each entry gives: **Synopsis** · **Purpose** · **Wraps** (`ctx.*` API) · **Ou
 
 ### 3.7 `nucleus version`
 
-`nucleus version [--check-updates]` — reports installed Nucleus version + all pinned wrapped-OSS versions per `pyproject.toml` (Constraint #11 traceability); `--check-updates` queries PyPI, never auto-installs. **Wraps**: `nucleus.__version__` + `importlib.metadata.version()` per runtime dep; no network unless `--check-updates`. **Outputs**: two-column table — at minimum `nucleus` / `duckdb` / `polars` / `pyarrow` / `pyiceberg` / `dagster` (same set §11 enumerates). **Error exits**: 0 (informational; `--check-updates` network failure → warning, not error). **Cite**: `AGENTS.md` §3 Constraint #11; `docs/compatibility.md`.
+`nucleus version [--check-updates]` — reports installed Nucleus version + all pinned wrapped-OSS versions per `pyproject.toml` (Constraint #11 traceability); `--check-updates` queries PyPI, never auto-installs. **Wraps**: `nucleus.__version__` + `importlib.metadata.version()` per runtime dep; no network unless `--check-updates`. **Outputs**: two-column table — at minimum `nucleus` / `duckdb` / `polars` / `pyarrow` / `pyiceberg` / `dagster` (same set §11 enumerates). **Error exits**: 0 (informational; `--check-updates` network failure → warning, not error). **Cite**: `AGENTS.md` §3 Constraint #11; `docs/internal/compatibility.md`.
 
 ### 3.8 `nucleus chat "<question>"` ← v0.2, **Beta**
 
@@ -78,7 +78,7 @@ Each entry gives: **Synopsis** · **Purpose** · **Wraps** (`ctx.*` API) · **Ou
 
 `nucleus schedule on <key>` / `off <key>` / `trigger <key>` — **deferred to v0.2**; in v0.1.1 these three sub-commands raise `NucleusFeatureDeferredError` (NE5008) with a clear "active scheduling ships in v0.2" message and `nucleus run <key>` as the manual workaround.
 
-**Stability**: Beta (ADR-005 §2). **Wraps**: `nucleus.coordination.schedules.{list_schedules, preview_schedule}` → croniter (validation + preview) + Dagster `ScheduleDefinition` (v0.2 active-scheduling path; hidden behind coordination layer). **Error exits**: unknown / unscheduled asset → 1 `NucleusScheduleNotFoundError` (NE5006); invalid format → 1 `NucleusInvalidAssetDefinition` (NE3004); deferred sub-commands → 1 `NucleusFeatureDeferredError` (NE5008). **Cite**: ADR-017; `nucleus_ctx_sdk_spec.md` §5 (`schedule=` kwarg); `docs/compatibility.md` (`croniter==3.0.4`). **Out-of-scope for v0.1.1**: daemon wiring, timezone support, partition-aware scheduling (all v0.2+).
+**Stability**: Beta (ADR-005 §2). **Wraps**: `nucleus.coordination.schedules.{list_schedules, preview_schedule}` → croniter (validation + preview) + Dagster `ScheduleDefinition` (v0.2 active-scheduling path; hidden behind coordination layer). **Error exits**: unknown / unscheduled asset → 1 `NucleusScheduleNotFoundError` (NE5006); invalid format → 1 `NucleusInvalidAssetDefinition` (NE3004); deferred sub-commands → 1 `NucleusFeatureDeferredError` (NE5008). **Cite**: ADR-017; `nucleus_ctx_sdk_spec.md` §5 (`schedule=` kwarg); `docs/internal/compatibility.md` (`croniter==3.0.4`). **Out-of-scope for v0.1.1**: daemon wiring, timezone support, partition-aware scheduling (all v0.2+).
 
 ---
 

@@ -3,13 +3,13 @@
 > **Status**: AMENDED — 2026-05-14 — three rows demoted / removed per `docs/internal/research/otel_day1_decision.md` Option α-split; `opentelemetry-sdk` and `sqlglot` shifted to `[project.optional-dependencies]`; `msgspec` removed entirely. Originally ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0).
 > **Date**: 2026-05-13 (original) · 2026-05-14 (amendment) · **Decider**: Solo founder
 > **Tags**: dependencies, pins, governance, license-tier, constraint-11
-> **Related**: ADR-003, ADR-004, ADR-007, ADR-008, ADR-010, ADR-011; [AGENTS.md §3 Constraint #11](../../AGENTS.md); [`pyproject.toml`](../../pyproject.toml); `docs/internal/research/*.md`; `docs/compatibility.md`
+> **Related**: ADR-003, ADR-004, ADR-007, ADR-008, ADR-010, ADR-011; [AGENTS.md §3 Constraint #11](../../AGENTS.md); [`pyproject.toml`](../../pyproject.toml); `docs/internal/research/*.md`; `docs/internal/compatibility.md`
 
 ## Context
 
 The 2026-05 research wave delivered ~20 component research docs (`dagster`, `pyiceberg`, `duckdb`, `polars`, `pyarrow`, `dlt`, `openlineage`, `opentelemetry`, `sqlglot`, `polaris`, `lakekeeper`, `marimo`, `dbt-duckdb`, `soda`, `minio`, `daft`, `lance`, `oidc_providers`, `observability_backends`, `ducklake`); each surfaced a pin candidate + license + JVM-free check + tier classification. `pyproject.toml` already pins 17 runtime deps but holds no inline tier metadata and no link back to the research doc that justifies each pin.
 
-**AGENTS.md §3 Constraint #11** (*"exact version pins in `pyproject.toml`, one-component-per-PR upgrades, mandatory upgrade smoke tests in CI, documented rollback command, major-version-upgrade ADR requirement"*) treats the pin list as canonical operational state; **ADR-007** classifies each dep into GREEN / YELLOW / RED license tiers. This ADR is the **single consolidation point** (pin × research × license tier × Tier-0/1/2 swap class per Constraint #9). Once accepted, `pyproject.toml`, `scripts/check_pinning.py`, `scripts/check_licenses.py`, and `docs/compatibility.md` all derive from this matrix; drift is a CI-detected bug.
+**AGENTS.md §3 Constraint #11** (*"exact version pins in `pyproject.toml`, one-component-per-PR upgrades, mandatory upgrade smoke tests in CI, documented rollback command, major-version-upgrade ADR requirement"*) treats the pin list as canonical operational state; **ADR-007** classifies each dep into GREEN / YELLOW / RED license tiers. This ADR is the **single consolidation point** (pin × research × license tier × Tier-0/1/2 swap class per Constraint #9). Once accepted, `pyproject.toml`, `scripts/check_pinning.py`, `scripts/check_licenses.py`, and `docs/internal/compatibility.md` all derive from this matrix; drift is a CI-detected bug.
 
 ## Decision
 
@@ -98,8 +98,8 @@ The 2026-05 research wave delivered ~20 component research docs (`dagster`, `pyi
 | Transitive dep silently changes license | `scripts/check_licenses.py` (ADR-007) lock-file watching; CI fails on tier shift |
 | `pyiceberg` upgrade blocks PoC #1 promo + v0.3 dlt | ADR-003 protocol; `tests/upgrade_smoke/test_iceberg_upgrade.py` |
 | AI agent proposes a RED tier dep | This ADR + `scripts/check_licenses.py` + PR template checklist |
-| Pin staleness compounds (e.g., OTEL 12 minors behind) | Quarterly upgrade audit per AGENTS.md §11.13; tracked in `docs/compatibility.md` |
-| `docs/compatibility.md` drifts from this matrix | This ADR is canonical; `compatibility.md` is the derived snapshot |
+| Pin staleness compounds (e.g., OTEL 12 minors behind) | Quarterly upgrade audit per AGENTS.md §11.13; tracked in `docs/internal/compatibility.md` |
+| `docs/internal/compatibility.md` drifts from this matrix | This ADR is canonical; `compatibility.md` is the derived snapshot |
 | Storage-substrate dual-track confuses users | ADR-008 docs sweep; SeaweedFS = default, MinIO = `-f docker-compose.minio.yml` opt-in |
 | NEEDS VERIFICATION items merge silently | Each NV listed in Open Questions; resolve before that row's status flips PROPOSED → ACCEPTED |
 
@@ -108,7 +108,7 @@ The 2026-05 research wave delivered ~20 component research docs (`dagster`, `pyi
 1. `scripts/check_pinning.py` — extend to assert this matrix verbatim against `[project.dependencies]`; fails CI on drift.
 2. `scripts/check_licenses.py` (ADR-007) — cross-references License + Tier columns; fails CI on tier shift vs lock file.
 3. `tests/integration/dependencies/test_imports.py` (post-PoC promotion) — `import <pkg>` + one canonical API call per pinned dep (AGENTS.md §11.12).
-4. `docs/compatibility.md` — derived view; quarterly snapshot per AGENTS.md §11.13.
+4. `docs/internal/compatibility.md` — derived view; quarterly snapshot per AGENTS.md §11.13.
 5. `.github/PULL_REQUEST_TEMPLATE.md` — dependency-upgrade checkbox cites this ADR.
 
 ## Rollback
@@ -117,7 +117,7 @@ ADR-012a amends a specific row if a PoC empirically forces a pin change (e.g., P
 
 ## Trigger
 
-Status flips **PROPOSED → ACCEPTED** when: (1) founder signs off; (2) NEEDS VERIFICATION items resolved per Open Questions OR explicitly marked deferred-OK; (3) `scripts/check_pinning.py` extended to assert this matrix verbatim; (4) `docs/compatibility.md` either deprecated in favour of this ADR OR regenerated as a derived snapshot. **Not gated on any PoC** — documentation governance; can ACCEPT immediately.
+Status flips **PROPOSED → ACCEPTED** when: (1) founder signs off; (2) NEEDS VERIFICATION items resolved per Open Questions OR explicitly marked deferred-OK; (3) `scripts/check_pinning.py` extended to assert this matrix verbatim; (4) `docs/internal/compatibility.md` either deprecated in favour of this ADR OR regenerated as a derived snapshot. **Not gated on any PoC** — documentation governance; can ACCEPT immediately.
 
 ## Downstream consumers
 
@@ -126,7 +126,7 @@ Status flips **PROPOSED → ACCEPTED** when: (1) founder signs off; (2) NEEDS VE
 | `pyproject.toml` `[project.dependencies]` | THIS matrix is canonical; drift is a CI bug |
 | `scripts/check_pinning.py` | reads this matrix, asserts pins verbatim |
 | `scripts/check_licenses.py` (ADR-007) | cross-references License + Tier columns |
-| `docs/compatibility.md` | derived quarterly snapshot |
+| `docs/internal/compatibility.md` | derived quarterly snapshot |
 | All future ADRs proposing upgrades | cite the row they touch |
 | `.github/PULL_REQUEST_TEMPLATE.md` | dependency-upgrade checkbox cites this ADR |
 | AI agents | cite this ADR for "what is the current pin of X" — never answer from training memory (AGENTS.md §11.12) |
@@ -136,7 +136,7 @@ Status flips **PROPOSED → ACCEPTED** when: (1) founder signs off; (2) NEEDS VE
 
 1. **Enumerate transitive pins** (`pyarrow`, `click`, `s3fs`) as first-class rows, or stay top-level only? *Default*: include both; CI lint enforces only top-level. (`pyarrow` + `click` already explicit; `s3fs` flagged for explicit pin.) — **RESOLVED 2026-05-13**: keep default (include both rows; CI lint top-level only) per founder blanket approval.
 2. **Should Tier 0 immortal rows** (`pyarrow`, `opentelemetry-api/sdk`) **override the upgrade-ADR requirement** since immortal = never swap, only upgrade? *Default*: still require ADR for major bumps (ABI / API churn risk); minor/patch follow normal Constraint #11. — **RESOLVED 2026-05-13**: keep default (ADR required for major bumps) per founder blanket approval.
-3. **Retire `docs/compatibility.md`** in favour of this ADR? *Default*: keep `compatibility.md` as a quarterly human snapshot; ADR-012 is the policy lock consumed by CI. — **RESOLVED 2026-05-13**: keep `compatibility.md` as derived quarterly snapshot per founder blanket approval.
+3. **Retire `docs/internal/compatibility.md`** in favour of this ADR? *Default*: keep `compatibility.md` as a quarterly human snapshot; ADR-012 is the policy lock consumed by CI. — **RESOLVED 2026-05-13**: keep `compatibility.md` as derived quarterly snapshot per founder blanket approval.
 4. **Resolve NEEDS VERIFICATION items before ACCEPT?** (a) `psycopg[binary]==3.2.3` license string vs ADR-007 LGPL row (Cloud-impact); (b) explicit `s3fs` pin (currently via `pyiceberg[s3fs]` extra); (c) `dbt-core` PyPI license-field-blank Apache-2.0 confirmation; (d) SeaweedFS exact docker tag per ADR-008; (e) `pyjwt==2.8.x` exact patch at v0.3 ADR time. *Default*: (a) + (b) before ACCEPT (v0.1 surface); (c)-(e) deferred-OK to their adoption ADRs. — **RESOLVED 2026-05-13** per founder blanket approval (FOUNDER_ACTION_QUEUE.md §1 A1.15): (a) **resolved-before-ACCEPT** — `psycopg[binary]==3.2.3` license = LGPLv3+ (dynamic-link exempt) per ADR-007 §Tier 2 YELLOW row; matrix row already records this. (b) **FLAGGED — surfaced for founder action** — `s3fs` currently transitive via `pyiceberg[s3fs]==0.8.1` extra in `pyproject.toml:47`, **not** an explicit top-level pin row; making `s3fs` explicit requires a `pyproject.toml` edit which is out of this PR's scope (founder must add `s3fs==<NV exact version>` to `[project.dependencies]` in a one-line follow-up PR per AGENTS.md §11.13 one-component-per-PR; record matching row in the matrix above). (c)+(d)+(e) **deferred-OK** to their adoption ADRs (dbt-duckdb v0.3+ ADR, ADR-008 SeaweedFS housekeeping PR, v0.3 OIDC ADR-010 implementation PR respectively).
 
 ---
@@ -153,4 +153,4 @@ Status flips **PROPOSED → ACCEPTED** when: (1) founder signs off; (2) NEEDS VE
 
 **Amended**: 2026-05-14 -- `jinja2==3.1.5` -> `jinja2==3.1.6` to unblock cold `pip install -e ".[dev]"` on clean environments. `litellm==1.83.14` hard-locks `jinja2==3.1.6` in its wheel metadata; `pip` resolver rejects `3.1.5` when `litellm` is in the same env, making the install fail entirely. Security context: 3.1.6 is a security release that patches GHSA-cpwx-vrp4-4pq7 (the `|attr` filter bypassing sandbox attribute lookup) -- no behavioral or API changes vs 3.1.5. Release notes: https://github.com/pallets/jinja/releases/tag/3.1.6 (published 2025-03-05). **Rollback:** `pip install jinja2==3.1.5` requires also downgrading `litellm` -- not a viable rollback; the forward-only path is correct here. Caught by WSL beachhead E2E 2026-05-14.
 
-**Amended**: 2026-05-15 — Connector expansion wave. Added two new `[project.optional-dependencies]` extras: `snowflake = ["dlt[snowflake]==1.26.0"]` (Apache-2.0 · GREEN; per [ADR-019](ADR-019-snowflake-connector-via-dlt.md)) and `gcs = ["gcsfs==2026.5.0"]` (BSD-3-Clause · GREEN; per [ADR-020](ADR-020-object-storage-connectors-via-duckdb.md)). S3 and local-filesystem connectors use existing core deps (`duckdb==1.1.3`, `s3fs==2026.4.0`) — no new pins. Optional pin count revised: 2 → 4 optional-runtime pins. `all = ["nucleus[dev,docs,observability,lineage-advanced,snowflake,gcs]"]` updated. `docs/compatibility.md` §2 and §7 updated accordingly. Rollback for `gcsfs`: `pip uninstall gcsfs`. Rollback for `dlt[snowflake]`: no action needed (dlt itself stays; Snowflake dialect extras are uninstalled by pip if `nucleus[snowflake]` is removed).
+**Amended**: 2026-05-15 — Connector expansion wave. Added two new `[project.optional-dependencies]` extras: `snowflake = ["dlt[snowflake]==1.26.0"]` (Apache-2.0 · GREEN; per [ADR-019](ADR-019-snowflake-connector-via-dlt.md)) and `gcs = ["gcsfs==2026.5.0"]` (BSD-3-Clause · GREEN; per [ADR-020](ADR-020-object-storage-connectors-via-duckdb.md)). S3 and local-filesystem connectors use existing core deps (`duckdb==1.1.3`, `s3fs==2026.4.0`) — no new pins. Optional pin count revised: 2 → 4 optional-runtime pins. `all = ["nucleus[dev,docs,observability,lineage-advanced,snowflake,gcs]"]` updated. `docs/internal/compatibility.md` §2 and §7 updated accordingly. Rollback for `gcsfs`: `pip uninstall gcsfs`. Rollback for `dlt[snowflake]`: no action needed (dlt itself stays; Snowflake dialect extras are uninstalled by pip if `nucleus[snowflake]` is removed).

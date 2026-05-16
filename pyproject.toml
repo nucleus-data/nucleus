@@ -4,7 +4,7 @@
 # Per AGENTS.md Hard Constraint #11: all runtime dependencies use EXACT pins.
 # Per AGENTS.md Hard Constraint #10: every wrapped library has docs reference.
 # Version updates: ONE component per PR; smoke tests required; rollback documented.
-# See docs/compatibility.md for current tested versions.
+# See docs/internal/compatibility.md for current tested versions.
 # ============================================================================
 
 [build-system]
@@ -36,7 +36,7 @@ classifiers = [
 # Runtime dependencies — EXACT PINS REQUIRED (Constraint #11)
 # ----------------------------------------------------------------------------
 # Each line: pinned version + docs URL.
-# To upgrade: see docs/compatibility.md upgrade workflow.
+# To upgrade: see docs/internal/compatibility.md upgrade workflow.
 #
 # Install-size split (ADR-039, PoC #5 blocker, 2026-05-15)
 # ---------------------------------------------------------

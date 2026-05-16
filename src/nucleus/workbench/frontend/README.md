@@ -1,13 +1,51 @@
 # Nucleus Workbench — Frontend (Editorial Hero v0.2)
 
+> ## ⚠ Status: PREVIEW — not part of the v0.2.0 ship
+>
+> This React + TypeScript + Vite source tree is **v0.3 work-in-progress**
+> and is **not** what users run when they invoke `nucleus workbench up`. It
+> has never been compiled or built in this repository: `node_modules` is
+> absent (corporate-proxy `npm install` was blocked during the v0.2.0
+> sprint), TypeScript was never type-checked, Vite was never invoked, and
+> there are no UI tests for these files.
+>
+> **Production path for v0.2.0 ⇒** `src/nucleus/workbench/static/index.html`
+> (~79 KB single-file inline-React app + locally vendored
+> `static/vendor/{react,react-dom,tailwind}.min.js`). That path is the one
+> mounted by `nucleus.workbench.app:create_app`, verified by
+> `tests/workbench/` (35/35 PASS), and offline-renderable per
+> [ADR-016](../../../../docs/decisions/ADR-016-workbench-mvp.md) Decision
+> §"Process model" + Rationale (no Node.js at runtime, single Python
+> process, localhost-bound).
+>
+> **Why two implementations exist.** ADR-016 selected Fork B (custom React
+> SPA + FastAPI) as the long-term Workbench architecture. The compile step
+> requires `npm install`, which the v0.2.0 sprint environment could not
+> perform reliably (corporate proxy). To still ship a working web surface
+> for v0.2.0 we authored a self-contained, offline-renderable `index.html`
+> that vendors React/Tailwind locally and ships in the wheel. Both paths
+> implement the same Editorial Hero layout against the same FastAPI
+> `/api/*` surface.
+>
+> **v0.3 plan.** Compile this tree (`npm install && npm run build`), run a
+> Lighthouse audit + bundle-size check (≤ 500 KB initial JS gzipped per
+> ADR-016 Risks), and either (a) replace `static/index.html` with the
+> built artifact (`dist/*` → `../static/`), or (b) ship both and let
+> operators pick. Decision deferred to the v0.3 Workbench polish ADR
+> (placeholder: ADR-038 evolution).
+>
+> **See:** [ADR-042 — Workbench React Frontend is Preview (v0.3 WIP)](../../../../docs/decisions/ADR-042-workbench-frontend-preview.md).
+
+---
+
 React 18 + Vite 5 + TypeScript 5 + Tailwind CSS 3 SPA.
 Designed as an **Editorial Hero** layout: bold gradient hero dashboard +
 3-column grid (Recent Runs | Pipeline DAG | AI Copilot).
 
-## Dev (requires npm / Node 18+)
+## Dev (requires npm / Node 18+) — v0.3 sprint task
 
 ```bash
-# Install deps
+# Install deps (currently fails behind corporate proxies; v0.3 unblocks this)
 npm install
 
 # Dev server (proxies /api/* to localhost:8765)
@@ -16,7 +54,7 @@ npm run dev
 # → open http://localhost:5173
 ```
 
-## Build for production
+## Build for production (v0.3 — not yet exercised in v0.2.0)
 
 ```bash
 npm run build
@@ -24,14 +62,14 @@ npm run build
 cp -r dist/* ../static/
 ```
 
-## Proxy-blocked environments (Bosch APAC etc.)
+## Proxy-blocked environments (the v0.2.0 reality)
 
-If `npm install` fails (corporate proxy), the static CDN fallback demo is available
-at `../static/index.html` and is served by FastAPI automatically.
-The CDN demo renders the full Editorial Hero layout using React 18 via esm.sh and
-Tailwind via the Play CDN — no build step required.
+If `npm install` fails (corporate proxy), use the v0.2.0 production path —
+`../static/index.html` (vendored React + Tailwind under `../static/vendor/`)
+is mounted by FastAPI automatically and renders the full Editorial Hero
+layout with **no build step and no Node.js at runtime** per ADR-016.
 
-Run `nucleus workbench up` and open http://localhost:8765 to see the demo.
+Run `nucleus workbench up` and open http://localhost:8765 to see it.
 
 ## Routes
 

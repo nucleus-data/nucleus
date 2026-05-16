@@ -108,7 +108,7 @@ python -m pytest tests/ -q --tb=short
 
 Expected: some tests pass, some may skip (for features requiring Docker or live services). **Zero failures** is the goal; skips are acceptable.
 
-If failures appear: check whether they are pre-existing (check `docs/FOUNDER_ACTION_QUEUE.md`) or caused by your environment. If new, stop and investigate before proceeding.
+If failures appear: check whether they are pre-existing (check `docs/internal/FOUNDER_ACTION_QUEUE.md`) or caused by your environment. If new, stop and investigate before proceeding.
 
 ---
 
@@ -178,7 +178,7 @@ Do not write any code until you've read at least `AGENTS.md`.
 
 Good starting points:
 - GitHub Issues labeled `good-first-issue`
-- Items in `docs/FOUNDER_ACTION_QUEUE.md` §"Optional polish" (E5.x items)
+- Items in `docs/internal/FOUNDER_ACTION_QUEUE.md` §"Optional polish" (E5.x items)
 - Documentation improvements in `docs/site/`
 
 Avoid first-PR edits to:

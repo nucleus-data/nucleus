@@ -40,7 +40,7 @@ Ratified 2026-05-15: implemented in commit a41a82c (v0.2.0 workstreams bundle). 
 2. `Makefile`: `install` target uses `uv pip install -e ".[dev]"` if `uv` is on PATH, falls back to pip.
 3. `.github/workflows/ci.yml`: all 5 jobs updated to use `astral-sh/setup-uv@v3` + `uv pip install --system`.
 4. `.pre-commit-config.yaml`: ruff hook rev bumped to `v0.15.13`.
-5. `docs/compatibility.md`: ruff row updated.
+5. `docs/internal/compatibility.md`: ruff row updated.
 6. Ran `ruff format .` — 107 files reformatted with 2026 style guide.
 7. Added `PLC0415`, `SIM105`, `N818`, `RUF022` to global ignore list (intentional patterns).
 

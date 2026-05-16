@@ -243,7 +243,7 @@ FIX: Look up the actual license at https://pypi.org/project/some-package/
 **How to fix**:
 ```
 FAIL: ADR-012 cross-check: duckdb pin in pyproject.toml (1.1.5) != compatibility.md (1.1.3)
-FIX: Update docs/compatibility.md to match the new pin
+FIX: Update docs/internal/compatibility.md to match the new pin
 ```
 
 ---
@@ -305,7 +305,7 @@ Before you start work, run all governance scripts. If any fail on the unmodified
 python scripts/check_vocabulary.py > /dev/null 2>&1 && echo PASS || echo FAIL
 ```
 
-Do not fix pre-existing failures unless they block your work. Log them in `docs/FOUNDER_ACTION_QUEUE.md`.
+Do not fix pre-existing failures unless they block your work. Log them in `docs/internal/FOUNDER_ACTION_QUEUE.md`.
 
 ---
 

@@ -41,7 +41,7 @@ Recommended: **Option A**. No implementation work at v0.3.
 At v0.3:
 1. Verify R2 NV-6 (MotherDuck DuckLake + Iceberg compatibility at https://motherduck.com/docs/integrations/file-formats/ducklake/)
 2. Document MotherDuck as Mode 2 reference architecture in `docs/yield-to-giants/mode2.md`
-3. Add to `docs/compatibility.md` as a watch-list item
+3. Add to `docs/internal/compatibility.md` as a watch-list item
 
 At v1.5+:
 1. Open dedicated ADR if NV-6 confirms Iceberg compatibility

@@ -26,7 +26,7 @@ Once promotion lands the error classes become **public contract**: users grep lo
 - `NE1xxx` = **L0 Physics** (Iceberg, Parquet, Arrow, S3, network IO)
 - `NE2xxx` = **L1 Engines** (DuckDB, Polars; future DataFusion/Daft — compute, parse/bind/plan, in-engine resource limits)
 - `NE3xxx` = **L2 Coordination** (asset graph, Dagster wrap, contracts, lineage, translator itself)
-- `NE4xxx` = **L3 Intelligence** (AI Copilot v0.2+, `ctx.agent` v0.5+) — **range accepted 2026-05-13 via ADR-015 ratification; same-PR co-amendment per `docs/FOUNDER_ACTION_QUEUE.md §0`**
+- `NE4xxx` = **L3 Intelligence** (AI Copilot v0.2+, `ctx.agent` v0.5+) — **range accepted 2026-05-13 via ADR-015 ratification; same-PR co-amendment per `docs/internal/FOUNDER_ACTION_QUEUE.md §0`**
 - `NE5xxx` = **L4 Experience** (`ctx` SDK, CLI, Workbench, Marimo)
 
 **NE4xxx initial allocation (ADR-015, 2026-05-13):**

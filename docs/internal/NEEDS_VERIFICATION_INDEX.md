@@ -1,6 +1,6 @@
 # NEEDS VERIFICATION Index
 
-> **Status**: v2 — refresh after ADR-004, ADR-008, ADR-009, ADR-010, alignment sweeps 1+2, macOS SETUP. **Date**: 2026-05-13 05:10 UTC+7. **Per**: [`AGENTS.md`](../AGENTS.md) §11.12. **Supersedes v1** (Worker FF, 2026-05-13 ~02:50).
+> **Status**: v2 — refresh after ADR-004, ADR-008, ADR-009, ADR-010, alignment sweeps 1+2, macOS SETUP. **Date**: 2026-05-13 05:10 UTC+7. **Per**: [`AGENTS.md`](../../AGENTS.md) §11.12. **Supersedes v1** (Worker FF, 2026-05-13 ~02:50).
 > **Method**: `Grep` for `NEEDS VERIFICATION` across `docs/`, `poc/`, `scripts/`, top-level + new compose stubs. **181 raw markers across 59 files** (excluding this index's own self-references); substantive sub-items expand to ~235.
 > **Purpose**: founder's one-stop list for "what to verify when Python install lands, Docker is running, or external services are reachable".
 

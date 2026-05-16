@@ -22,7 +22,7 @@ Each "no" = stop and fix.
 5. **Pinned?** All runtime deps still `package==X.Y.Z`? (Hard Constraint #11)
 6. **Beachhead?** Serves (or doesn't hurt) the **<30-min** target? (architecture v4.1 §1.5)
 7. **Errors translated?** Every external exception caught at a layer boundary becomes a `NucleusError`? (v4.1 §6.4)
-8. **LOC budget?** If `src/` LOC grew, is `docs/budget_history.md` updated and the tier ceiling respected? (`AGENTS.md §11.6`)
+8. **LOC budget?** If `src/` LOC grew, is `docs/internal/budget_history.md` updated and the tier ceiling respected? (`AGENTS.md §11.6`)
 9. **New library?** If wrapping a new lib, is `docs/internal/research/<library>.md` written from official docs? (`AGENTS.md §11.12`)
 
 ## §3. Branching and commits
@@ -74,7 +74,7 @@ These apply to YOU, not the AI. The AI does what you tell it; the discipline is 
 - **Verify against official docs** (Hard Constraint #10). Cite the docs URL in the import comment. Never accept AI-suggested wrapped-lib calls without confirming the API exists.
 - **Log hallucinations** in `docs/internal/research/ai_hallucinations.md`.
 - **Risky/Bad categories** (`AGENTS.md §11.3`) — do NOT accept AI authorship for: Error Translation Layer, `ctx.sql` Jinja resolver core, concurrency / atomicity decisions, performance-critical paths, schema evolution edge cases, direct Dagster internals.
-- **New dep proposed by AI?** Write `docs/internal/research/<library>.md` BEFORE merging; confirm version exists on PyPI; update [`docs/compatibility.md`](docs/compatibility.md).
+- **New dep proposed by AI?** Write `docs/internal/research/<library>.md` BEFORE merging; confirm version exists on PyPI; update [`docs/internal/compatibility.md`](docs/internal/compatibility.md).
 - **No bulk upgrades.** One component per PR (`AGENTS.md §11.13`).
 
 ## §8. Issue triage
@@ -90,7 +90,7 @@ Templates: [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/) (`bug_report.yml
 - [ ] Vocabulary clean (engineering.md §15)
 - [ ] Tests passing locally + in CI (lint + type + unit; integration if relevant)
 - [ ] LOC under tier ceiling (`scripts/loc_budget.py --report`)
-- [ ] Docs updated as needed: docs/internal/research/, docs/compatibility.md, ADR, CHANGELOG
+- [ ] Docs updated as needed: docs/internal/research/, docs/internal/compatibility.md, ADR, CHANGELOG
 - [ ] PR template filled completely; no empty sections
 ```
 
@@ -120,7 +120,7 @@ Rejected on sight:
 
 ## §12. Useful links
 
-[`AGENTS.md`](AGENTS.md) · [`docs/conventions/engineering.md`](docs/conventions/engineering.md) · [`docs/onboarding/learning_path.md`](docs/onboarding/learning_path.md) · [`.cursor/rules/nucleus.mdc`](.cursor/rules/nucleus.mdc) · [`docs/compatibility.md`](docs/compatibility.md) · [`docs/decisions/`](docs/decisions/) · [`docs/internal/security/threat_model_v0.md`](docs/internal/security/threat_model_v0.md) · [`docs/specs/nucleus_architecture_v4.1.md`](docs/specs/nucleus_architecture_v4.1.md) · [`SETUP.md`](SETUP.md) · [`Makefile`](Makefile) (`make help`)
+[`AGENTS.md`](AGENTS.md) · [`docs/conventions/engineering.md`](docs/conventions/engineering.md) · [`docs/onboarding/learning_path.md`](docs/onboarding/learning_path.md) · [`.cursor/rules/nucleus.mdc`](.cursor/rules/nucleus.mdc) · [`docs/internal/compatibility.md`](docs/internal/compatibility.md) · [`docs/decisions/`](docs/decisions/) · [`docs/internal/security/threat_model_v0.md`](docs/internal/security/threat_model_v0.md) · [`docs/specs/nucleus_architecture_v4.1.md`](docs/specs/nucleus_architecture_v4.1.md) · [`SETUP.md`](SETUP.md) · [`Makefile`](Makefile) (`make help`)
 
 ---
 

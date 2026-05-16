@@ -201,7 +201,7 @@ class TestI2LocBudgetGreen:
     """I2: src/nucleus/ LOC < 8,000 (v0.1 ceiling).
 
     Per docs/internal/release-process/E2E_TEST_PLAN.md §I2.
-    Ref: AGENTS.md §11.6; docs/budget_history.md.
+    Ref: AGENTS.md §11.6; docs/internal/budget_history.md.
     """
 
     def test_loc_budget_under_ceiling(self) -> None:

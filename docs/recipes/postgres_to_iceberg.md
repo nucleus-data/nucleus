@@ -175,6 +175,6 @@ Per [AGENTS.md §11.12](../../AGENTS.md), uncertain claims logged so PoC #5 can 
 2. **`nucleus init --template=basic`** scaffold content unspecified beyond the template name in [`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §3.1.
 3. **`@nucleus.asset` + `ctx.read(..., as_="polars")`** are v0.1 per the ctx SDK table ([v4.1 §13.2](../specs/nucleus_architecture_v4.1.md)) but no implementation lives in `src/nucleus/` yet (AGENTS.md §11.1 phase gate).
 4. **`nucleus sql` auto-resolves Iceberg asset names to DuckDB tables** — pyiceberg supports the underlying `.to_duckdb(name)` ([`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §5); the `ctx`-side glue is unimplemented.
-5. **DuckDB Iceberg extension** read coverage of newly-written tables — read-only in 1.1.3 per [`docs/internal/research/duckdb.md`](../research/duckdb.md); confirm against [`docs/compatibility.md`](../compatibility.md).
+5. **DuckDB Iceberg extension** read coverage of newly-written tables — read-only in 1.1.3 per [`docs/internal/research/duckdb.md`](../research/duckdb.md); confirm against [`docs/internal/compatibility.md`](../internal/compatibility.md).
 
 Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../research/ai_hallucinations.md). Re-validate after PoC #5 (per [`docs/specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §13).

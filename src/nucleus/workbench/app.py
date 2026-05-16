@@ -12,10 +12,24 @@ Routes:
     /api/runs/{id}/log     — SSE log stream for a run
     /api/query             — POST: execute SQL via ctx.sql + DuckDB
     /api/chat              — POST: proxy to Nucleus AI Copilot (ADR-015)
-    /                      — static SPA (React build or CDN fallback)
+    /                      — static SPA bundle from ``./static/`` (offline-
+                             renderable; vendored React + Tailwind under
+                             ``./static/vendor/``)
+
+Static-vs-frontend boundary (ADR-042, v0.2.0)
+---------------------------------------------
+Only ``./static/`` is mounted at ``/`` and shipped to users. The sibling
+``./frontend/`` directory holds a parallel React + TypeScript + Vite
+source tree that is **preview / v0.3 work-in-progress** — it has never
+been compiled in this repository (corporate-proxy ``npm install``
+constraints during the v0.2.0 sprint), is not bundled, and is **not**
+imported by this app or by any production code path. End users running
+``nucleus workbench up`` always receive the offline-renderable
+``static/index.html`` per ADR-016 + ADR-042.
 
 CORS is allowed for the Vite dev server (localhost:5173) so ``npm run dev``
-works against the FastAPI backend on :8000 / :8765 without a proxy.
+works against the FastAPI backend on :8000 / :8765 without a proxy when
+the ``./frontend/`` tree is eventually built (v0.3 task).
 
 # Stability: Internal @ v0.2
 """

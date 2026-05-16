@@ -130,7 +130,7 @@ Hard ceiling **8,000 LOC** for `src/nucleus/` at v0.1 per `pyproject.toml:291` +
 | `ctx/` | 2400 | _context 250 + read/write 500 + copy_from 250 + sql 800 + _decorators 400 + shared 200 |
 | `cli/` | 1800 | main 100 + commands ~1530 + helpers 170 |
 | `intelligence/` | 0 | v0.1 OUT (v4.1 §18.1) |
-| **Sum / Buffer / Ceiling** | **7450 / 550 / 8000** | tracked monthly via `scripts/loc_budget.py` → `docs/budget_history.md` |
+| **Sum / Buffer / Ceiling** | **7450 / 550 / 8000** | tracked monthly via `scripts/loc_budget.py` → `docs/internal/budget_history.md` |
 
 ---
 

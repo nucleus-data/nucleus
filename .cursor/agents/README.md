@@ -144,7 +144,7 @@ Per Cursor docs §"Anti-patterns to avoid":
 | `.cursor/rules/nucleus.mdc` | Cursor-specific workflow tactics + 8-question gate |
 | `docs/specs/nucleus_architecture_v4.1.md` | The architecture every subagent must respect |
 | `docs/specs/nucleus_poc_plan.md` | What's being promoted; status of each PoC |
-| `docs/FOUNDER_ACTION_QUEUE.md` | What's pending founder decision (NOT delegatable) |
+| `docs/internal/FOUNDER_ACTION_QUEUE.md` | What's pending founder decision (NOT delegatable) |
 
 ---
 

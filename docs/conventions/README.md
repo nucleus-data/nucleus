@@ -2,7 +2,7 @@
 
 Project-wide engineering rules: language, type system, imports, formatting, testing, dependency hygiene, secret handling, commit and PR discipline. Per [`AGENTS.md`](../../AGENTS.md) §10, every AI agent and human contributor follows these — they make 1,000 small decisions once so they're never re-debated. PRs that violate engineering conventions are rejected without further review (per `engineering.md` §0).
 
-This file is a navigation index. Read the linked convention before opening any PR; per [`AGENTS.md`](../../AGENTS.md) Hard Constraints #10 + #11, conventions co-evolve with the wrapped-library pin matrix in [`../compatibility.md`](../compatibility.md) and the official-docs anchors in [`../research/`](../research/).
+This file is a navigation index. Read the linked convention before opening any PR; per [`AGENTS.md`](../../AGENTS.md) Hard Constraints #10 + #11, conventions co-evolve with the wrapped-library pin matrix in [`../internal/compatibility.md`](../internal/compatibility.md) and the official-docs anchors in [`../research/`](../research/).
 
 ---
 
@@ -25,7 +25,7 @@ This file is a navigation index. Read the linked convention before opening any P
 
 ## Cross-cutting touch points
 
-- [`../compatibility.md`](../compatibility.md) — runtime dependency pin matrix (per Hard Constraint #11)
+- [`../internal/compatibility.md`](../internal/compatibility.md) — runtime dependency pin matrix (per Hard Constraint #11)
 - [`../research/`](../research/) — official-docs anchors per Hard Constraint #10
 - [`../decisions/`](../decisions/) — ADRs that amend a convention (e.g., ADR-005 SDK API freeze, ADR-006 error code numbering, ADR-007 license tier policy)
 - [`../patterns/secret_management.md`](../patterns/secret_management.md) — `pydantic.SecretStr` + `ctx.secrets` discipline (cross-cutting pattern)

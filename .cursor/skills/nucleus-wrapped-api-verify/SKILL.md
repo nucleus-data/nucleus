@@ -85,4 +85,4 @@ MinIO tag) are model entries.
 
 If the user asks "upgrade all dependencies", split into one-component-per-PR
 per `@AGENTS.md §11.13`. Suggest order by staleness from
-`@docs/compatibility.md`. Never bulk-upgrade.
+`@docs/internal/compatibility.md`. Never bulk-upgrade.

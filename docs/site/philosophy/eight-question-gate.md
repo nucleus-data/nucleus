@@ -31,7 +31,7 @@ Before any new feature, component, or abstraction is added to Nucleus, it must p
 
 6. **Does it stay within the &lt;30K LOC budget?**
 
-   Track against [`docs/budget_history.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/budget_history.md). If a feature would push past the phase ceiling, defer it.
+   Track against [`docs/internal/budget_history.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/budget_history.md). If a feature would push past the phase ceiling, defer it.
 
 7. **Is it triggered by empirical telemetry, not anxiety?**
 
@@ -57,7 +57,7 @@ Feature: [name]
 8. v0.1 required: [yes / defer to vX.Y]
 ```
 
-If any answer is "no" or "unclear" — the feature is deferred. Document the imagined need in [`docs/FOUNDER_ACTION_QUEUE.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/FOUNDER_ACTION_QUEUE.md) for later reconsideration.
+If any answer is "no" or "unclear" — the feature is deferred. Document the imagined need in [`docs/internal/FOUNDER_ACTION_QUEUE.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/FOUNDER_ACTION_QUEUE.md) for later reconsideration.
 
 ## Anti-patterns this prevents
 

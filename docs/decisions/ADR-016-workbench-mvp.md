@@ -1,6 +1,6 @@
 # ADR-016: Workbench MVP — Custom React SPA + FastAPI (Fork B)
 
-> **Status**: ACCEPTED — 2026-05-13 (founder ratified Fork B + all 6 Open Questions per recommendations; see `docs/FOUNDER_ACTION_QUEUE.md §0 2026-05-13` ratification record)
+> **Status**: ACCEPTED — 2026-05-13 (founder ratified Fork B + all 6 Open Questions per recommendations; see `docs/internal/FOUNDER_ACTION_QUEUE.md §0 2026-05-13` ratification record)
 > **Date**: 2026-05-13 · **Decider(s)**: Solo founder (this ADR DRAFTS the recommendation; founder ratifies)
 
 > **Founder ratification (2026-05-13)** — Fork choice + all 6 Open Questions resolved per ADR recommendations:
@@ -8,7 +8,7 @@
 > 2. **AI chat sidebar**: ship Workbench v0.2 without sidebar if ADR-015 not ratified by Week 10; chat deferred to v0.3 or v0.2.1 patch.
 > 3. **Branding**: deferred to Week 6 once 2-3 screens exist for visual review (no brand book in v0.2 — Anti-Over-Engineering).
 > 4. **Accessibility**: WCAG 2.1 AA best-effort + Week 14 audit for v0.2; hard-AA target at v1.0.
-> 5. **Frontend LOC budget**: 8K TypeScript LOC ceiling for v0.2 (separate from 30K Python ceiling); tracked in `docs/budget_history.md`.
+> 5. **Frontend LOC budget**: 8K TypeScript LOC ceiling for v0.2 (separate from 30K Python ceiling); tracked in `docs/internal/budget_history.md`.
 > 6. **Tauri**: deferred to v0.5+ packaging ADR; v0.2 ships SPA + FastAPI architecture (Tauri-compatible).
 > **Tags**: workbench, frontend, fastapi, react, v0.2, layer-4-experience
 > **Supersedes**: (none — first Workbench architecture ADR)
@@ -116,7 +116,7 @@ If a future external reviewer cites "Fork A," confirm which alternative they mea
 ### Negative / costs
 - 10-14 weeks of build at solo-founder + AI-swarm velocity (4-8 weeks slower than Fork A's blocked option).
 - Two language stacks to maintain (Python backend + TypeScript frontend) — onboarding burden for any future contributor.
-- LOC budget impact: Workbench v0.2 estimated ~3-4K LOC of Python (FastAPI + adapters) + ~5-7K LOC of TypeScript (React + components). The TypeScript LOC is **not counted in the 30K proprietary Python budget** per `pyproject.toml [tool.nucleus] loc_exclude` — but we should track it separately in `docs/budget_history.md` to avoid silent expansion.
+- LOC budget impact: Workbench v0.2 estimated ~3-4K LOC of Python (FastAPI + adapters) + ~5-7K LOC of TypeScript (React + components). The TypeScript LOC is **not counted in the 30K proprietary Python budget** per `pyproject.toml [tool.nucleus] loc_exclude` — but we should track it separately in `docs/internal/budget_history.md` to avoid silent expansion.
 - Bundle-size discipline must hold. Monaco lazy-load is mandatory; CI gate at < 500 KB initial JS gzipped.
 
 ### Risks introduced
@@ -149,7 +149,7 @@ Sequencing (10-14 weeks; full breakdown in `docs/internal/research/workbench.md`
 - `frontend/src/__tests__/` (new — Vitest unit + Playwright E2E)
 - `scripts/check_bundle_size.py` (new — CI gate, < 500 KB initial JS gzipped)
 - `scripts/dagster_leak_check.py` (extend — scan `src/nucleus/workbench/`)
-- `docs/budget_history.md` (extend — track frontend LOC separately)
+- `docs/internal/budget_history.md` (extend — track frontend LOC separately)
 - `docs/internal/swap/workbench.md` (new — document Tauri / Cytoscape / CodeMirror / Litestar swap targets)
 
 **Migration**: none — Workbench is greenfield at v0.2. Users who never run `nucleus workbench` are unaffected.
@@ -174,7 +174,7 @@ Sequencing (10-14 weeks; full breakdown in `docs/internal/research/workbench.md`
 2. **AI chat sidebar gating window.** ADR-015 ratification deadline. If ADR-015 not ratified by Week 10, ship Workbench v0.2 without sidebar; defer chat to v0.3 or to a v0.2.1 patch.
 3. **Branding direction.** Color palette / typography / logo lockup. Recommend: defer to Week 6 once 2-3 screens exist for visual review. Anti-Over-Engineering: no brand book in v0.2.
 4. **Accessibility commitment.** WCAG 2.1 AA target for v0.2 ship vs "best-effort, audit at Week 14". Recommend best-effort + Week 14 audit; hard-AA at v1.0.
-5. **Frontend LOC budget.** TypeScript LOC is excluded from the 30K Python ceiling per `pyproject.toml [tool.nucleus] loc_exclude`, but we should set a parallel ceiling in `docs/budget_history.md`. Recommend: **8K TypeScript LOC ceiling for v0.2**; reconsider at v1.0.
+5. **Frontend LOC budget.** TypeScript LOC is excluded from the 30K Python ceiling per `pyproject.toml [tool.nucleus] loc_exclude`, but we should set a parallel ceiling in `docs/internal/budget_history.md`. Recommend: **8K TypeScript LOC ceiling for v0.2**; reconsider at v1.0.
 6. **Tauri future commitment.** v4.1 Appendix B Q3 was deferred. This ADR resolves the v0.2 web-vs-desktop question (web). Tauri-as-packaging at v0.5+ remains open; recommend a v0.5 ADR (not v0.2 work).
 
 ---

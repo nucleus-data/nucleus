@@ -11,7 +11,7 @@
 #   - Solo-founder reviews the issue weekly during planning
 #
 # This workflow enforces Hard Constraint #11 (upgrade-safe stack design):
-# it catches drift early, before the version matrix in docs/compatibility.md
+# it catches drift early, before the version matrix in docs/internal/compatibility.md
 # silently rots.
 #
 # Reading guide for a junior DE:
@@ -119,12 +119,12 @@ jobs:
           echo "## Docs URL liveness (Constraint #10)" >> audit_report.md
           echo "" >> audit_report.md
 
-          if [ -f docs/compatibility.md ]; then
+          if [ -f docs/internal/compatibility.md ]; then
             python <<'PY' >> audit_report.md
           import re, urllib.request
           from pathlib import Path
 
-          content = Path("docs/compatibility.md").read_text()
+          content = Path("docs/internal/compatibility.md").read_text()
           # Extract URLs from "Docs URL" column.
           urls = sorted(set(re.findall(r'https?://[^\s)|]+', content)))
 
@@ -141,7 +141,7 @@ jobs:
               except Exception as e:
                   bad.append((url, type(e).__name__))
 
-          print(f"- Checked {len(urls)} URLs from `docs/compatibility.md`")
+          print(f"- Checked {len(urls)} URLs from `docs/internal/compatibility.md`")
           print(f"- ✅ Live: {len(ok)}")
           print(f"- ⚠️  Broken: {len(bad)}")
           if bad:
@@ -151,7 +151,7 @@ jobs:
                   print(f"- `{url}` → {why}")
           PY
           else
-            echo "_No docs/compatibility.md found_" >> audit_report.md
+            echo "_No docs/internal/compatibility.md found_" >> audit_report.md
           fi
 
       # ----------------------------------------------------------------------

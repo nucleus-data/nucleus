@@ -407,7 +407,7 @@ Marks: ⬜ Not started · 🟨 In progress · ✅ Done · ⏭️ Skipped
 - Polars: https://docs.pola.rs/api/python/stable/
 - Dagster: https://docs.dagster.io/
 
-**Always reference the URL that matches our pinned version in [`docs/compatibility.md`](../compatibility.md).** Old docs lie about new APIs.
+**Always reference the URL that matches our pinned version in [`docs/internal/compatibility.md`](../internal/compatibility.md).** Old docs lie about new APIs.
 
 ---
 

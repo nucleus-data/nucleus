@@ -5,7 +5,7 @@
 #   1. Every PR (except chore: / docs: / skip-changelog-labelled PRs) must
 #      update CHANGELOG.md [Unreleased] section.
 #   2. Any PR that touches pyproject.toml (dep change) must also update
-#      docs/compatibility.md.
+#      docs/internal/compatibility.md.
 #
 # These are STATUS CHECKS, not auto-fixes.  They appear on the PR checks panel.
 # A PR with [skip-changelog] label passes both checks unconditionally.
@@ -65,7 +65,7 @@ jobs:
             --title "${{ github.event.pull_request.title }}"
 
   compatibility-check:
-    name: docs/compatibility.md updated with dep changes
+    name: docs/internal/compatibility.md updated with dep changes
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -102,8 +102,8 @@ jobs:
           git diff --name-only "origin/${{ github.event.pull_request.base.ref }}" HEAD \
             | grep -q "^docs/compatibility\.md$" \
             || {
-              echo "::error::pyproject.toml changed but docs/compatibility.md was NOT updated."
-              echo "Per AGENTS.md §11.13: every dep change requires updating docs/compatibility.md."
+              echo "::error::pyproject.toml changed but docs/internal/compatibility.md was NOT updated."
+              echo "Per AGENTS.md §11.13: every dep change requires updating docs/internal/compatibility.md."
               exit 1
             }
-          echo "✅ docs/compatibility.md updated alongside pyproject.toml"
+          echo "✅ docs/internal/compatibility.md updated alongside pyproject.toml"
