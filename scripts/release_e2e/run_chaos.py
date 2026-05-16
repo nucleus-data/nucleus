@@ -655,7 +655,7 @@ def run_j5_schema_drift() -> ChaosResult:
     3. Alter source table (add incompatible column or change type).
     4. Re-materialize; expect NucleusSchemaEvolutionError NE2004.
     """
-    return _result_stub("J5", "schema drift source → NE2004")
+    return _result_stub("J5", "schema drift source -> NE2004")
     # TODO: implement post-Wave-1
     # source.execute("ALTER TABLE orders ADD COLUMN new_col BLOB")
     # assert exit 5; assert NE2004 in stderr; no partial write
@@ -669,7 +669,7 @@ def run_j6_concurrent_run() -> ChaosResult:
     - No row duplication (row_count consistent)
     - No catalog corruption
     """
-    return _result_stub("J6", "concurrent run race → lock test")
+    return _result_stub("J6", "concurrent run race -> lock test")
     # TODO: implement post-Wave-1
     # p1 = subprocess.Popen([*NUCLEUS_CMD, "run", "slow_test.asset"])
     # p2 = subprocess.Popen([*NUCLEUS_CMD, "run", "slow_test.asset"])
@@ -687,7 +687,7 @@ def run_j7_catalog_corruption() -> ChaosResult:
     3. Run nucleus up / nucleus run; expect clean NE-coded error.
     4. Run nucleus up --rebuild; verify recovery (if implemented).
     """
-    return _result_stub("J7", "catalog corruption → recoverable")
+    return _result_stub("J7", "catalog corruption -> recoverable")
     # TODO: implement post-Wave-1
     # catalog_db.write_bytes(b"CORRUPTED DATA RANDOM BYTES\x00\xFF")
     # result = subprocess.run([*NUCLEUS_CMD, "up"], ...)

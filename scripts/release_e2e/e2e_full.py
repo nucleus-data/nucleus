@@ -559,7 +559,7 @@ def run_suite_b(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
         ("B1", "empty asset materialize"),
         ("B2", "1k-row materialize"),
         ("B3", "100k-row Polars LazyFrame"),
-        ("B4", "dependent asset chain A→B→C"),
+        ("B4", "dependent asset chain A->B->C"),
         ("B5", "dry-run no writes"),
         ("B6", "run --resume from checkpoint"),
         ("B7", "concurrent run lock test"),
@@ -615,15 +615,15 @@ def run_suite_d(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     suite.started_at = datetime.now(UTC).isoformat()
     print("\n[Suite D] Ingest — STUB (post-Wave-1)")
     for sid, name in [
-        ("D1", "Postgres → Iceberg happy path"),
-        ("D2", "Postgres bad creds → NE1001"),
-        ("D3", "Postgres unreachable → NE1001"),
-        ("D4", "MySQL → Iceberg happy path"),
-        ("D5", "S3 Parquet → Iceberg (moto)"),
-        ("D6", "GCS Parquet → Iceberg (mocked)"),
-        ("D7", "Filesystem CSV → Iceberg"),
-        ("D8", "Filesystem glob mixed schema → NE2004"),
-        ("D9", "Snowflake → Iceberg (mocked)"),
+        ("D1", "Postgres -> Iceberg happy path"),
+        ("D2", "Postgres bad creds -> NE1001"),
+        ("D3", "Postgres unreachable -> NE1001"),
+        ("D4", "MySQL -> Iceberg happy path"),
+        ("D5", "S3 Parquet -> Iceberg (moto)"),
+        ("D6", "GCS Parquet -> Iceberg (mocked)"),
+        ("D7", "Filesystem CSV -> Iceberg"),
+        ("D8", "Filesystem glob mixed schema -> NE2004"),
+        ("D9", "Snowflake -> Iceberg (mocked)"),
         ("D10", "ingest --preview no commit"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "D", sid))
@@ -818,7 +818,7 @@ def run_suite_j(tmpdir: Path, dry_run: bool) -> SuiteResult:
     for sid, name in [
         ("J3", "MinIO down retries + NE error"),
         ("J4", "Postgres connection drop mid-ingest"),
-        ("J5", "schema drift source → NE2004"),
+        ("J5", "schema drift source -> NE2004"),
         ("J6", "concurrent run race"),
         ("J7", "catalog corruption recoverable"),
         ("J8", "S3 multipart rollback"),
@@ -873,9 +873,9 @@ def run_suite_k(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
 
     for sid, name in [
         ("K2", "list < 2s for 100 assets"),
-        ("K3", "1GB DataFrame → Iceberg < 30s"),
+        ("K3", "1GB DataFrame -> Iceberg < 30s"),
         ("K4", "1GB scan + aggregate < 3s"),
-        ("K5", "Workbench Lighthouse ≥ 90"),
+        ("K5", "Workbench Lighthouse >= 90"),
     ]:
         suite.scenarios.append(_stub(f"{sid} {name}", "K", sid))
     suite.finished_at = datetime.now(UTC).isoformat()
