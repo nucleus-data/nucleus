@@ -49,3 +49,15 @@
 package-lock.json linguist-generated=true
 yarn.lock linguist-generated=true
 uv.lock linguist-generated=true
+
+# Preview-only React + TypeScript + Vite source tree (v0.3 work-in-progress).
+# Per ADR-042 (docs/decisions/ADR-042-workbench-frontend-preview.md), v0.2.0
+# ships the offline-renderable static SPA at src/nucleus/workbench/static/.
+# `export-ignore` keeps the uncompiled preview tree out of `git archive`
+# outputs (used by some sdist build paths) so end users do not download
+# ~150 KB of source they cannot run without a Node toolchain that v0.2.0
+# does not assume. Hatchling wheel builds are governed separately and
+# tracked in ADR-042 Open Question §1.
+# Docs: https://git-scm.com/docs/gitattributes#_export_ignore
+src/nucleus/workbench/frontend/ export-ignore
+src/nucleus/workbench/frontend/** export-ignore
