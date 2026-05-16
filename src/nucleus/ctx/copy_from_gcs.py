@@ -37,7 +37,7 @@ from pyiceberg.exceptions import (
     TableAlreadyExistsError,
 )
 
-# gcsfs and pyarrow.fs are optional — activated by `pip install nucleus[gcs]`.
+# gcsfs and pyarrow.fs are optional — activated by `pip install nucleus-data[gcs]`.
 # Docs: https://gcsfs.readthedocs.io/en/latest/
 #       https://arrow.apache.org/docs/python/filesystems.html#fsspec-filesystems
 try:
@@ -238,7 +238,7 @@ def ingest_gcs_to_iceberg(
     Returns the number of rows written. Uses ``gcsfs`` for ADC credential resolution
     and registers the GCS filesystem with DuckDB via ``duckdb.register_filesystem()``.
 
-    Requires: ``pip install nucleus[gcs]`` to activate the GCS extras
+    Requires: ``pip install nucleus-data[gcs]`` to activate the GCS extras
     (installs ``gcsfs==2026.5.0``).
 
     Args:
@@ -279,7 +279,7 @@ def ingest_gcs_to_iceberg(
         raise NucleusConfigError(
             user_message="Google Cloud Storage support is not installed.",
             fix_hint=(
-                "Run: pip install nucleus[gcs]  "
+                "Run: pip install nucleus-data[gcs]  "
                 "This installs gcsfs==2026.5.0 for GCS access via ADC credentials."
             ),
         )

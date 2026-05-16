@@ -102,7 +102,7 @@ File formula bugs at https://github.com/nucleus-data/nucleus/issues with the lab
 
 ## Per-release update (founder, ~10 min after every PyPI release)
 
-After `pip install nucleus-data==0.X.Y` works (per `../pypi/PUBLISH_RUNBOOK.md`):
+After `pip install nucleus-data-data==0.X.Y` works (per `../pypi/PUBLISH_RUNBOOK.md`):
 
 ```bash
 cd homebrew-nucleus

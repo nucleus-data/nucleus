@@ -15,7 +15,7 @@
 | Capability | Nucleus v0.2 | Databricks | Snowflake |
 |---|---|---|---|
 | **License (core)** | Apache 2.0 forever | Proprietary (Databricks Free Edition + open Spark/Delta upstream) | Proprietary |
-| **Deployment** | `pip install nucleus` on a laptop | Managed cloud (AWS/Azure/GCP); Free Edition for individuals | Managed cloud (AWS/Azure/GCP) |
+| **Deployment** | `pip install nucleus-data` on a laptop | Managed cloud (AWS/Azure/GCP); Free Edition for individuals | Managed cloud (AWS/Azure/GCP) |
 | **Cold start** | `nucleus up` ~6 s (PoC #4) | Cluster boot ~minutes (depends on tier; serverless faster) | Warehouse resume seconds-to-minutes |
 | **Idle cost** | $0 (your laptop) | Per-cluster idle costs unless serverless / auto-suspend | Auto-suspend reduces idle; storage + compute billed |
 | **Min annual contract** | $0 (OSS) | Free Edition $0; production starts low-thousands | Standard tier from low-thousands |

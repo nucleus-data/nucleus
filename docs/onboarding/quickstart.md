@@ -19,7 +19,7 @@ This path is for **small product engineering teams** (on the order of five peopl
 Public release path, after the `v0.2.0` PyPI workflow is green:
 
 ```bash
-pip install nucleus
+pip install nucleus-data
 nucleus version
 ```
 

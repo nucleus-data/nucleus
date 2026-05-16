@@ -59,8 +59,8 @@ Re-verify the day-of release with `pip index versions <name>` or by visiting `ht
      version = "0.2.0"
    ```
 
-4. Update README install snippet from `pip install nucleus` to `pip install nucleus-data`.
-5. Update `docs/onboarding/quickstart.md` and any other doc that says `pip install nucleus`.
+4. Update README install snippet from `pip install nucleus-data` to `pip install nucleus-data-data`.
+5. Update `docs/onboarding/quickstart.md` and any other doc that says `pip install nucleus-data`.
 6. Commit on a feature branch; do not push to main yet.
 
 **STOP CONDITION**: If the founder wants to file a PEP 541 dispute first, pause this runbook and execute that path separately. Disputes can take 2-4 weeks; v0.2.0 should not block on them.
@@ -161,7 +161,7 @@ The tag push fires `release.yml`. Watch the run at https://github.com/nucleus-da
 # clean throwaway venv anywhere outside the repo
 python -m venv $env:TEMP\nucleus-pypi-verify
 & "$env:TEMP\nucleus-pypi-verify\Scripts\Activate.ps1"
-pip install nucleus-data
+pip install nucleus-data-data
 nucleus --version       # MUST print 0.2.0
 nucleus init demo
 cd demo
@@ -211,7 +211,7 @@ Recommendation: **publish to our own tap/bucket first** (we control timing), the
 |---|---|---|
 | Action fails with `403 invalid-publisher` | OIDC config in Step 2 doesn't match the workflow filename, repo, or environment | Re-check Step 2 fields character-for-character |
 | `twine check` fails on README | README has unrenderable RST/markdown | Run `python -m readme_renderer README.md` locally; fix until it passes |
-| `pip install nucleus-data` returns the wrong version | PyPI mirror lag (rare, ~5 min) | Wait 5 min and retry, or use `pip install --no-cache-dir nucleus-data==0.2.0` |
+| `pip install nucleus-data-data` returns the wrong version | PyPI mirror lag (rare, ~5 min) | Wait 5 min and retry, or use `pip install --no-cache-dir nucleus-data==0.2.0` |
 | Wheel installs but `nucleus --version` fails with "command not found" | Entry-point script missing from wheel | Verify `[project.scripts] nucleus = "nucleus.cli.main:app"` in pyproject.toml; rebuild |
 | Wheel installs but imports fail | `[tool.hatch.build.targets.wheel] packages = ["src/nucleus"]` missing or wrong | Check pyproject.toml; rebuild |
 

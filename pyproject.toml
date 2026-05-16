@@ -12,7 +12,7 @@ requires = ["hatchling>=1.27.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "nucleus"
+name = "nucleus-data"
 version = "0.2.0"  # Tier 2 "Public Launch" — Wave 1 bundle (11 builders, 2026-05-15).
 description = "Ship data products from a laptop — a local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks; graduates cleanly to any Iceberg catalog"
 readme = "README.md"
@@ -45,7 +45,7 @@ classifiers = [
 # filesystem-Iceberg + the substrate (Dagster + OTEL no-op + OpenLineage
 # emit). Source connectors (Postgres / MySQL / Snowflake), the AI Copilot,
 # the Workbench HTTP stack, and observability exporters live under
-# `[project.optional-dependencies]` below — `pip install nucleus[postgres]`,
+# `[project.optional-dependencies]` below — `pip install nucleus-data[postgres]`,
 # `nucleus[ai]`, `nucleus[workbench]`, `nucleus[all]`, etc.
 #
 # Hard limit: <30 entries in `[project.dependencies]` enforced by
@@ -105,7 +105,7 @@ dependencies = [
 # Optional dependencies (ADR-039 install-size split, 2026-05-15)
 # ----------------------------------------------------------------------------
 # Two tiers per ADR-012 amendment 2026-05-14 + ADR-039 install-size split
-# (PoC #5 blocker — `pip install nucleus` <60 s, <30 deps):
+# (PoC #5 blocker — `pip install nucleus-data` <60 s, <30 deps):
 #
 #   1. Runtime extras  — exact pins required; checked by
 #      `scripts/check_pinning.py` with the same `==` rule as
@@ -118,16 +118,16 @@ dependencies = [
 #      (linters/test runners can minor-flex); `--strict` upgrades to `==`-only.
 #
 # Install patterns:
-#   pip install nucleus                       # core only (~16 deps, <60 s install)
-#   pip install nucleus[postgres]             # + Postgres source connector
-#   pip install nucleus[mysql]                # + MySQL source connector
-#   pip install nucleus[snowflake]            # + Snowflake source connector
-#   pip install nucleus[s3]                   # + raw S3 helpers (s3fs already in core)
-#   pip install nucleus[gcs]                  # + GCS source connector
-#   pip install nucleus[ai]                   # + AI Copilot (`nucleus chat`)
-#   pip install nucleus[workbench]            # + Workbench HTTP UI (`nucleus workbench up`)
-#   pip install nucleus[observability]        # + OTEL SDK for v0.5+ exporter wiring
-#   pip install nucleus[lineage-advanced]     # + sqlglot for column-lineage walker
+#   pip install nucleus-data                       # core only (~16 deps, <60 s install)
+#   pip install nucleus-data[postgres]             # + Postgres source connector
+#   pip install nucleus-data[mysql]                # + MySQL source connector
+#   pip install nucleus-data[snowflake]            # + Snowflake source connector
+#   pip install nucleus-data[s3]                   # + raw S3 helpers (s3fs already in core)
+#   pip install nucleus-data[gcs]                  # + GCS source connector
+#   pip install nucleus-data[ai]                   # + AI Copilot (`nucleus chat`)
+#   pip install nucleus-data[workbench]            # + Workbench HTTP UI (`nucleus workbench up`)
+#   pip install nucleus-data[observability]        # + OTEL SDK for v0.5+ exporter wiring
+#   pip install nucleus-data[lineage-advanced]     # + sqlglot for column-lineage walker
 #   pip install -e ".[all]"                   # all runtime extras (no dev tooling)
 #   pip install -e ".[dev]"                   # contributor lint/test environment
 #   pip install -e ".[dev,all]"               # contributor + everything (CI default)
@@ -141,7 +141,7 @@ dependencies = [
 
 # Postgres source connector (ADR-014, dlt sql_database Stage 1 wave 2026-05-13).
 # Activates SQLAlchemy + psycopg3 + dlt's sql_database verified source.
-# Install: `pip install nucleus[postgres]`
+# Install: `pip install nucleus-data[postgres]`
 # Docs: https://docs.sqlalchemy.org/en/20/dialects/postgresql.html
 #       https://www.psycopg.org/psycopg3/docs/
 #       https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database
@@ -157,9 +157,9 @@ postgres = [
 # MySQL source connector (ADR-014 §"MySQL parity (2026-05-14)").
 # Activates SQLAlchemy + pymysql + dlt's sql_database. SQLAlchemy and dlt are
 # duplicated with the postgres extras intentionally — `pip` dedups them at
-# resolve time so users running `pip install nucleus[postgres,mysql]` get a
+# resolve time so users running `pip install nucleus-data[postgres,mysql]` get a
 # single SQLAlchemy + single dlt.
-# Install: `pip install nucleus[mysql]`
+# Install: `pip install nucleus-data[mysql]`
 # Docs: https://docs.sqlalchemy.org/en/20/dialects/mysql.html
 #       https://pymysql.readthedocs.io/
 # License: pymysql MIT · GREEN; sqlalchemy MIT · GREEN; dlt Apache-2.0 · GREEN.
@@ -172,7 +172,7 @@ mysql = [
 # Snowflake source connector (ADR-019, connector expansion wave 2026-05-15).
 # Activates dlt's Snowflake extras (snowflake-connector-python + snowflake-sqlalchemy).
 # Rollback: pip install "dlt[snowflake]==<prior>" (remove section and revert).
-# Install: `pip install nucleus[snowflake]`
+# Install: `pip install nucleus-data[snowflake]`
 # Docs: https://docs.snowflake.com/en/developer-guide/python-connector/sqlalchemy
 # License: snowflake-connector-python Apache-2.0 · GREEN; snowflake-sqlalchemy Apache-2.0 · GREEN.
 snowflake = [
@@ -181,10 +181,10 @@ snowflake = [
 
 # S3 helpers — `s3fs==2026.4.0` is ALREADY in core (Tier 1 pin), so the default
 # install can read `s3://…` URIs via pyiceberg + DuckDB httpfs. This extras
-# group is a self-reference for `pip install nucleus[s3]` discoverability and
+# group is a self-reference for `pip install nucleus-data[s3]` discoverability and
 # version-locks the same `s3fs` pin so a user-managed `[s3]` install matches
 # core. Power users wanting the raw AWS SDK should `pip install boto3` directly.
-# Install: `pip install nucleus[s3]`
+# Install: `pip install nucleus-data[s3]`
 # Docs: https://s3fs.readthedocs.io/
 # License: BSD-3-Clause · GREEN.
 s3 = [
@@ -193,7 +193,7 @@ s3 = [
 
 # GCS object-storage connector (ADR-020, connector expansion wave 2026-05-15).
 # gcsfs provides ADC credentials + GCS filesystem for DuckDB register_filesystem().
-# Install: `pip install nucleus[gcs]`
+# Install: `pip install nucleus-data[gcs]`
 # Docs: https://gcsfs.readthedocs.io/en/latest/
 # License: BSD-3-Clause · GREEN
 # Upgrade smoke: add tests/upgrade_smoke/test_gcsfs.py before next version bump.
@@ -202,20 +202,20 @@ gcs = [
 ]
 
 # AI Copilot — `nucleus chat` + intelligence layer wrappers (ADR-015).
-# Install: `pip install nucleus[ai]`
+# Install: `pip install nucleus-data[ai]`
 # Docs: https://docs.litellm.ai/docs/
 # License: MIT · GREEN. Wraps 100+ LLM providers; Python >=3.10,<3.14.
 # Rollback: `pip install litellm==1.83.14` (or `pip uninstall litellm`).
 # Upgrade smoke: tests/upgrade_smoke/test_litellm.py
 # Friendly-error: if a user runs `nucleus chat` without this extra installed,
 # `nucleus.intelligence.copilot` raises NE6001 pointing at
-# `pip install nucleus[ai]` (rather than a raw ModuleNotFoundError).
+# `pip install nucleus-data[ai]` (rather than a raw ModuleNotFoundError).
 ai = [
   "litellm==1.83.14",                    # MIT. Single new runtime dep per AGENTS.md §11.13
 ]
 
 # Workbench HTTP UI — FastAPI + React SPA (ADR-016 Fork B).
-# Install: `pip install nucleus[workbench]`
+# Install: `pip install nucleus-data[workbench]`
 # Docs: https://fastapi.tiangolo.com/ · https://www.uvicorn.org/ · https://github.com/ijl/orjson
 # License: fastapi MIT · GREEN; uvicorn BSD-3-Clause · GREEN; orjson (Apache-2.0 OR MIT) AND MPL-2.0 · YELLOW.
 # Rollback: `pip uninstall fastapi uvicorn orjson` (the React SPA still ships in the wheel as static files).
@@ -228,7 +228,7 @@ workbench = [
 # Opt-in OTEL SDK + exporters (per ADR-011 §1 substrate-vs-transport split,
 # amended 2026-05-14: API stays in core as no-op substrate, SDK ships only when
 # the v0.5+ collector-export ADR fires or a power user wires their own exporter).
-# Install: `pip install nucleus[observability]`
+# Install: `pip install nucleus-data[observability]`
 # Docs: https://opentelemetry.io/docs/languages/python/exporters/
 observability = [
   "opentelemetry-sdk==1.29.0",           # version-locked to opentelemetry-api in core
@@ -242,7 +242,7 @@ observability = [
 # receive it without `[lineage-advanced]`. This extras group exposes sqlglot
 # as a direct, version-locked dep for projects that import it without
 # depending on dlt (e.g. pure DuckDB stacks).
-# Install: `pip install nucleus[lineage-advanced]`
+# Install: `pip install nucleus-data[lineage-advanced]`
 # Docs: https://sqlglot.com/sqlglot.html
 lineage-advanced = [
   "sqlglot==26.0.0",
@@ -269,7 +269,7 @@ dev = [
 
   # Optional runtime packages mirrored for the dev test matrix.
   # Post-ADR-039 the install-size split moves these out of the default end-user
-  # install (`pip install nucleus`), but contributors running `pip install -e ".[dev]"`
+  # install (`pip install nucleus-data`), but contributors running `pip install -e ".[dev]"`
   # need every feature importable so the full test suite (tests/copilot/,
   # tests/workbench/, tests/connectors/, tests/upgrade_smoke/) runs end-to-end.
   # ADR-039 §3 ("Extras Design"): the split is for END USERS, not for dev.
@@ -303,7 +303,7 @@ docs = [
 # Meta-group: union of every RUNTIME extras group (no `dev`, no `docs`).
 # Per PEP 508 self-reference: `nucleus[...]` resolves when installing this
 # package from a local checkout (`pip install -e ".[all]"`) or from PyPI
-# (`pip install nucleus[all]`). Verified against `pip>=21.2` (we ship with
+# (`pip install nucleus-data[all]`). Verified against `pip>=21.2` (we ship with
 # pip 26.x in dev) per PEP 631 + https://peps.python.org/pep-0508/#extras.
 # Contributors who also want lint/test should run `pip install -e ".[dev,all]"`.
 all = [

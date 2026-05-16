@@ -19,16 +19,16 @@ PyPI upload failure, name conflict, or OIDC trust misconfiguration delays the pu
 3. Dry-run the full release workflow (`python scripts/release.py --dry-run`) in CI on every PR.
 4. Rollback: if PyPI publish fails post-tag, `git tag -d v0.2.0` locally and fix; no force-push to `main`.
 
-### Risk 2: Slow `pip install nucleus`
+### Risk 2: Slow `pip install nucleus-data`
 
 **Probability**: Medium | **Impact**: Medium
 
-With 24+ runtime dependencies, cold `pip install nucleus` could take >2 min on slow connections, undermining the "fast" brand.
+With 24+ runtime dependencies, cold `pip install nucleus-data` could take >2 min on slow connections, undermining the "fast" brand.
 
 **Mitigation**:
-1. Track install size in CI: `pip install nucleus && du -sh $(python -c "import site; print(site.getsitepackages()[0])")`.
+1. Track install size in CI: `pip install nucleus-data && du -sh $(python -c "import site; print(site.getsitepackages()[0])")`.
 2. Optional deps stay in extras (`[observability]`, `[multimodal]`).
-3. Target: cold install <60 s on 100 Mbps. Benchmark in CI with `time pip install nucleus`.
+3. Target: cold install <60 s on 100 Mbps. Benchmark in CI with `time pip install nucleus-data`.
 4. If exceeded: audit which dep is the culprit (`pip install --verbose`); consider binary wheel pre-build.
 
 ### Risk 3: Workbench Scope Expands Beyond MVP

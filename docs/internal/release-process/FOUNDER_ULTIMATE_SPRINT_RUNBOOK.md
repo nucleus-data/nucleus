@@ -41,7 +41,7 @@
   ```powershell
   Start-Process "https://www.youtube.com/upload"
   ```
-  Expected: first frame shows `pip install nucleus`, last frame shows `nucleus query` returning rows.
+  Expected: first frame shows `pip install nucleus-data`, last frame shows `nucleus query` returning rows.
 
 - [ ] **`try.nucleus.dev` (or fallback docs landing) deployed and reachable** from incognito. _(2 min)_
 
@@ -109,7 +109,7 @@
 - [ ] **Pre-flight install attempt** in a clean venv — must FAIL (confirms publish target is correct, artifact does not yet exist). _(3 min)_
 
   ```powershell
-  python -m venv .venv-pypi-preflight; .\.venv-pypi-preflight\Scripts\Activate.ps1; pip install nucleus==0.2.0; deactivate; Remove-Item -Recurse -Force .venv-pypi-preflight
+  python -m venv .venv-pypi-preflight; .\.venv-pypi-preflight\Scripts\Activate.ps1; pip install nucleus-data==0.2.0; deactivate; Remove-Item -Recurse -Force .venv-pypi-preflight
   ```
   Expected: `ERROR: Could not find a version that satisfies the requirement nucleus==0.2.0`.
 

@@ -322,7 +322,7 @@ Create `docs/site/guides/ingest-from-<source>.md` (see existing guides in `docs/
 # Ingest from <Source>
 
 ## Prerequisites
-- `pip install nucleus[<source>]`
+- `pip install nucleus-data[<source>]`
 
 ## Quick start
 ```bash

@@ -10,7 +10,7 @@ Audience: **startup data teams** (on the order of five engineers, roughly **100G
 
 - **Python 3.11** (same pin as Nucleus v0.1)
 - **Docker Desktop** (or compatible runtime) for MinIO + Postgres
-- A **git checkout of Nucleus** with an editable install (`pip install -e ".[dev]"` from the repo root — `pip install nucleus` ships once the PyPI release is out)
+- A **git checkout of Nucleus** with an editable install (`pip install -e ".[dev]"` from the repo root — `pip install nucleus-data` ships once the PyPI release is out)
 
 ## Layout
 

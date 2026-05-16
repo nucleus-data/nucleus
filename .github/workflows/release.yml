@@ -193,7 +193,7 @@ jobs:
 
             **Install:**
             ```bash
-            pip install nucleus==${{ needs.build.outputs.version }}
+            pip install nucleus-data==${{ needs.build.outputs.version }}
             ```
 
             **Full changelog:** https://github.com/nucleus-data/nucleus/blob/main/CHANGELOG.md

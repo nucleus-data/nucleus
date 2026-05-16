@@ -23,11 +23,11 @@
 
 <p align="center">
   <a href="https://github.com/nucleus-data/nucleus/raw/main/assets/demos/v0.2/launch_60s.mp4">
-    <img src="assets/demos/v0.2/launch_60s_poster.png" alt="60-second Nucleus demo — pip install nucleus, init, up, run, query, Workbench" width="720" />
+    <img src="assets/demos/v0.2/launch_60s_poster.png" alt="60-second Nucleus demo — pip install nucleus-data, init, up, run, query, Workbench" width="720" />
   </a>
 </p>
 
-*Click to play (60 s, no audio, captions burned in). From `pip install nucleus` to a queried Iceberg snapshot with the Workbench dashboard on `localhost:8765`. Source script: [`docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`](docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md). The MP4 + poster image land alongside the launch tag; if the link is dark in your mirror, the script is the source of truth.*
+*Click to play (60 s, no audio, captions burned in). From `pip install nucleus-data` to a queried Iceberg snapshot with the Workbench dashboard on `localhost:8765`. Source script: [`docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`](docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md). The MP4 + poster image land alongside the launch tag; if the link is dark in your mirror, the script is the source of truth.*
 
 ---
 
@@ -36,7 +36,7 @@
 **Python 3.11** is the primary supported interpreter (3.12 may work; follow `pyproject.toml`).
 
 ```bash
-pip install nucleus                                  # ~16 deps, <60 s on warm pip cache
+pip install nucleus-data                                  # ~16 deps, <60 s on warm pip cache
 nucleus init my-stack && cd my-stack && nucleus up   # scaffold + boot local stack (~5–7 s; see Why Nucleus)
 nucleus run example.greeting                         # materialize your first Iceberg snapshot
 ```

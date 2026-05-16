@@ -32,7 +32,7 @@ Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 **WRAP `dlt[snowflake]` as the Snowflake source connector.** Specifically:
 
-1. Add `dlt[snowflake]==1.26.0` to `[project.optional-dependencies] snowflake` (users install via `pip install nucleus[snowflake]`).
+1. Add `dlt[snowflake]==1.26.0` to `[project.optional-dependencies] snowflake` (users install via `pip install nucleus-data[snowflake]`).
 2. Implement `src/nucleus/ctx/copy_from_snowflake.py` mirroring the Postgres connector pattern verbatim.
 3. Add `_translate_dlt_snowflake_exception` to `src/nucleus/coordination/error_translation.py`.
 4. Expose `ingest_snowflake_to_iceberg()` in `nucleus.ctx` + `copy_from("snowflake://...")` dispatcher path.
@@ -48,7 +48,7 @@ Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 ## Consequences
 
 - **LOC budget impact**: ~150 LOC (`copy_from_snowflake.py` + error translator additions).
-- **Optional dep**: `dlt[snowflake]==1.26.0` + transitively `snowflake-connector-python` (~60 MB, C extensions). This is opt-in only — base `pip install nucleus` is unaffected.
+- **Optional dep**: `dlt[snowflake]==1.26.0` + transitively `snowflake-connector-python` (~60 MB, C extensions). This is opt-in only — base `pip install nucleus-data` is unaffected.
 - **License**: `snowflake-connector-python` is Apache-2.0 · GREEN. `snowflake-sqlalchemy` is Apache-2.0 · GREEN.
 - **Maintenance ownership**: connector expansion builder; error translator owned by coordination layer.
 - **Swap target**: if `dlt` is swapped per `docs/internal/swap/dlt.md`, the Snowflake connector must be re-implemented. The swap interface is `ingest_snowflake_to_iceberg(conn_str, source_table, ...)`.

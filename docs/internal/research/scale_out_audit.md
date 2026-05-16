@@ -402,7 +402,7 @@ These are components where the founder might be tempted to rewrite for "performa
 | Mini-scheduler in Go | "Better cron" | Same as #3 above. Mini-scheduler is fallback per design | v4.1 §6.7 |
 | Custom Polars replacement | "Faster DataFrames" | Constraint #4; Polars IS the wrap (Rust under the hood) | `AGENTS.md` §3 #4; `nucleus.mdc` table |
 | Custom DuckDB replacement | "Faster SQL" | Constraint #4; DuckDB IS the wrap (C++ under the hood); DataFusion is the swap target per v4.1 §9 | `AGENTS.md` §3 #4 |
-| `cli/main.py` rewrite in Rust (Click → clap) | "Faster startup" | Cold path; lazy-imports already get `nucleus --version` < 500 ms per perf doc §2.1; Typer is the wrap. Rust would force users to install a separate binary, breaking `pip install nucleus` simplicity | `nucleus.mdc` Anti-Over-Engineering rule #5; v4.1 §16.1 |
+| `cli/main.py` rewrite in Rust (Click → clap) | "Faster startup" | Cold path; lazy-imports already get `nucleus --version` < 500 ms per perf doc §2.1; Typer is the wrap. Rust would force users to install a separate binary, breaking `pip install nucleus-data` simplicity | `nucleus.mdc` Anti-Over-Engineering rule #5; v4.1 §16.1 |
 | `intelligence/copilot.py` rewrite in Rust | "Faster Copilot" | LLM-bound; provider latency dominates; Rust optimizes nothing on the wire | `AGENTS.md` §9 (AI Copilot economics — token cost is the variable, not local CPU) |
 
 This list exists because rewrite-temptation is a recurring pattern in solo-founder + AI-assisted projects: every component looks rewritable when the boilerplate-generation cost is near-zero. The architecture's discipline is the only firewall.

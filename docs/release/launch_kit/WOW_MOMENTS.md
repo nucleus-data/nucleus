@@ -98,7 +98,7 @@
 **What**: The literal copy-paste sequence from a fresh shell to a queried Iceberg snapshot:
 
 ```bash
-pip install nucleus
+pip install nucleus-data
 nucleus init my-stack && cd my-stack
 nucleus up
 nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders
@@ -194,11 +194,11 @@ Subagent E already shipped [`README_HERO_PATCH.md`](README_HERO_PATCH.md) — a 
 
 ### Improvement 3 — Install snippet clarity (HIGH priority)
 
-**Current state**: lines 41-46 show `git clone https://github.com/nucleus-data/nucleus.git ... pip install -e ".[dev]"` as the **primary** install path, with a parenthetical "When publishing completes, `pip install nucleus` becomes the default path".
+**Current state**: lines 41-46 show `git clone https://github.com/nucleus-data/nucleus.git ... pip install -e ".[dev]"` as the **primary** install path, with a parenthetical "When publishing completes, `pip install nucleus-data` becomes the default path".
 
-**Proposal**: invert the priority once the release workflow publishes v0.2.0 to PyPI — the README should lead with `pip install nucleus` (or `pip install "nucleus[postgres,workbench]"` for the full beachhead path). Before PyPI is green, the editable-dev workflow stays in [`CONTRIBUTING.md`](../../../CONTRIBUTING.md). **Per [`docs/decisions/ADR-039-install-size-split-extras.md`](../../decisions/ADR-039-install-size-split-extras.md)**, the lean core install is `pip install nucleus` (~16 deps); extras are opt-in.
+**Proposal**: invert the priority once the release workflow publishes v0.2.0 to PyPI — the README should lead with `pip install nucleus-data` (or `pip install "nucleus[postgres,workbench]"` for the full beachhead path). Before PyPI is green, the editable-dev workflow stays in [`CONTRIBUTING.md`](../../../CONTRIBUTING.md). **Per [`docs/decisions/ADR-039-install-size-split-extras.md`](../../decisions/ADR-039-install-size-split-extras.md)**, the lean core install is `pip install nucleus-data` (~16 deps); extras are opt-in.
 
-**Verification**: after patch, the first `bash` block in the README contains `pip install nucleus`, not `git clone`.
+**Verification**: after patch, the first `bash` block in the README contains `pip install nucleus-data`, not `git clone`.
 
 ### Improvement 4 — Badge selection (LOW priority)
 
@@ -215,7 +215,7 @@ Subagent E already shipped [`README_HERO_PATCH.md`](README_HERO_PATCH.md) — a 
 **Proposal**: per `README_HERO_PATCH.md` §"3-command quickstart", surface a single 3-command sequence at the top:
 
 ```bash
-pip install nucleus
+pip install nucleus-data
 nucleus init my-stack && cd my-stack && nucleus up
 nucleus run example.greeting
 ```

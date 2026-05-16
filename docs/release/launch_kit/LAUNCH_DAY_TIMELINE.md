@@ -41,7 +41,7 @@
 |---|---|---|
 | 05:00 | **Push the tag.** Follow `RELEASE_READINESS.md` Phase 2: stage commit → push → `git tag -a v0.2.0` → `git push origin v0.2.0`. **This is the moment of public commitment.** | [ ] |
 | 05:10 | **Watch the PyPI publish workflow** — `gh run watch --repo nucleus-data/nucleus`. Expect ~6–8 min total. All three jobs must go green: `build`, `publish-pypi`, `create-release`. | [ ] |
-| 05:25 | **Cold install smoke from PyPI** — `python -m venv .venv-pypi && .\.venv-pypi\Scripts\Activate.ps1 && pip install nucleus==0.2.0 && nucleus version`. Must print `0.2.0`. | [ ] |
+| 05:25 | **Cold install smoke from PyPI** — `python -m venv .venv-pypi && .\.venv-pypi\Scripts\Activate.ps1 && pip install nucleus-data==0.2.0 && nucleus version`. Must print `0.2.0`. | [ ] |
 | 05:35 | **Replace auto-generated Release body with curated notes** — `gh release edit v0.2.0 --notes-file docs/release/v0.2.0_RELEASE_NOTES.md`. | [ ] |
 | 05:45 | **Verify the docs site is live** — load <https://nucleus-data.github.io/nucleus/> (or your domain) in a clean browser tab; click through the quickstart and confirm the install copy distinguishes PyPI release install from local-dev editable install. GitHub Pages requires the repo to be public or GitHub Pro until enabled. | [ ] |
 | 05:50 | **Open all five composer tabs**, drafts already pasted: HN submit, Twitter, LinkedIn, Reddit /r/dataengineering, dev.to. Stage the URLs in a notes file so you can grab them quickly for cross-linking later. | [ ] |
@@ -143,7 +143,7 @@ If any of these fire, **PAUSE and triage** before continuing:
 - **GitHub or PyPI is down** at T-0 → defer to next eligible day (Tue or Wed).
 - **HN auto-flags / shadowbans the post** → email <hn@ycombinator.com> politely; resubmit only after they reply.
 - **Hostile comment thread spirals** (e.g., 5+ "this is just X" comments in a row) → stop responding; let the thread cool. Your reply-velocity feeds the troll.
-- **Production-breaking bug surfaces in the first hour** (e.g., `pip install nucleus` immediately fails) → pull the GitHub Release back to draft (`gh release edit v0.2.0 --draft`); fix; re-publish. The PyPI artifact stays live (you can't unpublish, only yank).
+- **Production-breaking bug surfaces in the first hour** (e.g., `pip install nucleus-data` immediately fails) → pull the GitHub Release back to draft (`gh release edit v0.2.0 --draft`); fix; re-publish. The PyPI artifact stays live (you can't unpublish, only yank).
 - **You are tired and angry** at any point → take a 30-min walk before the next response. Tired-and-angry comments survive forever on HN; hold the bar.
 
 ---

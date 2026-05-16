@@ -93,7 +93,7 @@ Each lists earliest milestone per v4.1 §18.
 
 ### 4.4 `nucleus enable <feature>` (v0.3 onward, Mo 14-20)
 
-Opt-in to optional integrations. Adds a runtime dep via `pip install nucleus[<feature>]` and writes the toggle to `nucleus_project.yaml`. License-tier compliance per ADR-007 enforced at enable time: RED-tier features refuse to enable in Cloud and warn loudly in OSS. Initial features (all GREEN-tier per ADR-007 unless noted): `marquez` (OL HttpTransport → Marquez, v0.3), `dbt` (dbt-duckdb adapter, v0.3), `polaris` (Apache Polaris catalog, v0.3), `lakekeeper` (Lakekeeper catalog, v0.3), `mcp-server` (`nucleus-mcp-server` ~500 LOC, v0.5), `soda` (Soda Core v3.x, v0.5 — **GREEN only with `soda-core==3.x`**; v4+ is RED per ADR-007).
+Opt-in to optional integrations. Adds a runtime dep via `pip install nucleus-data[<feature>]` and writes the toggle to `nucleus_project.yaml`. License-tier compliance per ADR-007 enforced at enable time: RED-tier features refuse to enable in Cloud and warn loudly in OSS. Initial features (all GREEN-tier per ADR-007 unless noted): `marquez` (OL HttpTransport → Marquez, v0.3), `dbt` (dbt-duckdb adapter, v0.3), `polaris` (Apache Polaris catalog, v0.3), `lakekeeper` (Lakekeeper catalog, v0.3), `mcp-server` (`nucleus-mcp-server` ~500 LOC, v0.5), `soda` (Soda Core v3.x, v0.5 — **GREEN only with `soda-core==3.x`**; v4+ is RED per ADR-007).
 
 ---
 

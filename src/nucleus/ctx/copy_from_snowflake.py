@@ -78,7 +78,7 @@ def ingest_snowflake_to_iceberg(
     dispositions, username/password auth via connection URL. No SSO/key-pair/
     IAM — those land with ADR-010 at v0.5+.
 
-    Requires: ``pip install nucleus[snowflake]`` to activate the Snowflake extras
+    Requires: ``pip install nucleus-data[snowflake]`` to activate the Snowflake extras
     (installs ``snowflake-connector-python`` and ``snowflake-sqlalchemy``).
 
     Args:

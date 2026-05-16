@@ -48,7 +48,7 @@ Nucleus v0.2.0 — local-first Iceberg pipelines from a laptop (Apache 2.0, Pyth
 > 6. **`nucleus.db` BI handshake.** `nucleus up` writes a single DuckDB file containing one native table per materialized Iceberg asset. Connect Superset/Evidence/Rill/Streamlit by file path. Recipe: `docs/cookbook/bi-connectivity.md`.
 > 7. **Iceberg branch + tag CLI.** `nucleus snapshot branch create/delete` + `nucleus snapshot tag create/delete` exposing PyIceberg `manage_snapshots()` for WAP and EOM/EOW compliance archiving. Beta tier; full WAP semantics with Lakekeeper in v0.3.
 > 8. **AI Copilot v0.2** — single-turn chat via litellm (anthropic/openai/ollama). API keys come from your shell env, never logged, never sent to Nucleus servers (we don't have any). Opt-in consent stored at `.nucleus/copilot_opt_in`. Cost ceiling defaults to $0.10/call. Setup: `docs/cookbook/ai-copilot-setup.md`.
-> 9. **Install-size split.** `pip install nucleus` is lean (<30 deps, <60 s install on warm cache); optional extras `[postgres / mysql / snowflake / s3 / gcs / ai / workbench / all]`.
+> 9. **Install-size split.** `pip install nucleus-data` is lean (<30 deps, <60 s install on warm cache); optional extras `[postgres / mysql / snowflake / s3 / gcs / ai / workbench / all]`.
 > 10. **11-script governance suite enforced in CI.** `check_vocabulary` (forbids the usual hype words plus several other forbidden framings), `check_pinning` (exact pins on every runtime dep), `loc_budget` (30K LOC ceiling), `dagster_leak_check` (zero external classnames in user-facing strings — if it leaks, the release is blocked), `check_error_codes`, `check_api_stability`, `check_licenses`, `check_layering`, `check_lazy_imports`, `check_install_size`, `check_perf_budget`.
 >
 > **Stack details.** Pinned wrapped dependencies (per `pyproject.toml` v0.2.0): `duckdb==1.1.3`, `polars==1.18.0`, `pyiceberg==0.11.1`, `pyarrow==18.1.0`, `dagster==1.9.5`, `dlt==1.26.0`, `fastapi==0.136.1`, `litellm==1.83.14`, `sqlalchemy==2.0.36`. Total proprietary code: 12,840 LOC under `src/nucleus/` (43% of the 30K LOC v1.0 ceiling per `docs/internal/research/scale_out_audit.md` §1.1).
@@ -72,7 +72,7 @@ Nucleus v0.2.0 — local-first Iceberg pipelines from a laptop (Apache 2.0, Pyth
 > **Quickstart:**
 >
 >     python3.11 -m venv .venv && source .venv/bin/activate
->     pip install nucleus
+>     pip install nucleus-data
 >     nucleus init demo && cd demo
 >     nucleus up
 >     nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders

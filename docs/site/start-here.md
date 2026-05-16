@@ -28,7 +28,7 @@ Designed for the **beachhead persona**: a **5-engineer startup data team**, **10
 
 ## Beta status
 
-v0.2 is beta. The `ctx` SDK surface is stabilising but **not yet locked under semver** — that happens at v1.0. Pin your installs (`pip install nucleus==0.2.0`) and read the [Changelog](changelog.md) before upgrading.
+v0.2 is beta. The `ctx` SDK surface is stabilising but **not yet locked under semver** — that happens at v1.0. Pin your installs (`pip install nucleus-data==0.2.0`) and read the [Changelog](changelog.md) before upgrading.
 
 ---
 

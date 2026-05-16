@@ -45,7 +45,7 @@ Everything else is rented from open source.
 30-second start:
 
 ```
-pip install nucleus
+pip install nucleus-data
 nucleus init my-stack && cd my-stack
 nucleus up
 nucleus ingest postgres://localhost/app --table public.orders --as raw.orders

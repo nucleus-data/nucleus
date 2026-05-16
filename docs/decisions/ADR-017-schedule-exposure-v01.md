@@ -179,7 +179,7 @@ Gate verdict: **PASS (with Q7 founder override + Q8 explicit roadmap deviation)*
 ## Rollback
 
 ```
-pip install nucleus==<previous>   # reverts croniter and schedule surface together
+pip install nucleus-data==<previous>   # reverts croniter and schedule surface together
 git revert <PR-SHA>
 ```
 

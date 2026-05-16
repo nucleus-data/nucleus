@@ -10,7 +10,7 @@
 
 ```bash
 # Lean core (~30 deps, <60 s install on warm cache)
-pip install nucleus
+pip install nucleus-data
 
 # Or with optional extras:
 pip install "nucleus[postgres]"     # + psycopg

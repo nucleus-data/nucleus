@@ -72,7 +72,7 @@ def translate_litellm_exception(exc: Exception) -> NucleusError:  # noqa: PLR091
         return NucleusCopilotProviderError(
             user_message="Copilot provider library is not installed.",
             fix_hint=(
-                "The Copilot provider library is bundled with `pip install nucleus`. "
+                "The Copilot provider library is bundled with `pip install nucleus-data`. "
                 "Reinstall the package and retry."
             ),
             cause=exc,

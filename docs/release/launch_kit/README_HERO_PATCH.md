@@ -27,11 +27,11 @@
 
 <p align="center">
   <a href="https://github.com/nucleus-data/nucleus/raw/main/assets/demos/v0.2/launch_60s.mp4">
-    <img src="assets/demos/v0.2/launch_60s_poster.png" alt="60-second Nucleus demo — pip install nucleus, init, up, run, query, Workbench" width="720" />
+    <img src="assets/demos/v0.2/launch_60s_poster.png" alt="60-second Nucleus demo — pip install nucleus-data, init, up, run, query, Workbench" width="720" />
   </a>
 </p>
 
-*Click to play (60 s, no audio, captions burned in). From `pip install nucleus` to a queried Iceberg snapshot with the Workbench dashboard on `localhost:8765`. Source script: [`docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`](docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md).*
+*Click to play (60 s, no audio, captions burned in). From `pip install nucleus-data` to a queried Iceberg snapshot with the Workbench dashboard on `localhost:8765`. Source script: [`docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`](docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md).*
 
 ---
 
@@ -40,7 +40,7 @@
 **Python 3.11** is the primary supported interpreter (3.12 may work; follow `pyproject.toml`).
 
 ```bash
-pip install nucleus                                  # ~16 deps, <60 s on warm pip cache
+pip install nucleus-data                                  # ~16 deps, <60 s on warm pip cache
 nucleus init my-stack && cd my-stack && nucleus up   # scaffold + boot local stack (~6 s)
 nucleus run example.greeting                         # materialize your first Iceberg snapshot
 ```
@@ -99,7 +99,7 @@ This is not a feature matrix — feature matrices favor whoever picks the featur
 
 2. **The demo is the wow.** A 60-second video earns more clicks than 60 seconds of reading. The poster image is what shows when JavaScript is off (RSS readers, email, mirrors); the click takes the user to the MP4. Asset path matches `60_SECOND_DEMO_SCRIPT.md` §Distribution.
 
-3. **Three commands, not a wall of `pip install -e .[dev]`.** The current README's first install command is `git clone … && pip install -e ".[dev]"` — that signals "developer workflow" and scares off first-time users. The patch makes `pip install nucleus` the primary path and gates the editable-dev workflow behind the Contributing section (unchanged below).
+3. **Three commands, not a wall of `pip install -e .[dev]`.** The current README's first install command is `git clone … && pip install -e ".[dev]"` — that signals "developer workflow" and scares off first-time users. The patch makes `pip install nucleus-data` the primary path and gates the editable-dev workflow behind the Contributing section (unchanged below).
 
 4. **"Why Nucleus" is a persona pitch, not a feature list.** Three bullets, each one cites architecture. Each bullet answers a different reader's primary question:
    - The "yield to giants" bullet answers the lock-in skeptic.

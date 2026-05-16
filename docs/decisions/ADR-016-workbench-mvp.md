@@ -89,7 +89,7 @@ If a future external reviewer cites "Fork A," confirm which alternative they mea
 
 **Pros**: native OS integration; offline-first identical-to-prod; native menu bar / system tray.
 
-**Cons**: adds a Rust toolchain to founder's build pipeline; cross-platform packaging adds ~2-3 weeks per platform target; user installation friction (vs `pip install nucleus` then `nucleus workbench`).
+**Cons**: adds a Rust toolchain to founder's build pipeline; cross-platform packaging adds ~2-3 weeks per platform target; user installation friction (vs `pip install nucleus-data` then `nucleus workbench`).
 
 **Why rejected (for v0.2 — reconsider for v0.5+)**: Tauri wraps SPAs. Building Fork B as a Vite SPA keeps the Tauri-packaging path open without committing to it now. Per v4.1 Appendix B Q3: "retrofit between them is significant rework" — but only if the SPA assumes a server. Our SPA + FastAPI architecture is Tauri-compatible because Tauri can either bundle FastAPI as a sidecar or replace it with a Tauri-native command surface. Defer Tauri to a v0.5 packaging swap, not a v0.2 architecture choice.
 

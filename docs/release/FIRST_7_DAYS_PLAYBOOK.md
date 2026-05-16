@@ -12,7 +12,7 @@
 ## Install Failures
 
 Detection signals:
-- `pip install nucleus==0.2.0` fails.
+- `pip install nucleus-data==0.2.0` fails.
 - User reports Python version mismatch, missing wheel, resolver conflict, or optional extras breakage.
 - PyPI page renders but `nucleus version` does not report `0.2.0`.
 

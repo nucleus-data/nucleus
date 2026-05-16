@@ -48,7 +48,7 @@ packaging/
 
 **Founder decision required (Step 0 in `pypi/PUBLISH_RUNBOOK.md`):** pick a PyPI distribution name. Default recommendation is **`nucleus-data`** because it matches the GitHub org `nucleus-data/nucleus` and reads cleanly.
 
-The Python *import* name stays `nucleus` regardless — the `pip install` command becomes `pip install nucleus-data`, but the user code still says `import nucleus.ctx as ctx`. Distribution and import names are independent (cf. `pip install scikit-learn` → `import sklearn`).
+The Python *import* name stays `nucleus` regardless — the `pip install` command becomes `pip install nucleus-data-data`, but the user code still says `import nucleus.ctx as ctx`. Distribution and import names are independent (cf. `pip install scikit-learn` → `import sklearn`).
 
 The downstream package recipes (brew / scoop / chocolatey / snap) all use the Chocolatey/brew/scoop **package id `nucleus`** because that is the user-facing CLI binary — but the wheel they download is named `nucleus_data-*.whl`. The recipes already encode this assumption.
 
@@ -85,7 +85,7 @@ Each step blocks the next. Do not parallelise across the dotted line.
                                             │
             ┌─────────── verification gate ─┼───────────┐
             ▼                               ▼           ▼
-    pip install nucleus-data       . . . . . . . .  pip install
+    pip install nucleus-data-data       . . . . . . . .  pip install
     works on clean venv            (no errors)      reproducibly works
                                             │
        . . . . . . . . . . . . . . . . . . .│ everything below is parallelisable
@@ -114,7 +114,7 @@ In strict priority order. Items below the line are nice-to-have for v0.2.0; revi
    - Default: `nucleus-data`.
    - Open `docs/decisions/ADR-NNN-pypi-name.md` recording the choice.
    - Update `pyproject.toml` line `name = "nucleus"` → `name = "nucleus-data"` (or chosen name).
-   - Update README `pip install nucleus` → `pip install nucleus-data`.
+   - Update README `pip install nucleus-data` → `pip install nucleus-data-data`.
 
 2. **Configure PyPI OIDC trusted publisher.**
    - Visit https://pypi.org/manage/account/publishing/.

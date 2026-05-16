@@ -118,7 +118,7 @@ py-spy top --pid <PID>   # live profile
 When the observability extras are installed:
 
 ```bash
-pip install nucleus[observability]
+pip install nucleus-data[observability]
 ```
 
 Set an OTLP exporter:

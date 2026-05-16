@@ -42,12 +42,12 @@ nucleus workbench up   # listens on http://localhost:8765 — leave running
 **Terminal action:**
 
 ```
-$ pip install nucleus
+$ pip install nucleus-data
 ```
 
 **Voiceover:** *"Nucleus is a local-first Python SDK and CLI for Iceberg-native pipelines. Watch a five-engineer team go from `git clone` to a production-shaped table in under a minute."*
 
-**On-screen subtitle:** `pip install nucleus  →  ~7 s on a warm cache`
+**On-screen subtitle:** `pip install nucleus-data  →  ~7 s on a warm cache`
 
 **What viewers should see:** the install completing (warm cache means the download bar zips by; verify the elapsed time stays under 10 s after the green checkmark). If your network is slow on the day, fall back to `pip install --no-index --find-links /tmp/nucleus-pip-cache nucleus` for the take.
 

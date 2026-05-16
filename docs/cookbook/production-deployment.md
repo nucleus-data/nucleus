@@ -223,11 +223,11 @@ Per `AGENTS.md` §11.13 — **one dependency upgrade per PR** in development; on
 **Bare-metal / venv install**
 
 1. Read pins in [`docs/internal/compatibility.md`](../internal/compatibility.md).
-2. `pip install nucleus==<new-version>` inside the activated environment.
+2. `pip install nucleus-data==<new-version>` inside the activated environment.
 3. `nucleus version` → exit code **0**.
 4. Canary: `nucleus run <your_smoke_asset_key>`.
 5. Append notes to `/var/lib/nucleus/upgrade-log.md` (timestamp, from→to, operator).
-6. Rollback: `pip install nucleus==<previous>` plus documented dependency pins.
+6. Rollback: `pip install nucleus-data==<previous>` plus documented dependency pins.
 
 **Docker Compose reference stack**
 

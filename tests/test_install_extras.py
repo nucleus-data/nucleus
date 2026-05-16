@@ -9,16 +9,16 @@ are well-formed across BOTH layers of truth:
    non-empty list of exact-pinned entries (operator must be ``==``).
 2. **Wheel/install layer** -- ``importlib.metadata.requires("nucleus")``
    surfaces each declared dep with the matching ``; extra == "<name>"``
-   marker so ``pip install nucleus[<name>]`` actually pulls it in.
+   marker so ``pip install nucleus-data[<name>]`` actually pulls it in.
 
 This catches three regression classes early:
 
 * A contributor accidentally moves a runtime dep into the wrong extras
   group (or back into core) without updating the boundary docs.
 * The hatchling build backend drops an extras row from the wheel
-  metadata (would silently break ``pip install nucleus[ai]``).
+  metadata (would silently break ``pip install nucleus-data[ai]``).
 * The ``all`` meta-group loses its PEP 508 self-reference (would make
-  ``pip install nucleus[all]`` a no-op).
+  ``pip install nucleus-data[all]`` a no-op).
 
 Per PEP 621 ``[project.optional-dependencies]``
 (https://peps.python.org/pep-0621/) + PEP 508 environment markers
@@ -190,7 +190,7 @@ def test_all_meta_group_is_self_reference() -> None:
     """`all = ["nucleus[postgres,mysql,...]"]` per PEP 508 extras self-ref.
 
     The `all` meta-group MUST consist of one entry of the form
-    `nucleus[<comma-separated-extras>]` so `pip install nucleus[all]`
+    `nucleus[<comma-separated-extras>]` so `pip install nucleus-data[all]`
     fans out to every named runtime extras in one resolver pass.
     """
     deps = _extras_from_pyproject("all")
@@ -204,7 +204,7 @@ def test_all_meta_group_is_self_reference() -> None:
     )
 
     # Every named runtime extras MUST be inside the brackets so
-    # `pip install nucleus[all]` resolves them all.
+    # `pip install nucleus-data[all]` resolves them all.
     inside = entry[entry.index("[") + 1 : entry.index("]")]
     listed = {x.strip() for x in inside.split(",")}
     expected = {name for name, _ in _RUNTIME_EXTRAS}

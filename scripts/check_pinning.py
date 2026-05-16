@@ -10,7 +10,7 @@ Enforces (in order of severity):
    ``lineage-advanced``; see ``RUNTIME_EXTRAS_GROUPS`` below) is also pinned
    with ``==``, exactly as for ``[project] dependencies``. These are real
    runtime libraries that simply ship behind an opt-in install (e.g.
-   ``pip install nucleus[observability]``); they are not contributor
+   ``pip install nucleus-data[observability]``); they are not contributor
    tooling. Source: ADR-012 amendment 2026-05-14 +
    ``docs/internal/research/otel_day1_decision.md`` Option α-split.
 3. Every entry across every other ``[project.optional-dependencies]`` table

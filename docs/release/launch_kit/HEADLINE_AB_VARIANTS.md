@@ -118,7 +118,7 @@ The script is in the repo. The output log is in docs/release/. Run it yourself.
 ```
 30-second start:
 
- pip install nucleus
+ pip install nucleus-data
  nucleus init my-stack && cd my-stack
  nucleus up
  nucleus ingest postgres://localhost/app --table public.orders --as raw.orders
@@ -238,7 +238,7 @@ If something breaks, file an issue with the NE#### error code so we can find it 
 [v0.2.0] Nucleus - one SDK over DuckDB + Polars + pyiceberg + Dagster, Apache 2.0, paid testers wanted
 ```
 
-*(108 chars; under the 300-char Reddit limit; opens with the version number so search ranks it on the next user's `pip install nucleus` Google query.)*
+*(108 chars; under the 300-char Reddit limit; opens with the version number so search ranks it on the next user's `pip install nucleus-data` Google query.)*
 
 ### Title alternates
 
@@ -310,7 +310,7 @@ I wanted to materialize my first Iceberg snapshot without standing up Kubernetes
 > Here is what those five commands look like, in 2026, on my laptop, with the only prerequisite being Python 3.11:
 >
 > ```bash
-> pip install nucleus
+> pip install nucleus-data
 > nucleus init my-stack && cd my-stack
 > nucleus up
 > nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders

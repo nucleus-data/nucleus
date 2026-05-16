@@ -63,7 +63,7 @@ Treatment: no special handling; pin freely, upgrade per Constraint #11 normal wo
 | **Anti-Capitalist / Hippocratic / similar restricted** | (rare in data tooling) | REJECT — incompatible with most users' commercial use | REJECT |
 
 **Treatment for RED**:
-1. **Always opt-in import path** — never default; user must `pip install nucleus[soda]` knowing the implications
+1. **Always opt-in import path** — never default; user must `pip install nucleus-data[soda]` knowing the implications
 2. Wrapping module documents the license-tier restriction in its module docstring
 3. **Cloud cannot include RED dependencies** — Cloud control plane must work without any RED import
 4. ADR required to add ANY new RED dependency

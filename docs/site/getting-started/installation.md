@@ -23,7 +23,7 @@ description: Install Nucleus and its dependencies on macOS, Linux, or Windows.
 === "From PyPI (stable)"
 
     ```bash
-    pip install nucleus
+    pip install nucleus-data
     ```
 
     PyPI packaging is in progress for v0.1. Until the first public release lands:
@@ -42,7 +42,7 @@ description: Install Nucleus and its dependencies on macOS, Linux, or Windows.
 
     ```bash
     # Core only
-    pip install nucleus
+    pip install nucleus-data
 
     # Core + observability (OpenTelemetry SDK exporter)
     pip install "nucleus[observability]"

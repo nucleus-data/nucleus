@@ -142,7 +142,7 @@ Numbers from docs only; **no Nucleus benchmark yet** — repeat under PoC v0.3 b
 - **Memory**: per-notebook kernel process; no documented budget. `mo.sql` results in memory by default; use `output_type=native` (DuckDB lazy relation) for large datasets — https://docs.marimo.io/guides/working_with_data/sql/ §"SQL Output Types".
 - **Reactive overhead**: static analysis on every edit (ms range; no published benchmark). Runtime re-executes "only those cells that need to be run" — no whole-notebook re-run.
 - **WASM** (https://docs.marimo.io/guides/wasm/ §"Limitations"): 2 GB cap, no threading/multi-proc/PDB. DuckDB+Polars wheels work in Pyodide. Out of scope for v0.3; v0.5+ "share as link" UX bet.
-- **Wheel size**: 38.8 MB at 0.23.6 (PyPI bdist_wheel) — bundled React frontend. Relevant to `pip install nucleus[notebook]` UX.
+- **Wheel size**: 38.8 MB at 0.23.6 (PyPI bdist_wheel) — bundled React frontend. Relevant to `pip install nucleus-data[notebook]` UX.
 
 ---
 

@@ -26,7 +26,7 @@ Follow these in order. Each builds on the previous.
 
 | # | Guide | Time | What you learn |
 |---|-------|------|----------------|
-| 1 | [Installation](installation.md) | ~5 min | `pip install nucleus`, system requirements, first `nucleus version` |
+| 1 | [Installation](installation.md) | ~5 min | `pip install nucleus-data`, system requirements, first `nucleus version` |
 | 2 | [Quickstart](quickstart.md) | ~30 min | The full beachhead path: `init` → `up` → `ingest` → `run` → `query` |
 | 3 | [Your First Asset](your-first-asset.md) | ~15 min | Anatomy of a `@nucleus.asset` — function, return value, contract, check |
 | 4 | [First BI-Ready Table](first-bi-table.md) | ~20 min | End-to-end Postgres → Iceberg → BI tool, with cross-asset lineage |

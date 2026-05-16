@@ -56,7 +56,7 @@ Contracts are the "schema gate." Checks are the "business logic gate." Use both.
 
 ## Soda Core (v0.5+)
 
-In v0.5+, contracts can be backed by [Soda Core](https://www.soda.io/soda-core) for richer rule types (distribution checks, freshness, anomaly detection). This requires `pip install nucleus[soda]`.
+In v0.5+, contracts can be backed by [Soda Core](https://www.soda.io/soda-core) for richer rule types (distribution checks, freshness, anomaly detection). This requires `pip install nucleus-data[soda]`.
 
 !!! note "v0.1"
     v0.1 contracts use the native `@nucleus.contract` decorator. Soda Core backing is deferred to v0.5+.
