@@ -121,7 +121,7 @@ Concretely:
 ### Risks introduced
 
 - **Risk**: a future contributor may unintentionally edit `frontend/src/*.tsx` expecting the change to ship to users in v0.2.0. **Mitigation**: PREVIEW banner is the first content in `frontend/README.md`; `app.py` docstring states the boundary; CI tests at `tests/workbench/` exercise only the FastAPI + `static/` path, so any frontend-only edit is provably non-shipping.
-- **Risk**: hatchling's wheel build does not honour `.gitattributes export-ignore`, so the wheel may still include the uncompiled React tree. **Mitigation**: out-of-scope for this ADR; v0.3 polish window will add `[tool.hatch.build.targets.{sdist,wheel}].exclude` if measurement shows wheel bloat (current `pip install nucleus[workbench]` size budget per ADR-039 not violated).
+- **Risk**: hatchling's wheel build does not honour `.gitattributes export-ignore`, so the wheel may still include the uncompiled React tree. **Mitigation**: out-of-scope for this ADR; v0.3 polish window will add `[tool.hatch.build.targets.{sdist,wheel}].exclude` if measurement shows wheel bloat (current `pip install nucleus-data[workbench]` size budget per ADR-039 not violated).
 - **Risk**: v0.3 reaches the build window and `npm install` still fails behind corporate proxies. **Mitigation**: external builder (CI on a non-proxied runner, or an explicit one-off founder-laptop build) produces the `dist/*` artifact and commits it directly into `static/` with a release-note explanation. ADR-038 will name the runner.
 
 ---

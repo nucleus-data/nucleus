@@ -134,7 +134,7 @@ hide:
 
 ```
 git clone https://github.com/nucleus-data/nucleus && cd nucleus
-pip install -e ".[dev]"                                   # or: pip install nucleus
+pip install -e ".[dev]"                                   # or: pip install nucleus-data
 
 nucleus init beachhead-demo && cd beachhead-demo
 nucleus up                                                 # MinIO + catalog + definitions ready

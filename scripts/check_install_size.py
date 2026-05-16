@@ -2,7 +2,7 @@
 
 Enforces a hard ceiling on the number of entries in
 ``pyproject.toml`` ``[project.dependencies]`` so the default
-``pip install nucleus`` invocation stays inside the
+``pip install nucleus-data`` invocation stays inside the
 beachhead 30-minute target (PoC #5 feedback: 6 minutes / 100+
 transitive deps was an evaluation killer).
 
@@ -17,7 +17,7 @@ Rules
 3. Every entry under a ``RUNTIME_EXTRAS_GROUPS`` extras group (defined
    in ``scripts/check_pinning.py``) MUST also use ``==``; same reason.
 4. The ``all`` meta-group MUST self-reference (i.e. contain a
-   ``nucleus[...]`` entry) so ``pip install nucleus[all]`` resolves
+   ``nucleus[...]`` entry) so ``pip install nucleus-data[all]`` resolves
    the named runtime extras as a single transaction.
 
 Exit codes
@@ -170,7 +170,7 @@ def check_install_size(max_core: int = DEFAULT_MAX_CORE_DEPS) -> InstallSizeRepo
                     f"[{group_name}] {pkg}{op}... ({entry!r}; runtime extras must pin)"
                 )
 
-    # `all` meta-group must self-reference so `pip install nucleus[all]`
+    # `all` meta-group must self-reference so `pip install nucleus-data[all]`
     # resolves every runtime extras in one transaction.
     all_entries = report.extras_entries.get("all", [])
     report.all_meta_value = list(all_entries)

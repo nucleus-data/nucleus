@@ -53,7 +53,7 @@ Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 ### Sub-connector 2: GCS Object Source
 
 - `src/nucleus/ctx/copy_from_gcs.py`
-- DuckDB + `gcsfs==2026.5.0` (optional dep: `pip install nucleus[gcs]`)
+- DuckDB + `gcsfs==2026.5.0` (optional dep: `pip install nucleus-data[gcs]`)
 - `gcsfs.GCSFileSystem()` provides ADC credential chain; registered with DuckDB via `conn.register_filesystem(pyarrow.fs.PyFileSystem(FSSpecHandler(gcs)))`
 - Dispatcher: `copy_from("gs://bucket/file.parquet", target="ns.table", ...)`
 - Direct: `ingest_gcs_to_iceberg("gs://bucket/file.parquet", ...)`

@@ -263,7 +263,7 @@ def chat(
         raise NucleusConfigError(
             user_message="The Copilot provider library is not installed.",
             fix_hint=(
-                "The Copilot provider library is bundled with `pip install nucleus`. "
+                "The Copilot provider library is bundled with `pip install nucleus-data`. "
                 "Reinstall the package and retry, or use `--provider ollama` for an offline path."
             ),
             cause=exc,

@@ -85,7 +85,7 @@ read it.  Safety is enforced via two complementary layers:
 - Return **HTTP 403** on `POST /api/runs/trigger`, `POST /api/chat`, and
   any mutating SQL submitted to `POST /api/query`.
 - Show a banner in the UI: *"This is a read-only demo — try Nucleus
-  locally with `pip install nucleus`."*
+  locally with `pip install nucleus-data`."*
 
 Until the read-only middleware ships, deploys MUST keep the filesystem
 chmod layer.  Do not change `Dockerfile.demo` lines 86-88 without first

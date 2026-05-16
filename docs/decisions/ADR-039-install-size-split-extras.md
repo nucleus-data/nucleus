@@ -37,7 +37,7 @@ extra group is independently versioned and rollback-tested.
 ## Decision
 
 **Adopt a layered-extras pattern** matching the `pip install pkg[a,b]`
-syntax. The default `pip install nucleus` produces a lean core (≤30
+syntax. The default `pip install nucleus-data` produces a lean core (≤30
 top-level deps, target <60 s clean install on a warm pip cache); every
 optional capability lights up via an additive opt-in extra.
 
@@ -66,7 +66,7 @@ snowflake / gcsfs`. The CLI uses lazy imports inside command bodies;
 module-level imports of optional libs would crash users who installed
 core only. Validated by:
 
-- `scripts/check_install_size.py` — runs `python -c "from nucleus.cli.main import app"` against `pip install nucleus[core]` and confirms a clean import without optional deps installed.
+- `scripts/check_install_size.py` — runs `python -c "from nucleus.cli.main import app"` against `pip install nucleus-data[core]` and confirms a clean import without optional deps installed.
 - `scripts/check_lazy_imports.py` — AST-walks `src/nucleus/` for any top-level `import` of the optional libraries above and exits non-zero if found.
 - `tests/test_install_extras.py` — smoke-installs `nucleus[core]`, `nucleus[postgres]`, `nucleus[ai]`, `nucleus[workbench]`, `nucleus[all]` in clean venvs and asserts only the expected deps land.
 
@@ -74,11 +74,11 @@ core only. Validated by:
 
 | Install | Target | Actual (2026-05-15, warm pip cache) |
 |---|---|---|
-| `pip install nucleus` (core) | <60 s | TBD — measured by `scripts/release_e2e/install_size.py` |
-| `pip install nucleus[postgres]` | <90 s | TBD |
-| `pip install nucleus[ai]` | <90 s | TBD |
-| `pip install nucleus[workbench]` | <90 s | TBD |
-| `pip install nucleus[all]` | <180 s | TBD |
+| `pip install nucleus-data` (core) | <60 s | TBD — measured by `scripts/release_e2e/install_size.py` |
+| `pip install nucleus-data[postgres]` | <90 s | TBD |
+| `pip install nucleus-data[ai]` | <90 s | TBD |
+| `pip install nucleus-data[workbench]` | <90 s | TBD |
+| `pip install nucleus-data[all]` | <180 s | TBD |
 
 PoC #5 testers will report empirical numbers on first-run; v0.2.1
 patch landing if any exceed budget by >25 %.
@@ -137,7 +137,7 @@ Total: ~785 LOC, well within the v0.2 phase ceiling.
 | `pyproject.toml` lines 41-49 + 105-107 + 140-300 | Core dep list trimmed; extras block added; ADR-039 footnote referenced |
 | `scripts/check_install_size.py` | New governance script (≤30 core deps; lean core import check) |
 | `scripts/check_lazy_imports.py` | New governance script (AST-walks `src/nucleus/`) |
-| `tests/test_install_extras.py` | New smoke test (`pip install nucleus[core/postgres/ai/workbench/all]`) |
+| `tests/test_install_extras.py` | New smoke test (`pip install nucleus-data[core/postgres/ai/workbench/all]`) |
 | `src/nucleus/cli/main.py` | Lazy-imported `psycopg`, `fastapi`, `litellm`, `dlt`, `httpx` (in command bodies) |
 | `docs/onboarding/quickstart.md` | Install patterns section |
 | `docs/internal/compatibility.md` | Per-extra version pin rows |

@@ -397,7 +397,7 @@ Three locking strategies as of May 2026 (source: [pydevtools locking guide](http
 ### Relevance to Nucleus
 
 Nucleus ships governance scripts in `scripts/` — `loc_budget.py`, `dagster_leak_check.py`,
-`check_pinning.py`, etc. These currently require `pip install nucleus[dev]` before running.
+`check_pinning.py`, etc. These currently require `pip install nucleus-data[dev]` before running.
 
 With PEP 723 + uv:
 ```python

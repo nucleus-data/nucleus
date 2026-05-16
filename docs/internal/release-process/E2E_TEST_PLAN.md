@@ -369,7 +369,7 @@
 
 ### F1. `nucleus workbench up` — serves on localhost:8080
 
-**Setup**: initialized project; workbench dependencies installed (`pip install nucleus[workbench]`)  
+**Setup**: initialized project; workbench dependencies installed (`pip install nucleus-data[workbench]`)  
 **Steps**: `nucleus workbench up` (or `nucleus up` if workbench auto-starts)  
 **Expected**: exit 0 (background process); GET `http://localhost:8080/` returns 200  
 **Acceptance**: HTTP 200 within 10 s of command  

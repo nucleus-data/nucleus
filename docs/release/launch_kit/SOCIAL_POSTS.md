@@ -42,7 +42,7 @@ Everything else is rented from open source.
 ```
 30-second start:
 
-  pip install nucleus
+  pip install nucleus-data
   nucleus init my-stack && cd my-stack
   nucleus up
   nucleus ingest postgres://localhost/app --table public.orders --as raw.orders
@@ -202,7 +202,7 @@ HONEST disclosures: it's beta; our 2026-05-15 empirical baseline FAILED 11 metri
 Quickstart:
 
   python3.11 -m venv .venv && source .venv/bin/activate
-  pip install nucleus
+  pip install nucleus-data
   nucleus init demo && cd demo
   nucleus up
   nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders
@@ -274,7 +274,7 @@ Show HN: Nucleus – local-first data platform that graduates to Databricks
 ```
 Founder here. Three things I want to be upfront about because HN deserves it.
 
-1. What Nucleus actually is. A local-first Python SDK + CLI that wraps DuckDB, Polars, Apache Iceberg (via pyiceberg), and embedded orchestration (Dagster, hidden behind the ctx SDK) into a single `pip install nucleus`. The headline use case is a 5–20 engineer team going from `git clone` to a BI-ready Iceberg table in under 30 minutes on a laptop. No JVM in the default path. Apache 2.0. The eight CLI commands (init / up / down / run / ingest / query / chat / version) are intentionally boring. `nucleus ingest postgres://... --table public.orders --as raw.orders` is the one-liner that makes the 30-min metric possible.
+1. What Nucleus actually is. A local-first Python SDK + CLI that wraps DuckDB, Polars, Apache Iceberg (via pyiceberg), and embedded orchestration (Dagster, hidden behind the ctx SDK) into a single `pip install nucleus-data`. The headline use case is a 5–20 engineer team going from `git clone` to a BI-ready Iceberg table in under 30 minutes on a laptop. No JVM in the default path. Apache 2.0. The eight CLI commands (init / up / down / run / ingest / query / chat / version) are intentionally boring. `nucleus ingest postgres://... --table public.orders --as raw.orders` is the one-liner that makes the 30-min metric possible.
 
 2. What it is NOT. Not a Spark replacement. Not a Databricks competitor. Not "AI-native" — it's AI-ready, the Copilot is one optional chat command via litellm. Not a database, not a SQL engine, not a vector DB. The proprietary code is ~13K LOC of glue (with a 30K LOC ceiling we will hit before v1.0); 95% of execution time at any meaningful workload runs in C++ (DuckDB, pyarrow), Rust (Polars), or wire-bound network I/O. The thesis is wrap-not-build. <!-- banned-term: AI-native -->
 
@@ -285,7 +285,7 @@ The architecture doc (docs/specs/nucleus_architecture_v4.1.md, ~50 min read) is 
 Quickstart:
 
     python3.11 -m venv .venv && source .venv/bin/activate
-    pip install nucleus
+    pip install nucleus-data
     nucleus init demo && cd demo
     nucleus up
     nucleus run example.greeting

@@ -63,7 +63,7 @@ nucleus down
 
 ## Notes
 
-* PyPI distribution name is `nucleus-data` because the bare `nucleus` name is squatted on PyPI. The CLI binary remains `nucleus`. To install via pip directly: `pip install nucleus-data`.
+* PyPI distribution name is `nucleus-data` because the bare `nucleus` name is squatted on PyPI. The CLI binary remains `nucleus`. To install via pip directly: `pip install nucleus-data-data`.
 * First run of `nucleus up` may take ~30s while pyiceberg, polars, duckdb, and pyarrow wheels are fetched and warmed.
 * Source: https://github.com/nucleus-data/nucleus
 ]]></description>

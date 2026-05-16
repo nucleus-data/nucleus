@@ -2329,7 +2329,7 @@ def mk_user_journey() -> dict[str, Any]:
             1,
             "1. pip install\nnucleus[core]",
             "user",
-            "$ pip install nucleus[core]\n  ... 24 packages installed",
+            "$ pip install nucleus-data[core]\n  ... 24 packages installed",
         ),
         (
             "init",

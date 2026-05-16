@@ -179,7 +179,7 @@ pip install twine
 twine yank nucleus==X.Y.Z --reason "Critical bug in [component]. Fixed in X.Y.Z+1."
 ```
 
-Yanked versions still install if explicitly requested (`pip install nucleus==X.Y.Z`), but are excluded from automatic resolution. This is the least disruptive option.
+Yanked versions still install if explicitly requested (`pip install nucleus-data==X.Y.Z`), but are excluded from automatic resolution. This is the least disruptive option.
 
 ### Option 2: Patch Release (if fixable in <24h)
 1. Fix the bug in a new commit.
@@ -189,7 +189,7 @@ Yanked versions still install if explicitly requested (`pip install nucleus==X.Y
 ### Option 3: Rollback for users
 Include in the GitHub Release notes:
 ```
-Rollback: pip install nucleus==X.Y.(Z-1)
+Rollback: pip install nucleus-data==X.Y.(Z-1)
 ```
 
 ---
@@ -232,7 +232,7 @@ Copy this and check off before every release:
 [ ] git commit "release: vX.Y.Z"
 [ ] git tag vX.Y.Z && git push origin vX.Y.Z (FOUNDER ONLY)
 [ ] CI release workflow PASS
-[ ] PyPI publish confirmed (pip install nucleus==X.Y.Z)
+[ ] PyPI publish confirmed (pip install nucleus-data==X.Y.Z)
 [ ] GitHub Release created
 [ ] Docs site updated
 [ ] Announcement published

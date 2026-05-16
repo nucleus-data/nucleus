@@ -146,7 +146,7 @@ Estimate via `client.query(sql, job_config=QueryJobConfig(dry_run=True)).total_b
 # ADR-NNN: BigQuery Read Source via google-cloud-bigquery
 Status: PROPOSED  ·  Date: 2026-MM-DD  ·  Related: ADR-014, ADR-019, ADR-020
 Context: Users with data in BigQuery must currently EXPORT → GCS → ingest.
-Decision: WRAP google-cloud-bigquery[pyarrow]==3.41.0 as `pip install nucleus[bigquery]`.
+Decision: WRAP google-cloud-bigquery[pyarrow]==3.41.0 as `pip install nucleus-data[bigquery]`.
 Options rejected: dlt[bigquery] (destination-only); custom REST (BUILD); BigFrames (wrong model).
 Scope v0.3: single-query call, ADC + service-account, dry-run cost estimate, NE1011 quota code.
 OUT: streaming/storage-API (opt-in flag), incremental cursors, MERGE/INSERT, BigFrames, federated queries.
@@ -297,7 +297,7 @@ Type-mapping risks (Databricks SQL → Arrow → Iceberg, per https://docs.datab
 Status: PROPOSED (lead Wave 3)  ·  Related: ADR-014/019/020, parity_vs_bosch_ely_adb_batch.md
 Context: Bosch ELY runs Azure Databricks daily; without UC read, engineers must
   df.write.format("parquet").save("abfs://...") then ingest via Azure Blob — two-step.
-Decision: WRAP databricks-sql-connector[pyarrow]==4.2.6 as `pip install nucleus[databricks]`.
+Decision: WRAP databricks-sql-connector[pyarrow]==4.2.6 as `pip install nucleus-data[databricks]`.
 Read-only v0.3. Write-back via Mode 1 Iceberg portability — not via SQL connector.
 Options rejected:
   - pyodbc + Databricks ODBC (system dep; no Arrow)
@@ -601,7 +601,7 @@ Inherited from filesystem connector. No SFTP-specific logic.
 Status: PROPOSED  ·  Related: ADR-007 (license tier), ADR-020 (filesystem delegation)
 Context: Bosch ELY uses SFTP for industrial sensor + factory-floor data exports.
   Without SFTP, engineers must scp manually then ingest — fragile two-step.
-Decision: WRAP paramiko==5.0.0 as `pip install nucleus[sftp]`. Download → tempdir →
+Decision: WRAP paramiko==5.0.0 as `pip install nucleus-data[sftp]`. Download → tempdir →
   delegate to existing filesystem connector → cleanup.
 Options rejected:
   - fsspec/sshfs (wraps paramiko anyway; extra layer with no current win)
@@ -750,7 +750,7 @@ NEEDS VERIFICATION (medium risk): the FSSpec→PyArrow handler had async-vs-sync
 Status: PROPOSED (P1)  ·  Related: ADR-020, parity_vs_bosch_ely_adb_batch.md
 Context: Current object-storage: S3 + GCS + local FS. Azure Blob = remaining 3rd-cloud
   parity gap. Bosch ELY runs Azure Databricks + ADLS Gen2.
-Decision: WRAP adlfs==2026.5.0 as `pip install nucleus[azure]`. Use same
+Decision: WRAP adlfs==2026.5.0 as `pip install nucleus-data[azure]`. Use same
   register_filesystem pattern as copy_from_gcs.py.
 Options rejected:
   - azure-storage-blob directly (would re-implement adlfs fsspec adapter)
@@ -813,7 +813,7 @@ Current `src/nucleus/` ≈ 13K LOC (NEEDS VERIFICATION exact figure against `doc
 | SFTP | `paramiko==5.0.0` | **LGPL-2.1 YELLOW** | ~5 MB |
 | Azure Blob | `adlfs==2026.5.0` | BSD-3-Clause GREEN | ~17 MB |
 
-**Net new top-level deps: 4** (REST adds zero). `pip install nucleus` core is unchanged — Wave 3 adds 4 extras groups + reuses dlt for the 5th. ADR-039 `<30 core deps` hard ceiling preserved.
+**Net new top-level deps: 4** (REST adds zero). `pip install nucleus-data` core is unchanged — Wave 3 adds 4 extras groups + reuses dlt for the 5th. ADR-039 `<30 core deps` hard ceiling preserved.
 
 Optional extras count: current 9 → 14 with Wave 3 (bigquery / databricks / rest / sftp / azure).
 

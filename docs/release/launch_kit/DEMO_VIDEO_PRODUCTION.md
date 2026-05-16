@@ -11,7 +11,7 @@
 | Time | Scene | Duration | What viewer sees | What viewer hears |
 |---|---|---|---|---|
 | 0:00 - 0:05 | Title card | 5 s | Nucleus logo on blue gradient; tagline "Ship data products from a laptop"; v0.2.0 sub-title | Hook line (15 words) |
-| 0:05 - 0:15 | Install | 10 s | `pip install nucleus` running and completing | "Nucleus is a local-first Python SDK and CLI for Iceberg pipelines..." |
+| 0:05 - 0:15 | Install | 10 s | `pip install nucleus-data` running and completing | "Nucleus is a local-first Python SDK and CLI for Iceberg pipelines..." |
 | 0:15 - 0:25 | Init + Up | 10 s | `nucleus init my-stack && cd my-stack && nucleus up` | "`nucleus init` scaffolds; `nucleus up` boots the stack." |
 | 0:25 - 0:40 | Ingest | 15 s | `nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders` | "One-liner ingest. Auto-infer schema. Atomic Iceberg commit." |
 | 0:40 - 0:52 | Query | 12 s | `nucleus query "SELECT ... FROM {{ ref('raw.orders') }} ..."` Rich table | "Jinja-templated SQL through DuckDB against the snapshot." |
@@ -79,7 +79,7 @@ After pre-flight, your two terminals are:
 - **Terminal A**:
 
   ```
-  $ pip install nucleus
+  $ pip install nucleus-data
   ```
 
 - **Expected output (last 6 lines)**:
@@ -93,7 +93,7 @@ After pre-flight, your two terminals are:
   Successfully installed nucleus-0.2.0 duckdb-1.1.3 polars-1.18.0 ...
   ```
 
-- **On-screen subtitle**: `pip install nucleus  ->  ~7 s on a warm cache`
+- **On-screen subtitle**: `pip install nucleus-data  ->  ~7 s on a warm cache`
 - **Voiceover (~10 s)**:
   > "Nucleus is a local-first Python SDK and CLI for Iceberg-native pipelines. One `pip install`. No JVM. No cluster."
 

@@ -35,7 +35,7 @@ quoting publicly. Numbers below are all empirical; nothing is fabricated.
 `docs/internal/research/performance_reliability_targets.md` (perf doc) catalogs
 **aspirational v0.3+ targets** — the direction Nucleus is heading.
 This document catalogs the **v0.2.0 empirical baseline** — what a user
-who installs `pip install nucleus==0.2.0` today will actually see on a
+who installs `pip install nucleus-data==0.2.0` today will actually see on a
 single laptop. Per AGENTS.md §10 row 8 ("be brutally honest about
 scope"), aspirational numbers without empirical backing are anxiety. We
 publish both: targets in the perf doc, actuals here.

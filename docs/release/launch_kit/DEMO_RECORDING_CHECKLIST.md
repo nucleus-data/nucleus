@@ -97,7 +97,7 @@
 - [ ] Hit record on OBS.
 - [ ] Wait 1 s of silent dark screen (will be trimmed in post but gives audio room to settle).
 - [ ] Run the 5 commands in sequence, in Terminal A:
-  1. `pip install nucleus`
+  1. `pip install nucleus-data`
   2. `nucleus init my-stack && cd my-stack`
   3. `nucleus up`
   4. `nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders`

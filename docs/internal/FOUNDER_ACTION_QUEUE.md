@@ -423,7 +423,7 @@ Two more Phase D / drift verifier items resolved in this window. Pipeline now ha
 | (c) Status quo (keep speculative pins, no wiring) | Do nothing; document the drift in `docs/budget_history.md` as a known v0.1.0 narrative gap. | 0 LOC | n/a |
 
 **Architect recommendation**: **Option (b)**. Three reasons:
-1. **Anti-Over-Engineering pillar**: pins without callers are dead weight. Moving them to `[project.optional-dependencies] future` keeps them discoverable (`pip install nucleus[future]`) but out of the v0.1 install footprint. Reduces v0.1 surface from 25 → 21 runtime pins.
+1. **Anti-Over-Engineering pillar**: pins without callers are dead weight. Moving them to `[project.optional-dependencies] future` keeps them discoverable (`pip install nucleus-data[future]`) but out of the v0.1 install footprint. Reduces v0.1 surface from 25 → 21 runtime pins.
 2. **Honest ADR posture**: ADR-011 §1 makes a promise that the code doesn't keep. Amending the ADR to match reality (or implementing reality to match the ADR) is correct under the Vision pillar — but the LOC/maintenance cost of (a) doesn't serve the 30-min beachhead metric. Defer-to-real-caller is the more practical posture.
 3. **Vocabulary discipline**: telemetry observability is a v0.5+ "Production Tier" concern per `docs/specs/nucleus_architecture_v4.1.md` §18 roadmap. Day-1 no-op wiring was an aspirational promise; landing it now without observable demand violates the 8-question gate ("Triggered by empirical telemetry, not anxiety?").
 
@@ -484,7 +484,7 @@ After triage of the rescued verifier findings, the following landed foreground (
 |---|---|---|---|
 | 1 | `src/nucleus/cli/main.py` | docstring at `_open_iceberg_catalog` | Stale `pyiceberg==0.8.1` → `0.11.1` (was last drift verifier MEDIUM #1 outstanding ref in src/) |
 | 2 | `src/nucleus/cli/main.py` | `nucleus up --profile` help text | Stale `nucleus.toml` → `nucleus_project.yaml` (user-visible help drift) |
-| 3 | `src/nucleus/intelligence/translate.py` | ImportError fix_hint | `pip install nucleus[copilot]` → `pip install nucleus` (the `[copilot]` extra does not exist in `pyproject.toml`; broken UX) |
+| 3 | `src/nucleus/intelligence/translate.py` | ImportError fix_hint | `pip install nucleus-data[copilot]` → `pip install nucleus-data` (the `[copilot]` extra does not exist in `pyproject.toml`; broken UX) |
 | 4 | `src/nucleus/intelligence/translate.py` | `_BANNED_NAMES` regex | Added `re.IGNORECASE` so capitalized variants `Anthropic`/`OpenAI`/`Ollama` are stripped from user-facing strings (closes a leak path AGENTS.md §11.7 forbids) |
 | 5 | `src/nucleus/intelligence/copilot.py` | LiteLLM ImportError fix_hint | Same `nucleus[copilot]` fix as translate.py + Ollama offline-fallback hint |
 | 6 | `docs/internal/swap/pyiceberg.md` | header block | `Current default: pyiceberg…==0.8.1` → `…==0.11.1`; ADR-003 0.8.1→0.11 migration marked as **landed** (during PoC #1 promotion) instead of "queued"; `Last touched` bumped to 2026-05-14 |

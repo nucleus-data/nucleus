@@ -83,7 +83,7 @@ Zero — docs content is not counted in the 30K LOC proprietary budget (per `pyp
 | `mkdocs-glightbox` | 0.5.2 | MIT |
 | `pymdown-extensions` | 10.21.3 | MIT |
 
-All GREEN tier per ADR-007. Not installed with `pip install nucleus` (docs extra only).
+All GREEN tier per ADR-007. Not installed with `pip install nucleus-data` (docs extra only).
 
 ### Files created
 

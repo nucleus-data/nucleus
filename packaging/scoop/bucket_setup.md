@@ -117,7 +117,7 @@ Add `.github/workflows/ci.yml` that runs `scoop install` from the manifest on ev
 
 ## Per-release update (founder, ~5 min after every PyPI release)
 
-After `pip install nucleus-data==0.X.Y` works (per `../pypi/PUBLISH_RUNBOOK.md`):
+After `pip install nucleus-data-data==0.X.Y` works (per `../pypi/PUBLISH_RUNBOOK.md`):
 
 ```powershell
 cd scoop-bucket

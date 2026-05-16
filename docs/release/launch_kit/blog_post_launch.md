@@ -11,7 +11,7 @@ Today we are releasing **Nucleus v0.2.0**, the first publicly-available version 
 If you are a 5–20 engineer team building a greenfield analytics stack on 100 GB–5 TB of data, Nucleus is built for you.
 
 ```bash
-pip install nucleus
+pip install nucleus-data
 nucleus init my-stack && cd my-stack
 nucleus up
 nucleus ingest postgres://localhost/app --table public.orders --as raw.orders
@@ -169,13 +169,13 @@ This is *intentionally thin*. v0.2 ships the smallest useful Copilot. Schema-awa
 ### Install-size split (ADR-039)
 
 ```bash
-pip install nucleus              # lean core, <30 deps, <60 s install
-pip install nucleus[postgres]    # + psycopg
-pip install nucleus[snowflake]   # + dlt[snowflake]
-pip install nucleus[gcs]         # + gcsfs
-pip install nucleus[ai]          # + litellm + anthropic + openai
-pip install nucleus[workbench]   # + fastapi + uvicorn
-pip install nucleus[all]         # everything
+pip install nucleus-data              # lean core, <30 deps, <60 s install
+pip install nucleus-data[postgres]    # + psycopg
+pip install nucleus-data[snowflake]   # + dlt[snowflake]
+pip install nucleus-data[gcs]         # + gcsfs
+pip install nucleus-data[ai]          # + litellm + anthropic + openai
+pip install nucleus-data[workbench]   # + fastapi + uvicorn
+pip install nucleus-data[all]         # everything
 ```
 
 Lazy-import boundary at `pyproject.toml` lines 134-139 enforced by `scripts/check_lazy_imports.py` and `scripts/check_install_size.py` in CI.
@@ -230,7 +230,7 @@ python3.11 -m venv .venv && source .venv/bin/activate
 pip install -e .
 
 # Or, after the release workflow publishes to PyPI:
-pip install nucleus
+pip install nucleus-data
 ```
 
 - **Repo & quickstart**: <https://github.com/nucleus-data/nucleus>

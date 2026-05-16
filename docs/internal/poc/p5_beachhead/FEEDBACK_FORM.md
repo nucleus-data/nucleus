@@ -98,7 +98,7 @@ Install took **381 seconds** on a fast WSL2 connection. On a corporate proxy or 
 
 The README promises "ship data products from a laptop" but the dependency footprint is closer to a full MLOps platform. For a cold-eval by an external DE, this is a significant "is this worth my time?" filter.
 
-**Suggested fix**: Separate `[core]` extras (DuckDB, Polars, pyiceberg, click) from `[ai]`, `[dev]`, `[connectors]`. Let users install `pip install nucleus` (~20 deps) first and experience the aha-moment before pulling in Dagster + LiteLLM.
+**Suggested fix**: Separate `[core]` extras (DuckDB, Polars, pyiceberg, click) from `[ai]`, `[dev]`, `[connectors]`. Let users install `pip install nucleus-data` (~20 deps) first and experience the aha-moment before pulling in Dagster + LiteLLM.
 
 ---
 
@@ -274,7 +274,7 @@ Fix those three and this clears the bar for "serious eval." The table-stakes com
 
 ## What would make me a paying user
 
-1. **Public PyPI package** (`pip install nucleus` in <60 seconds, <20 core deps). Let me try the SQLite → query path in one minute before committing to a full install.
+1. **Public PyPI package** (`pip install nucleus-data` in <60 seconds, <20 core deps). Let me try the SQLite → query path in one minute before committing to a full install.
 
 2. **Postgres error translation that actually fires.** I tried the bad-creds path expecting "Connection refused — check your host/port." I got SQLAlchemy internals. Fix this one error path and the "production-grade error UX" promise becomes credible.
 

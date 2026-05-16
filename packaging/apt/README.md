@@ -4,7 +4,7 @@ This directory is intentionally **near-empty**. There is no .deb spec for v0.2.0
 
 ## Why deferred
 
-Linux users have a working install path via `pip install nucleus-data` (per `../pypi/PUBLISH_RUNBOOK.md`). System-managed Python on Debian/Ubuntu (`python3.11`, `python3-venv`) is well-maintained, and pip-into-venv is the default workflow for Python tooling in the Linux dev community.
+Linux users have a working install path via `pip install nucleus-data-data` (per `../pypi/PUBLISH_RUNBOOK.md`). System-managed Python on Debian/Ubuntu (`python3.11`, `python3-venv`) is well-maintained, and pip-into-venv is the default workflow for Python tooling in the Linux dev community.
 
 Building a real .deb requires:
 

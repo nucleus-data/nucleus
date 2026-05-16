@@ -91,7 +91,7 @@ All 8 questions answered YES or NEUTRAL. The decision passes the gate.
 
 **Pros**: `nucleus dagit` works out-of-the-box; no "binary missing" friction; install discoverability via `pip show dagster-webserver`.
 
-**Cons**: adds ~12 MB to every `pip install nucleus` (verified per <https://pypi.org/project/dagster-webserver/> wheel sizes 2026-05-14). 95% of users will never run `nucleus dagit`. AGENTS.md Constraint #11 (one-component-per-PR) + §11.13 (upgrade-safety discipline) — adding a new pinned dep needs an upgrade-smoke test, a rollback command, and a quarterly audit slot.
+**Cons**: adds ~12 MB to every `pip install nucleus-data` (verified per <https://pypi.org/project/dagster-webserver/> wheel sizes 2026-05-14). 95% of users will never run `nucleus dagit`. AGENTS.md Constraint #11 (one-component-per-PR) + §11.13 (upgrade-safety discipline) — adding a new pinned dep needs an upgrade-smoke test, a rollback command, and a quarterly audit slot.
 
 **Why rejected**: 12 MB for a 5%-utility feature fails Anti-Over-Engineering BIND. The opt-in install path (one `pip install dagster-webserver==1.9.5` command surfaced via the NE5009 fix_hint) is the right friction-vs-bytes trade.
 
@@ -120,7 +120,7 @@ All 8 questions answered YES or NEUTRAL. The decision passes the gate.
 - PoC #5 reviewers' "why no UI?" question has a one-line answer in the codebase + spec.
 - v4.1 §6.6 Tier 3 promise fulfilled at v0.1.1, not deferred to v0.3+.
 - Power users have a familiar on-ramp during the 10-14 week Workbench build.
-- Zero new runtime deps; default `pip install nucleus` size unchanged.
+- Zero new runtime deps; default `pip install nucleus-data` size unchanged.
 - Carve-out is bounded and explicitly labelled — no risk of vocabulary creep.
 - Composability preserved: when the embedded orchestrator is eventually swapped for `nucleus-mini-scheduler` (per v4.1 §6.7), this command can either route to the mini-scheduler's UI (if any) or be marked deprecated with a clean error pointing at `nucleus workbench`.
 
@@ -173,7 +173,7 @@ All 8 questions answered YES or NEUTRAL. The decision passes the gate.
 
 ## Open questions
 
-1. **Bundling cadence.** Should `dagster-webserver` be added to the install matrix as an optional extra (`pip install nucleus[dagit]`) at v0.3? Recommend YES to remove the manual install step, but track install-size telemetry first; defer to v0.3 ADR.
+1. **Bundling cadence.** Should `dagster-webserver` be added to the install matrix as an optional extra (`pip install nucleus-data[dagit]`) at v0.3? Recommend YES to remove the manual install step, but track install-size telemetry first; defer to v0.3 ADR.
 2. **`nucleus enable compat-dagster` reconciliation.** When `nucleus enable` lands at v0.3, do we keep `nucleus dagit` as a standalone command (preferred — operator commands are stable surface) or rework it into a toggle? Recommend keep; revisit at v0.3 with a separate ADR if the founder's intent at that point is to consolidate.
 3. **Workbench v0.2 cutover.** When the Workbench reaches feature parity with the orchestrator UI for the v0.2 feature set, do we deprecate `nucleus dagit`? Recommend NO — Dagit will always have features the Workbench has not wrapped (sensor diagnostic UIs, code-location reload screens, etc.). Keep the escape hatch indefinitely.
 

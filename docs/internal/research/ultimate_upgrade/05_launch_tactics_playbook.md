@@ -23,7 +23,7 @@ If the founder reads only one section, read this one.
 
 5. **Refined recommendation**: aim for BemiDB / OpenHands / SigNoz tier (~200-400 HN pts, ~50-150K stars over 2-3 years, language-specific trending, NOT all-languages monthly #1). Pursuing #1 monthly would require betraying [AGENTS.md §8](../../../AGENTS.md) forbidden framings — a Pyrrhic victory.
 
-6. **Top 3 launch-killers**: (a) `pip install nucleus` broken at T+0 → defer 24 h if T-1 h smoke from PyPI fails; (b) hostile first-comment spiral → founder first-comment within 60 s, FAQ paraphrased not pasted, silent on content-free hostility; (c) tagline reads as marketing-speak → switch to the recommended R1 tagline below.
+6. **Top 3 launch-killers**: (a) `pip install nucleus-data` broken at T+0 → defer 24 h if T-1 h smoke from PyPI fails; (b) hostile first-comment spiral → founder first-comment within 60 s, FAQ paraphrased not pasted, silent on content-free hostility; (c) tagline reads as marketing-speak → switch to the recommended R1 tagline below.
 
 7. **Refined top-recommended tagline (3 ranked)**:
    - **R1 (recommended)**: `Nucleus: Iceberg pipelines from a laptop, in <30 minutes, no JVM.` (61 chars, constraint-led + concrete metric + zero buzzwords)
@@ -280,7 +280,7 @@ The existing [`60_SECOND_DEMO_SCRIPT.md`](../../release/launch_kit/60_SECOND_DEM
 
 **Edit 2 — Hold a 2-second subtitle overlay on the Iceberg snapshot ID in Scene 4.** Text: `Apache Iceberg snapshot — committed, atomic, portable.` This is the single most concrete proof the demo is real (not staged). Per OpenHands + BemiDB threads, "is this real?" is the #1 first-comment objection.
 
-**Edit 3 — Final 2-second overlay on Scene 6 end-frame.** Add `pip install nucleus / github.com/nucleus-data/nucleus / Apache 2.0`. Twitter / LinkedIn share-card previews use this last frame; with the overlay it becomes a self-contained ad.
+**Edit 3 — Final 2-second overlay on Scene 6 end-frame.** Add `pip install nucleus-data / github.com/nucleus-data/nucleus / Apache 2.0`. Twitter / LinkedIn share-card previews use this last frame; with the overlay it becomes a self-contained ad.
 
 ### 4.8 First-week content calendar
 
@@ -410,7 +410,7 @@ Combined: could reach 15-30% but requires 6 weeks of pre-launch work + 3 lottery
 
 | Killer | Probability | Mitigation |
 |---|---|---|
-| 1. `pip install nucleus` broken at T+0 | ~5% (CI green but catastrophic if happens) | T-1 h cold install from fresh venv on different OS; defer 24 h if fails |
+| 1. `pip install nucleus-data` broken at T+0 | ~5% (CI green but catastrophic if happens) | T-1 h cold install from fresh venv on different OS; defer 24 h if fails |
 | 2. Hostile "yet-another-wrapper" comment-spiral | ~25-30% | First-comment paraphrased not pasted; respond every 5 min in first hour; silent on content-free hostility |
 | 3. Tagline reads as marketing-speak; post stays <30 pts for 6 h | ~25% with "Ship data products" / ~10% with R1 | Switch to R1 tagline (§4.1); pre-test on 2-3 trusted readers 24 h before |
 

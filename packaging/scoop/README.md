@@ -29,7 +29,7 @@ See `bucket_setup.md` for step-by-step custom bucket creation.
 
 ## Why we install via venv (architecture note)
 
-The manifest creates a Python virtualenv at `$dir\venv` and runs `pip install nucleus-data` inside it. We do **not** install nucleus into the user's system Python or into the `python311` Scoop-shipped Python because:
+The manifest creates a Python virtualenv at `$dir\venv` and runs `pip install nucleus-data-data` inside it. We do **not** install nucleus into the user's system Python or into the `python311` Scoop-shipped Python because:
 
 1. **Clean uninstall.** `scoop uninstall nucleus` removes `$dir` (the entire app folder). If we'd installed into the user's site-packages we'd leak files everywhere.
 2. **Version isolation.** Two Scoop apps that both want `python311` shouldn't fight over each other's deps. The venv prevents that.
@@ -41,7 +41,7 @@ Cost: ~150 MB on disk (the venv + pyiceberg + polars + duckdb + pyarrow wheels).
 
 ## Pre-publish checklist (founder, every release)
 
-1. **PyPI is live first.** The manifest URL points at a `.whl` file we upload to GitHub releases — but `pip install` inside the post_install script also resolves transitive deps from PyPI. Confirm `pip install nucleus-data` works from a clean venv (see `../pypi/PUBLISH_RUNBOOK.md` Step 6).
+1. **PyPI is live first.** The manifest URL points at a `.whl` file we upload to GitHub releases — but `pip install` inside the post_install script also resolves transitive deps from PyPI. Confirm `pip install nucleus-data-data` works from a clean venv (see `../pypi/PUBLISH_RUNBOOK.md` Step 6).
 
 2. **Build the wheel.**
 

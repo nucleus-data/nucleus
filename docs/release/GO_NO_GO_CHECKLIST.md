@@ -7,7 +7,7 @@
 - [ ] Canonical repo URL is consistent in launch-critical docs: `https://github.com/nucleus-data/nucleus`. Any legacy personal-repo URL appears only where explicitly marked historical.
 - [ ] Public docs URL is either live at `https://nucleus-data.github.io/nucleus/` or all launch copy states the README/quickstart are the canonical entry points until Pages is enabled. GitHub Pages requires the repo to be public or GitHub Pro until enabled.
 - [ ] PyPI Trusted Publisher is registered for owner `nucleus-data`, repo `nucleus`, workflow `release.yml`, environment `pypi`.
-- [ ] Public install copy is honest: before PyPI publish use `pip install -e ".[dev]"`; after the `v0.2.0` workflow succeeds use `pip install nucleus` or exact-version `pip install nucleus==0.2.0`. Optional extras are explicit, e.g. `pip install "nucleus[postgres,workbench]"`.
+- [ ] Public install copy is honest: before PyPI publish use `pip install -e ".[dev]"`; after the `v0.2.0` workflow succeeds use `pip install nucleus-data` or exact-version `pip install nucleus-data==0.2.0`. Optional extras are explicit, e.g. `pip install "nucleus[postgres,workbench]"`.
 - [ ] Release mechanics are single-path: founder pushes the tag, then verifies `.github/workflows/release.yml` created the GitHub Release. Manual `gh release create` is fallback only if the workflow did not create one.
 - [ ] Workbench default URL is consistent with source: `http://localhost:8765`.
 - [ ] Launch kit has no raw angle-bracket placeholders. Missing media is represented as `FOUNDER ACTION` or `WORKSTREAM C ACTION`.
@@ -21,7 +21,7 @@
 ## SHOULD PASS before public
 
 - [ ] Press kit stats are rechecked against the latest `scripts/loc_budget.py`, release notes, and README.
-- [ ] Clean PyPI smoke succeeds after publish: `pip install nucleus==0.2.0 && nucleus version`.
+- [ ] Clean PyPI smoke succeeds after publish: `pip install nucleus-data==0.2.0 && nucleus version`.
 - [ ] Fresh clone smoke succeeds from the canonical repo URL.
 - [ ] HN/Reddit FAQ has concise answers for "just a wrapper", Windows concurrent-run failure, performance baseline gaps, solo-founder risk, and graduation to giants.
 - [ ] Founder has 4 hours blocked after Show HN submission for good-faith responses.

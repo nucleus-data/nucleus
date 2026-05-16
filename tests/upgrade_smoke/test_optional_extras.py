@@ -3,7 +3,7 @@
 Validates the disposition landed 2026-05-14 per
 ``docs/internal/research/otel_day1_decision.md`` Option a-split:
 
-1. `pip install nucleus` (no extras) imports cleanly — the four core
+1. `pip install nucleus-data` (no extras) imports cleanly — the four core
    modules (``nucleus``, ``nucleus.ctx``, ``nucleus.errors``,
    ``nucleus.cli.main``) load without requiring any opt-in extra.
 2. `opentelemetry-api` stays in core — the no-op substrate per ADR-011 §1
@@ -18,7 +18,7 @@ Validates the disposition landed 2026-05-14 per
    `[project.optional-dependencies]` group, and (after a clean install)
    not importable. Per ``docs/internal/research/otel_day1_decision.md`` §D3.
 5. `opentelemetry-sdk` only ships when the user opts in via
-   ``pip install nucleus[observability]``.
+   ``pip install nucleus-data[observability]``.
 
 Per AGENTS.md §11.13 (Hard Constraint #11 — upgrade-safe stack design)
 this test guards future regressions: if a contributor accidentally
@@ -70,7 +70,7 @@ def _dep_packages(specs: list[str]) -> set[str]:
 
 
 # ---------------------------------------------------------------------------
-# 1-4. Core import smoke (`pip install nucleus` with no extras must work)
+# 1-4. Core import smoke (`pip install nucleus-data` with no extras must work)
 # ---------------------------------------------------------------------------
 
 
@@ -86,7 +86,7 @@ def _dep_packages(specs: list[str]) -> set[str]:
 def test_core_module_imports_without_optional_extras(module_name: str) -> None:
     """The four core modules import without requiring any opt-in extras.
 
-    A user who runs ``pip install nucleus`` (no extras) must reach
+    A user who runs ``pip install nucleus-data`` (no extras) must reach
     ``import nucleus``, ``nucleus.ctx``, ``nucleus.errors``, and
     ``nucleus.cli.main`` cleanly. This is the v0.1 default install
     contract per ADR-012 amendment 2026-05-14.
@@ -204,7 +204,7 @@ def test_msgspec_unimportable_after_clean_install() -> None:
 
     Per ADR-012 amendment 2026-05-14 ``msgspec`` is removed from every
     dependency group. After a clean ``pip install -e .`` (or
-    ``pip install nucleus``) ``msgspec`` is no longer pulled into the
+    ``pip install nucleus-data``) ``msgspec`` is no longer pulled into the
     environment by Nucleus. If this test fails because ``msgspec`` is
     still importable, the dev venv has a stale package -- run
     ``pip uninstall -y msgspec`` to bring it back into compliance.
@@ -239,7 +239,7 @@ def test_opentelemetry_sdk_unimportable_in_minimal_install() -> None:
     """``import opentelemetry.sdk`` is unavailable in the minimal install.
 
     Per ADR-011 amendment 2026-05-14 + ``docs/internal/research/otel_day1_decision.md``
-    §D1: SDK ships only via ``pip install nucleus[observability]``. A user
+    §D1: SDK ships only via ``pip install nucleus-data[observability]``. A user
     on the default install must NOT find ``opentelemetry.sdk`` available.
     The skipif above suppresses this test in dev envs that opted into
     ``[observability]`` or ``[all]`` -- those envs by design have the SDK.

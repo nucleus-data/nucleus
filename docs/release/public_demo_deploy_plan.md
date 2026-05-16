@@ -168,7 +168,7 @@ The demo image exports `NUCLEUS_DEMO_MODE=true`.  Today (v0.2.0 GA) this env var
 - `POST /api/query` with mutating SQL (`INSERT`, `UPDATE`, `DELETE`, `CREATE`, `DROP`).  SQL classification via sqlglot statement walk (the `lineage-advanced` extras already pin sqlglot).
 - `POST /api/schedules/*` — schedule mutations.
 
-The middleware should also render a banner in the SPA: *"This is a read-only demo.  Try Nucleus locally with `pip install nucleus`."*
+The middleware should also render a banner in the SPA: *"This is a read-only demo.  Try Nucleus locally with `pip install nucleus-data`."*
 
 **Scope estimate**: ~50 LOC in `app.py` + 1 test in `tests/workbench/test_demo_mode.py`.  Adds zero new deps.  Tracked as ADR-040 candidate.
 
@@ -290,7 +290,7 @@ Render hard ceiling: Render Starter is $7/mo, no surprise bills possible — Ren
 | `https://nucleus-data.github.io/nucleus/` | GitHub Pages           | Hosted mkdocs site once repo visibility/Pages gating allows it. |
 | `nucleus-data.dev`                       | Cloudflare Pages       | Landing page — links to docs, demo, GitHub.               |
 | `github.com/nucleus-data/nucleus`        | GitHub                 | Source repo.                                              |
-| `pypi.org/project/nucleus`               | PyPI                   | `pip install nucleus`.                                    |
+| `pypi.org/project/nucleus`               | PyPI                   | `pip install nucleus-data`.                                    |
 
 DNS records (Cloudflare):
 

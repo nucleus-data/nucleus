@@ -247,14 +247,14 @@ dependencies = [
 
 [project.optional-dependencies]
 +# Opt-in OTEL SDK + future exporters (per ADR-011 §1 v0.5+ transport).
-+# Install: `pip install nucleus[observability]`
++# Install: `pip install nucleus-data[observability]`
 +observability = [
 +  "opentelemetry-sdk==1.29.0",       # version-locked to opentelemetry-api
 +]
 +
 +# Opt-in column-level lineage + asset-graph dep extraction
 +# (per docs/internal/research/sqlglot.md §10; first concrete caller v0.5+).
-+# Install: `pip install nucleus[lineage-advanced]`
++# Install: `pip install nucleus-data[lineage-advanced]`
 +lineage-advanced = [
 +  "sqlglot==26.0.0",
 +]
@@ -340,7 +340,7 @@ Architect's B2.8 default was α-full (both api + sdk to extras). This research's
 
 ### F2. Does v0.1 enterprise pitch require visible OTEL hooks?
 
-If the v0.1 release narrative mentions "OpenTelemetry-ready out of the box" as a sales bullet, α-split is the stronger story (`pip install nucleus[observability]` → point a collector). α-full demands a second install step. No existing user request has surfaced in `FOUNDER_ACTION_QUEUE.md` §0 or `docs/onboarding/quickstart.md`; absent demand, either option is honest. **Decide.**
+If the v0.1 release narrative mentions "OpenTelemetry-ready out of the box" as a sales bullet, α-split is the stronger story (`pip install nucleus-data[observability]` → point a collector). α-full demands a second install step. No existing user request has surfaced in `FOUNDER_ACTION_QUEUE.md` §0 or `docs/onboarding/quickstart.md`; absent demand, either option is honest. **Decide.**
 
 ### F3. `msgspec` — remove or extras-bucket?
 

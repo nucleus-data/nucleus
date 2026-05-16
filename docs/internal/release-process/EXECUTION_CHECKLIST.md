@@ -401,7 +401,7 @@ Present:
 ```
 
 - [ ] CI release workflow completed (green)
-- [ ] PyPI package published (`pip install nucleus==0.2.0` works)
+- [ ] PyPI package published (`pip install nucleus-data==0.2.0` works)
 - [ ] GitHub Release created with CHANGELOG excerpt
 - [ ] PoC #5 external testers notified
 
