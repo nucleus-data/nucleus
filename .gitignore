@@ -205,3 +205,7 @@ workbench_snapshot.html
 
 # Local agent scratch directory (transient inter-worker artifacts)
 .scratch/
+
+# Transient agent-session transcript artifacts
+TRANSCRIPT.md
+

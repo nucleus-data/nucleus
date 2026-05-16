@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="assets\nucleus-logo-option-2-composable.png" alt="Nucleus" width="500" />
+  <img src="assets/nucleus-logo-option-2-composable.png" alt="Nucleus" width="500" />
 </p>
 
 # Nucleus
 
 
-**Quickstart:** [`docs/onboarding/quickstart.md`](docs/onboarding/quickstart.md) · **Examples:** [`examples/01-ecommerce-elt/`](examples/01-ecommerce-elt/) · **Roadmap anchor:** [`nucleus_architecture_v4.1.md` section 18 — Roadmap](nucleus_architecture_v4.1.md#18-roadmap)
+**Quickstart:** [`docs/onboarding/quickstart.md`](docs/onboarding/quickstart.md) · **Examples:** [`examples/01-ecommerce-elt/`](examples/01-ecommerce-elt/) · **Roadmap anchor:** [`docs/specs/nucleus_architecture_v4.1.md` section 18 — Roadmap](docs/specs/nucleus_architecture_v4.1.md#18-roadmap)
 
 [![PyPI version](https://img.shields.io/pypi/v/nucleus.svg)](https://pypi.org/project/nucleus/)
 [![Status: v0.2 beta](https://img.shields.io/badge/status-v0.2%20beta-yellow)]()
@@ -56,15 +56,15 @@ Full quickstart with Postgres + S3 + a BI-ready mart in <30 min: [`docs/onboardi
 
 ## Why Nucleus
 
-- **Graduates to giants, not away from them.** Nucleus writes plain Apache Iceberg snapshots to your own S3 (or filesystem) — no Nucleus-proprietary byte format, ever. The day you outgrow a laptop, you point Databricks, Snowflake, or any Iceberg catalog at the same bucket. Zero migration. The yield-to-giants strategy is a first-class architectural principle, not a fallback ([`nucleus_architecture_v4.1.md` §10](nucleus_architecture_v4.1.md#10-yield-to-giants-strategy)).
-- **Local-first by construction.** Cold boot ~6 s (`nucleus up`). Idle RAM ~117 MB. Iceberg snapshots, scheduling daemon, run ledger, and Workbench all run from a single `pip install` on a laptop. No cluster. No JVM. Local-identical-to-prod ([`docs/benchmarks/2026-05-15_baseline.md`](docs/benchmarks/2026-05-15_baseline.md)).
+- **Graduates to giants, not away from them.** Nucleus writes plain Apache Iceberg snapshots to your own S3 (or filesystem) — no Nucleus-proprietary byte format, ever. The day you outgrow a laptop, you point Databricks, Snowflake, or any Iceberg catalog at the same bucket. Zero migration. The yield-to-giants strategy is a first-class architectural principle, not a fallback ([`docs/specs/nucleus_architecture_v4.1.md` §10](docs/specs/nucleus_architecture_v4.1.md#10-yield-to-giants-strategy)).
+- **Local-first by construction.** Cold boot ~6 s (`nucleus up`). Idle RAM ~117 MB. Iceberg snapshots, scheduling daemon, run ledger, and Workbench all run from a single `pip install` on a laptop. No cluster. No JVM. Local-identical-to-prod ([`docs/internal/benchmarks/2026-05-15_baseline.md`](docs/internal/benchmarks/2026-05-15_baseline.md)).
 - **AI-assisted, not AI-gated.** `nucleus chat` routes through `litellm` to your provider of choice (Anthropic / OpenAI / Ollama / 100+ more), with opt-in consent, no Nucleus servers, no key logging. The Copilot is a feature; the data path is the product. Lineage-aware refactoring arrives in v0.5 ([ADR-015](docs/decisions/ADR-015-ai-chat-mvp.md)). <!-- banned-term: AI-native -->
 
 ---
 
 ## What's not in v0.2 (yet)
 
-We are honest about scope. v0.2.0 is the first publicly available release; treat it as beta. The following are **deferred** to v0.3 / v0.5 / v1.0 per the roadmap at [`nucleus_architecture_v4.1.md` §18](nucleus_architecture_v4.1.md#18-roadmap):
+We are honest about scope. v0.2.0 is the first publicly available release; treat it as beta. The following are **deferred** to v0.3 / v0.5 / v1.0 per the roadmap at [`docs/specs/nucleus_architecture_v4.1.md` §18](docs/specs/nucleus_architecture_v4.1.md#18-roadmap):
 
 - **Lakekeeper REST catalog** — v0.3+ (v0.2 stays on filesystem catalog; bytes are still valid Iceberg).
 - **`dbt-duckdb` adapter** — v0.3+ optional. v0.2 ships native `ctx.sql` + Jinja `{{ ref() }}` (~180 LOC, hard 2,500 LOC scope ceiling).
@@ -74,7 +74,7 @@ We are honest about scope. v0.2.0 is the first publicly available release; treat
 - **Hybrid compute dispatch** (`@nucleus.sql_asset(compute="databricks")`) — v1.5+.
 - **Nucleus Cloud** (managed catalog, managed S3, managed deploy) — v1.0+. The OSS core is and will remain free forever.
 
-If your problem requires any of these today, Nucleus is not yet for you. The full disclosure of empirical numbers (including 11 measured failures vs aspirational targets) lives at [`docs/benchmarks/2026-05-15_baseline.md`](docs/benchmarks/2026-05-15_baseline.md).
+If your problem requires any of these today, Nucleus is not yet for you. The full disclosure of empirical numbers (including 11 measured failures vs aspirational targets) lives at [`docs/internal/benchmarks/2026-05-15_baseline.md`](docs/internal/benchmarks/2026-05-15_baseline.md).
 
 ---
 
@@ -90,7 +90,7 @@ This is not a feature matrix — feature matrices favour whoever picks the featu
 
 ## What is Nucleus (slightly longer)
 
-A **local-first Python SDK + CLI** that wraps DuckDB, Polars, Apache Iceberg, PyArrow, and embedded orchestration behind **`ctx`** (programmatic) and **`nucleus`** (operator). A **data product** here means an Iceberg-backed **asset** with transforms, **contracts** (`@nucleus.check`), and lineage metadata — see **`nucleus_architecture_v4.1.md` section 12.1** for the precise definition. Vocabulary guidance for docs and UI: [`AGENTS.md`](AGENTS.md) section 7.
+A **local-first Python SDK + CLI** that wraps DuckDB, Polars, Apache Iceberg, PyArrow, and embedded orchestration behind **`ctx`** (programmatic) and **`nucleus`** (operator). A **data product** here means an Iceberg-backed **asset** with transforms, **contracts** (`@nucleus.check`), and lineage metadata — see **`docs/specs/nucleus_architecture_v4.1.md` section 12.1** for the precise definition. Vocabulary guidance for docs and UI: [`AGENTS.md`](AGENTS.md) section 7.
 
 ```python
 import nucleus.ctx as ctx
@@ -124,7 +124,7 @@ Nucleus optimizes the **on-ramp**; when you exceed single-node scale, **your Ice
 
 ## The Five Pillars
 
-Mirrored from **`nucleus_architecture_v4.1.md` section 2** and [`AGENTS.md`](AGENTS.md) section 6:
+Mirrored from **`docs/specs/nucleus_architecture_v4.1.md` section 2** and [`AGENTS.md`](AGENTS.md) section 6:
 
 1. **High performance on minimal resources** — DuckDB + Polars + Arrow; cold start budget **under ~10s** for `nucleus up`.
 2. **Composable by constitution** — Tier 1/2 dependencies expose swap interfaces + smoke tests; **full alternate implementations stay on-demand**, not preemptive.
@@ -138,7 +138,7 @@ Mirrored from **`nucleus_architecture_v4.1.md` section 2** and [`AGENTS.md`](AGE
 
 Five layers (bottom → top): **Physics** (Arrow, Iceberg, Parquet, S3 API) → **Engines** (DuckDB, Polars, …) → **Coordination** (materialization + lineage) → **Intelligence** (Copilot, agents — staged) → **Experience** (`ctx` + CLI + Workbench).
 
-- [`nucleus_architecture_v4.1.md`](nucleus_architecture_v4.1.md) — source of truth (**section 18** = versioned roadmap).
+- [`docs/specs/nucleus_architecture_v4.1.md`](docs/specs/nucleus_architecture_v4.1.md) — source of truth (**section 18** = versioned roadmap).
 - [`docs/architecture/`](docs/architecture/) — diagrams and sequences.
 
 ---
@@ -170,13 +170,13 @@ nucleus down
 nucleus version
 ```
 
-Detailed flag and stability text: [`nucleus_cli_spec.md`](nucleus_cli_spec.md).
+Detailed flag and stability text: [`docs/specs/nucleus_cli_spec.md`](docs/specs/nucleus_cli_spec.md).
 
 ---
 
 ## Yield-to-giants strategy
 
-Nucleus **complements** Databricks/Snowflake -- Iceberg bytes port first; hybrid dispatch and federation are **later roadmap items** (`nucleus_architecture_v4.1.md` section 10).
+Nucleus **complements** Databricks/Snowflake -- Iceberg bytes port first; hybrid dispatch and federation are **later roadmap items** (`docs/specs/nucleus_architecture_v4.1.md` section 10).
 
 The day a single laptop is no longer enough, three modes (per architecture section 10) cover the path forward:
 
@@ -197,7 +197,7 @@ Honest caveats -- the graduation cookbooks document a path, not a battle-tested 
 .
 ├── AGENTS.md                      # Contributor + vocabulary rules
 ├── README.md                      # This file
-├── nucleus_architecture_v4.1.md # Architecture + roadmap (section 18)
+├── docs/specs/nucleus_architecture_v4.1.md # Architecture + roadmap (section 18)
 ├── examples/                      # Curated end-to-end samples (start at 01-ecommerce-elt)
 ├── src/nucleus/                   # Implementation (ctx, CLI, coordination, …)
 ├── docs/                          # Onboarding, recipes, patterns, decisions
