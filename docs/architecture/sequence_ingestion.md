@@ -4,7 +4,7 @@
 > **Scope**: How `nucleus ingest <source-url> --table <name>` lands a first Iceberg asset on the laptop
 > **Audience**: Anyone touching `ctx/copy_from.py` (v0.1)
 > **Status**: v0.1 path via `ctx.copy_from` (~200 LOC). Prototyped by **PoC #3** (`poc/p3_ingest/ingest.py`); graduates to `src/nucleus/ctx/` only after PoC #1 ships `nucleus.errors`.
-> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md) (TEMPLATE), [`sequence_query.md`](sequence_query.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5.5 + §5.5.1, [`../research/dlt.md`](../research/dlt.md) (v0.3+ futures)
+> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md) (TEMPLATE), [`sequence_query.md`](sequence_query.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5.5 + §5.5.1, [`../internal/research/dlt.md`](../internal/research/dlt.md) (v0.3+ futures)
 
 ---
 

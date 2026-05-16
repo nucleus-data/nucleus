@@ -3,7 +3,7 @@
 > **Pattern**: Big Data — Iceberg Lifecycle / Layout
 > **Status**: Pre-implementation reference. Used by: Tier 1+ asset declarations (`partition_by=...`).
 > **Audience**: Anyone writing or reviewing assets that materialize to Iceberg, especially before touching `ctx.asset` partition arguments.
-> **References**: [`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §4, §7; [`docs/patterns/type_mapping.md`](./type_mapping.md) §4.4; [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
+> **References**: [`docs/internal/research/pyiceberg.md`](../internal/research/pyiceberg.md) §4, §7; [`docs/patterns/type_mapping.md`](./type_mapping.md) §4.4; [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
 > **Last reviewed**: 2026-05-12 — versions per [`docs/internal/compatibility.md`](../internal/compatibility.md) (`pyiceberg==0.8.1`, `pyarrow==18.1.0`)
 
 Read this **before** writing Tier 0 Heartbeat code that calls `Table.append` or `create_table(... partition_spec=...)`. Picking the wrong partition transform is the #1 silent performance killer in Iceberg warehouses.
@@ -12,7 +12,7 @@ Read this **before** writing Tier 0 Heartbeat code that calls `Table.append` or 
 
 ## §1. Why partitioning matters for Nucleus
 
-- Tier 1+ assets declare partitioning via `@nucleus.asset(partition_by="day(event_ts)")`. The decorator translates that to a PyIceberg `PartitionSpec` (per [`pyiceberg.md`](../research/pyiceberg.md) §4).
+- Tier 1+ assets declare partitioning via `@nucleus.asset(partition_by="day(event_ts)")`. The decorator translates that to a PyIceberg `PartitionSpec` (per [`pyiceberg.md`](../internal/research/pyiceberg.md) §4).
 - **Wrong spec, two symptoms**:
   1. Too coarse → readers full-scan multi-GB files for a 1-day query.
   2. Too fine → millions of tiny files; manifest reads dominate; commit latency balloons.
@@ -71,7 +71,7 @@ spec = PartitionSpec(
 )
 ```
 
-- `source_id` = the integer field ID of the source column in the table schema (NOT the column name; field IDs are the source of truth per [`pyiceberg.md`](../research/pyiceberg.md) §4).
+- `source_id` = the integer field ID of the source column in the table schema (NOT the column name; field IDs are the source of truth per [`pyiceberg.md`](../internal/research/pyiceberg.md) §4).
 - `field_id` = the partition field's own ID. Start at 1000+ to avoid collision with schema field IDs.
 - `name` = the human-readable partition name visible in manifests and SQL projections.
 - Pass `spec` into `Catalog.create_table(..., partition_spec=spec)`.
@@ -99,7 +99,7 @@ Iceberg supports **evolving** the partition spec without rewriting old data.
 
 - Old snapshots keep their original spec; new data is written under the new spec. Reads transparently union both.
 - Spec: [iceberg.apache.org/spec/#partition-evolution](https://iceberg.apache.org/spec/#partition-evolution).
-- PyIceberg API: `Table.update_spec()` returns a builder used inside a transaction (see [`pyiceberg.md`](../research/pyiceberg.md) §5).
+- PyIceberg API: `Table.update_spec()` returns a builder used inside a transaction (see [`pyiceberg.md`](../internal/research/pyiceberg.md) §5).
 
 ```python
 from pyiceberg.transforms import HourTransform
@@ -161,7 +161,7 @@ table.scan(row_filter="event_ts >= '2026-05-01'").plan_files()
 - `table.spec()` returns the **current** `PartitionSpec`. Cheap (metadata only).
 - `table.specs()` returns the dict of **all historical specs** (one per spec evolution). Useful for "why are these files in a different layout?"
 - `table.scan(row_filter=...).plan_files()` returns the list of files that would be read for that filter. If you see thousands of files for a daily query, partitioning is broken or compaction is overdue (see [`compaction.md`](./compaction.md) §5).
-- **DuckDB iceberg extension** (read-only in 1.1.3, per [`duckdb.md`](../research/duckdb.md) §4): `SELECT *` transparently shows the source columns; partition columns are derived metadata and aren't returned unless you explicitly add them as columns.
+- **DuckDB iceberg extension** (read-only in 1.1.3, per [`duckdb.md`](../internal/research/duckdb.md) §4): `SELECT *` transparently shows the source columns; partition columns are derived metadata and aren't returned unless you explicitly add them as columns.
 
 ---
 

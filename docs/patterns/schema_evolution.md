@@ -1,12 +1,12 @@
 # Pattern: Iceberg Schema Evolution
 
-> **Tier 1+** per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2, §14.3. Add-column auto-applied in v0.1 `ctx.write`; drop / rename / widen lands with `nucleus migrate` in v0.3+. See also [`pyiceberg.md`](../research/pyiceberg.md) §5, §7; [`partitioning.md`](./partitioning.md) §5; [`type_mapping.md`](./type_mapping.md) §4; [`time_travel.md`](./time_travel.md) §5. Last reviewed 2026-05-12 against `pyiceberg==0.8.1`.
+> **Tier 1+** per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2, §14.3. Add-column auto-applied in v0.1 `ctx.write`; drop / rename / widen lands with `nucleus migrate` in v0.3+. See also [`pyiceberg.md`](../internal/research/pyiceberg.md) §5, §7; [`partitioning.md`](./partitioning.md) §5; [`type_mapping.md`](./type_mapping.md) §4; [`time_travel.md`](./time_travel.md) §5. Last reviewed 2026-05-12 against `pyiceberg==0.8.1`.
 
 ---
 
 ## §1. What this pattern is
 
-Iceberg can `add`, `drop`, `rename`, `reorder`, and `widen` columns **without rewriting data files** — every change is a metadata commit (per [Iceberg spec — schema evolution](https://iceberg.apache.org/spec/#schema-evolution)). Powered by **immutable integer field IDs**: data files identify columns by ID, not name (per [`pyiceberg.md`](../research/pyiceberg.md) §7). Old snapshots stay readable because they reference their original IDs and files.
+Iceberg can `add`, `drop`, `rename`, `reorder`, and `widen` columns **without rewriting data files** — every change is a metadata commit (per [Iceberg spec — schema evolution](https://iceberg.apache.org/spec/#schema-evolution)). Powered by **immutable integer field IDs**: data files identify columns by ID, not name (per [`pyiceberg.md`](../internal/research/pyiceberg.md) §7). Old snapshots stay readable because they reference their original IDs and files.
 
 ---
 
@@ -63,7 +63,7 @@ with table.transaction() as txn:
 - `delete_column(name)` — cannot drop a column still in an active partition spec (per [`partitioning.md`](./partitioning.md) §5).
 - `move_first` / `move_after` / `move_before` — reorder.
 
-Inside `Transaction`, the schema commit bundles with appends as **one snapshot**. Illegal moves raise `pyiceberg.exceptions.ValidationError` → `NucleusSchemaEvolutionError` (per [`pyiceberg.md`](../research/pyiceberg.md) §5, §6).
+Inside `Transaction`, the schema commit bundles with appends as **one snapshot**. Illegal moves raise `pyiceberg.exceptions.ValidationError` → `NucleusSchemaEvolutionError` (per [`pyiceberg.md`](../internal/research/pyiceberg.md) §5, §6).
 
 ---
 
@@ -90,7 +90,7 @@ Inside `Transaction`, the schema commit bundles with appends as **one snapshot**
 ## §7. Cross-refs
 
 - [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2 (AMA), §14.3 (allowed-change policy).
-- [`pyiceberg.md`](../research/pyiceberg.md) §5, §6, §7, §9.
+- [`pyiceberg.md`](../internal/research/pyiceberg.md) §5, §6, §7, §9.
 - Related: [`partitioning.md`](./partitioning.md) §5; [`type_mapping.md`](./type_mapping.md) §4; [`snapshot_retention.md`](./snapshot_retention.md) §6; [`time_travel.md`](./time_travel.md) §5.
 - Spec: [iceberg.apache.org/spec/#schema-evolution](https://iceberg.apache.org/spec/#schema-evolution).
 
@@ -98,7 +98,7 @@ Inside `Transaction`, the schema commit bundles with appends as **one snapshot**
 
 ## §8. NEEDS VERIFICATION
 
-Confirm via PoC #1 against `pyiceberg==0.8.1`; log results to [`ai_hallucinations.md`](../research/ai_hallucinations.md).
+Confirm via PoC #1 against `pyiceberg==0.8.1`; log results to [`ai_hallucinations.md`](../internal/research/ai_hallucinations.md).
 
 - [ ] `Table.update_schema()` returns a context manager in 0.8.1 (docs landed post-0.8; release notes silent).
 - [ ] Dotted-path syntax (`"user.address.city"`) for nested add/drop works at depth ≥ 2.

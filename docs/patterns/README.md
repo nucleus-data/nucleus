@@ -28,13 +28,13 @@ This file is a navigation index. Patterns are versioned to the pinned wrapped-li
 ## Conventions
 
 - **Pattern, not recipe.** Patterns explain the *why* and the *Nucleus wrap*. End-to-end runnable walkthroughs live in [`../recipes/`](../recipes/).
-- **Cite the wrapped library.** Every pattern links to its [`../research/<lib>.md`](../research/) anchor and the pinned release per [`../internal/compatibility.md`](../internal/compatibility.md).
+- **Cite the wrapped library.** Every pattern links to its [`../internal/research/<lib>.md`](../internal/research/) anchor and the pinned release per [`../internal/compatibility.md`](../internal/compatibility.md).
 - **No bare `pyiceberg` in user-facing examples.** Code samples always wrap through `ctx` — patterns demonstrate the abstraction users actually see.
 - **Vocabulary** per [`AGENTS.md`](../../AGENTS.md) §7: *asset*, *snapshot*, *contract*, *check*, *materialization*. Never *table* (as primitive), *version* (for snapshots), *test* (for asset checks).
 - **Property tests enforce.** Where a pattern is mechanically verifiable (`type_mapping.md`), property tests in `tests/patterns/` are the contract; doc and tests evolve together.
 
 ---
 
-[← `docs/specs/nucleus_architecture_v4.1.md` §6.3](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — research/](../research/README.md) · [Sibling — recipes/](../recipes/README.md) · [Sibling — security/](../internal/security/README.md)
+[← `docs/specs/nucleus_architecture_v4.1.md` §6.3](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — research/](../internal/research/README.md) · [Sibling — recipes/](../recipes/README.md) · [Sibling — security/](../internal/security/README.md)
 
 *Last updated 2026-05-13. Add new patterns by appending to the matching group; the group is set by which architecture section the pattern serves. One file per pattern — do not bundle.*

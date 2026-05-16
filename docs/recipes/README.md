@@ -35,6 +35,6 @@ Demonstrates `ctx.agent` + `nucleus-mcp-server` (~500 LOC, v0.5 per [v4.1 §18.4
 
 ---
 
-[← `docs/specs/nucleus_architecture_v4.1.md` §1.5 (beachhead)](../specs/nucleus_architecture_v4.1.md) · [ADR-002 (connector scope)](../decisions/ADR-002-positioning-decision-2026-05.md) · [Sibling — patterns/](../patterns/README.md) · [Sibling — research/](../research/README.md) · [Sibling — onboarding/](../onboarding/README.md)
+[← `docs/specs/nucleus_architecture_v4.1.md` §1.5 (beachhead)](../specs/nucleus_architecture_v4.1.md) · [ADR-002 (connector scope)](../decisions/ADR-002-positioning-decision-2026-05.md) · [Sibling — patterns/](../patterns/README.md) · [Sibling — research/](../internal/research/README.md) · [Sibling — onboarding/](../onboarding/README.md)
 
 *Last updated 2026-05-13. Add new recipes only when they serve a documented v0.1 / v0.3 / v0.5+ scope line — invented use cases without spec backing are rejected.*

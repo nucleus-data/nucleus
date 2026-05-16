@@ -3,7 +3,7 @@
 > **Pattern**: Big Data — Iceberg Lifecycle / Maintenance
 > **Status**: Pre-implementation reference. Not exposed in v0.1. CLI surface (`nucleus expire-snapshots`) lands in v0.3+.
 > **Audience**: Anyone reviewing the Asset Materialization Adapter; anyone debugging "we delete daily but storage keeps growing".
-> **References**: [`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §4, §5; [`docs/patterns/compaction.md`](./compaction.md); [`docs/patterns/partitioning.md`](./partitioning.md); [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
+> **References**: [`docs/internal/research/pyiceberg.md`](../internal/research/pyiceberg.md) §4, §5; [`docs/patterns/compaction.md`](./compaction.md); [`docs/patterns/partitioning.md`](./partitioning.md); [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
 > **Last reviewed**: 2026-05-12 — versions per [`docs/internal/compatibility.md`](../internal/compatibility.md) (`pyiceberg==0.8.1`)
 
 Read this **before** any code path that calls `Table.append`, `Table.overwrite`, or the compaction recipe in [`compaction.md`](./compaction.md). Every one of those creates a snapshot. Without retention, snapshots accumulate forever.
@@ -32,7 +32,7 @@ A snapshot is a small piece of metadata, not a copy of the data. Knowing its sha
 | `manifest_list` | Path to a `*-snap-*.avro` file listing all manifests alive at this snapshot. |
 | `summary` | Operation type (`append`, `overwrite`, `delete`, etc.) + counters (added-files, deleted-files, added-records). |
 
-Inspecting via PyIceberg (per [`pyiceberg.md`](../research/pyiceberg.md) §5):
+Inspecting via PyIceberg (per [`pyiceberg.md`](../internal/research/pyiceberg.md) §5):
 
 ```python
 table = catalog.load_table("warehouse.orders")
