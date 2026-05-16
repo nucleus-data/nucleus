@@ -1,0 +1,88 @@
+{
+  "$schema": "internal — empirical workbench performance measurements",
+  "audit_method": "headless Chrome render + PowerShell Invoke-WebRequest timing",
+  "audit_method_caveat": "lighthouse-cli unavailable in this environment (corporate Artifactory blocks `npm install` / `npx` — UNABLE_TO_VERIFY_LEAF_SIGNATURE on lo-artifact.de.bosch.com TLS chain). Real Chrome 141 was used for DOM-render verification + screenshot but Lighthouse extension itself could not be installed. Measurements below are FastAPI server-side latency + Chrome render confirmation, not full Core Web Vitals.",
+  "audited_url": "http://127.0.0.1:8765/",
+  "audited_at_utc": "2026-05-16T05:55Z",
+  "workbench_version": "0.2.0",
+  "audited_path": "src/nucleus/workbench/static/index.html",
+  "chrome_render": {
+    "browser": "Google Chrome 141 (system install at C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe)",
+    "screenshot_bytes": 696744,
+    "rendered_dom_bytes": 107717,
+    "source_html_bytes": 77542,
+    "react_root_populated": true,
+    "react_hydration_succeeded": true,
+    "console_messages": [
+      {
+        "level": "INFO",
+        "source": "vendor/tailwind.min.js:64",
+        "message": "cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI"
+      }
+    ],
+    "console_errors": [],
+    "uncaught_exceptions": [],
+    "failed_fetches": []
+  },
+  "ui_strings_rendered_in_dom": [
+    "Today's pipeline",
+    "ASSETS",
+    "ROWS",
+    "GREEN",
+    "AI Copilot",
+    "Try asking",
+    "Recent materializations",
+    "Pipeline",
+    "Dashboard",
+    "nucleus",
+    "my_warehouse",
+    "ESC",
+    "No materializations",
+    "No assets registered"
+  ],
+  "ui_strings_missing_from_dom": [],
+  "performance_ms": {
+    "method": "Invoke-WebRequest cold + 5 warm samples, p95 = max of warm samples",
+    "endpoints": {
+      "GET /": { "cold_ms": 92, "warm_avg_ms": 9.6, "warm_p95_ms": 16, "html_bytes": 77542, "target_ms": 500, "verdict": "PASS" },
+      "GET /api/health": { "cold_ms": 157, "warm_avg_ms": 27.6, "warm_p95_ms": 48, "target_ms": 100, "verdict": "PASS" },
+      "GET /api/dashboard/summary": { "cold_ms": 15, "warm_avg_ms": 13.8, "warm_p95_ms": 22, "target_ms": 200, "verdict": "PASS" },
+      "GET /api/assets": { "cold_ms": 6, "warm_avg_ms": 8.8, "warm_p95_ms": 17, "target_ms": 200, "verdict": "PASS" },
+      "GET /api/runs": { "cold_ms": 12, "warm_avg_ms": 6.6, "warm_p95_ms": 9, "target_ms": 200, "verdict": "PASS" },
+      "GET /api/catalog?page=1&page_size=20": { "cold_ms": 14, "warm_avg_ms": 5.8, "warm_p95_ms": 7, "target_ms": 200, "verdict": "PASS" },
+      "GET /api/search?q=test": { "cold_ms": 4, "warm_avg_ms": 4.2, "warm_p95_ms": 5, "target_ms": 200, "verdict": "PASS" },
+      "GET /vendor/tailwind.min.js": { "cold_ms": 21, "warm_avg_ms": 20.6, "warm_p95_ms": 22, "bytes": 407362 },
+      "GET /vendor/react.production.min.js": { "cold_ms": 7, "warm_avg_ms": 6.8, "warm_p95_ms": 7, "bytes": 10782 },
+      "GET /vendor/react-dom.production.min.js": { "cold_ms": 20, "warm_avg_ms": 12.4, "warm_p95_ms": 14, "bytes": 132102 }
+    },
+    "total_payload_bytes": 627788,
+    "total_payload_kb": 612.9,
+    "target_payload_kb": 1024,
+    "verdict": "PASS"
+  },
+  "real_lighthouse_estimates_pending": {
+    "note": "These are projected from server-side timing + Chrome render success. A real lighthouse-cli run on a non-proxied environment is required for ratified scores.",
+    "performance_score_projected": "95-100 (loopback localhost; single render-blocking script bundle is the only deduction)",
+    "accessibility_score_projected": "95-100 (assuming LIGHTHOUSE_NOTES.md polish-pass roles + aria-labels render in DOM — confirmed `role=\"alert\"`, `role=\"status\"`, 5x `aria-label`, 3x `sr-only`, 4x `focus-visible` all present in source)",
+    "best_practices_score_projected": "95 (one INFO console message from Tailwind CDN runtime — see `chrome_render.console_messages`; remove via build-time Tailwind to lift to 100)",
+    "seo_score_projected": "90 (no meta description; acceptable for an internal local-first tool)"
+  },
+  "vendored_assets_offline_renderable": {
+    "verified": true,
+    "notes": "All scripts/styles served from /vendor/ — no external https:// fetches found in served HTML. Per ADR-016 §3 the Workbench is fully offline-renderable. Tailwind Play CDN runtime (vendor/tailwind.min.js) is bundled locally but its boot prints an INFO console nag which is the only observed defect.",
+    "external_https_in_html": [
+      "http://www.w3.org/2000/svg (XML namespace, not a fetch)",
+      "https://github.com/lucide-icons/lucide/tree/main/icons (HTML comment attribution, not a fetch)"
+    ]
+  },
+  "cross_browser": {
+    "method": "Invoke-WebRequest with -UserAgent override; verified byte-identical HTML responses",
+    "user_agents_tested": {
+      "chrome_120_win": { "html_bytes": 77542, "match_baseline": true },
+      "firefox_120_win": { "html_bytes": 77542, "match_baseline": true },
+      "edge_120_win": { "html_bytes": 77542, "match_baseline": true },
+      "safari_17_mac": { "html_bytes": 77542, "match_baseline": true }
+    },
+    "caveat": "Server returns identical HTML to all UAs (no UA-sniffing on server). Real client-side rendering parity verified only for Chrome 141 (system installed). Edge and Firefox client-side parity inferred from shared HTML + react.production.min.js UMD which targets the union of evergreen browsers."
+  }
+}
