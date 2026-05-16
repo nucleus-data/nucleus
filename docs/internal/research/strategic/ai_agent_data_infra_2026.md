@@ -113,13 +113,13 @@ Founder's profile is **incompatible with Angles C and D as primary positioning**
 - Definite $10 M + Fi — `definite.app/blog/definite-raises-%2410M`
 - Mage AI pivot — `mage.ai/blog/mage-heros-journey-...`
 - Hex Series C $70 M — `hex.tech/blog/series-c`
-- AI-data shutdowns — `dang.ai/.../olli`; `linkedin.com/posts/mohallaba` (Datawisp); `whyhive.com/blog/shutting-down`; `ai-plaza.io/blog/reworkd-ai-shut-down`
+- AI-data shutdowns — `dang.ai/.../../olli`; `linkedin.com/posts/mohallaba` (Datawisp); `whyhive.com/blog/shutting-down`; `ai-plaza.io/blog/reworkd-ai-shut-down`
 - MCP 97 M / 10 K servers / LF donation — `beingguru.com/anthropic-mcp-hits-97-million-installs`; `tokenmix.ai/blog/mcp-protocol-guide-2026`; `anthropic.com/news/donating-the-model-context-protocol`
 - Iceberg MCP servers — `github.com/cloudera/iceberg-mcp-server`; `github.com/dragonejt/iceberg-mcp-server`
 - Lance into Iceberg PR — `github.com/apache/iceberg/pull/15751`
 - Vector DB sizing + Q1 2026 vendor share loss — `researchandmarkets.com/reports/5948613`; `venturebeat.com/data/the-retrieval-rebuild-...`
-- Pinecone 340 % YoY + 40-50 % cuts + Marketplace — `markaicode.com/vs/rag-vs-long-context`; `app.ailog.fr/.../pinecone-serverless-update`
-- Letta + agent memory market — `vectorize.io/articles/letta-vs-langchain-memory`; `agentmarketcap.ai/blog/.../agent-memory-vendor-landscape-2026`
+- Pinecone 340 % YoY + 40-50 % cuts + Marketplace — `markaicode.com/vs/rag-vs-long-context`; `app.ailog.fr/.../../pinecone-serverless-update`
+- Letta + agent memory market — `vectorize.io/articles/letta-vs-langchain-memory`; `agentmarketcap.ai/blog/.../../agent-memory-vendor-landscape-2026`
 - LangGraph Platform GA — `blog.langchain.com/langgraph-platform-ga`
 - dbt Copilot GA — `getdbt.com/blog/dbt-copilot-is-ga`
 - 40-60 % time reduction / 2-3× tests — `latentview.com/blog/agentic-ai-for-data-transformation`

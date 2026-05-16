@@ -42,7 +42,7 @@ Engineering conventions exist to make 1,000 small decisions once so we never re-
 
 ### §2.1 `src/` layout
 - **Decision**: All importable code lives under `src/nucleus/`. **No flat layout.**
-- **Why**: Forces explicit packaging. Prevents accidental imports of test/poc/scripts code.
+- **Why**: Forces explicit packaging. Prevents accidental imports of test/internal/poc/scripts code.
 - **Reference**: https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/
 
 ### §2.2 Module sizes

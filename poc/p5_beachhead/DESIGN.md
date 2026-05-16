@@ -127,7 +127,7 @@ v0.1 ship date moves before the metric does.
 
 **None.** PoC #5 is a methodology, not a code artifact. Outcomes land in:
 
-- `docs/audits/poc5_beachhead_<YYYY-MM-DD>.md` — per-tester transcripts,
+- `docs/internal/audits/poc5_beachhead_<YYYY-MM-DD>.md` — per-tester transcripts,
   timings, stuck-points, tagline recall, ratings.
 - `docs/specs/nucleus_poc_plan.md` §5 acceptance checkboxes flipped to ✓ on PASS.
 - `AGENTS.md` §1 phase checklist line "PoCs #2-5 validated" flipped.

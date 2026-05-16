@@ -4,7 +4,7 @@ Status: ACCEPTED (P0-1 through P0-5 implemented 2026-05-15)
 Date: 2026-05-15
 Author: builder (v0.2.0 reconciliation pass)
 Implemented: 2026-05-15 by reliability-hardening builder (Wave 2 P0-3)
-Sources: `docs/internal/research/performance_reliability_targets.md` §6 (ACID gaps), §7 (reliability patterns), §8 (chaos scenarios); `docs/audit/2026-05-15_mass_audit_findings.md` (Wave 1E)
+Sources: `docs/internal/research/performance_reliability_targets.md` §6 (ACID gaps), §7 (reliability patterns), §8 (chaos scenarios); `docs/internal/audits/2026-05-15_mass_audit_findings.md` (Wave 1E)
 
 ## Context
 

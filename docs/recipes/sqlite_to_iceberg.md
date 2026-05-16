@@ -1,10 +1,10 @@
 # Recipe: SQLite → Iceberg in 10 minutes
 
 > **Time**: ~10 min (no Docker, no source DB to install) · **Difficulty**: Junior DE · **Prereqs**: Python 3.11 / 3.12, ~200 MB disk
-> **Status**: pre-v0.1 — depends on PoCs #1 + #3 + #4 passing first; CLI lines marked `<!-- pre-v0.1 -->`. PoC #3's Python entry point is 7/7 pytest green ([`poc/p3_ingest/test_ingest.py`](../../poc/p3_ingest/test_ingest.py)).
+> **Status**: pre-v0.1 — depends on PoCs #1 + #3 + #4 passing first; CLI lines marked `<!-- pre-v0.1 -->`. PoC #3's Python entry point is 7/7 pytest green ([`poc/p3_ingest/test_ingest.py`](../../internal/poc/p3_ingest/test_ingest.py)).
 > **Refs**: [`postgres_to_iceberg.md`](./postgres_to_iceberg.md) · [`csv_to_iceberg.md`](./csv_to_iceberg.md) · [`docs/patterns/partitioning.md`](../patterns/partitioning.md) · [`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §3.5
 
-A junior DE's first taste of Iceberg. You have a local SQLite DB (Django dev DB, Excel export, Airtable archive) and you want it queryable as an Iceberg asset for BI / future graduation to a real catalog. SQLite is the only source PoC #3 has validated end-to-end ([`poc/p3_ingest/STATUS.md`](../../poc/p3_ingest/STATUS.md)) — this recipe traces the shortest verified path through `nucleus ingest`.
+A junior DE's first taste of Iceberg. You have a local SQLite DB (Django dev DB, Excel export, Airtable archive) and you want it queryable as an Iceberg asset for BI / future graduation to a real catalog. SQLite is the only source PoC #3 has validated end-to-end ([`poc/p3_ingest/STATUS.md`](../../internal/poc/p3_ingest/STATUS.md)) — this recipe traces the shortest verified path through `nucleus ingest`.
 
 ---
 
@@ -72,7 +72,7 @@ nucleus ingest sqlite:///./sales.db \
     --table customers --as raw.customers          # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §3.5 -->
 ```
 
-Auto-infers the Iceberg schema from `PRAGMA table_info(...)` ([`poc/p3_ingest/ingest.py:55-60`](../../poc/p3_ingest/ingest.py)) and atomically commits via `Catalog.create_table` + `Table.append` ([`poc/p3_ingest/ingest.py:219-222`](../../poc/p3_ingest/ingest.py)). Destination: `.nucleus/warehouse/raw/customers/`. No Python, no schema declaration.
+Auto-infers the Iceberg schema from `PRAGMA table_info(...)` ([`poc/p3_ingest/ingest.py:55-60`](../../internal/poc/p3_ingest/ingest.py)) and atomically commits via `Catalog.create_table` + `Table.append` ([`poc/p3_ingest/ingest.py:219-222`](../../internal/poc/p3_ingest/ingest.py)). Destination: `.nucleus/warehouse/raw/customers/`. No Python, no schema declaration.
 
 ## Step 5: Verify (~1 min)
 
@@ -113,14 +113,14 @@ Done. Total: **<10 min** if nothing went sideways.
 ## What you've achieved
 
 - **Iceberg-native asset** — schema preserved, `Table.append` atomic, snapshot committed.
-- **Auto-inferred schema** — `INTEGER → LongType`, `REAL → DoubleType`, `TEXT → StringType`, `BLOB → BinaryType` ([`poc/p3_ingest/ingest.py:55-60`](../../poc/p3_ingest/ingest.py)); `NOT NULL` preserved as Iceberg `required=True` ([`poc/p3_ingest/ingest.py:91-94`](../../poc/p3_ingest/ingest.py)).
+- **Auto-inferred schema** — `INTEGER → LongType`, `REAL → DoubleType`, `TEXT → StringType`, `BLOB → BinaryType` ([`poc/p3_ingest/ingest.py:55-60`](../../internal/poc/p3_ingest/ingest.py)); `NOT NULL` preserved as Iceberg `required=True` ([`poc/p3_ingest/ingest.py:91-94`](../../internal/poc/p3_ingest/ingest.py)).
 - **Partition strategy applied** — `month(signup_ts)` prunes BI queries at planning time.
 - **BI-ready, graduation-clean** — Parquet + Iceberg metadata, portable to Polaris / Lakekeeper / Databricks / Snowflake (Mode 1, [v4.1 §17](../specs/nucleus_architecture_v4.1.md)).
 
 ## Common gotchas
 
-- **Type map is narrow** — only `INTEGER`, `REAL`, `TEXT`, `BLOB` (the four SQLite storage classes) work in v0. `NUMERIC`, `DECIMAL`, `BOOLEAN`, `DATE`, `DATETIME` raise `NucleusUnsupportedTypeError` ([`poc/p3_ingest/ingest.py:80-89`](../../poc/p3_ingest/ingest.py)). Workaround: `CREATE VIEW v AS SELECT CAST(weird AS TEXT) ...` and ingest the view. User-supplied schema is v0.5+ ([`schema_evolution.md`](../patterns/schema_evolution.md) §3); auto-infer is the only v0 path ([`poc/p3_ingest/ingest.py:176`](../../poc/p3_ingest/ingest.py)).
-- **Windows `file:///` URI quirk** — pyiceberg 0.8.1 mis-parses the RFC 8089 `file:///C:/...` form on Windows; PoC #3 emits the two-slash `file://C:/...` workaround ([`poc/p3_ingest/ingest.py:112-125`](../../poc/p3_ingest/ingest.py)). `nucleus ingest` handles this — flag it only if you call pyiceberg directly. Tracker: [iceberg-python#1005](https://github.com/apache/iceberg-python/issues/1005).
+- **Type map is narrow** — only `INTEGER`, `REAL`, `TEXT`, `BLOB` (the four SQLite storage classes) work in v0. `NUMERIC`, `DECIMAL`, `BOOLEAN`, `DATE`, `DATETIME` raise `NucleusUnsupportedTypeError` ([`poc/p3_ingest/ingest.py:80-89`](../../internal/poc/p3_ingest/ingest.py)). Workaround: `CREATE VIEW v AS SELECT CAST(weird AS TEXT) ...` and ingest the view. User-supplied schema is v0.5+ ([`schema_evolution.md`](../patterns/schema_evolution.md) §3); auto-infer is the only v0 path ([`poc/p3_ingest/ingest.py:176`](../../internal/poc/p3_ingest/ingest.py)).
+- **Windows `file:///` URI quirk** — pyiceberg 0.8.1 mis-parses the RFC 8089 `file:///C:/...` form on Windows; PoC #3 emits the two-slash `file://C:/...` workaround ([`poc/p3_ingest/ingest.py:112-125`](../../internal/poc/p3_ingest/ingest.py)). `nucleus ingest` handles this — flag it only if you call pyiceberg directly. Tracker: [iceberg-python#1005](https://github.com/apache/iceberg-python/issues/1005).
 - **WAL-mode source DB** — if `sales.db` is being written by another process, ingest reads a snapshot at file-open time per stdlib [`sqlite3.connect`](https://docs.python.org/3/library/sqlite3.html). Quiesce the writer for fully-consistent reads.
 
 ## What's next
@@ -136,7 +136,7 @@ Done. Total: **<10 min** if nothing went sideways.
 
 Per [AGENTS.md §11.12](../../AGENTS.md):
 
-1. **`nucleus ingest` CLI** — spec §3.5 lists `sqlite://` + `--table` / `--as`, but PoC #3 ships only the Python entry point `ingest_sqlite_to_iceberg(...)` ([`poc/p3_ingest/ingest.py:176`](../../poc/p3_ingest/ingest.py)). The CLI shim lands when PoC #3 graduates to `src/nucleus/ctx/copy_from.py` (~200 LOC, [v4.1 §5.5.1](../specs/nucleus_architecture_v4.1.md)). The original prompt's `--source-table` / `--target` / `--partition-by` flags are *not* spec form — partitioning runs through the asset decorator, not an ingest flag.
+1. **`nucleus ingest` CLI** — spec §3.5 lists `sqlite://` + `--table` / `--as`, but PoC #3 ships only the Python entry point `ingest_sqlite_to_iceberg(...)` ([`poc/p3_ingest/ingest.py:176`](../../internal/poc/p3_ingest/ingest.py)). The CLI shim lands when PoC #3 graduates to `src/nucleus/ctx/copy_from.py` (~200 LOC, [v4.1 §5.5.1](../specs/nucleus_architecture_v4.1.md)). The original prompt's `--source-table` / `--target` / `--partition-by` flags are *not* spec form — partitioning runs through the asset decorator, not an ingest flag.
 2. **`nucleus sql "..."` vs `nucleus query "..."`** — sibling recipes use `nucleus sql`; spec §3.6 calls it `nucleus query`. Recipe mirrors the existing recipes pending sibling reconciliation.
 3. **`@nucleus.sql_asset(partition_by="month(signup_ts)")` string DSL** — described in [`docs/patterns/partitioning.md`](../patterns/partitioning.md) §3 + §6 but the parser inside `@nucleus.asset` / `@nucleus.sql_asset` is not implemented; lands alongside PoC #2.
 4. **`nucleus snapshot list / restore`** — deferred to v0.5 per spec §4.1. Use `nucleus sql` against the asset until the snapshot subcommand ships.
@@ -146,4 +146,4 @@ Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../rese
 
 ---
 
-[← `docs/recipes/README.md`](./README.md) · [Sibling — `docs/patterns/README.md`](../patterns/README.md) · [Source — `poc/p3_ingest/`](../../poc/p3_ingest/)
+[← `docs/recipes/README.md`](./README.md) · [Sibling — `docs/patterns/README.md`](../patterns/README.md) · [Source — `poc/p3_ingest/`](../../internal/poc/p3_ingest/)

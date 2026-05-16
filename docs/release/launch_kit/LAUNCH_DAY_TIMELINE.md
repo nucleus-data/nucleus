@@ -11,8 +11,8 @@
 | Time (PT) | Task | Done? |
 |---|---|---|
 | 14:00 | **Open** `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` and confirm every Phase 1 item is GREEN. If any item is RED, stop — defer launch by one day. | [ ] |
-| 14:15 | **Set PoC #5 compensation** in `docs/poc/p5_beachhead/RECRUITMENT_PLAN.md` (recommended `$150` per 90-min session). FOUNDER ACTION: replace the compensation placeholder before outreach. | [ ] |
-| 14:25 | **Publish the Calendly link** (e.g., `calendly.com/<you>/nucleus-poc5-30min`). Paste into `RECRUITMENT_PLAN.md` and into the 20 outreach email templates at `docs/poc/p5_beachhead/outreach_emails/`. | [ ] |
+| 14:15 | **Set PoC #5 compensation** in `docs/internal/poc/p5_beachhead/RECRUITMENT_PLAN.md` (recommended `$150` per 90-min session). FOUNDER ACTION: replace the compensation placeholder before outreach. | [ ] |
+| 14:25 | **Publish the Calendly link** (e.g., `calendly.com/<you>/nucleus-poc5-30min`). Paste into `RECRUITMENT_PLAN.md` and into the 20 outreach email templates at `docs/internal/poc/p5_beachhead/outreach_emails/`. | [ ] |
 | 14:45 | **Stage 20 outreach emails as Gmail drafts** — do not send yet. Each draft addressed individually, no BCC blast. | [ ] |
 | 15:00 | **Record the 60-second demo** per `docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`. Budget 90 min for retakes; ship if any take meets the retake checklist at the bottom of that file. | [ ] |
 | 16:30 | **Upload the demo MP4** to `assets/demos/v0.2/launch_60s.mp4` and confirm the file size is < 50 MB (Twitter/LinkedIn native-upload ceiling). | [ ] |
@@ -150,7 +150,7 @@ If any of these fire, **PAUSE and triage** before continuing:
 
 ## What this timeline does NOT cover
 
-- **Pre-launch outreach** to potential users / beta testers — out of scope; handled separately via `docs/poc/p5_beachhead/RECRUITMENT_PLAN.md`.
+- **Pre-launch outreach** to potential users / beta testers — out of scope; handled separately via `docs/internal/poc/p5_beachhead/RECRUITMENT_PLAN.md`.
 - **Investor outreach** — out of scope; the Mo 24 decision gate (ADR-002 §8.3) is the right time to start that conversation, not launch day.
 - **Press / journalist outreach** — out of scope for v0.2; we are not a press story yet. Revisit at v0.5+ when there are external users to quote.
 - **YouTube / podcast appearances** — out of scope; the 60-sec demo MP4 is the only video asset for v0.2.

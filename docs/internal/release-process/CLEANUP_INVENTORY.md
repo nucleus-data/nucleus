@@ -45,14 +45,14 @@ Estimated disk reclaimable: < 5 MB (the major cleanup was already done on 2026-0
 | **Safety check** | `rg "architecture_design_conversation"` → verify zero inbound links before deleting |
 | **Action** | Delete if no inbound links, otherwise archive to `docs/archive/` |
 
-### 1.3 `docs/security/threat_model_v0.md`
+### 1.3 `docs/internal/security/threat_model_v0.md`
 
 | Field | Value |
 |---|---|
-| **Path** | `docs/security/threat_model_v0.md` |
-| **Why delete** | Explicitly superseded by `docs/security/threat_model_v1.md`. Version number in filename confirms this. |
+| **Path** | `docs/internal/security/threat_model_v0.md` |
+| **Why delete** | Explicitly superseded by `docs/internal/security/threat_model_v1.md`. Version number in filename confirms this. |
 | **Safety check** | `rg "threat_model_v0"` → should be zero or only historical references |
-| **Action** | `git rm docs/security/threat_model_v0.md` (preserves history) |
+| **Action** | `git rm docs/internal/security/threat_model_v0.md` (preserves history) |
 
 ### 1.4 `frontend/` directory (stale pre-workbench scaffold)
 
@@ -64,11 +64,11 @@ Estimated disk reclaimable: < 5 MB (the major cleanup was already done on 2026-0
 | **Wave-1 dependency** | Confirm Wave-1A shipped `src/nucleus/workbench/frontend/` first |
 | **Action** | `git rm -r frontend/` if safe; OR preserve as archive if still referenced |
 
-### 1.5 `docs/audits/README.md` + `docs/audits/positioning_drift_2026-05-12.md` + `docs/audits/positioning_drift_2026-05-13.md`
+### 1.5 `docs/internal/audits/README.md` + `docs/internal/audits/positioning_drift_2026-05-12.md` + `docs/internal/audits/positioning_drift_2026-05-13.md`
 
 | Field | Value |
 |---|---|
-| **Path** | `docs/audits/` (3 files) |
+| **Path** | `docs/internal/audits/` (3 files) |
 | **Why review** | Positioning drift audit docs from 2026-05-12/13. ADR-002 locked positioning at those dates. These may be archivable. |
 | **Safety check** | `rg "positioning_drift"` → confirm not actively referenced in any current doc |
 | **Action** | Move to `docs/archive/audits/` if zero active references; safe to keep if uncertain |
@@ -173,19 +173,19 @@ Use `git mv` to preserve blame/log history. These files are intentionally kept p
 | **Status** | Updated 2026-05-14 with Phase D ctx functions; content is reasonably current but may overlap with `docs/site/getting-started/quickstart.md` (Wave-1C) |
 | **Action** | After Wave-1C lands: compare both docs; if `docs/site/` version covers same ground, convert `docs/onboarding/quickstart.md` to redirect note: `See docs/site/getting-started/quickstart.md` |
 
-### 4.3 `docs/swap/lakekeeper.md` + `docs/swap/dlt.md` — reference non-existent test paths
+### 4.3 `docs/internal/swap/lakekeeper.md` + `docs/internal/swap/dlt.md` — reference non-existent test paths
 
 | Field | Value |
 |---|---|
-| **Paths** | `docs/swap/lakekeeper.md`, `docs/swap/dlt.md` |
+| **Paths** | `docs/internal/swap/lakekeeper.md`, `docs/internal/swap/dlt.md` |
 | **Issue** | Both reference `tests/swap/` paths for v0.3+ smoke tests that don't exist yet (MINOR verifier finding 6) |
 | **Action** | Edit both docs to mark referenced test paths as `"TBD when promoted to v0.3+"` rather than current-pointing claims. 5-min foreground edit. |
 
-### 4.4 `docs/swap/workbench.md` — missing formal Composability sections
+### 4.4 `docs/internal/swap/workbench.md` — missing formal Composability sections
 
 | Field | Value |
 |---|---|
-| **Path** | `docs/swap/workbench.md` |
+| **Path** | `docs/internal/swap/workbench.md` |
 | **Issue** | Missing the 4-section swap template (interface / smoke tests / migration / owner); documents 4 internal sub-component swaps instead. MINOR verifier finding 7. |
 | **Action** | Defer to v0.2 structural review (non-blocking for v0.2.0 release); add TODO note to doc header |
 
@@ -267,7 +267,7 @@ Step 3 — Section 5: Empty placeholders (foreground, ~5 min)
   Verify .gitkeep files are intentional. Audit near-empty __init__.py.
 
 Step 4 — Section 1.1–1.4: Safe deletions (foreground or swarm, ~15 min)
-  git rm docs/security/threat_model_v0.md
+  git rm docs/internal/security/threat_model_v0.md
   Remove-Item SESSION_STATE_2026-05-13.md  (if founder approves)
   Review architecture_design_conversation.md (delete vs archive)
   Review frontend/ (delete vs archive — wave-1A dependency)

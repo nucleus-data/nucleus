@@ -2,7 +2,7 @@
 
 > **Component**: `litellm==1.83.14` (Intelligence layer Copilot wrap)
 > **Tier**: Tier 2 — Intelligence engine wrap (not immortal; LLM economics volatile)
-> **ADR**: [ADR-015](../decisions/ADR-015-ai-chat-mvp.md)
+> **ADR**: [ADR-015](../../decisions/ADR-015-ai-chat-mvp.md)
 > **Research**: [docs/internal/research/ai_copilot.md](../research/ai_copilot.md) §12
 > **Composability rule**: interface + smoke tests maintained always; full swap built **on-demand only**
 > (Composability by Constitution §3 — do NOT pre-implement; this doc records the swap plan)
@@ -107,6 +107,6 @@ Replace `translate.py`'s litellm imports with provider-specific exception types:
 4. Remove `litellm==<pin>` from `pyproject.toml`
 5. Add the direct SDK pins (anthropic + openai) and update `docs/compatibility.md`
 6. Run `tests/intelligence/` + `tests/upgrade_smoke/test_litellm.py` (delete the latter after swap)
-7. Update `docs/swap/litellm.md` to "SWAPPED" status
+7. Update `docs/internal/swap/litellm.md` to "SWAPPED" status
 
 Total estimated effort: ~4 hours (one focused engineer).

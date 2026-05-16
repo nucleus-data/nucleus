@@ -2,7 +2,7 @@
 
 > **Pinned**: 1.1.3  •  **Verified**: 2026-05-12  •  **Docs**: https://duckdb.org/docs/stable/clients/python/overview
 > **Used in**: `src/nucleus/engines/duckdb_engine.py` (Tier 0+). Default SQL engine.
-> **Companion**: [`docs/architecture/sequence_error_translation.md`](../architecture/sequence_error_translation.md) §4.2, [`docs/patterns/type_mapping.md`](../patterns/type_mapping.md) §6.
+> **Companion**: [`docs/architecture/sequence_error_translation.md`](../../architecture/sequence_error_translation.md) §4.2, [`docs/patterns/type_mapping.md`](../../patterns/type_mapping.md) §6.
 
 Official-docs anchor per AGENTS.md Hard Constraint #10. Read before writing PoC #1 or any Tier 0 Heartbeat code.
 
@@ -54,7 +54,7 @@ Paths below are under `https://duckdb.org/docs/stable/`.
 - **In-memory vs file-backed** — `connect(":memory:")` ephemeral; `connect("warehouse.duckdb")` opens/creates single-file DB. **v0.1 mode = `:memory:`**; persistence is Iceberg, not the DuckDB file.
 - **`DuckDBPyRelation`** — Lazy relation from `conn.sql(...)` / `conn.from_arrow(...)`. Materializes only on `.arrow()` / `.pl()` / `.fetchall()`. Useful for the `ctx.sql` Jinja resolver. → `/clients/python/relational_api`
 - **Native readers** — `read_parquet`, `read_csv`, `read_json` as SQL functions. Globs + S3 URIs need the `httpfs` extension.
-- **Iceberg extension** — `INSTALL iceberg; LOAD iceberg;` then `SELECT * FROM iceberg_scan('.../metadata.json')`. **Read-only** in 1.1.3; writes are via PyIceberg. → `/extensions/iceberg`
+- **Iceberg extension** — `INSTALL iceberg; LOAD iceberg;` then `SELECT * FROM iceberg_scan('.../../metadata.json')`. **Read-only** in 1.1.3; writes are via PyIceberg. → `/extensions/iceberg`
 - **Memory + spill** — `SET memory_limit='4GB'` caps RAM; over-budget queries spill to `temp_directory`. Default ~80% of system RAM.
 - **Threads** — Auto-parallelizes; defaults to one per CPU core. `SET threads=N`. Tests want `threads=1` for deterministic ordering.
 - **Transactions / threading** — `BEGIN; ... COMMIT;` per connection; single-writer per file (MVCC). Connection (or `conn.cursor()`) per task; **never share across threads**.
@@ -100,7 +100,7 @@ Module: `duckdb` (top-level). All inherit from `duckdb.Error` ⊂ `Exception`. R
 
 **Flagged for PoC #1 to verify**: `ParserException` exposing parseable line/column; `OutOfMemoryException` firing reliably (vs. OS OOM-kill); `TransactionException` triggering with concurrent file connections. If any class name is missing or renamed in 1.1.3, log to `docs/internal/research/ai_hallucinations.md` per `.cursor/rules/nucleus.mdc`.
 
-Translator contract: [`sequence_error_translation.md`](../architecture/sequence_error_translation.md) §5.
+Translator contract: [`sequence_error_translation.md`](../../architecture/sequence_error_translation.md) §5.
 
 ---
 
@@ -126,7 +126,7 @@ Translator contract: [`sequence_error_translation.md`](../architecture/sequence_
 - **Iceberg reads**: (a) DuckDB's `iceberg_scan(...)` for SQL-side reads; (b) PyIceberg's `Table.scan().to_duckdb(connection_name)` to expose an Iceberg table as a DuckDB view from Python. v0.1 prefers (b) — it composes with the Asset Materialization Adapter.
 - **Iceberg writes**: **never via DuckDB**. PyIceberg `Table.append()` / `.overwrite()` only — Constraint #5.
 - **Errors**: caught at the engine boundary → Error Translation Layer → `NucleusError`. `scripts/dagster_leak_check.py` extends naturally to detect `duckdb.` substrings in user-facing CLI output.
-- **Type coercion**: governed by [`type_mapping.md`](../patterns/type_mapping.md) §6. Property tests in `tests/patterns/test_type_mapping.py`.
+- **Type coercion**: governed by [`type_mapping.md`](../../patterns/type_mapping.md) §6. Property tests in `tests/patterns/test_type_mapping.py`.
 
 ---
 

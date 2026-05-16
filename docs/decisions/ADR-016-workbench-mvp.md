@@ -150,7 +150,7 @@ Sequencing (10-14 weeks; full breakdown in `docs/internal/research/workbench.md`
 - `scripts/check_bundle_size.py` (new — CI gate, < 500 KB initial JS gzipped)
 - `scripts/dagster_leak_check.py` (extend — scan `src/nucleus/workbench/`)
 - `docs/budget_history.md` (extend — track frontend LOC separately)
-- `docs/swap/workbench.md` (new — document Tauri / Cytoscape / CodeMirror / Litestar swap targets)
+- `docs/internal/swap/workbench.md` (new — document Tauri / Cytoscape / CodeMirror / Litestar swap targets)
 
 **Migration**: none — Workbench is greenfield at v0.2. Users who never run `nucleus workbench` are unaffected.
 
@@ -163,7 +163,7 @@ Sequencing (10-14 weeks; full breakdown in `docs/internal/research/workbench.md`
 - [ ] CI check added: `scripts/check_bundle_size.py` (fail if initial JS gzipped > 500 KB).
 - [ ] CI check extended: `scripts/dagster_leak_check.py` to scan `src/nucleus/workbench/` + `frontend/src/`.
 - [ ] CI check extended: `scripts/check_vocabulary.py` (already runs; verify Workbench docs add no banned terms).
-- [ ] Documented in: `docs/internal/research/workbench.md` (this ADR's evidence base); `docs/swap/workbench.md` (NEW at v0.2 build start).
+- [ ] Documented in: `docs/internal/research/workbench.md` (this ADR's evidence base); `docs/internal/swap/workbench.md` (NEW at v0.2 build start).
 - [ ] Architecture sections updated on acceptance: v4.1 §8.1 row "Workbench v0.2" annotated with "(Vite + React + FastAPI per ADR-016)"; v4.1 Appendix B Question 3 marked RESOLVED-by-ADR-016.
 
 ---

@@ -11,7 +11,7 @@
 > 5. **+1-week effort buffer** accepted; if SQLAlchemy backend needs a JSONB / NUMERIC adapter shim, +1 week absorbs it. Stage 2 ConnectorX pre-commit deferred to evidence.
 > **Tags**: connectors, ingestion, dlt, postgres, stage-1, wrap-not-build, error-translation
 > **Supersedes (in part)**: portions of `docs/specs/nucleus_architecture_v4.1.md` §5.5.1 (Amendment 13 sized a native Postgres branch on `ctx.copy_from`; this ADR proposes dlt wrap) + `docs/internal/research/dlt.md` §10 (placed dlt at v0.3+; Stage 1 narrows the trigger to one production-grade SQL source).
-> **Related**: ADR-001 (no commit service), ADR-002 §6 (dlt deferred to v0.3+ — this ADR re-prioritizes), ADR-003 (PyIceberg `0.8.1 → 0.11.x` — **hard prerequisite**), ADR-006 (NE-codes), ADR-007 (license tier — dlt is Apache-2.0, GREEN), ADR-013 (`ctx.materialize` shape mirrored here for `ctx.copy_from_postgres`), `docs/internal/research/dlt.md` §13, `docs/swap/dlt.md`, `docs/specs/nucleus_architecture_v4.1.md` §5.5 + §6.3 + §6.4, `AGENTS.md` §3 #10/#11 + §11.12 + §11.13, `src/nucleus/ctx/copy_from.py` (the SQLite parallel).
+> **Related**: ADR-001 (no commit service), ADR-002 §6 (dlt deferred to v0.3+ — this ADR re-prioritizes), ADR-003 (PyIceberg `0.8.1 → 0.11.x` — **hard prerequisite**), ADR-006 (NE-codes), ADR-007 (license tier — dlt is Apache-2.0, GREEN), ADR-013 (`ctx.materialize` shape mirrored here for `ctx.copy_from_postgres`), `docs/internal/research/dlt.md` §13, `docs/internal/swap/dlt.md`, `docs/specs/nucleus_architecture_v4.1.md` §5.5 + §6.3 + §6.4, `AGENTS.md` §3 #10/#11 + §11.12 + §11.13, `src/nucleus/ctx/copy_from.py` (the SQLite parallel).
 
 ## Context
 
@@ -31,9 +31,9 @@ ADR-002 §6 + ADR-003 §"Downstream consumers" already documented dlt as the v0.
 | Option | Shape | Verdict |
 |---|---|---|
 | **A — Native Postgres branch on `ctx.copy_from`** | Add `ingest_postgres_to_iceberg(...)` mirroring `ingest_sqlite_to_iceberg(...)`. Pure SQLAlchemy + PyIceberg. ~150 LOC. | **REJECT for Stage 1** — duplicates work dlt already solves (type fidelity, batched reads, schema reflection); when Stage 2 incremental + Stage 3 merge land, the native branch reaches dlt's LOC anyway and we still have to wrap dlt for v0.3 connector breadth. Defer-as-fallback per Risk #1 below. |
-| **B — Sling subprocess** | Per `docs/swap/dlt.md` swap target. ~500-1k LOC. | REJECT — premature swap; `docs/swap/dlt.md` §1 trigger conditions don't fire. Sling stays interface-only per v4.1 §9.3. |
+| **B — Sling subprocess** | Per `docs/internal/swap/dlt.md` swap target. ~500-1k LOC. | REJECT — premature swap; `docs/internal/swap/dlt.md` §1 trigger conditions don't fire. Sling stays interface-only per v4.1 §9.3. |
 | **C — Singer / Meltano** | Per-tap mixed-license catalogue. | REJECT — license audit gate (some AGPL-3.0); Meltano embeds its own scheduler (Constraint #3). |
-| **D — Wrap `dlt.sources.sql_database` for Postgres only** | New `ctx.copy_from_postgres(...)` + `nucleus ingest postgres://...` CLI flag. ~80 LOC glue + `dlt==1.26.0` runtime pin. | **ACCEPT (PROPOSED)** — production-grade SQL→Iceberg path; Apache-2.0 (ADR-007 GREEN); JVM-free (Constraint #1); composability swap doc already in place (`docs/swap/dlt.md`); foundation for Stage 2 incremental + v0.3+ connector breadth without re-architecture. |
+| **D — Wrap `dlt.sources.sql_database` for Postgres only** | New `ctx.copy_from_postgres(...)` + `nucleus ingest postgres://...` CLI flag. ~80 LOC glue + `dlt==1.26.0` runtime pin. | **ACCEPT (PROPOSED)** — production-grade SQL→Iceberg path; Apache-2.0 (ADR-007 GREEN); JVM-free (Constraint #1); composability swap doc already in place (`docs/internal/swap/dlt.md`); foundation for Stage 2 incremental + v0.3+ connector breadth without re-architecture. |
 
 ## Decision
 
@@ -146,9 +146,9 @@ def ingest_postgres_to_iceberg(conn_str, source_table, *, warehouse_dir,
 
 ## Composability
 
-dlt is **Tier 2 (wrapped capability)**. `docs/swap/dlt.md` already enumerates Sling and Singer as swap targets and documents the `SourceEngineProtocol`. This ADR does **not** modify that interface — it implements the default. Stage 1 keeps `ctx.copy_from` (SQLite branch) as the always-live in-house baseline that any future swap must satisfy (`docs/swap/dlt.md` §3).
+dlt is **Tier 2 (wrapped capability)**. `docs/internal/swap/dlt.md` already enumerates Sling and Singer as swap targets and documents the `SourceEngineProtocol`. This ADR does **not** modify that interface — it implements the default. Stage 1 keeps `ctx.copy_from` (SQLite branch) as the always-live in-house baseline that any future swap must satisfy (`docs/internal/swap/dlt.md` §3).
 
-If dlt itself becomes unviable post-Stage 1 (license pivot, dltHub fold, perf regression >2x — `docs/swap/dlt.md` §1 trigger conditions), the rollback is path A above (~150 LOC native Postgres branch on `ctx.copy_from`). That fallback is documented as Risk #1 and stays *interface-only* during Stage 1 — we do not pre-emptively build it (Anti-Over-Engineering §2: one caller = inline).
+If dlt itself becomes unviable post-Stage 1 (license pivot, dltHub fold, perf regression >2x — `docs/internal/swap/dlt.md` §1 trigger conditions), the rollback is path A above (~150 LOC native Postgres branch on `ctx.copy_from`). That fallback is documented as Risk #1 and stays *interface-only* during Stage 1 — we do not pre-emptively build it (Anti-Over-Engineering §2: one caller = inline).
 
 ## Risks & mitigations
 
@@ -292,7 +292,7 @@ Same two-level `__context__` walk as the Postgres translator (`docs/internal/res
 | `tests/ctx/test_copy_from_mysql.py` | 15 unit tests (dlt + pymysql mocked) — happy path, scheme validation, 4 error-translation cases, pipeline naming, schema kwarg handling |
 | `tests/ctx/test_copy_from_unified.py` | 3 new tests in `TestMySQLDispatch`; existing unsupported-scheme test moved off `mysql://` to `oracle://` |
 | `tests/upgrade_smoke/test_dlt_mysql.py` | API-surface lock (always-runnable) + 6 column-type round-trip cases (SKIP-BY-DEFAULT pending MySQL testcontainer) |
-| `docs/swap/dlt.md` | Updated: swap doc now describes MySQL coverage alongside Postgres |
+| `docs/internal/swap/dlt.md` | Updated: swap doc now describes MySQL coverage alongside Postgres |
 
 ### Verification (this amendment)
 

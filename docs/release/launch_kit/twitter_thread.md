@@ -158,7 +158,7 @@ Schema-aware in v0.3. Lineage-aware in v0.5.
 HONEST disclosures because this community deserves them:
 
 → It's beta
-→ Empirical perf baseline FAILED 11 metrics vs aspirational targets (publishing the numbers anyway: docs/benchmarks/2026-05-15_baseline.md)
+→ Empirical perf baseline FAILED 11 metrics vs aspirational targets (publishing the numbers anyway: docs/internal/benchmarks/2026-05-15_baseline.md)
 → B4 concurrent-run safety FAILS on Windows; passes Linux/WSL
 → Solo founder
 ```
@@ -227,7 +227,7 @@ Thanks for reading. 🙏
 - ❌ "Spark killer / Databricks killer" framings (banned per `AGENTS.md` §8) <!-- banned-term: Spark killer --> <!-- banned-term: Databricks killer -->
 - ❌ "AI-native data platform" (banned) <!-- banned-term: AI-native -->
 - ❌ "Better than X" (we are *different*, not *better-of-the-same*)
-- ❌ Any number not in `docs/benchmarks/2026-05-15_baseline.md` or `docs/internal/research/scale_out_audit.md` or `pyproject.toml`
+- ❌ Any number not in `docs/internal/benchmarks/2026-05-15_baseline.md` or `docs/internal/research/scale_out_audit.md` or `pyproject.toml`
 - ❌ "Production-ready" / "enterprise-ready" — this is beta
 - ❌ Memes about competitor failures (we are friendly to giants)
 - ❌ Engagement-bait CTAs ("Like + RT if you've ever spent a week wiring orchestrators…")

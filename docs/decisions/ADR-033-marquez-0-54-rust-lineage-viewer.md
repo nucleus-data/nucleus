@@ -44,7 +44,7 @@ Recommended: **Option A**.
 
 Implementation:
 1. Add `nucleus enable marquez` CLI command (wraps `docker compose up ilum/marquez:0.54.0 + postgres:16`)
-2. Update `docs/swap/marquez.md` with the pin and Rust/Java clarification
+2. Update `docs/internal/swap/marquez.md` with the pin and Rust/Java clarification
 3. Configure AMA `HttpTransport` to emit events to Marquez when `--marquez-url` is configured in `nucleus_project.yaml`
 4. Workbench lineage view: replace NDJSON scan with `GET /api/v1/lineage` call when Marquez is configured; fall back to NDJSON if not
 
@@ -58,7 +58,7 @@ Implementation:
 - **Infrastructure dependency**: PostgreSQL 16 (existing in our Docker Compose stack)
 - **No new Python runtime dependencies** (openlineage-python already pinned; `HttpTransport` already documented)
 - **Maintenance ownership**: Coordination layer (AMA emission) + Experience layer (Workbench client)
-- **Swap target**: Documented at `docs/swap/marquez.md` — DataHub as swap target (OL HttpTransport is the interface; zero code change to switch)
+- **Swap target**: Documented at `docs/internal/swap/marquez.md` — DataHub as swap target (OL HttpTransport is the interface; zero code change to switch)
 
 ## Architecture Sections Touched
 

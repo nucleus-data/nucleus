@@ -9,7 +9,7 @@ description: Responsible disclosure policy for Nucleus security vulnerabilities.
 
 **Do not file a public GitHub issue for security vulnerabilities.**
 
-Instead, use GitHub's [private security advisory](https://github.com/nucleus-data/nucleus/security/advisories/new) feature, or email the maintainer directly (address in the repo's `SECURITY.md`).
+Instead, use GitHub's [private security advisory](https://github.com/nucleus-data/nucleus/internal/security/advisories/new) feature, or email the maintainer directly (address in the repo's `SECURITY.md`).
 
 Include:
 - Description of the vulnerability
@@ -32,7 +32,7 @@ Out of scope:
 
 ## Threat model
 
-See [`docs/security/threat_model_v1.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/security/threat_model_v1.md) for the documented threat model.
+See [`docs/internal/security/threat_model_v1.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/security/threat_model_v1.md) for the documented threat model.
 
 ## Security design
 

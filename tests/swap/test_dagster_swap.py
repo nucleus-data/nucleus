@@ -4,8 +4,8 @@ Per AGENTS.md Hard Constraint #9 + ``docs/specs/nucleus_architecture_v4.1.md`` �
 §9.3. Tests Dagster transitively through the AMA's public surface — NO
 direct ``import dagster`` here because ``scripts/dagster_leak_check.py``
 forbids it outside ``src/nucleus/coordination/`` + ``tests/coordination/``.
-``tests/swap/`` is intentionally NOT in the allow-list.
-Reference: ``docs/swap/dagster.md`` · Docs: https://docs.dagster.io/api/python-api/
+``tests/internal/swap/`` is intentionally NOT in the allow-list.
+Reference: ``docs/internal/swap/dagster.md`` · Docs: https://docs.dagster.io/api/python-api/
 """
 
 from __future__ import annotations
@@ -59,7 +59,7 @@ def test_ama_unknown_key_raises_nucleus_error_no_dagster_leak() -> None:
 
 
 def test_ama_helpers_present_as_swap_unit_boundary() -> None:
-    """AMA helpers form the swap unit per docs/swap/dagster.md (Option A, 2026-05-14).
+    """AMA helpers form the swap unit per docs/internal/swap/dagster.md (Option A, 2026-05-14).
 
     The Dagster swap boundary now uses direct asset-body invocation
     (_invoke_asset_body) + pyiceberg commit (_commit_to_iceberg) instead

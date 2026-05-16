@@ -3,7 +3,7 @@
 > **Status**: AMENDED — 2026-05-14 — substrate-presence clarified per `docs/internal/research/otel_day1_decision.md` (no-op via API-only; SDK demoted to `[project.optional-dependencies] observability`). Originally ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0).
 > **Date**: 2026-05-13 (original) · 2026-05-14 (amendment) · **Decider**: Solo founder
 > **Tags**: telemetry, observability, otel, privacy, opt-in, cardinality, v0.5
-> **Related**: ADR-002 §8 (Cloud path), ADR-005 §1 (tier ladder — OTEL Internal v0.1 → Beta v0.3 → Stable v0.5), ADR-006 (`NE-codes` are the only error labels in metric attributes), ADR-007 (OTEL + VM + VL + Marquez all GREEN Apache-2.0 per Worker X §2.1), ADR-009 (OL emission — same opt-in shape), `AGENTS.md` §3 Constraint #6 + §7 (vocabulary) + §11.7 (no external classnames), `docs/specs/nucleus_architecture_v4.1.md` §6.x + §11, `docs/internal/research/opentelemetry.md` (Worker M), `docs/internal/research/observability_backends.md` (Worker X), `docs/internal/research/daft.md` §8 (Scarf trap), `docs/security/threat_model_v0.md` §3 + §6
+> **Related**: ADR-002 §8 (Cloud path), ADR-005 §1 (tier ladder — OTEL Internal v0.1 → Beta v0.3 → Stable v0.5), ADR-006 (`NE-codes` are the only error labels in metric attributes), ADR-007 (OTEL + VM + VL + Marquez all GREEN Apache-2.0 per Worker X §2.1), ADR-009 (OL emission — same opt-in shape), `AGENTS.md` §3 Constraint #6 + §7 (vocabulary) + §11.7 (no external classnames), `docs/specs/nucleus_architecture_v4.1.md` §6.x + §11, `docs/internal/research/opentelemetry.md` (Worker M), `docs/internal/research/observability_backends.md` (Worker X), `docs/internal/research/daft.md` §8 (Scarf trap), `docs/internal/security/threat_model_v0.md` §3 + §6
 
 ## Context
 

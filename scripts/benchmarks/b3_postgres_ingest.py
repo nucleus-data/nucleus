@@ -470,7 +470,7 @@ def main(argv: list[str] | None = None) -> int:
 
     result = BenchResult(
         name="B3: Postgres ingest scale",
-        script="scripts/benchmarks/b3_postgres_ingest.py",
+        script="scripts/internal/benchmarks/b3_postgres_ingest.py",
         command=f"{sys.executable} -m scripts.benchmarks.b3_postgres_ingest --scale {args.scale}",
         started_at=started_at,
         completed_at=completed_at,

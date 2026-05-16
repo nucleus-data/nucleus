@@ -27,7 +27,7 @@ Each "no" = stop and fix.
 
 ## §3. Branching and commits
 
-**Branch**: `<type>/<short-desc>`, lowercase, hyphenated — e.g. `feat/copy-from-postgres`, `fix/iceberg-commit-retry`, `chore/upgrade-ruff`, `docs/contributing-guide`, `poc/1-dagster-error-translation` (in `/poc/`, NOT `/nucleus/`), `adr/002-engine-protocol`.
+**Branch**: `<type>/<short-desc>`, lowercase, hyphenated — e.g. `feat/copy-from-postgres`, `fix/iceberg-commit-retry`, `chore/upgrade-ruff`, `docs/contributing-guide`, `poc/1-dagster-error-translation` (in `/internal/poc/`, NOT `/nucleus/`), `adr/002-engine-protocol`.
 
 **Commits**: Conventional Commits (`engineering.md §10.1`) — `<type>(<scope>): <subject ≤72 chars>`. Body explains WHY (not WHAT). Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `build`, `ci`, `style`, `revert`. Scopes: `ctx`, `cli`, `engines`, `coordination`, `physics`, `intelligence`, `errors`, `scripts`, `docs`, `ci`, `adr`, `poc`. DCO sign-off (`git commit -s`) required when external contributors arrive (v0.5+); build the habit now. `main` is protected; **squash-merge only** — the squash subject becomes canonical history.
 
@@ -120,7 +120,7 @@ Rejected on sight:
 
 ## §12. Useful links
 
-[`AGENTS.md`](AGENTS.md) · [`docs/conventions/engineering.md`](docs/conventions/engineering.md) · [`docs/onboarding/learning_path.md`](docs/onboarding/learning_path.md) · [`.cursor/rules/nucleus.mdc`](.cursor/rules/nucleus.mdc) · [`docs/compatibility.md`](docs/compatibility.md) · [`docs/decisions/`](docs/decisions/) · [`docs/security/threat_model_v0.md`](docs/security/threat_model_v0.md) · [`docs/specs/nucleus_architecture_v4.1.md`](docs/specs/nucleus_architecture_v4.1.md) · [`SETUP.md`](SETUP.md) · [`Makefile`](Makefile) (`make help`)
+[`AGENTS.md`](AGENTS.md) · [`docs/conventions/engineering.md`](docs/conventions/engineering.md) · [`docs/onboarding/learning_path.md`](docs/onboarding/learning_path.md) · [`.cursor/rules/nucleus.mdc`](.cursor/rules/nucleus.mdc) · [`docs/compatibility.md`](docs/compatibility.md) · [`docs/decisions/`](docs/decisions/) · [`docs/internal/security/threat_model_v0.md`](docs/internal/security/threat_model_v0.md) · [`docs/specs/nucleus_architecture_v4.1.md`](docs/specs/nucleus_architecture_v4.1.md) · [`SETUP.md`](SETUP.md) · [`Makefile`](Makefile) (`make help`)
 
 ---
 

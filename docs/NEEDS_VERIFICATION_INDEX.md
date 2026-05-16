@@ -98,7 +98,7 @@ PoC #5 (`poc/p5_beachhead/`): **0 NV markers**. `scripts/benchmark_regression.py
 - **C4_component.md (5)**: :35/:164/:184 (×3) `ctx.agent` v0.5+ placeholder · :190-192 §4 5-sub: `ctx.agent` shape · `ctx.read` `as_=` polars vs arrow · `ctx.sql` macro primitives · `ctx.copy_from` `mode="append"` v0.1 vs v0.3 · `ctx.dagster_context` escape-hatch.
 - **C4_container.md (2)** ← **dropped from 5 — JJ-2 cleared 3**: :175 §7 header (7-sub remain) · :196 C4 model URL.
 - **sequence_asset_materialization.md (2)**: :6/:141 §5 8-sub: `ctx.materialize` spelling · Dagster↔ctx bridging · OL event shapes (now ADR-009) · AMA write path · `ctx.read` identifier translation · contract validation timing · PyIceberg drift · DuckDB connection lifecycle.
-- **sequence_swap_drill.md (1)** ← **dropped from 2**: :194 §9 header (7-sub: cadence 28d-vs-90d · `scripts/drift_detection.py` n/a · `src/nucleus/swap/` + `tests/swap_smoke/` n/a · Tier 0 drill · drill-log location · license/health monitor automation · per-component walkthrough).
+- **sequence_swap_drill.md (1)** ← **dropped from 2**: :194 §9 header (7-sub: cadence 28d-vs-90d · `scripts/drift_detection.py` n/a · `src/nucleus/internal/swap/` + `tests/swap_smoke/` n/a · Tier 0 drill · drill-log location · license/health monitor automation · per-component walkthrough).
 - **docs/specs/nucleus_architecture_v4.1.md (1)** NEW: :47 — SeaweedFS exact tag pin + S3 parity edges per JJ-2 alignment sweep #2 (§5.8 Object Store amendment cross-refs ADR-008).
 
 `sequence_query.md` / `sequence_ingestion.md`: see §2 / §3. `sequence_error_translation.md` / `C4_context.md`: **0 NV markers**. **11 markers; ~32 sub.** (v1: 16; net −5.)
@@ -129,7 +129,7 @@ Full per-item enumeration unchanged from v1 unless flagged. Net §5 total: **76 
 
 ---
 
-## §6. Swap-doc uncertainties (`docs/swap/*.md`)
+## §6. Swap-doc uncertainties (`docs/internal/swap/*.md`)
 
 Each swap doc has a `## 7. NEEDS VERIFICATION` section. Header counts as 1 grep hit; substantive sub-items follow.
 

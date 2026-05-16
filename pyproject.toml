@@ -610,7 +610,7 @@ branch = true
 parallel = true
 omit = [
   "*/tests/*",
-  "*/poc/*",
+  "*/internal/poc/*",
   "*/__main__.py",
 ]
 

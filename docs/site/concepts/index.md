@@ -64,7 +64,7 @@ If you've used dbt or Dagster, the leap is small. If you haven't, eight terms is
 
 - **Job / task / pipeline output** — replaced by **asset** and **materialization**. The graph is the unit, not the run.
 - **Version** — replaced by **snapshot**. Iceberg owns versioning; we surface it under the right name.
-- **Plugin / extension / module** — Nucleus has no public plugin surface in v1. Extension comes via composability swaps documented in [`/docs/swap/`](../governance/composability.md).
+- **Plugin / extension / module** — Nucleus has no public plugin surface in v1. Extension comes via composability swaps documented in [`/docs/internal/swap/`](../governance/composability.md).
 - **Metastore** <!-- banned-term: metastore --> — replaced by **catalog**. We say catalog because that's what the OSS ecosystem (Iceberg REST, Polaris, Lakekeeper, Unity) calls it.
 
 If you find yourself reaching for one of those words, the [vocabulary table in `AGENTS.md` §7](https://github.com/nucleus-data/nucleus/blob/main/AGENTS.md#7-vocabulary-use-these-terms) shows the canonical replacement. Consistency in language prevents architecture drift.

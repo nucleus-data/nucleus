@@ -84,7 +84,7 @@ Step 3: 8-Question Gate
 - Empirical? PoC #2 validated the hypothesis first. YES
 - v0.1 Hello World? YES (required for `nucleus run`)
 
-**Result**: BUILD. ADR documented. PoC #2 validated before commit. See `docs/swap/dlt.md` (dbt-duckdb as swap target for v0.3).
+**Result**: BUILD. ADR documented. PoC #2 validated before commit. See `docs/internal/swap/dlt.md` (dbt-duckdb as swap target for v0.3).
 
 ### Example 3: Custom Auth System
 
@@ -102,7 +102,7 @@ Step 3: 8-Question Gate
 
 **Step 2**: Lance/LanceDB exists. Apache 2.0-inspired governance. ✅ WRAP.
 
-**Result**: WRAP LanceDB. Defer to v0.5. Document in `docs/swap/` if a swap target is needed.
+**Result**: WRAP LanceDB. Defer to v0.5. Document in `docs/internal/swap/` if a swap target is needed.
 
 ---
 
@@ -115,7 +115,7 @@ Tier 1 / Tier 2 dependency → requires:
   1. Clean swap interface (types compile, API surface matches)  — ALWAYS maintained
   2. Basic smoke tests (5-10 tests)                            — ALWAYS run in CI
   3. Full swap implementation                                  — on-demand only (trigger event)
-  4. Migration path in docs/swap/<component>.md                — ALWAYS maintained
+  4. Migration path in docs/internal/swap/<component>.md                — ALWAYS maintained
 ```
 
 "Full adapter built on-demand" means: don't pre-build two full implementations. Build the interface + smoke tests from day 1; build the full adapter only when the trigger fires (vendor death, license pivot, >2x perf regression).
@@ -167,7 +167,7 @@ Build custom because: <specific reason>
 ## Consequences
 - LOC budget impact: ~X lines
 - Maintenance ownership: @owner
-- Swap target: docs/swap/<component>.md
+- Swap target: docs/internal/swap/<component>.md
 - Tests verifying: <test files>
 
 ## Architecture Sections Touched

@@ -44,7 +44,7 @@ Other anchors: https://polaris.apache.org/  •  https://polaris.apache.org/down
 **URL gaps / 404s on 2026-05-13** — flag for AI agents:
 
 - **All four user-supplied URLs 404**: `https://polaris.apache.org/{quickstart,docs/configuring-polaris-for-production,docs/iceberg-rest-service,docs/access-control}/`. Polaris uses `/releases/<version>/...` (stable) or `/in-dev/unreleased/...` (dev) — never `/docs/...` or bare `/quickstart/`. Map: `quickstart` → `releases/1.4.1/getting-started/quick-start/`; production config → `releases/1.4.1/configuration/configuring-polaris-for-production/`; access-control → `in-dev/unreleased/managing-security/access-control/`; iceberg-rest-service has **no dedicated page** (it's implicit in the Iceberg REST spec link).
-- `https://polaris.apache.org/in-dev/unreleased/{authentication,deploying-polaris,iceberg-rest-service,api-spec}/` all 404. Authentication lives at `.../managing-security/external-idp/`.
+- `https://polaris.apache.org/in-dev/unreleased/{authentication,deploying-polaris,iceberg-rest-service,api-spec}/` all 404. Authentication lives at `.../../managing-security/external-idp/`.
 - `https://github.com/apache/polaris/blob/main/{README.md,LICENSE}` returns empty body via `WebFetch` (same GitHub blob-viewer quirk as Lakekeeper's repo, not a real 404). License is Apache-2.0 by ASF TLP policy + trademarked release-artefact wording.
 - `https://polaris.apache.org/blog/2026-04-21-polaris-1.4.0-release/` and similar release-blog URLs 404. Use Downloads page + GitHub Releases for changelogs.
 
@@ -106,7 +106,7 @@ When the user picks Polaris: (1) compose adds `polaris-server` (8181), `polaris-
 
 ### §5.2 OIDC delegation (Hard Constraint #6 — non-negotiable)
 
-Per AGENTS.md §3 Hard Constraint #6, Polaris realms in Nucleus production MUST use `polaris.authentication.<realm>.type=external` with Quarkus OIDC plugged into an external IdP. Documented IdPs (per `external-idp/` + Keycloak example): **Keycloak** (Polaris ships end-to-end compose at `.../using-polaris/keycloak-idp/` — recommended for v0.3 self-hosted), **Okta / Microsoft Entra-ID / Auth0** (standard Quarkus OIDC; per-provider gotchas **NEEDS VERIFICATION** — Lakekeeper's docs are more detailed here), **Google Identity Platform** (supported by Quarkus; Polaris docs don't explicitly cover — **NEEDS VERIFICATION**), **Authentik** (OIDC-compliant; not explicitly documented — **NEEDS VERIFICATION**). OPA is authorization-side via External PDP, separate from authentication.
+Per AGENTS.md §3 Hard Constraint #6, Polaris realms in Nucleus production MUST use `polaris.authentication.<realm>.type=external` with Quarkus OIDC plugged into an external IdP. Documented IdPs (per `external-idp/` + Keycloak example): **Keycloak** (Polaris ships end-to-end compose at `.../../using-polaris/keycloak-idp/` — recommended for v0.3 self-hosted), **Okta / Microsoft Entra-ID / Auth0** (standard Quarkus OIDC; per-provider gotchas **NEEDS VERIFICATION** — Lakekeeper's docs are more detailed here), **Google Identity Platform** (supported by Quarkus; Polaris docs don't explicitly cover — **NEEDS VERIFICATION**), **Authentik** (OIDC-compliant; not explicitly documented — **NEEDS VERIFICATION**). OPA is authorization-side via External PDP, separate from authentication.
 
 Key config keys (full reference in §3): `polaris.authentication.<realm>.type` per-realm override; `quarkus.oidc.{auth-server-url,client-id}`; `polaris.oidc.principal-mapper.{id-claim-path,name-claim-path}` for JWT-claim → Polaris-principal mapping; `polaris.oidc.principal-roles-mapper.{filter,mappings[i].{regex,replacement}}` for JWT-claim → `PRINCIPAL_ROLE:<name>` translation; `polaris.realm-context.{realms,require-header=true}` (**`require-header=true` mandatory in production** — default-permissive header omission can leak between realms).
 
@@ -122,7 +122,7 @@ Supported storage types per `polaris.features."SUPPORTED_CATALOG_STORAGE_TYPES"`
 
 Polaris RBAC (per `managing-security/access-control/`): **Principal → Principal Role → Catalog Role → Privilege** (2-tier delegation). Privileges scoped on Securable Objects (Catalog / Namespace / Iceberg Table / View / Policy). Privilege families: **Table** (10 — `TABLE_{CREATE,DROP,LIST,READ_PROPERTIES,WRITE_PROPERTIES,READ_DATA,WRITE_DATA,FULL_METADATA,ATTACH_POLICY,DETACH_POLICY}`); **View** (6); **Namespace** (8); **Catalog** (7 — incl. `CATALOG_MANAGE_CONTENT` superset); **Policy** (8). v0.3 single-team mode provisions one `nucleus_writer` catalog role with `CATALOG_MANAGE_CONTENT` + one `nucleus_reader` with `TABLE_READ_DATA` + `TABLE_FULL_METADATA`. v0.5+ multi-tenant (Cloud): per-tenant catalog + scoped principal roles.
 
-⚠️ Polaris docs warn explicitly: **table / view / namespace / catalog properties are readable metadata.** Never store passwords, tokens, access keys — anyone with `*_READ_PROPERTIES` or `*_FULL_METADATA` can read them. Surface in `docs/security/threat_model_v0.md`.
+⚠️ Polaris docs warn explicitly: **table / view / namespace / catalog properties are readable metadata.** Never store passwords, tokens, access keys — anyone with `*_READ_PROPERTIES` or `*_FULL_METADATA` can read them. Surface in `docs/internal/security/threat_model_v0.md`.
 
 ### §5.5 Atomic commit semantics — the Hard Constraint #5 hinge
 
@@ -223,7 +223,7 @@ Polaris and Lakekeeper are **mutual swap targets** by design (ADR-002 §6). Both
 
 If both Polaris **and** Lakekeeper become unviable: **Apache Gravitino** (Apache-2.0, ASF Incubating; JVM; out of scope for v0.3) or **Unity Catalog OSS** (Apache-2.0, Databricks-led; existing v0.5+ target per v4.1 §5.7). **AWS Glue / Cloudflare R2 / Snowflake-managed Polaris** = Mode 1 graduation targets (v4.1 §10.1), not OSS swap targets. **Build custom REST server** — rejected (Constraint #5; ADR-001).
 
-**Verdict**: Polaris co-default with Lakekeeper makes overall catalog-bus risk effectively zero for v0.3. Both feed the same downstream code path; swap drills run nightly in CI via the `pyiceberg.Catalog` Protocol surface; `docs/swap/catalog.md` documents the drill steps.
+**Verdict**: Polaris co-default with Lakekeeper makes overall catalog-bus risk effectively zero for v0.3. Both feed the same downstream code path; swap drills run nightly in CI via the `pyiceberg.Catalog` Protocol surface; `docs/internal/swap/catalog.md` documents the drill steps.
 
 ---
 

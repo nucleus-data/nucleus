@@ -4,7 +4,7 @@
 > **Status in Nucleus**: **Tier 0 (immortal)** per `docs/specs/nucleus_architecture_v4.1.md` §3.2 + §4.1. Asset-level lineage in v0.1 (per §6.2 step 4 + §12.4); column-level via sqlglot in v0.5+ (§12.4 + §18.4).
 > **Used in (planned)**: `src/nucleus/coordination/asset_materialization.py` — the AMA is the *only* module that constructs `OpenLineageClient` or calls `client.emit(...)`.
 
-Official-docs anchor per [AGENTS.md Hard Constraint #10](../../AGENTS.md). Read before wiring the OL emitter into the AMA (post PoC #1), or before any column-lineage work in v0.5+. OpenLineage is one of seven immortal substrates in `docs/specs/nucleus_architecture_v4.1.md` §4.1; it has **no swap target** and cannot be re-architected away (see §8 here).
+Official-docs anchor per [AGENTS.md Hard Constraint #10](../../../AGENTS.md). Read before wiring the OL emitter into the AMA (post PoC #1), or before any column-lineage work in v0.5+. OpenLineage is one of seven immortal substrates in `docs/specs/nucleus_architecture_v4.1.md` §4.1; it has **no swap target** and cannot be re-architected away (see §8 here).
 
 ---
 
@@ -153,7 +153,7 @@ Numbers from official docs + library source; **not yet benchmarked under Nucleus
 
 ## §8. Swap-target analysis (v4.1 §9.3)
 
-OpenLineage is **Tier 0 (immortal)** per v4.1 §3.2 + §4.1; per Constraint #9, Tier 0 needs no swap target. Justification: no competing open spec has comparable adoption (Atlas is governance-scoped; PROV-O too generic; vendor lineage from Unity / Snowflake / Databricks / OpenMetadata all support OL as wire-in/wire-out); LF AI & Data Graduate project; monthly minors (1.40.0 → 1.47.1 over 6 months); Apache-2.0 immutable. Datadog / GCP Data Catalog / Amazon DataZone shipped dedicated OL transports in 1.46.0+. If OL is ever replaced, the replacement *becomes* the new Tier 0 substrate by virtue of needing to replace it. No pre-emptive adapter. No `docs/swap/openlineage.md`. Same reasoning as Arrow, Iceberg, Parquet, S3, OpenTelemetry.
+OpenLineage is **Tier 0 (immortal)** per v4.1 §3.2 + §4.1; per Constraint #9, Tier 0 needs no swap target. Justification: no competing open spec has comparable adoption (Atlas is governance-scoped; PROV-O too generic; vendor lineage from Unity / Snowflake / Databricks / OpenMetadata all support OL as wire-in/wire-out); LF AI & Data Graduate project; monthly minors (1.40.0 → 1.47.1 over 6 months); Apache-2.0 immutable. Datadog / GCP Data Catalog / Amazon DataZone shipped dedicated OL transports in 1.46.0+. If OL is ever replaced, the replacement *becomes* the new Tier 0 substrate by virtue of needing to replace it. No pre-emptive adapter. No `docs/internal/swap/openlineage.md`. Same reasoning as Arrow, Iceberg, Parquet, S3, OpenTelemetry.
 
 ---
 

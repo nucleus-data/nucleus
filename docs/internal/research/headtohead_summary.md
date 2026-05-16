@@ -40,7 +40,7 @@ the deep-dive** -- the honest disclaimers live there.
 |---|---|
 | Spark / Databricks | Different category -- distributed cluster vs single laptop. Per `docs/specs/nucleus_architecture_v4.1.md` Section 10 (yield to giants), Nucleus does not compete here. The comparison would mislead. |
 | Snowflake / BigQuery | Same -- managed cloud warehouses. Nucleus graduates TO them via Iceberg portability rather than competes WITH them. |
-| Airflow | Different shape -- task-centric vs asset-centric. Migration guide tracked at `docs/swap/airflow.md`; benchmark would compare apples to oranges. |
+| Airflow | Different shape -- task-centric vs asset-centric. Migration guide tracked at `docs/internal/swap/airflow.md`; benchmark would compare apples to oranges. |
 | Prefect | Different shape -- flow/task vs asset. See `docs/internal/research/parity_vs_dbt_dagster_airflow.md` Section 3.5. |
 | SQLMesh | Closest spirit-competitor (Python-first, local-first, DuckDB-capable). Worth a future head-to-head; deferred to v0.3 prep. |
 
@@ -85,8 +85,8 @@ python -m scripts.benchmarks.headtohead_dbt_duckdb       --runs 5 --rows 100000
 python -m scripts.benchmarks.headtohead_dagster_duckdb   --runs 5 --rows 10000
 
 # Result JSON paths:
-# docs/benchmarks/_results/headtohead_dbt_duckdb.json
-# docs/benchmarks/_results/headtohead_dagster_duckdb.json
+# docs/internal/benchmarks/_results/headtohead_dbt_duckdb.json
+# docs/internal/benchmarks/_results/headtohead_dagster_duckdb.json
 ```
 
 ---
@@ -117,7 +117,7 @@ For the full pick-which matrix see each deep-dive's Section 4 / 5.
   Section 10 (yield to giants)
 * `AGENTS.md` Section 10.8 (be brutally honest about scope)
 * Harnesses: `scripts/benchmarks/headtohead_*.py`
-* Result JSONs: `docs/benchmarks/_results/headtohead_*.json`
+* Result JSONs: `docs/internal/benchmarks/_results/headtohead_*.json`
 
 ---
 

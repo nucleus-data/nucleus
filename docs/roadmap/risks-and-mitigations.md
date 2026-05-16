@@ -242,7 +242,7 @@ Swap interfaces (DuckDB/DataFusion, Dagster/mini-scheduler) drift as the default
 
 **Mitigation**:
 1. Quarterly swap drill in CI: interface compiles + 5-10 smoke tests pass.
-2. Any PR touching a Tier 1/2 component: contributor runs `pytest tests/swap/<component>_smoke.py`.
+2. Any PR touching a Tier 1/2 component: contributor runs `pytest tests/internal/swap/<component>_smoke.py`.
 3. `scripts/check_layering.py` prevents cross-layer imports that would bind implementations together.
 
 ---

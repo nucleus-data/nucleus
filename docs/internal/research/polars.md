@@ -5,7 +5,7 @@
 > **Used in**: `src/nucleus/engines/polars_engine.py` (L1, Tier 0+). Default DataFrame engine.
 > **Repo**: https://github.com/pola-rs/polars  •  **License**: MIT
 
-This file is the official-docs anchor for Polars per [AGENTS.md Hard Constraint #10](../../AGENTS.md). Audience: junior data engineer or AI agent integrating against Polars. Read before touching any Polars-wrapping code.
+This file is the official-docs anchor for Polars per [AGENTS.md Hard Constraint #10](../../../AGENTS.md). Audience: junior data engineer or AI agent integrating against Polars. Read before touching any Polars-wrapping code.
 
 ---
 

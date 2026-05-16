@@ -264,7 +264,7 @@ This section governs **how** AI agents and humans collaborate during PoCs and v0
 
 Until PoC #1 (Dagster Error Translation Layer) is validated:
 
-- ✅ Allowed: PoC stubs in `/poc/` directory
+- ✅ Allowed: PoC stubs in `/internal/poc/` directory
 - ✅ Allowed: test fixtures, validation scripts, benchmark harnesses
 - ✅ Allowed: documentation, ADRs (Architecture Decision Records)
 - ❌ Forbidden: Production code in `/nucleus/` (the main package)

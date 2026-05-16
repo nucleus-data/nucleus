@@ -148,7 +148,7 @@ def test_credential_missing_translates_to_NucleusConfigError(source_impl): ...
 - Current (dlt): https://dlthub.com/docs/intro (subpages `/general-usage/{pipeline,state}`, `/dlt-ecosystem/destinations/iceberg`)
 - Swap targets: https://docs.slingdata.io/ • https://github.com/slingdata-io/sling • https://www.singer.io/ • https://github.com/MeltanoLabs
 - Research: `docs/internal/research/dlt.md` • `docs/internal/research/pyiceberg.md` §B.3
-- Related: `docs/decisions/ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md` • `docs/swap/pyiceberg.md` §7
+- Related: `docs/decisions/ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md` • `docs/internal/swap/pyiceberg.md` §7
 
 ## 7. NEEDS VERIFICATION
 

@@ -253,6 +253,6 @@ Stable bindings live in `src/nucleus/errors.py` (`NucleusCopilot*` + `NucleusBud
 
 - [ADR-015 — AI Chat MVP](../decisions/ADR-015-ai-chat-mvp.md) — scope, privacy, LiteLLM decision
 - [`docs/errors/copilot.md`](../errors/copilot.md) — NE4001–NE4005 + NE3005 Copilot timeout notes
-- [`docs/swap/litellm.md`](../swap/litellm.md) — composability / swap plan
+- [`docs/internal/swap/litellm.md`](../internal/swap/litellm.md) — composability / swap plan
 - [LiteLLM providers](https://docs.litellm.ai/docs/providers) — authoritative model strings + env names
 - [LiteLLM proxy configuration](https://docs.litellm.ai/docs/proxy/configs) — only if you operate the optional proxy

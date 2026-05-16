@@ -182,7 +182,7 @@ Future tiers per `docs/specs/nucleus_architecture_v4.1.md` §17 (NOT shipping in
 
 ### Q14. Is the license going to change?
 
-**No.** Per `AGENTS.md` §3 + Hard Constraint #11 trajectory: **Apache 2.0 forever. No BSL/SSPL pivot.** A license pivot is explicitly forbidden. If we ever did pivot, it would auto-trigger the "vendor went hostile" composability fork condition documented in `docs/swap/dagster.md` (which would be a darkly self-referential outcome).
+**No.** Per `AGENTS.md` §3 + Hard Constraint #11 trajectory: **Apache 2.0 forever. No BSL/SSPL pivot.** A license pivot is explicitly forbidden. If we ever did pivot, it would auto-trigger the "vendor went hostile" composability fork condition documented in `docs/internal/swap/dagster.md` (which would be a darkly self-referential outcome).
 
 ### Q15. Can I use Nucleus commercially?
 
@@ -332,7 +332,7 @@ Full error registry: `src/nucleus/errors.py`. Per-error fix docs: `docs/errors/`
 
 ### Q26. (bonus) Is Nucleus production-ready?
 
-**No, it's beta.** v0.2.0 is the first publicly available release. The empirical baseline at `docs/benchmarks/2026-05-15_baseline.md` documents what's verified and what's still in flight. Recommended for greenfield analytics on 100 GB–5 TB; **not recommended for mission-critical production today.**
+**No, it's beta.** v0.2.0 is the first publicly available release. The empirical baseline at `docs/internal/benchmarks/2026-05-15_baseline.md` documents what's verified and what's still in flight. Recommended for greenfield analytics on 100 GB–5 TB; **not recommended for mission-critical production today.**
 
 That said: the WSL beachhead E2E (8/8 gates) does pass, real Iceberg snapshots are written, error translation discipline is enforced in CI, and 873+ tests pass. The honest position is "stable enough to evaluate seriously; not stable enough to bet your job on yet."
 

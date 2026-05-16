@@ -284,7 +284,7 @@ Eight scenarios. Each is a decision tree, not a prescription. Decision time **be
 3. **Is the CVE exploitable in our usage?** (read the CVE carefully — many DuckDB CVEs apply only to networked usage; we ship local-first.)
    - **No** → document non-applicability in [`SECURITY.md`](../SECURITY.md). No patch needed. Add a test that asserts the non-applicable code path stays unused.
    - **Yes, but low** → defer to next patch release with a CHANGELOG entry.
-   - **Yes, critical** → trigger the swap interface for that dep ([`docs/swap/<dep>.md`](swap/) — built on-demand per [`AGENTS.md`](../AGENTS.md) §11). This is the "vendor death" scenario.
+   - **Yes, critical** → trigger the swap interface for that dep ([`docs/internal/swap/<dep>.md`](swap/) — built on-demand per [`AGENTS.md`](../AGENTS.md) §11). This is the "vendor death" scenario.
 
 **Time budget**: 4h triage; 48h ship.
 
@@ -323,7 +323,7 @@ Eight scenarios. Each is a decision tree, not a prescription. Decision time **be
 **Tree**:
 
 1. Read the license change carefully. ELv2 / BSL with usage caps may or may not affect Apache-2.0 redistribution. Consult a lawyer if it's ambiguous — this is the **one** "stop and ask for paid advice" scenario.
-2. If the change blocks redistribution: trigger the swap interface (`docs/swap/<dep>.md` — built on-demand per [`AGENTS.md`](../AGENTS.md) §11). Pin to the last Apache-compatible version meanwhile. Patch `pyproject.toml` immediately.
+2. If the change blocks redistribution: trigger the swap interface (`docs/internal/swap/<dep>.md` — built on-demand per [`AGENTS.md`](../AGENTS.md) §11). Pin to the last Apache-compatible version meanwhile. Patch `pyproject.toml` immediately.
 3. Open an ADR: `ADR-NNN: License pivot of <dep>; swap to <alternative>`. Status: ACCEPTED (this is a forced decision, not an optional one).
 4. Communicate publicly within 7 days: GitHub Discussion announcement + CHANGELOG entry + Twitter/Mastodon post.
 5. Ship the swap within the next minor version. Do not let this drag — it's an existential risk to the project's open-source posture.
@@ -599,7 +599,7 @@ Track monthly in a private spreadsheet or notebook. Trends matter; absolute valu
 | Discord / Discussions msgs | Manual | Active = >10 msgs/week |
 | CI green-rate on main | `gh run list --workflow=ci.yml` | >95% pass on `main` |
 | Test suite size | `pytest --collect-only | tail -1` | Grows with codebase; no shrinkage |
-| Benchmark stability | `docs/benchmarks/` | No regression >10% on any tracked metric |
+| Benchmark stability | `docs/internal/benchmarks/` | No regression >10% on any tracked metric |
 
 If three metrics trend red simultaneously, that's a **stop condition** — book a quarterly-grade review immediately.
 

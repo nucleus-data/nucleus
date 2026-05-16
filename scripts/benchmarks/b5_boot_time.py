@@ -311,7 +311,7 @@ def main(argv: list[str] | None = None) -> int:
 
     result = BenchResult(
         name="B5: Boot time",
-        script="scripts/benchmarks/b5_boot_time.py",
+        script="scripts/internal/benchmarks/b5_boot_time.py",
         command=f"{python} -m scripts.benchmarks.b5_boot_time --iterations {args.iterations}",
         started_at=started_at,
         completed_at=completed_at,

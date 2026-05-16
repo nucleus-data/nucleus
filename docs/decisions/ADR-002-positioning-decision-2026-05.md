@@ -214,13 +214,13 @@ Total core pass: 8 files, 14 edits. Estimated review surface: ~150 LOC changed a
 
 **§8.6.1 Apply-log extension — drift sweep follow-up (2026-05-12 evening pass)**
 
-Worker B's drift sweep (`docs/audits/positioning_drift_2026-05-12.md`) surfaced 2 items the initial §8.6 pass missed. Both fixed in the follow-up pass; logged here so the audit trail is complete:
+Worker B's drift sweep (`docs/internal/audits/positioning_drift_2026-05-12.md`) surfaced 2 items the initial §8.6 pass missed. Both fixed in the follow-up pass; logged here so the audit trail is complete:
 
 | File | Edit | Classification |
 |---|---|---|
 | `docs/architecture/C4_context.md:29` | Mermaid label replaced with §8.1 thesis (`Ship data products from a laptop / Local-first Python SDK + CLI / for Iceberg-native pipelines`) | **Patch-introduced** — C4 diagrams were absent from initial §8.6 apply log |
 | `docs/specs/nucleus_architecture_v4.1.md:170` | §1.2 trend row 6 `"AI-native data contracts"` → `"AI-assisted contract authoring"` (right column adjusted) | **Pre-existing** (not caused by v4.1.3) — but a vocab-check ban-list violation that the sweep made visible; fixed opportunistically since v4.1 was being touched anyway |
-| `scripts/check_vocabulary.py` + 5 primary docs (`docs/specs/nucleus_architecture_v4.1.md`, `AGENTS.md`, `README.md`, `.cursor/rules/nucleus.mdc`) | **Option A vocab-check hygiene pass** (per `docs/audits/positioning_drift_2026-05-12.md` §3 + this §8.6.1 follow-up): (1) extended `SKIP_PATTERNS` with 5 whole-file exemptions covering retirement-narrative docs — deprecated `nucleus_architecture_v3.md` / `v4.md`, `docs/audits/`, `docs/decisions/`, `docs/internal/research/strategic/`; (2) added inline `<!-- banned-term: ... -->` exemptions to legitimate retirement-narrative lines in primary docs (v4.1 §1.6 + evening-pass note; `AGENTS.md` §0 + vocabulary contract + forbidden-framings list; README pillar #3; `.cursor/rules/nucleus.mdc` vocabulary + forbidden-framings list); C4 diagrams verified clean (no banned terms after the §8.6.1 Mermaid label fix above). | **Patch — CI hygiene**, no semantic / architectural change. Closes the gap the drift audit surfaced where the script would FAIL on its own primary-doc retirement narratives once `.github/workflows/ci.yml:82` is wired live. |
+| `scripts/check_vocabulary.py` + 5 primary docs (`docs/specs/nucleus_architecture_v4.1.md`, `AGENTS.md`, `README.md`, `.cursor/rules/nucleus.mdc`) | **Option A vocab-check hygiene pass** (per `docs/internal/audits/positioning_drift_2026-05-12.md` §3 + this §8.6.1 follow-up): (1) extended `SKIP_PATTERNS` with 5 whole-file exemptions covering retirement-narrative docs — deprecated `nucleus_architecture_v3.md` / `v4.md`, `docs/internal/audits/`, `docs/decisions/`, `docs/internal/research/strategic/`; (2) added inline `<!-- banned-term: ... -->` exemptions to legitimate retirement-narrative lines in primary docs (v4.1 §1.6 + evening-pass note; `AGENTS.md` §0 + vocabulary contract + forbidden-framings list; README pillar #3; `.cursor/rules/nucleus.mdc` vocabulary + forbidden-framings list); C4 diagrams verified clean (no banned terms after the §8.6.1 Mermaid label fix above). | **Patch — CI hygiene**, no semantic / architectural change. Closes the gap the drift audit surfaced where the script would FAIL on its own primary-doc retirement narratives once `.github/workflows/ci.yml:82` is wired live. |
 
 **§8.6.2 Residual vocab-check cleanup (2026-05-12 late evening pass)**
 
@@ -237,4 +237,4 @@ Worker B's §8.6.1 pass intentionally scope-restricted to "Option A within the a
 
 **Predicted exit code of `python scripts/check_vocabulary.py` now: 0 (PASS).** All 22 audit-listed LEGITIMATE matches + the 7 Worker-B-flagged residuals are now either SKIP_PATTERNS-covered or inline-exempted, except `ingest.py` which is renamed compliant. The vocab-check hygiene gap is fully closed; CI wiring of `scripts/check_vocabulary.py` is unblocked.
 
-Drift-clean as of this commit. Next audit pass scheduled when ADR-003 ships (per `docs/audits/positioning_drift_2026-05-12.md` §3 rec 3).
+Drift-clean as of this commit. Next audit pass scheduled when ADR-003 ships (per `docs/internal/audits/positioning_drift_2026-05-12.md` §3 rec 3).

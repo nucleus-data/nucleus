@@ -3,7 +3,7 @@
 > **Diagram type**: UML Sequence
 > **Scope**: How a Dagster failure becomes a NucleusError visible to the user
 > **Audience**: Anyone touching `coordination/error_translation.py`
-> **Status (2026-05-13)**: PoC #1 translator landed in [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py) — 17 typed handlers, two-pass match in `translate()`, and a `_iter_causes` walker that traverses both `__cause__` and `__context__`. Promotion to `src/nucleus/coordination/error_translation.py` pending founder review — see [`../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md`](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md). Tests: 21/22 green.
+> **Status (2026-05-13)**: PoC #1 translator landed in [`../../internal/poc/p1_error_translation/translator.py`](../../internal/poc/p1_error_translation/translator.py) — 17 typed handlers, two-pass match in `translate()`, and a `_iter_causes` walker that traverses both `__cause__` and `__context__`. Promotion to `src/nucleus/coordination/error_translation.py` pending founder review — see [`../../internal/poc/p1_error_translation/PROMOTION_PR_DRAFT.md`](../../internal/poc/p1_error_translation/PROMOTION_PR_DRAFT.md). Tests: 21/22 green.
 > **Companion**: [`C4_container.md`](C4_container.md), [`sequence_asset_materialization.md`](sequence_asset_materialization.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.4 (canonical spec), [`../../AGENTS.md`](../../AGENTS.md) §11.7 (enforcement discipline).
 
 This is the **most important sequence in the whole platform**. If a Dagster error ever leaks past `ctx`, our entire abstraction has failed — we're "Dagster with extra steps". This document defines the contract.
@@ -99,7 +99,7 @@ sequenceDiagram
 
 ## §3.1. Translator internals (PoC #1 — landed 2026-05-13)
 
-Three implementation details cement the architectural promise of §1 and §3 against real-world Dagster `materialize()` re-raise semantics. All three landed in [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py) today; see [`PROMOTION_PR_DRAFT.md` §Architectural changes](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md) for founder-ratification context.
+Three implementation details cement the architectural promise of §1 and §3 against real-world Dagster `materialize()` re-raise semantics. All three landed in [`../../internal/poc/p1_error_translation/translator.py`](../../internal/poc/p1_error_translation/translator.py) today; see [`PROMOTION_PR_DRAFT.md` §Architectural changes](../../internal/poc/p1_error_translation/PROMOTION_PR_DRAFT.md) for founder-ratification context.
 
 ### §3.1.1 The cause walker — `_iter_causes`
 
@@ -128,7 +128,7 @@ This restructure replaced the original v0 design ("`_unwrap_cause` once, look up
 
 CPython's `do_raise` (invoked when Dagster's `execute_plan` re-raises) **overwrites** `wrapper.__context__` with the currently-handled exception. If a test (or real failure) sets the inner cause manually on `wrapper.__context__` **before** raising the wrapper, that pre-set context is irrecoverably lost by the time `translate()` sees the exception.
 
-This is Python language semantics, not a translator bug. Real-world failures are unaffected because they raise naturally via `try / except / raise` inside the asset — the implicit `__context__` chain survives the Dagster boundary because Dagster's wrapping happens around the *naturally raised* wrapper, not a hand-constructed one. Documented in [`PROMOTION_PR_DRAFT.md` §Known issues](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md); the lone failing test in the 21/22 suite (`test_context_only_chain_falls_through_to_inner_handler`) exercises this limitation deliberately and is queued for either rewrite (natural-chain shape) or `@pytest.mark.skip` per founder decision.
+This is Python language semantics, not a translator bug. Real-world failures are unaffected because they raise naturally via `try / except / raise` inside the asset — the implicit `__context__` chain survives the Dagster boundary because Dagster's wrapping happens around the *naturally raised* wrapper, not a hand-constructed one. Documented in [`PROMOTION_PR_DRAFT.md` §Known issues](../../internal/poc/p1_error_translation/PROMOTION_PR_DRAFT.md); the lone failing test in the 21/22 suite (`test_context_only_chain_falls_through_to_inner_handler`) exercises this limitation deliberately and is queued for either rewrite (natural-chain shape) or `@pytest.mark.skip` per founder decision.
 
 **NEEDS VERIFICATION**: The `do_raise` interaction may differ in Dagster 1.10+ if Dagster changes its internal re-raise pattern. AGENTS.md §11.13's upgrade SOP requires re-running the translator suite (especially `test_dagster_wrapper_falls_through_to_inner_library`) after any Dagster minor-version bump.
 
@@ -283,7 +283,7 @@ When `ctx.run()` returns a `RunResult(failure, error=NucleusError)`, the CLI ren
 
 ## §7. Tests required (PoC #1 acceptance criteria)
 
-> **Status (2026-05-13)**: PoC #1 ships **17 typed handlers** spanning Dagster + Polars + DuckDB + pyiceberg + stdlib. `pytest poc/p1_error_translation/ -v` is **21/22 green**; the lone failure (`test_context_only_chain_falls_through_to_inner_handler`) is documented in §3.1.3 as a Python `__context__` overwrite limitation, not a translator bug. The §7.4 "50 known cases" fixture is still pending — PoC #1 acceptance bar is "no specific handler matched ⇒ deterministic fallback to `NucleusInternalError` with bug-report URL"; the 50-case bar moves to v0.1 production graduation. See [`../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md`](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md) for the full pre-merge gate.
+> **Status (2026-05-13)**: PoC #1 ships **17 typed handlers** spanning Dagster + Polars + DuckDB + pyiceberg + stdlib. `pytest poc/p1_error_translation/ -v` is **21/22 green**; the lone failure (`test_context_only_chain_falls_through_to_inner_handler`) is documented in §3.1.3 as a Python `__context__` overwrite limitation, not a translator bug. The §7.4 "50 known cases" fixture is still pending — PoC #1 acceptance bar is "no specific handler matched ⇒ deterministic fallback to `NucleusInternalError` with bug-report URL"; the 50-case bar moves to v0.1 production graduation. See [`../../internal/poc/p1_error_translation/PROMOTION_PR_DRAFT.md`](../../internal/poc/p1_error_translation/PROMOTION_PR_DRAFT.md) for the full pre-merge gate.
 
 For PoC #1 to pass:
 

@@ -109,7 +109,7 @@ One representative URL per topic; full SERP results captured in chat history.
 - **Mage AI** — `mage.ai/blog/mage-heros-journey-…`. Pivoted away from AI-native framing May 2023.
 - **LanceDB** — `lancedb.com`, `neuronfeed.com/startups/lancedb`, `lancedb.com/blog/newsletter-january-2026`. $41.5M Series A, $155M valuation, 10B vectors, Bytedance LAS.
 - **Iceberg catalogs** — `databricks.com/blog/year-interoperability-…-unity-catalog`, `datalakehousehub.com/blog/2026-02-state-of-the-apache-iceberg-ecosystem`, `xebia.com/blog/market-leaders-challengers-data-catalogs-…`. Unity 700+ orgs, 1M+ monthly downloads; Gravitino TLP Jun 2025.
-- **Snowflake + Databricks MCP** — `docs.snowflake.com/.../cortex-agents-mcp`, `docs.databricks.com/.../mcp`. Managed MCP servers shipped 2025.
+- **Snowflake + Databricks MCP** — `docs.snowflake.com/.../../cortex-agents-mcp`, `docs.databricks.com/.../../mcp`. Managed MCP servers shipped 2025.
 - **Cloudflare Data Platform** — `blog.cloudflare.com/cloudflare-data-platform/`. R2 Catalog beta Apr 2025; full stack Sept 2025; free, zero-egress.
 - **Prefect / Dagster** — `prefect.io/solutions/agents`, `support.dagster.io/articles/3171123463-…-may-2026`. Prefect Horizon for agents; Dagster+ Solo $10/mo + credits May 2026.
 - **dlt + Fivetran/dbt merger** — `adriennevermorel.com/articles/dlt-python-native-data-loader`. Fivetran + dbt Labs merged Oct 2025, ~$600M ARR.

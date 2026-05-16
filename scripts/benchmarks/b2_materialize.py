@@ -452,7 +452,7 @@ def main(argv: list[str] | None = None) -> int:
 
     result = BenchResult(
         name="B2: Materialize at scale",
-        script="scripts/benchmarks/b2_materialize.py",
+        script="scripts/internal/benchmarks/b2_materialize.py",
         command=(
             f"{sys.executable} -m scripts.benchmarks.b2_materialize "
             f"--scale {args.scale}{' --no-streaming' if args.no_streaming else ''}"

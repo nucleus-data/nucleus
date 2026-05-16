@@ -446,7 +446,7 @@ python -m scripts.benchmarks.b8_workbench_api --runs 10
 ```
 
 The legacy orchestrator `python scripts/benchmarks/run_all.py` writes
-the **internal-facing** baseline at `docs/benchmarks/<date>_baseline.md`
+the **internal-facing** baseline at `docs/internal/benchmarks/<date>_baseline.md`
 (used by CI / governance); `benchmark_v020.py` writes the
 **release-facing** consolidated JSON cited above.
 
@@ -462,7 +462,7 @@ the **internal-facing** baseline at `docs/benchmarks/<date>_baseline.md`
 * **Single Iceberg storage backend.** All measurements use the
   v0.2.0-shipped **filesystem catalog** (sqlite metadata + local
   Parquet). Lakekeeper / S3 / Polaris paths exist as swap interfaces
-  (`docs/swap/`) but are not part of the v0.2.0 release contract.
+  (`docs/internal/swap/`) but are not part of the v0.2.0 release contract.
 * **Single source connector path measured**. B3 (Postgres) was
   blocked by the corporate Docker proxy on this host. The MySQL,
   Snowflake, GCS, and S3 source connectors shipped in v0.2.0 are not
@@ -526,7 +526,7 @@ checklist.
 * `docs/internal/research/performance_reliability_targets.md` — perf-doc with
   v0.3+ aspirational targets (§1–§13) + v0.2.0 empirical actuals
   reconciliation (§14, updated by this run).
-* `docs/benchmarks/2026-05-15_baseline.md` — internal-facing baseline
+* `docs/internal/benchmarks/2026-05-15_baseline.md` — internal-facing baseline
   written by `scripts/benchmarks/run_all.py` (B1–B5 only; this
   document supersedes it for user-facing claims).
 * `scripts/benchmarks/_common.py` — shared harness (RSSWatcher,

@@ -205,7 +205,7 @@ Items where the API surface or implementation choice is not yet locked — commi
 - [`C4_container.md`](C4_container.md) — L2, five layers as containers.
 - [`sequence_error_translation.md`](sequence_error_translation.md) — the critical sequence proving §2.6 (PoC #1 spec).
 - [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) — §3 (layers), §5 (engines), §6 (coordination), §13 (`ctx` contract).
-- [`../../poc/`](../../poc/) — PoCs #1/#2/#3 that this diagram's components graduate from.
+- [`../../internal/poc/`](../../internal/poc/) — PoCs #1/#2/#3 that this diagram's components graduate from.
 
 ---
 

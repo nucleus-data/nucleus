@@ -95,7 +95,7 @@ ADR-006 §Initial has 12 codes; this ADR adds **2 new** (`NE3004`, `NE3005`) →
 
 - **LOC impact**: ~150-200 LOC across `sdk/types.py` (~30 LOC new module per skeleton plan §2), `ctx/_decorators.py` or new `ctx/sdk/materialize.py` (~100 LOC; Q5), `errors.py` (~15 LOC for `NucleusMaterializationError`/`NE3004`).
 - **Maintenance ownership**: @founder (AGENTS.md §0).
-- **Swap**: `docs/swap/dagster.md` (existing). `nucleus-mini-scheduler` (v4.1 §6.7, ~3-5K LOC) MUST honour signature unchanged.
+- **Swap**: `docs/internal/swap/dagster.md` (existing). `nucleus-mini-scheduler` (v4.1 §6.7, ~3-5K LOC) MUST honour signature unchanged.
 - **Tests**: `tests/sdk/test_materialize.py` (~10-15 cases: happy, each `upstream=` mode, timeout, partition forms, both `asset` forms, unknown-key); `tests/api_stability/test_signatures.py` snapshot; `scripts/dagster_leak_check.py` asserts zero Dagster strings in `MaterializationResult` + `NucleusMaterializationError.user_message`.
 - **Sections to update on acceptance** (AGENTS.md §10 r7): v4.1 §13.2 — add `ctx.materialize` row (✅ v0.1+); `docs/specs/nucleus_ctx_sdk_spec.md` §12 + new §5.4 "Materialize API" (NV #4); `cli_spec` §3.4 — reconcile plural drift (NV #1); `sequence_asset_materialization.md` §5 r1 — close; `v01_skeleton_plan.md` §6 Q2 + §7 NV #1 — mark resolved.
 - **Downstream**: unblocks `cli/commands/run.py` (§3.2 r6); unblocks `coordination/asset_materialization.py` public-surface tests (§4 step 7); locks `nucleus-mini-scheduler` input contract.

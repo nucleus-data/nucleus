@@ -41,15 +41,15 @@ CNCF spec + Python reference implementation for three signals — **Traces / Met
 
 Verified by `WebFetch` 2026-05-13. Every fact cites this set.
 
-- Main / What-is: https://opentelemetry.io/docs/ • .../what-is-opentelemetry/
+- Main / What-is: https://opentelemetry.io/docs/ • .../../what-is-opentelemetry/
 - Signals: https://opentelemetry.io/docs/concepts/signals/ (Traces / Metrics / Logs / Baggage sub-pages)
 - Python status + version support: https://opentelemetry.io/docs/languages/python/
 - **Python instrumentation (the API surface we wrap)**: https://opentelemetry.io/docs/languages/python/instrumentation/
-- Python exporters / propagation: https://opentelemetry.io/docs/languages/python/exporters/ • .../propagation/
+- Python exporters / propagation: https://opentelemetry.io/docs/languages/python/exporters/ • .../../propagation/
 - Python API ref (RTD, per-version): https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html (`metrics.html`, `_logs.html`; leading underscore intentional — Logs pre-GA)
 - Spec stability / versioning: https://opentelemetry.io/docs/specs/otel/versioning-and-stability/
-- Semantic Conventions: https://opentelemetry.io/docs/specs/semconv/general/trace/ • .../general/metrics/ • .../database/
-- GitHub / Releases / PyPI: https://github.com/open-telemetry/opentelemetry-python • .../releases • https://pypi.org/project/opentelemetry-api/ • .../opentelemetry-sdk/
+- Semantic Conventions: https://opentelemetry.io/docs/specs/semconv/general/trace/ • .../../general/metrics/ • .../../database/
+- GitHub / Releases / PyPI: https://github.com/open-telemetry/opentelemetry-python • .../../releases • https://pypi.org/project/opentelemetry-api/ • .../../opentelemetry-sdk/
 - Contrib (instrumentations + exporters): https://github.com/open-telemetry/opentelemetry-python-contrib • Collector (v0.5+ stack): https://opentelemetry.io/docs/collector/
 
 **Gotcha**: two API-reference families exist. Cite RTD for Python signatures; the cross-language spec uses pseudo-code — never cite spec snippets as Python signatures.
@@ -227,7 +227,7 @@ Log every catch in `docs/internal/research/ai_hallucinations.md` per AGENTS.md �
 - [ ] **OTEL Collector** (`opentelemetry-collector-contrib`): OTLP receivers + `prometheusremotewrite`/`otlp` exporters for VM/VL. Default `otel-collector.yaml` in the Cloud helm chart.
 - [ ] **Pin OTLP exporter** — `opentelemetry-exporter-otlp-proto-http==<latest>` (HTTP/Protobuf, JVM-free, gRPC-free). ADR.
 - [ ] **`opentelemetry-instrumentation-logging`** (replaces deprecated `LoggingHandler` ≥1.40): wire `structlog` through it.
-- [ ] **Semantic conventions audit** — `.../database/` + `.../general/metrics/`. Decide which `nucleus.*` attributes rename to standard `db.*` / `code.*` keys.
+- [ ] **Semantic conventions audit** — `.../../database/` + `.../../general/metrics/`. Decide which `nucleus.*` attributes rename to standard `db.*` / `code.*` keys.
 - [ ] **Re-fetch latest OTEL Python release** and re-run §6.3 — releases monthly; will have drifted.
 - [ ] **OpenLineage ↔ OTEL trace_id convention** once `docs/internal/research/openlineage.md` lands. Co-design with §4.4.
 - [ ] **MCP server propagation** (`v4.1.md` §18.4): how MCP clients pass W3C Trace Context into `ctx`.

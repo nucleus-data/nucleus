@@ -225,7 +225,7 @@ typing, observability hooks, and so on. The 32-LOC delta is the
 
 All numbers below are from a single n=3 run of the harness on the
 host described in Section 1.1, captured by
-`docs/benchmarks/_results/headtohead_dagster_duckdb.json` on
+`docs/internal/benchmarks/_results/headtohead_dagster_duckdb.json` on
 2026-05-15.
 
 ### 3.1 Lines of code (meaningful)
@@ -380,7 +380,7 @@ python -m scripts.benchmarks.headtohead_dagster_duckdb --dry-run
 python -m scripts.benchmarks.headtohead_dagster_duckdb --runs 5 --rows 10000
 
 # Result JSON written to:
-# docs/benchmarks/_results/headtohead_dagster_duckdb.json
+# docs/internal/benchmarks/_results/headtohead_dagster_duckdb.json
 ```
 
 ---
@@ -409,7 +409,7 @@ python -m scripts.benchmarks.headtohead_dagster_duckdb --runs 5 --rows 10000
 
 * Harness: `scripts/benchmarks/headtohead_dagster_duckdb.py`
 * Common utilities: `scripts/benchmarks/_common.py`
-* Result JSON: `docs/benchmarks/_results/headtohead_dagster_duckdb.json`
+* Result JSON: `docs/internal/benchmarks/_results/headtohead_dagster_duckdb.json`
 * Nucleus AMA pipeline: `docs/specs/nucleus_architecture_v4.1.md` Section 6.2
 * Nucleus error translation: `docs/specs/nucleus_architecture_v4.1.md`
   Section 6.4 + `src/nucleus/coordination/error_translation.py`

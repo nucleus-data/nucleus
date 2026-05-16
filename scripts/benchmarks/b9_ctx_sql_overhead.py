@@ -270,7 +270,7 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0915 — flat orches
         elapsed_total = benchmark_clock() - started
         result = BenchResult(
             name="B9: ctx.sql overhead",
-            script="scripts/benchmarks/b9_ctx_sql_overhead.py",
+            script="scripts/internal/benchmarks/b9_ctx_sql_overhead.py",
             command=f"{sys.executable} -m scripts.benchmarks.b9_ctx_sql_overhead",
             started_at=started_at,
             completed_at=completed_at,
@@ -337,7 +337,7 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0915 — flat orches
 
     result = BenchResult(
         name="B9: ctx.sql overhead",
-        script="scripts/benchmarks/b9_ctx_sql_overhead.py",
+        script="scripts/internal/benchmarks/b9_ctx_sql_overhead.py",
         command=(
             f"{sys.executable} -m scripts.benchmarks.b9_ctx_sql_overhead "
             f"--runs {args.runs} --rows {args.rows}"

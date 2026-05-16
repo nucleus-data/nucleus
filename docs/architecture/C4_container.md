@@ -99,9 +99,9 @@ flowchart TB
 
 | # | Container | Lifetime | Purpose / pin / swap target |
 |---|---|---|---|
-| 1 | `nucleus` CLI | per command | User entry — `init / up / down / run / ingest / query`. Cold boot <10 s (`v4.1` §11.2, [`poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md)). Typer assumed (§7 row 1). **Swap target**: none — frozen v1.0 (`v4.1` §13.3). |
+| 1 | `nucleus` CLI | per command | User entry — `init / up / down / run / ingest / query`. Cold boot <10 s (`v4.1` §11.2, [`poc/p4_boot_time/DESIGN.md`](../../internal/poc/p4_boot_time/DESIGN.md)). Typer assumed (§7 row 1). **Swap target**: none — frozen v1.0 (`v4.1` §13.3). |
 | 2 | `ctx` SDK | per CLI / script | The product. Surface enumerated in `v4.1` §13.2; lives in `src/nucleus/ctx/` per [`C4_component.md`](C4_component.md) §1; ~3000 LOC of ≤30K LOC ceiling (`AGENTS.md` §3 #8). Per `v4.1` §6.5 the SDK boundary is the only place Dagster types are wrapped — they MUST NOT cross it. **Swap target**: none; per-component swaps in [`C4_component.md`](C4_component.md) §3. |
-| 3 | Dagster Definitions | per CLI command | Orchestration, wrapped + hidden. v0.1 runs `1.9.5` in-process via `dagster.materialize([asset], instance=DagsterInstance.ephemeral())` ([`sequence_asset_materialization.md`](sequence_asset_materialization.md) §2) — no Dagit web server, no JVM (Constraint #1). Inception post-PoC #1 (`AGENTS.md` §11.1). **Swap target**: `nucleus-mini-scheduler` (~3-5K LOC) per `v4.1` §6.7 + [`docs/swap/dagster.md`](../swap/dagster.md); on-demand per `v4.1` §9.3. |
+| 3 | Dagster Definitions | per CLI command | Orchestration, wrapped + hidden. v0.1 runs `1.9.5` in-process via `dagster.materialize([asset], instance=DagsterInstance.ephemeral())` ([`sequence_asset_materialization.md`](sequence_asset_materialization.md) §2) — no Dagit web server, no JVM (Constraint #1). Inception post-PoC #1 (`AGENTS.md` §11.1). **Swap target**: `nucleus-mini-scheduler` (~3-5K LOC) per `v4.1` §6.7 + [`docs/internal/swap/dagster.md`](../internal/swap/dagster.md); on-demand per `v4.1` §9.3. |
 | 4 | Iceberg catalog (filesystem) | persistent | SQLite file (`.nucleus/catalog.db`) + `warehouse/` dir via `pyiceberg.SqlCatalog` ([`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md), pin `0.8.1`). **Owns atomic commits** via metadata-pointer swap ([`ADR-001`](../decisions/ADR-001-no-iceberg-commit-service.md)) — Constraint #5 forbids us from building one. **Swap target**: Lakekeeper (Rust) or Apache Polaris (JVM, ASF TLP 2026-02-18 per [`ADR-002`](../decisions/ADR-002-positioning-decision-2026-05.md) §2.4) at v0.3 co-default behind the same `pyiceberg.Catalog` interface. Polaris JVM lives in its own docker container, not in the always-on core path. |
 | 5 | MinIO server | persistent docker volume | Only out-of-process binary in v0.1. Go binary (~50 MB) on `localhost:9000` (S3 API); owns Parquet + Iceberg metadata under `warehouse/`. Started by `nucleus up` (`v4.1` §11.1). **Swap target**: AWS S3 / GCS / Azure Blob / R2 / SeaweedFS (`v4.1` §5.8). Graduation = 3-line `connections/storage.yml` change (`v4.1` §11.3). |
 | 6 | OpenLineage sink (FileTransport) | per materialization | In-process emitter → JSONL at `.nucleus/lineage/events` via `openlineage-python` ([`docs/internal/research/openlineage.md`](../research/openlineage.md) §3 row 1, §5 v0.1 row). Called from AMA post-write hook ([`sequence_asset_materialization.md`](sequence_asset_materialization.md) §1 step 17); never blocks — failure degrades gracefully (`docs/internal/research/openlineage.md` §6). v0.3+ swaps transport (not emitter) to `HttpTransport` → Marquez. **Swap target**: none — OL is Tier 0 immortal (`v4.1` §9.2); only transport varies. |
@@ -112,8 +112,8 @@ flowchart TB
 |---|---|---|---|
 | Workbench | L4 | v0.2 (Mo 8-14) | Web app; imports `ctx` SDK (`v4.1` §8.1). |
 | Inline AI chat (Copilot stage 1) | L3 | v0.2 (Mo 8-14) | Direct user→LLM HTTPS; Nucleus never proxies; never sends rows/PII ([`C4_context.md`](C4_context.md) §3.6 + §5.2). `v4.1` §7.2. |
-| Lakekeeper / Polaris | L1 | v0.3 (Mo 14-20) co-default | Behind same `pyiceberg.Catalog` interface (`v4.1` §5.7, [`docs/swap/lakekeeper.md`](../swap/lakekeeper.md)). |
-| dlt connectors | L1 | v0.3 (Mo 14-20) | Wrapped via `@nucleus.source(engine="dlt")` (`v4.1` §5.5.2, [`docs/swap/dlt.md`](../swap/dlt.md)); `ctx.copy_from` stays default for v0.1's six sources ([`sequence_ingestion.md`](sequence_ingestion.md) §4). |
+| Lakekeeper / Polaris | L1 | v0.3 (Mo 14-20) co-default | Behind same `pyiceberg.Catalog` interface (`v4.1` §5.7, [`docs/internal/swap/lakekeeper.md`](../internal/swap/lakekeeper.md)). |
+| dlt connectors | L1 | v0.3 (Mo 14-20) | Wrapped via `@nucleus.source(engine="dlt")` (`v4.1` §5.5.2, [`docs/internal/swap/dlt.md`](../internal/swap/dlt.md)); `ctx.copy_from` stays default for v0.1's six sources ([`sequence_ingestion.md`](sequence_ingestion.md) §4). |
 | Marquez | L2 | v0.3+ optional | OL HTTP backend via docker-compose ([`docs/internal/research/openlineage.md`](../research/openlineage.md) §5). |
 | Marimo | L4 | v0.3 (Mo 14-20) | Reactive notebook server (`v4.1` §8.1, [`docs/internal/research/marimo.md`](../research/marimo.md)). |
 | `nucleus-mcp-server` | L3 | v0.5+ (Mo 20-28) | MCP substrate hedge per [`ADR-002`](../decisions/ADR-002-positioning-decision-2026-05.md) §3; wraps `ctx` as MCP tools. |
@@ -124,7 +124,7 @@ flowchart TB
 
 ### §4.1 Boot sequence (`nucleus up`, cold)
 
-Per `v4.1` §11.1 and [`poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md), the cold-boot budget is **<10 s** total: (1) CLI + lazy-imports of `dagster`/`pyiceberg`/`polars`/`duckdb` (<3 s) → (2) `docker compose up -d minio` + healthcheck (<4.5 s) → (3) `pyiceberg.load_catalog(type='sql', ...)` (<0.5 s) → (4) `Definitions(assets=[...])` constructed in-process (<1.5 s) → (5) AMA registers OL sink (no I/O until first materialization). Warm boot <3 s; idle RAM <500 MB (`v4.1` §11.2).
+Per `v4.1` §11.1 and [`poc/p4_boot_time/DESIGN.md`](../../internal/poc/p4_boot_time/DESIGN.md), the cold-boot budget is **<10 s** total: (1) CLI + lazy-imports of `dagster`/`pyiceberg`/`polars`/`duckdb` (<3 s) → (2) `docker compose up -d minio` + healthcheck (<4.5 s) → (3) `pyiceberg.load_catalog(type='sql', ...)` (<0.5 s) → (4) `Definitions(assets=[...])` constructed in-process (<1.5 s) → (5) AMA registers OL sink (no I/O until first materialization). Warm boot <3 s; idle RAM <500 MB (`v4.1` §11.2).
 
 ### §4.2 Materialization & failure across containers
 
@@ -144,7 +144,7 @@ Full step-by-step in [`sequence_asset_materialization.md`](sequence_asset_materi
 
 ## §5. Hardware footprint (v0.1 laptop scope)
 
-Source: `v4.1` §11.2 + §16.3; per-container estimates verified by [`poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md). **Targets, not measurements** — re-verify when the boot harness lands.
+Source: `v4.1` §11.2 + §16.3; per-container estimates verified by [`poc/p4_boot_time/DESIGN.md`](../../internal/poc/p4_boot_time/DESIGN.md). **Targets, not measurements** — re-verify when the boot harness lands.
 
 | Container | Idle RAM | Active RAM | Disk |
 |---|---|---|---|
@@ -164,11 +164,11 @@ Both numbers fit inside `v4.1` §11.2 targets (idle <500 MB, active <2 GB).
 ## §6. Constraints check (per `AGENTS.md` §3)
 
 - **#1 No JVM in core path** — v0.1 zero JVM containers. v0.3 Polaris co-default runs in its own docker container behind `pyiceberg.Catalog`, not always-on in core path; Lakekeeper (Rust) is the zero-JVM alternate.
-- **#3 No custom scheduler** — Dagster wrapped (§3.1 row 3); mini-scheduler on-demand per [`docs/swap/dagster.md`](../swap/dagster.md).
+- **#3 No custom scheduler** — Dagster wrapped (§3.1 row 3); mini-scheduler on-demand per [`docs/internal/swap/dagster.md`](../internal/swap/dagster.md).
 - **#5 No custom Iceberg commit service** — catalog (§3.1 row 4) owns atomic commits per [`ADR-001`](../decisions/ADR-001-no-iceberg-commit-service.md).
 - **#6 No custom auth** — v0.1 no auth (single laptop); v0.3+ delegates to OIDC per [`docs/internal/research/oidc_providers.md`](../research/oidc_providers.md).
 - **#7 No ML/AI hosting** — Cloud Copilot (§3.2) is direct user→LLM; we never proxy ([`C4_context.md`](C4_context.md) §3.6).
-- **#9 Composability by Constitution** — every Tier 1/2 container has a `docs/swap/` target (Dagster, DuckDB, Polars, pyiceberg, Lakekeeper, dlt all present).
+- **#9 Composability by Constitution** — every Tier 1/2 container has a `docs/internal/swap/` target (Dagster, DuckDB, Polars, pyiceberg, Lakekeeper, dlt all present).
 
 ---
 
@@ -191,7 +191,7 @@ Per `AGENTS.md` §11.12, treat each as a **draft contract** until flipped:
 - [`C4_component.md`](C4_component.md) (L3) — inside the `ctx` SDK container (§3.1 row 2).
 - [`sequence_asset_materialization.md`](sequence_asset_materialization.md) / [`sequence_ingestion.md`](sequence_ingestion.md) — runtime flow across §3.1 containers.
 - [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §3 (layers), §5 (engines/catalog/object store), §6 (coordination), §11 (local-first), §16 (footprint), §18 (roadmap).
-- [`../../poc/p4_boot_time/DESIGN.md`](../../poc/p4_boot_time/DESIGN.md) — boot budget for §4.1.
+- [`../../internal/poc/p4_boot_time/DESIGN.md`](../../internal/poc/p4_boot_time/DESIGN.md) — boot budget for §4.1.
 - [`../decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md) / [`../decisions/ADR-002-positioning-decision-2026-05.md`](../decisions/ADR-002-positioning-decision-2026-05.md) §3.
 - C4 model spec: <https://c4model.com> (`# NEEDS VERIFICATION` per the no-web-fetch constraint).
 

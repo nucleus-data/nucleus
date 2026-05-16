@@ -153,7 +153,7 @@ Legend: ✅ shipped v0.1.0/v0.1.1 | 🟡 spec'd/deferred | ❌ not in scope | �
 - **External event injection via REST API** (`POST /assets/queuedEvent/{uri}`): useful for v0.3+ event-driven ingestion from external systems.
 - **Deferrable operators**: yield-control pattern for long-running I/O. Nucleus `@nucleus.sensor` polling covers this.
 
-**Action**: Write `docs/swap/airflow.md` migration guide (task→asset paradigm shift). No platform changes for v0.1.
+**Action**: Write `docs/internal/swap/airflow.md` migration guide (task→asset paradigm shift). No platform changes for v0.1.
 
 ---
 
@@ -184,7 +184,7 @@ SQLMesh is the **closest competitor in spirit**: Python-first, local-first, SQL-
 If `ctx.sql` grows beyond the 2500 LOC ceiling, SQLMesh is the drop-in swap:
 - Uses DuckDB as default local engine: NEEDS VERIFICATION at https://sqlmesh.readthedocs.io/en/stable/integrations/engines/duckdb/
 - Writes Iceberg-compatible formats: NEEDS VERIFICATION at https://sqlmesh.readthedocs.io/en/stable/integrations/
-- Swap interface: `docs/swap/sqlmesh.md` (already in repo per git status)
+- Swap interface: `docs/internal/swap/sqlmesh.md` (already in repo per git status)
 
 **Features worth borrowing from SQLMesh**:
 - `nucleus plan` (diff preview before apply) — P1 v0.2
@@ -209,7 +209,7 @@ If `ctx.sql` grows beyond the 2500 LOC ceiling, SQLMesh is the drop-in swap:
 2. Event-driven automations (webhooks, triggers) — richer than Nucleus's current `@nucleus.sensor` spec
 3. Interactive pause-for-approval — relevant for v0.5+ human-in-the-loop data quality workflows
 
-**Conclusion**: Write a `docs/swap/prefect.md` migration guide (flow→asset paradigm shift, Iceberg as Prefect artifact replacement). No platform changes for v0.1.
+**Conclusion**: Write a `docs/internal/swap/prefect.md` migration guide (flow→asset paradigm shift, Iceberg as Prefect artifact replacement). No platform changes for v0.1.
 
 ---
 

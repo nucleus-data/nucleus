@@ -4,7 +4,7 @@ Per the user-facing benchmark task spec (see
 `docs/internal/research/benchmarks_v0.2.0.md`):
 
     "Reproduce: 1 command:
-       python scripts/benchmarks/benchmark_v020.py --suite all --output benchmarks/results.json"
+       python scripts/internal/benchmarks/benchmark_v020.py --suite all --output benchmarks/results.json"
 
 This script is a thin orchestrator that:
 
@@ -19,12 +19,12 @@ This script is a thin orchestrator that:
         B3  — Postgres ingest scale         (optional; needs Docker)
         B4  — Concurrent run safety         (optional; reliability rather than perf)
     2. Collects each per-script JSON blob from
-       ``docs/benchmarks/_results/<name>.json``.
+       ``docs/internal/benchmarks/_results/<name>.json``.
     3. Writes a single consolidated JSON to ``--output`` so a third party
        can run one command and email back a comparable artifact.
 
-The legacy orchestrator at ``scripts/benchmarks/run_all.py`` writes the
-internal-facing markdown baseline at ``docs/benchmarks/<date>_baseline.md``
+The legacy orchestrator at ``scripts/internal/benchmarks/run_all.py`` writes the
+internal-facing markdown baseline at ``docs/internal/benchmarks/<date>_baseline.md``
 and is still the right tool for daily CI; ``benchmark_v020.py`` is the
 release-facing single-output entry users see in
 ``docs/internal/research/benchmarks_v0.2.0.md``.
@@ -238,7 +238,7 @@ def main(argv: list[str] | None = None) -> int:
     consolidated: dict[str, Any] = {
         "schema_version": 1,
         "suite": args.suite,
-        "tool": "scripts/benchmarks/benchmark_v020.py",
+        "tool": "scripts/internal/benchmarks/benchmark_v020.py",
         "started_at": started_at,
         "completed_at": completed_at,
         "suite_elapsed_s": suite_elapsed,
@@ -253,7 +253,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         "benchmarks": per_bench,
         "report_url": "docs/internal/research/benchmarks_v0.2.0.md",
-        "rerun_command": f"python scripts/benchmarks/benchmark_v020.py --suite {args.suite}",
+        "rerun_command": f"python scripts/internal/benchmarks/benchmark_v020.py --suite {args.suite}",
     }
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

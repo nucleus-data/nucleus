@@ -43,7 +43,7 @@ Per [Constraint #10 in AGENTS.md](https://github.com/nucleus-data/nucleus/blob/m
 
 | Document | Purpose |
 |----------|---------|
-| [`docs/benchmarks/2026-05-15_baseline.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/benchmarks/2026-05-15_baseline.md) | Empirical v0.2.0 baseline — boot, materialize, concurrent-run, TPC-H |
+| [`docs/internal/benchmarks/2026-05-15_baseline.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/benchmarks/2026-05-15_baseline.md) | Empirical v0.2.0 baseline — boot, materialize, concurrent-run, TPC-H |
 | [performance_reliability_targets.md](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/research/performance_reliability_targets.md) | Aspirational targets (v0.2 baseline diverges — see release notes) |
 | [scale_out_audit.md](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/research/scale_out_audit.md) | What we yield to giants on, with citations |
 | [free_tier_deploy_evaluation.md](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/research/free_tier_deploy_evaluation.md) | Cloud free-tier viability for demo deploys |

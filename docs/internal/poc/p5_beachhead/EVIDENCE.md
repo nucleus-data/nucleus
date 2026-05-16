@@ -109,10 +109,10 @@ A Nucleus swarm-implementer simulated an external tester on WSL2/Ubuntu-22.04 (W
 
 | Artifact | Storage path | Retention |
 |---|---|---|
-| Completed feedback forms (anonymized) | `docs/poc/p5_beachhead/results/FILLED_<date>_<participant-id>.md` | 12 months from session date |
-| Screen recordings (if consented) | `docs/poc/p5_beachhead/results/recordings/<date>_<participant-id>.<ext>` | 12 months from session date |
-| Aggregated summary | `docs/poc/p5_beachhead/results/AGGREGATE_SUMMARY.md` | Indefinite (no PII) |
-| SHA-256 warehouse fingerprints | `docs/poc/p5_beachhead/results/sha256_<date>_<participant-id>.txt` | 12 months |
+| Completed feedback forms (anonymized) | `docs/internal/poc/p5_beachhead/results/FILLED_<date>_<participant-id>.md` | 12 months from session date |
+| Screen recordings (if consented) | `docs/internal/poc/p5_beachhead/results/recordings/<date>_<participant-id>.<ext>` | 12 months from session date |
+| Aggregated summary | `docs/internal/poc/p5_beachhead/results/AGGREGATE_SUMMARY.md` | Indefinite (no PII) |
+| SHA-256 warehouse fingerprints | `docs/internal/poc/p5_beachhead/results/sha256_<date>_<participant-id>.txt` | 12 months |
 
 All PII-linked files are deleted after 12 months per `CONSENT.md` data retention policy unless tester renews consent in writing.
 

@@ -53,7 +53,7 @@ The following are tracked in the main chat — do **not** touch in the logo work
 
 - Foreground reconciliation across 3 builder returns (`ee37bb6` + `0a65da5` + Workbench v0.3 commits): pyproject.toml / CHANGELOG / AGENTS.md collision check.
 - Wave 1A-K agents status sweep.
-- Phase 2 root reorg per `docs/reorg/2026-05-15_root_md_reorg.md`.
+- Phase 2 root reorg per `docs/internal/reorg/2026-05-15_root_md_reorg.md`.
 - ADR ratification follow-ups.
 
 ## Copy-paste prompt for the new chat

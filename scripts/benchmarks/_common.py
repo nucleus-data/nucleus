@@ -6,7 +6,7 @@ This module contains:
 * ``software_versions()`` — wrapped-library versions read from importable modules.
 * ``RSSWatcher`` — background thread that samples ``psutil.Process().memory_info().rss``.
 * ``BenchResult`` / ``BenchRow`` — JSON-serialisable records consumed by ``run_all.py``.
-* ``write_result()`` — atomic JSON writer to ``docs/benchmarks/_results/``.
+* ``write_result()`` — atomic JSON writer to ``docs/internal/benchmarks/_results/``.
 * ``percentile()`` — small stdlib percentile helper (avoids numpy dep).
 * ``Verdict`` constants and ``classify()`` to keep severity logic in one place.
 
@@ -87,7 +87,7 @@ class BenchResult:
     """A full benchmark's output — one JSON file per script."""
 
     name: str  # e.g. "B5: Boot time"
-    script: str  # e.g. "scripts/benchmarks/b5_boot_time.py"
+    script: str  # e.g. "scripts/internal/benchmarks/b5_boot_time.py"
     command: str  # exact command line a user can re-run
     started_at: str  # ISO-8601 UTC
     completed_at: str  # ISO-8601 UTC
@@ -271,7 +271,7 @@ def now_iso() -> str:
 
 
 def write_result(result: BenchResult) -> Path:
-    """Atomic-write a ``BenchResult`` to ``docs/benchmarks/_results/<name>.json``.
+    """Atomic-write a ``BenchResult`` to ``docs/internal/benchmarks/_results/<name>.json``.
 
     The orchestrator (``run_all.py``) reads these files; per-script callers
     don't need to know the path layout.

@@ -4,7 +4,7 @@ Exercises today's wrap surface (filesystem SQL catalog + the 7 ``Table``
 methods consumed by ``coordination/asset_materialization.py`` and
 ``ctx/copy_from.py``); verifies iceberg-rust is installable OR doc'd as
 a gap (no install in CI — full swap on-demand only).
-Reference: ``docs/swap/pyiceberg.md`` · Docs: https://py.iceberg.apache.org/api/
+Reference: ``docs/internal/swap/pyiceberg.md`` · Docs: https://py.iceberg.apache.org/api/
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ from pyiceberg.schema import Schema
 from pyiceberg.types import LongType, NestedField, StringType
 
 _SKIP = "swap target — full impl on-demand only per .cursor/rules/nucleus.mdc Composability Constitution"
-_SWAP_DOC = Path("docs/swap/pyiceberg.md")
+_SWAP_DOC = Path("docs/internal/swap/pyiceberg.md")
 
 
 def _open_fs_catalog(warehouse: Path):
@@ -69,7 +69,7 @@ def test_iceberg_rust_python_binding_findable() -> None:
 
 
 def test_pyiceberg_critical_surface_present() -> None:
-    from pyiceberg.table import Table  # per docs/swap/pyiceberg.md §2
+    from pyiceberg.table import Table  # per docs/internal/swap/pyiceberg.md §2
 
     for m in (
         "append",
@@ -92,7 +92,7 @@ def test_full_swap_to_iceberg_rust_parity() -> None:
 
 
 @pytest.mark.skip(
-    reason="REST catalog parity deferred per docs/swap/pyiceberg.md §3; filesystem is v0.1 baseline; re-enable when Lakekeeper lands in v0.3"
+    reason="REST catalog parity deferred per docs/internal/swap/pyiceberg.md §3; filesystem is v0.1 baseline; re-enable when Lakekeeper lands in v0.3"
 )
 def test_rest_catalog_parity_lakekeeper_polaris() -> None:
     """Verify create/load/drop/append parity over REST when Lakekeeper integration lands."""

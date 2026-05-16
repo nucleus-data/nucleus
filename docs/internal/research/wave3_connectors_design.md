@@ -151,7 +151,7 @@ Options rejected: dlt[bigquery] (destination-only); custom REST (BUILD); BigFram
 Scope v0.3: single-query call, ADC + service-account, dry-run cost estimate, NE1011 quota code.
 OUT: streaming/storage-API (opt-in flag), incremental cursors, MERGE/INSERT, BigFrames, federated queries.
 LOC: ~220  ·  New dep: google-cloud-bigquery[pyarrow]==3.41.0 (~35 MB)
-Swap target: BigQuery REST API + manual Arrow (~600 LOC if needed); document docs/swap/bigquery.md.
+Swap target: BigQuery REST API + manual Arrow (~600 LOC if needed); document docs/internal/swap/bigquery.md.
 Smoke test: tests/upgrade_smoke/test_google_cloud_bigquery.py mocked via google.cloud.bigquery._testing.
 ```
 
@@ -306,7 +306,7 @@ Options rejected:
 Scope v0.3: PAT auth, single-table read with optional query_filter WHERE, NE1013 compute-paused.
 OUT: OAuth M2M (v0.4), OAuth U2M (rejected; CI-hostile), write-back, MERGE, INSERT, Spark Connect.
 LOC: ~250  ·  New dep: databricks-sql-connector[pyarrow]==4.2.6 (~30 MB)
-Swap target: raw Thrift over HTTP/2 (~500 LOC); docs/swap/databricks.md.
+Swap target: raw Thrift over HTTP/2 (~500 LOC); docs/internal/swap/databricks.md.
 Smoke test: tests/upgrade_smoke/test_databricks_sql.py mocked via pytest-httpserver.
 ```
 
@@ -613,7 +613,7 @@ OUT: Kerberos/gssapi (v0.5+), recursive globbing (`**`), streaming (v0.4 via ssh
   demand), file watching, remote command exec (SSHClient.exec_command — backdoor; reject).
 LOC: ~260  ·  New dep: paramiko==5.0.0 (LGPL-2.1 YELLOW; dynamic-link exempt per
   ADR-007; same precedent as existing psycopg LGPLv3+ in [postgres])
-Swap target: asyncssh (EPL-2.0) ~300 LOC; docs/swap/paramiko.md.
+Swap target: asyncssh (EPL-2.0) ~300 LOC; docs/internal/swap/paramiko.md.
 ```
 
 ### §4.9 Test plan
@@ -761,7 +761,7 @@ Scope v0.3: az:// + abfs:// schemes; DefaultAzureCredential + account_key + SAS 
 OUT: ADLS Gen1; Append Blob writes (read-only); HNS metadata ops; soft-delete;
   Event Grid notifications.
 LOC: ~190  ·  New dep: adlfs==2026.5.0 (BSD-3-Clause GREEN) + transitive (~17 MB)
-Swap target: DuckDB azure extension (~80 LOC) evaluate v0.4; docs/swap/adlfs.md.
+Swap target: DuckDB azure extension (~80 LOC) evaluate v0.4; docs/internal/swap/adlfs.md.
 NEW NE: NE1014 NucleusSourceTierError.
 Smoke: tests/upgrade_smoke/test_adlfs.py via Azurite emulator.
 ```

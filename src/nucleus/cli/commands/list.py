@@ -1,7 +1,7 @@
 """``nucleus list`` — registered-asset discoverability (PoC #5 Checkpoint 7).
 
 Per ``docs/specs/nucleus_cli_spec.md`` §3 (CLI surface) and the PoC #5 feedback form
-(``docs/poc/p5_beachhead/FEEDBACK_FORM.md`` Friction #5 + "What would make
+(``docs/internal/poc/p5_beachhead/FEEDBACK_FORM.md`` Friction #5 + "What would make
 me a paying user" #3): external testers had no way to discover registered
 assets without reading source files. This command closes that gap by
 listing every ``@nucleus.asset`` and ``@nucleus.check`` entry, with
@@ -227,7 +227,7 @@ def list_assets(
     registry entry.
 
     Per [bold]docs/specs/nucleus_cli_spec.md §3[/bold]. Closes
-    PoC #5 Checkpoint 7 (docs/poc/p5_beachhead/FEEDBACK_FORM.md Friction #5).
+    PoC #5 Checkpoint 7 (docs/internal/poc/p5_beachhead/FEEDBACK_FORM.md Friction #5).
 
     [bold]Examples[/bold]
 

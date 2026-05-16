@@ -66,7 +66,7 @@
 
 - [ ] **Voiceover script read aloud once** before recording - listen for any of: "AI-first" / "AI-native" / "Spark killer" / "Databricks killer" / "Data OS" / "AI-native data CLI". If any slip in, rewrite per `AGENTS.md` section 8. <!-- banned-term: launch-forbidden-framings -->
 - [ ] **CLI output has no class-name leaks**: run each take command once OFF-CAMERA and grep for `Dagster`, `DuckDBPyConnection`, `OpExecutionContext`, `pyiceberg.exceptions`. If any leak, **STOP** - that is a release-blocker per `scripts/dagster_leak_check.py`. Fix the bug, then re-record.
-- [ ] **Boot time on the recording host is < 10 s** for `nucleus up`. If it is over 10 s, retry on a freshly-rebooted laptop; we cite < 10 s in the voiceover and the recording must support the claim (`docs/benchmarks/2026-05-15_baseline.md` section B5).
+- [ ] **Boot time on the recording host is < 10 s** for `nucleus up`. If it is over 10 s, retry on a freshly-rebooted laptop; we cite < 10 s in the voiceover and the recording must support the claim (`docs/internal/benchmarks/2026-05-15_baseline.md` section B5).
 
 ---
 
@@ -153,6 +153,6 @@ If 2 or more triggers fire, **stop, reset (`nucleus down && rm -rf my-stack`), r
 - README hero patch (where the video embed lives): `README_HERO_PATCH.md`
 - Forbidden framings: `AGENTS.md` section 8
 - Beachhead source-of-truth: `docs/specs/nucleus_architecture_v4.1.md` section 1.5
-- Benchmark numbers cited in the voiceover: `docs/benchmarks/2026-05-15_baseline.md`
+- Benchmark numbers cited in the voiceover: `docs/internal/benchmarks/2026-05-15_baseline.md`
 
 *If you ship and a retake is needed post-launch, log the trigger in `docs/release/v0.2.0_POST_LAUNCH_NOTES.md` so the next demo recording can include the lesson.*

@@ -88,7 +88,7 @@ git revert <merge-commit-sha>
 git push origin main
 ```
 
-`poc/p2_ctx_sql/` is unchanged by this PR (purely additive `cp` into `src/nucleus/coordination/` and `tests/coordination/`); rollback leaves the PoC source intact. On CI failure, document in `poc/p2_ctx_sql/PROMOTION_FAILURES.md` and re-iterate inside `/poc/`.
+`poc/p2_ctx_sql/` is unchanged by this PR (purely additive `cp` into `src/nucleus/coordination/` and `tests/coordination/`); rollback leaves the PoC source intact. On CI failure, document in `poc/p2_ctx_sql/PROMOTION_FAILURES.md` and re-iterate inside `/internal/poc/`.
 
 ---
 

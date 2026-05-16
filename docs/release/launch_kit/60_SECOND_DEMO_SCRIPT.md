@@ -1,6 +1,6 @@
 # 60-Second Demo Script — Nucleus v0.2.0
 
-*Shot-by-shot screencast. Total runtime 60 s. Expected total recording time ~10 min after retakes. Source of truth for stats: `docs/benchmarks/2026-05-15_baseline.md`, `docs/release/launch_kit/press_kit.md` §key stats.*
+*Shot-by-shot screencast. Total runtime 60 s. Expected total recording time ~10 min after retakes. Source of truth for stats: `docs/internal/benchmarks/2026-05-15_baseline.md`, `docs/release/launch_kit/press_kit.md` §key stats.*
 
 ---
 
@@ -82,7 +82,7 @@ $ nucleus up
 
 **On-screen subtitle:** `Boot SeaweedFS + filesystem catalog + run ledger + scheduling daemon  →  ~6 s cold boot`
 
-**What viewers should see:** the colored progress lines for each component (`storage ✓`, `catalog ✓`, `orchestration ✓`, `ledger ✓`). The whole sequence is ~6 s on a fresh laptop per `docs/benchmarks/2026-05-15_baseline.md` §B5 (PoC #4 measured 5.82 s). If it overruns 15 s on the recording host, retry on a freshly-booted laptop — the measured number is what we cite.
+**What viewers should see:** the colored progress lines for each component (`storage ✓`, `catalog ✓`, `orchestration ✓`, `ledger ✓`). The whole sequence is ~6 s on a fresh laptop per `docs/internal/benchmarks/2026-05-15_baseline.md` §B5 (PoC #4 measured 5.82 s). If it overruns 15 s on the recording host, retry on a freshly-booted laptop — the measured number is what we cite.
 
 ---
 

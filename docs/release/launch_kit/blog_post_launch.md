@@ -73,7 +73,7 @@ The asset is the **only primitive**. There are no "tables" vs "jobs" vs "pipelin
 Per `AGENTS.md` §6 — every Nucleus design decision must serve at least one of these without harming another:
 
 1. **High performance on minimal resources.** DuckDB + Polars + Arrow do the heavy lifting. We measured `nucleus up` cold boot at **5.82 s** in PoC #4 (target was <10 s) on a 16 GB MacBook-class host. Idle RSS sits at **117 MB**.
-2. **Composable by constitution.** Every Tier 1/2 dependency exposes a swap interface and runs basic smoke tests in CI. We do not maintain second implementations preemptively (that's "Composability Tax"); we build the full adapter on demand when a trigger fires (vendor death, license pivot, perf regression >2x). See `docs/swap/dagster.md`.
+2. **Composable by constitution.** Every Tier 1/2 dependency exposes a swap interface and runs basic smoke tests in CI. We do not maintain second implementations preemptively (that's "Composability Tax"); we build the full adapter on demand when a trigger fires (vendor death, license pivot, perf regression >2x). See `docs/internal/swap/dagster.md`.
 3. **AI-ready by design.** Structured errors, predictable schemas, machine-introspectable `ctx` SDK. The platform is engineered for LLM comprehension. Copilot is a *feature*, not the headline.
 4. **Familiar UX from proven giants.** SQL templating feels like dbt. Asset graph feels like Dagster. Local-identical-to-prod feels like Supabase. CLI ergonomics feel like Vercel/Linear/Cursor. We do not invent vocabulary.
 5. **Friendly to giants, hostile to no-one.** Iceberg portability means your bytes stay yours. The day you outgrow Nucleus, you point Databricks/Snowflake at the same S3 + catalog and you're done. No re-migration. No format lock-in.
@@ -148,7 +148,7 @@ Every materialization writes a typed record to a durable NDJSON ledger at `<proj
 Per ADR-024 + ADR-025:
 
 - **DuckDB `memory_limit` guard at AMA init** — set to 80% of total RAM, clamped [2 GB, 32 GB], overridable in `nucleus_project.yaml`. OOM conditions now surface as `NucleusMemoryLimitExceeded` (NE2007) instead of opaque crashes.
-- **Advisory filesystem lock for concurrent runs** — cross-platform context manager (`fcntl.flock` on POSIX, `msvcrt.locking` on Windows). Stale locks (dead PID) auto-reclaimed. `NucleusConcurrentRunError` (NE3008) after a 30 s timeout. *Note: B4 concurrent-run safety still FAILs on Windows in our 2026-05-15 baseline because NTFS lock semantics differ from POSIX (`docs/benchmarks/2026-05-15_baseline.md` §B4); fix tracked for v0.2.1.*
+- **Advisory filesystem lock for concurrent runs** — cross-platform context manager (`fcntl.flock` on POSIX, `msvcrt.locking` on Windows). Stale locks (dead PID) auto-reclaimed. `NucleusConcurrentRunError` (NE3008) after a 30 s timeout. *Note: B4 concurrent-run safety still FAILs on Windows in our 2026-05-15 baseline because NTFS lock semantics differ from POSIX (`docs/internal/benchmarks/2026-05-15_baseline.md` §B4); fix tracked for v0.2.1.*
 - **`expire_old_snapshots` post-commit maintenance** — keeps the most recent 10 snapshots, expires older ones beyond `retain_days`. Maintenance failures are non-fatal.
 - **Error-budget SLO definitions** — per-operation `target_p95` thresholds for boot, materialize, query, ingest. OTEL enforcement deferred to v0.5+.
 
@@ -245,6 +245,6 @@ We built Nucleus for ourselves first. We hope it works for you too.
 
 ---
 
-*Honest disclosures (because credibility matters).* Nucleus v0.2.0 is **beta software**. The empirical benchmark baseline at `docs/benchmarks/2026-05-15_baseline.md` documents 11 measured failures vs the aspirational performance targets in `docs/internal/research/performance_reliability_targets.md` — boot time runs ~2 s on a contention-loaded host vs the original <500 ms claim, and the B4 concurrent-run safety test FAILs on Windows due to NTFS lock semantics. We are documenting these honestly rather than re-running until numbers improve. Re-measurements on freshly-booted beachhead-spec hardware are tracked for v0.2.1.
+*Honest disclosures (because credibility matters).* Nucleus v0.2.0 is **beta software**. The empirical benchmark baseline at `docs/internal/benchmarks/2026-05-15_baseline.md` documents 11 measured failures vs the aspirational performance targets in `docs/internal/research/performance_reliability_targets.md` — boot time runs ~2 s on a contention-loaded host vs the original <500 ms claim, and the B4 concurrent-run safety test FAILs on Windows due to NTFS lock semantics. We are documenting these honestly rather than re-running until numbers improve. Re-measurements on freshly-booted beachhead-spec hardware are tracked for v0.2.1.
 
 *Nucleus is built on the work of [Apache Arrow](https://arrow.apache.org), [Apache Iceberg](https://iceberg.apache.org), [Apache Parquet](https://parquet.apache.org), [DuckDB](https://duckdb.org), [Polars](https://pola.rs), [Dagster](https://dagster.io), [OpenLineage](https://openlineage.io), and [OpenTelemetry](https://opentelemetry.io). If we ship something useful, it is because these foundations exist. Support them.*

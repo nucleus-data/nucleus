@@ -4,7 +4,7 @@
 > **Status in Nucleus**: **Tier 0 (immortal)** per `docs/specs/nucleus_architecture_v4.1.md` §3.1 / §4.1 — one of seven bedrock substrates alongside Apache Iceberg, Apache Parquet, Lance, S3 API, OpenLineage, OpenTelemetry. **No swap target ever.**
 > **Wrapping mode**: **Zero wrapping behind an interface.** Apache Arrow IS the in-memory interface; wrapping it defeats the contract. Nucleus calls `pyarrow` directly in 3-4 narrow places (§3); the rest is inherited transitively via polars / duckdb / pyiceberg / dlt.
 
-Official-docs anchor per [AGENTS.md Hard Constraint #10](../../AGENTS.md). Read before touching any L0 ↔ L1 conversion path, or whenever a downstream pin (polars, duckdb, pyiceberg, dlt) is upgraded — the highest pyarrow floor across our pinned deps is what `pip install -e .[dev]` resolves to, and `pyiceberg==0.8.1`'s `pyarrow<19.0.0` is the binding ceiling. PyArrow is the **one dependency every other Tier 1/2 component already pulls transitively**; a poor pin here propagates everywhere.
+Official-docs anchor per [AGENTS.md Hard Constraint #10](../../../AGENTS.md). Read before touching any L0 ↔ L1 conversion path, or whenever a downstream pin (polars, duckdb, pyiceberg, dlt) is upgraded — the highest pyarrow floor across our pinned deps is what `pip install -e .[dev]` resolves to, and `pyiceberg==0.8.1`'s `pyarrow<19.0.0` is the binding ceiling. PyArrow is the **one dependency every other Tier 1/2 component already pulls transitively**; a poor pin here propagates everywhere.
 
 ---
 
@@ -97,7 +97,7 @@ Verified signature: `equals(self, Schema other, bool check_metadata=False)`. The
 
 `pa.schema(fields)`, `pa.field(name, type, nullable=True, metadata=None)`, plus primitive factories (`pa.int64`, `pa.string`, `pa.timestamp(unit, tz=None)`, `pa.decimal128(precision, scale)`, `pa.list_(value_type)`, `pa.struct(fields)`, `pa.map_(key, value)`) are the only constructors Nucleus uses. All verified in the [Data Types and Schemas reference](https://arrow.apache.org/docs/python/api/datatypes.html).
 
-**Timestamp unit discipline** (per [`type_mapping.md`](../patterns/type_mapping.md) §6.4 + `duckdb.md` §7): Iceberg v2 caps `timestamp`/`timestamptz` at **microseconds** — use `pa.timestamp("us", tz="UTC")`. Never `pa.timestamp("ns", ...)` against Iceberg v2 — pyiceberg rejects the write. Spec v3 adds `timestamp_ns`; revisit post-v0.5.
+**Timestamp unit discipline** (per [`type_mapping.md`](../../patterns/type_mapping.md) §6.4 + `duckdb.md` §7): Iceberg v2 caps `timestamp`/`timestamptz` at **microseconds** — use `pa.timestamp("us", tz="UTC")`. Never `pa.timestamp("ns", ...)` against Iceberg v2 — pyiceberg rejects the write. Spec v3 adds `timestamp_ns`; revisit post-v0.5.
 
 ### §3.7 NOT called by Nucleus (transitive only — DO NOT bloat)
 
@@ -180,7 +180,7 @@ Per v4.1 §3.1 (L0 Physics block lists Apache Arrow first), §4.1 (Tier-0 immort
 
 **Concrete implications for the codebase:**
 
-- **No `docs/swap/pyarrow.md` will ever be written.** Tier-0 components are not swappable by design. Introducing a "pyarrow swap target" is a v4.1 §4.1 violation requiring a constitutional amendment.
+- **No `docs/internal/swap/pyarrow.md` will ever be written.** Tier-0 components are not swappable by design. Introducing a "pyarrow swap target" is a v4.1 §4.1 violation requiring a constitutional amendment.
 - **No `nucleus.physics.ArrowEngine`-style wrapper class.** Nucleus code calls `import pyarrow as pa` and uses `pa.Table`, `pa.Schema`, `pa.field`, `pa.schema` directly in the four narrow places listed in §3. Wrapping them behind a Protocol would (a) defeat the zero-copy contract by adding per-call indirection, and (b) imply a swap v4.1 §4.1 forbids.
 - **PyArrow type names are allowed in user-facing output.** Unlike `dagster.`, `duckdb.`, `pyiceberg.` class names (which the Error Translation Layer per v4.1 §6.4 scrubs), Arrow type strings (`int64`, `timestamp[us, tz=UTC]`, `decimal128(18, 4)`, `list<element: string>`) are **part of the Nucleus user contract** — the schema vocabulary users see in `nucleus describe`, `@nucleus.contract(schema=...)` errors, and lineage facets. The `scripts/dagster_leak_check.py` CI lint must whitelist Arrow type strings while still rejecting wrapped-library class names.
 
@@ -205,7 +205,7 @@ If Apache Arrow ever died or pivoted hostile (a vanishingly small probability gi
 |---|---|---|
 | 2026-05-13 | pyarrow confirmed Tier-0 immortal substrate | v4.1 §3.1 / §4.1 / §9.2 — Arrow IS the in-memory contract. |
 | 2026-05-13 | No direct wrapping; call pyarrow APIs directly in the four narrow places in §3 | Wrapping a Tier-0 substrate defeats zero-copy and implies a swap that v4.1 §4.1 forbids. |
-| 2026-05-13 | No `docs/swap/pyarrow.md` will be written | Tier-0 components have no swap targets (v4.1 §9.2). |
+| 2026-05-13 | No `docs/internal/swap/pyarrow.md` will be written | Tier-0 components have no swap targets (v4.1 §9.2). |
 | 2026-05-13 | Pin remains `pyarrow==18.1.0`; upgrade gated by ADR-003 | pyiceberg 0.8.1 caps at `<19.0.0`; coupled upgrade per Constraint #11. |
 | 2026-05-13 | Arrow type strings allowed in user-facing output | Schema vocabulary contract — update `scripts/dagster_leak_check.py` to whitelist them while still rejecting Dagster / DuckDB / pyiceberg class names (v4.1 §6.4). |
 | TBD | Confirm `ArrowInvalid` / `ArrowIOError` are `Exception`-based | PoC #1 Week 1 fixture work. |

@@ -35,6 +35,6 @@ This file is a navigation index. Patterns are versioned to the pinned wrapped-li
 
 ---
 
-[← `docs/specs/nucleus_architecture_v4.1.md` §6.3](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — research/](../research/README.md) · [Sibling — recipes/](../recipes/README.md) · [Sibling — security/](../security/README.md)
+[← `docs/specs/nucleus_architecture_v4.1.md` §6.3](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — research/](../research/README.md) · [Sibling — recipes/](../recipes/README.md) · [Sibling — security/](../internal/security/README.md)
 
 *Last updated 2026-05-13. Add new patterns by appending to the matching group; the group is set by which architecture section the pattern serves. One file per pattern — do not bundle.*

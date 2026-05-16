@@ -174,7 +174,7 @@ python -m scripts.benchmarks.headtohead_dbt_duckdb --runs 5 --rows 100000
 ```
 
 The result JSON is then written to
-`docs/benchmarks/_results/headtohead_dbt_duckdb.json` with full
+`docs/internal/benchmarks/_results/headtohead_dbt_duckdb.json` with full
 hardware + software snapshot + per-run samples + medians + stddev.
 
 ### 4.2 Honest expectations (NOT measured here)
@@ -245,7 +245,7 @@ pip install dbt-duckdb
 python -m scripts.benchmarks.headtohead_dbt_duckdb --runs 5 --rows 100000
 
 # 3. The result JSON is written to
-#    docs/benchmarks/_results/headtohead_dbt_duckdb.json
+#    docs/internal/benchmarks/_results/headtohead_dbt_duckdb.json
 ```
 
 The harness writes hardware + software snapshot + per-run samples,
