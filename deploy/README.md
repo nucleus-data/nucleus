@@ -227,4 +227,4 @@ not honoring the kill switch.
 - Reset cadence + data policy: [`RESET_POLICY.md`](RESET_POLICY.md)
 - Production-equivalent compose: [`docker-compose.production.yaml`](../docker-compose.production.yaml)
 - Production cookbook: [`docs/cookbook/production-deployment.md`](../docs/cookbook/production-deployment.md)
-- Founder close-out: [`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](v0.2_FOUNDER_CLOSE_CHECKLIST.md)
+- Founder close-out: [`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](v0.2_FOUNDER_CLOSE_CHECKLIST.md)

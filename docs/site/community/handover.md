@@ -30,7 +30,7 @@ This page is the public-docs proxy. The canonical handover lives in the reposito
 
 ## Related docs
 
-- **Launch-day runbook** (~2 h founder hands-on): [`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md)
+- **Launch-day runbook** (~2 h founder hands-on): [`docs/internal/release-process/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/release-process/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md)
 - **Day-0 onboarding** for next developer or returning founder: [`docs/roadmap/HANDOVER.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/roadmap/HANDOVER.md)
 - **Action queue** for deferred founder-gated items: [`docs/FOUNDER_ACTION_QUEUE.md`](https://github.com/nucleus-data/nucleus/blob/main/docs/FOUNDER_ACTION_QUEUE.md)
 - **Universal AI handover** for AI agents: [`AGENTS.md`](https://github.com/nucleus-data/nucleus/blob/main/AGENTS.md)

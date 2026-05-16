@@ -1,6 +1,6 @@
 # Launch Day Timeline — Nucleus v0.2.0
 
-*Hour-by-hour Tuesday or Wednesday execution plan for a single founder firing all five public channels in sequence. All times are **Pacific Time** (PT) anchored to the Show HN window. Add **+3 h** for ET, **+8 h** for UTC. Companion to `docs/release/v0.2.0_RELEASE_READINESS.md` (32-item checklist) and `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (master runbook). Last updated 2026-05-15.*
+*Hour-by-hour Tuesday or Wednesday execution plan for a single founder firing all five public channels in sequence. All times are **Pacific Time** (PT) anchored to the Show HN window. Add **+3 h** for ET, **+8 h** for UTC. Companion to `docs/release/v0.2.0_RELEASE_READINESS.md` (32-item checklist) and `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (master runbook). Last updated 2026-05-15.*
 
 > **Submission day**: pick **Tuesday or Wednesday**. Avoid Monday (HN absorbs weekend backlog, you drown). Avoid Thursday (HN deprioritizes long-tail discussion). **Never Friday** (weekend dies the post). The actual calendar date is set in `FOUNDER_ACTION_QUEUE.md` once the founder confirms PyPI Trusted Publisher + branch protection are unblocked.
 
@@ -10,7 +10,7 @@
 
 | Time (PT) | Task | Done? |
 |---|---|---|
-| 14:00 | **Open** `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` and confirm every Phase 1 item is GREEN. If any item is RED, stop — defer launch by one day. | [ ] |
+| 14:00 | **Open** `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` and confirm every Phase 1 item is GREEN. If any item is RED, stop — defer launch by one day. | [ ] |
 | 14:15 | **Set PoC #5 compensation** in `docs/poc/p5_beachhead/RECRUITMENT_PLAN.md` (recommended `$150` per 90-min session). FOUNDER ACTION: replace the compensation placeholder before outreach. | [ ] |
 | 14:25 | **Publish the Calendly link** (e.g., `calendly.com/<you>/nucleus-poc5-30min`). Paste into `RECRUITMENT_PLAN.md` and into the 20 outreach email templates at `docs/poc/p5_beachhead/outreach_emails/`. | [ ] |
 | 14:45 | **Stage 20 outreach emails as Gmail drafts** — do not send yet. Each draft addressed individually, no BCC blast. | [ ] |

@@ -196,7 +196,7 @@ python -m scripts.benchmarks.b6_dag_materialize --shape all --rows 500
 > Numbering note: This is what the task spec calls "B4 multi-asset DAG"
 > but the script lives at `b6_dag_materialize.py` to avoid renumbering
 > the existing reliability-side `b4_concurrent_run.py` already cited in
-> `docs/release/chaos_test_results.md`. The release-orchestrator
+> `docs/internal/release-process/chaos_test_results.md`. The release-orchestrator
 > `benchmark_v020.py` runs both.
 
 ### B5 — Schema check overhead (3 quality checks on 1 M rows)

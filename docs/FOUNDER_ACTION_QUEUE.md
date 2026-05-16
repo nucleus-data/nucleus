@@ -7,7 +7,7 @@
 
 **Status**: Live — single launch-day artifact. Supersedes prior §0 entries for time-of-launch sequencing (they remain canonical for per-decision history).
 
-**Master runbook**: See **`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`** — the sole artifact the founder reads on launch day. 7 phases, time-sequenced, every step has a copy-pasteable verification command.
+**Master runbook**: See **`docs/internal/release-process/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`** — the sole artifact the founder reads on launch day. 7 phases, time-sequenced, every step has a copy-pasteable verification command.
 
 **2026-05-15/16 Ultimate sprint close-out — all 8 subagents returned (1 errored, 1 refire); the foreground close-out builder (subagent I) bundled the remaining work into `main` across 5 commits (Phase 1+2 combined → Phase 7); final state ready for founder runbook execution.** See `docs/release/v0.2.0_FINAL_STATE.md` for the per-commit summary, governance scores, pytest status, and confidence verdict. No new founder-gated items beyond what's already in `FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md` (PyPI OIDC registration, tag push, branch protection apply, 60-sec demo recording, Show HN / Twitter / Reddit / LinkedIn announcements, PoC #5 recruitment outreach).
 
@@ -21,7 +21,7 @@
 - §0.3 (IDE crash recovery) — items 12–15
 - §0 (8-Lane Research) — 11 ADR ratification decisions (ADR-026 to ADR-036)
 - §0 (v0.2.0 handover) — 6 founder gate items (tag push, ADR-018..025 ratification, PyPI OIDC, etc.)
-- `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` — pre-sprint blockers + ADR ratification + Dependabot + risk register
+- `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` — pre-sprint blockers + ADR ratification + Dependabot + risk register
 
 **Hard prerequisite for tag push** (cannot be deferred): PyPI OIDC trusted publisher registered at `https://pypi.org/manage/account/publishing/` per `v0.2_FOUNDER_CLOSE_CHECKLIST.md` §4.6 + ADR-022.
 
@@ -160,7 +160,7 @@ Skipped sections (already in HEAD):
 - **Pinning check**: PASS after 3.4 (install-split)
 - **Vocabulary check**: 6 pre-existing hits, no new from any commit
   - 5 false positives in `.venv-adr039/` (gitignored Worker B4 test venv; `check_vocabulary.py` lacks `.venv-*` exclusion)
-  - 1 real hit in `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (untracked file uses banned "data OS"; not in any commit's tree) <!-- banned-term: Data OS -->
+  - 1 real hit in `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (untracked file uses banned "data OS"; not in any commit's tree) <!-- banned-term: Data OS -->
 - **pytest tests/cli (excluding lazy_imports)**: 233 passed in 51s, 0 failures (exit 1 from coverage gate 47.59% vs 70% required - pre-existing)
 - **LOC budget**: 8,229/8,000 = **102.9% of v0.1 ceiling RED**. Under v0.2 ceiling (18,000) this is **46% GREEN**, but `scripts/loc_budget.py` was not bumped because 3.9 was skipped (script in HEAD already at v0.1 reference; no diff to apply). Founder action 12 below.
 - **Push**: SUCCESS, `029ef0d..aebe6b7  main -> main`
@@ -168,14 +168,14 @@ Skipped sections (already in HEAD):
 ### Untracked files left in tree (intentional)
 
 - `docs/audit/2026-05-15_frozen_worker_audit.md` (this audit) - meta-doc, may stay or be moved to `.scratch/`
-- `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (the close checklist) - has 1 banned-term violation; founder fix or commit-as-is choice
+- `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (the close checklist) - has 1 banned-term violation; founder fix or commit-as-is choice
 
 ### Founder decisions required (added to queue)
 
 | # | Action | Why | Command |
 |---|---|---|---|
 | 12 | Bump `scripts/loc_budget.py` reference phase v0.1 -> v0.2 (8,000 -> 18,000 ceiling) | Per AGENTS.md 1, v0.2.0 already bundled 2026-05-15; the script's reference phase wasn't bumped because the audit-planned 3.9 commit had no actual diff to apply | Edit `Reference phase: v0.1` -> `v0.2` and ceiling `8,000` -> `18,000` in `loc_budget.py`; commit with `chore(governance): loc budget phase v0.1->v0.2 per audit recommendation` |
-| 13 | Decide fate of untracked `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` | Has 1 banned-term hit ("data OS"); also a useful close-checklist artifact | Either fix the line + commit, or move to `.scratch/`, or accept-as-is with `<!-- banned-term: Data OS -->` exemption |
+| 13 | Decide fate of untracked `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` | Has 1 banned-term hit ("data OS"); also a useful close-checklist artifact | Either fix the line + commit, or move to `.scratch/`, or accept-as-is with `<!-- banned-term: Data OS -->` exemption |
 | 14 | Decide fate of untracked `docs/audit/2026-05-15_frozen_worker_audit.md` | Meta-audit document of this session | Either commit under `docs/audit/` for the trail, or move to `.scratch/` |
 | 15 | Add `.venv-*` exclusion to `scripts/check_vocabulary.py` | 5 false-positive hits today from Worker B4 test venv pollute the gate | One-line walk-skip pattern; commit with `fix(governance): exclude .venv-* dirs from vocabulary scan` |
 

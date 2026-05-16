@@ -354,7 +354,7 @@ def _commit_to_iceberg(
     #
     # The mkdir is wrapped in translate() to catch FileExistsError when the
     # warehouse path already exists as a non-directory entry (chaos J3 / CF-1
-    # — see docs/release/chaos_test_results.md §J3).  Path.mkdir(exist_ok=True)
+    # — see docs/internal/release-process/chaos_test_results.md §J3).  Path.mkdir(exist_ok=True)
     # only suppresses FileExistsError when the existing entry IS a directory.
     # Docs: https://docs.python.org/3/library/pathlib.html#pathlib.Path.mkdir
     try:

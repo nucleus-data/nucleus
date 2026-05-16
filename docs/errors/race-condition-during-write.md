@@ -5,7 +5,7 @@
 > **Stability**: Beta
 > **Introduced**: v0.2.0
 > **Related ADRs**: [ADR-006 §Decision](../decisions/ADR-006-nucleus-error-code-numbering.md), [ADR-024 P0-2](../decisions/ADR-024-reliability-hardening-plan.md)
-> **Closes chaos finding**: [CF-1 / J3](../release/chaos_test_results.md)
+> **Closes chaos finding**: [CF-1 / J3](../internal/release-process/chaos_test_results.md)
 
 ## What this error means
 
@@ -68,7 +68,7 @@ just before the DuckDB connection setup.
 ## Background
 
 This code was allocated by the v0.2 close-out checklist
-(`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.7 — pre-sprint
+(`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.7 — pre-sprint
 blocker #6) to close the chaos J3 / CF-1 translate() gap. Prior to
 v0.2.0 the same condition leaked a raw `FileExistsError` traceback
 through the CLI, violating `docs/specs/nucleus_architecture_v4.1.md` §6.4 +

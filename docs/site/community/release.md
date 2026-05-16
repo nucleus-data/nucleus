@@ -13,11 +13,11 @@ The v0.2.0 public launch ships with a complete set of release artifacts — note
 |----------|---------|
 | [Release Notes](https://github.com/nucleus-data/nucleus/blob/main/docs/release/v0.2.0_RELEASE_NOTES.md) | Copy-paste body for the GitHub Release page |
 | [Release Readiness Checklist](https://github.com/nucleus-data/nucleus/blob/main/docs/release/v0.2.0_RELEASE_READINESS.md) | 32-item phase-gated go/no-go checklist |
-| [Founder Close-out Checklist](https://github.com/nucleus-data/nucleus/blob/main/docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md) | Master close-out runbook |
-| [Founder Ultimate Sprint Runbook](https://github.com/nucleus-data/nucleus/blob/main/docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md) | Launch-day-only top-to-bottom runbook |
-| [Packaging Completeness Audit](https://github.com/nucleus-data/nucleus/blob/main/docs/release/PACKAGING_COMPLETENESS_AUDIT.md) | Status table per release artifact |
-| [E2E Test Plan](https://github.com/nucleus-data/nucleus/blob/main/docs/release/E2E_TEST_PLAN.md) | WSL beachhead test plan |
-| [Chaos Test Results](https://github.com/nucleus-data/nucleus/blob/main/docs/release/chaos_test_results.md) | Honest concurrent-run / failure-mode results |
+| [Founder Close-out Checklist](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md) | Master close-out runbook |
+| [Founder Ultimate Sprint Runbook](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/release-process/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md) | Launch-day-only top-to-bottom runbook |
+| [Packaging Completeness Audit](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/release-process/PACKAGING_COMPLETENESS_AUDIT.md) | Status table per release artifact |
+| [E2E Test Plan](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/release-process/E2E_TEST_PLAN.md) | WSL beachhead test plan |
+| [Chaos Test Results](https://github.com/nucleus-data/nucleus/blob/main/docs/internal/release-process/chaos_test_results.md) | Honest concurrent-run / failure-mode results |
 
 ## Launch kit
 

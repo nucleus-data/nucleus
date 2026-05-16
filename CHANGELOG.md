@@ -48,7 +48,7 @@ the full deprecation cycle that core data APIs receive.
 
 #### Changed
 - **ADR-012 Runtime pin matrix** — `gcsfs==2026.5.0` promoted from amendment-paragraph fallback (where `scripts/upgrade_smoke.py adr_012_cross_check` was already picking it up) into a canonical matrix row. BSD-3-Clause · GREEN · pairs with `s3fs==2026.4.0` cadence (both fsspec-family). Origin: ADR-020 (object-storage connectors via DuckDB httpfs). The 2026-05-15 amendment paragraph is retained as audit trail per the ADR-012 §Trigger rule ("amendments are additive only").
-- **`.github/workflows/release.yml`** — Adds `python scripts/check_install_size.py` to the governance gate step, restoring parity with `docs/release/PACKAGING_COMPLETENESS_AUDIT.md` §8 (11/11 governance scripts in CI).
+- **`.github/workflows/release.yml`** — Adds `python scripts/check_install_size.py` to the governance gate step, restoring parity with `docs/internal/release-process/PACKAGING_COMPLETENESS_AUDIT.md` §8 (11/11 governance scripts in CI).
 
 #### Verification
 - 11/11 governance scripts EXIT 0 locally (vocabulary / pinning / loc_budget / dagster_leak / error_codes / api_stability / layering / licenses / install_size / lazy_imports / changelog).
@@ -60,7 +60,7 @@ the full deprecation cycle that core data APIs receive.
 ### v0.2 close-out batch (2026-05-15, post-Wave-2)
 
 #### Fixed
-- **Chaos J3 / CF-1 closed (FileExistsError leak)** — `coordination/asset_materialization.py:_commit_to_iceberg` wraps `warehouse_dir.mkdir(parents=True, exist_ok=True)` in `translate()`. `exist_ok=True` does NOT suppress FileExistsError when the target is a non-directory entry (per Python pathlib docs), so the raw stdlib classname was leaking through. Per `docs/release/chaos_test_results.md` §J3.
+- **Chaos J3 / CF-1 closed (FileExistsError leak)** — `coordination/asset_materialization.py:_commit_to_iceberg` wraps `warehouse_dir.mkdir(parents=True, exist_ok=True)` in `translate()`. `exist_ok=True` does NOT suppress FileExistsError when the target is a non-directory entry (per Python pathlib docs), so the raw stdlib classname was leaking through. Per `docs/internal/release-process/chaos_test_results.md` §J3.
 - **Chaos J8 / CF-2 + CF-3 closed (pydantic.ValidationError leak)** — `cli/main.py:_execute_sql` widens the existing `try/except` to wrap `_open_iceberg_catalog` + `_register_catalog_in_duckdb` calls. New `_pydantic_validation_handler` in `coordination/error_translation.py` routes `pydantic.ValidationError` → `NucleusCatalogError` (NE1007). Registered BEFORE `ValueError` in the registry because pydantic v2 `ValidationError` subclasses `ValueError`. Per chaos_test_results.md §J8.
 - **`NucleusRaceConditionDuringWrite` (NE5018)** — new error class + `_file_exists_handler` routing builtin `FileExistsError` → NE5018. Stub docs at `docs/errors/race-condition-during-write.md`. L4 Experience layer per ADR-006.
 
@@ -78,7 +78,7 @@ the full deprecation cycle that core data APIs receive.
 #### Docs
 - **`docs/internal/research/performance_reliability_targets.md` demoted §2 to v0.3+ aspirational targets** — added status banner + §14 v0.2.0 empirical actuals per `docs/benchmarks/2026-05-15_baseline.md` (boot 2.1 s vs <500 ms claim, B4 Windows concurrent-run FAIL, B2 1 GB +29 %). §7.5 SLOs that DO hold empirically promoted as the v0.2.0 release contract. Anti-Over-Engineering default: "v0.2 actuals; v0.3 targets" honesty over aspirational claims that fail at first user validation. Per close-out checklist §1.9 Option A.
 - **`docs/audit/2026-05-15_frozen_worker_audit.md`** — meta-audit document of the 2026-05-15 IDE-crash recovery session. 78 transcripts inspected; zero FROZEN workers; pure sequenced commit pass.
-- **`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md`** — 894-line forward-looking release runbook (founder one-stop document for tag-push, PyPI OIDC, GitHub Pro, PoC #5 outreach).
+- **`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md`** — 894-line forward-looking release runbook (founder one-stop document for tag-push, PyPI OIDC, GitHub Pro, PoC #5 outreach).
 - **`docs/internal/research/ux_familiarity_audit.md`** — 56 KB Databricks + Snowflake parity research that drove the v0.2 polish bundle above.
 - **`docs/errors/race-condition-during-write.md`** — new error reference stub for NE5018.
 

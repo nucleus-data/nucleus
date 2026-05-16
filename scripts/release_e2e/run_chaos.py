@@ -1,6 +1,6 @@
 """Nucleus v0.2 Chaos Test Runner — Suite J.
 
-Implements chaos scenarios from docs/release/E2E_TEST_PLAN.md §"Suite J".
+Implements chaos scenarios from docs/internal/release-process/E2E_TEST_PLAN.md §"Suite J".
 J1 (disk-full mid-write) and J2 (kill-9 mid-commit) are FULLY IMPLEMENTED.
 J3–J8 are STUBBED with clear TODO markers.
 
@@ -19,7 +19,7 @@ Design principles:
 - Log all outcomes to stdout; exit 0 = all run scenarios PASS; exit 1 = any FAIL
 
 Refs:
-    docs/release/E2E_TEST_PLAN.md §"Suite J"
+    docs/internal/release-process/E2E_TEST_PLAN.md §"Suite J"
     docs/specs/nucleus_architecture_v4.1.md §6.2 step 3 (atomic commit guarantee)
     AGENTS.md §11.8 (chaos testing posture)
 """
@@ -727,7 +727,7 @@ SCENARIOS: dict[str, Callable[[], ChaosResult]] = {
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Nucleus chaos test runner (docs/release/E2E_TEST_PLAN.md §Suite J)."
+        description="Nucleus chaos test runner (docs/internal/release-process/E2E_TEST_PLAN.md §Suite J)."
     )
     parser.add_argument(
         "--scenario",

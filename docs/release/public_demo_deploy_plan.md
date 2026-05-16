@@ -407,7 +407,7 @@ After the v0.2.1 middleware (§5) ships, the operator should:
 - Bundle README (operator quick-ref): [`deploy/README.md`](../../deploy/README.md)
 - Data + reset policy (visitor-facing): [`deploy/RESET_POLICY.md`](../../deploy/RESET_POLICY.md)
 - Self-hosted production cookbook (the "real" deploy): [`docs/cookbook/production-deployment.md`](../cookbook/production-deployment.md)
-- Founder close-out checklist (org name + tag bundle): [`docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](v0.2_FOUNDER_CLOSE_CHECKLIST.md)
+- Founder close-out checklist (org name + tag bundle): [`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](v0.2_FOUNDER_CLOSE_CHECKLIST.md)
 - Workbench app source (`NUCLEUS_DEMO_MODE` recipient): [`src/nucleus/workbench/app.py`](../../src/nucleus/workbench/app.py)
 - Reference compose for production parity: [`docker-compose.production.yaml`](../../docker-compose.production.yaml)
 - Release automation (auto-deploy convention): [`.github/workflows/release.yml`](../../.github/workflows/release.yml)

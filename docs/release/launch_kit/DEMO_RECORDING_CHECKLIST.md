@@ -140,7 +140,7 @@ If 2 or more triggers fire, **stop, reset (`nucleus down && rm -rf my-stack`), r
 
 - [ ] Replay the final video end-to-end ONCE. Stop watching at 60 s. If you can resist re-shooting at this point, you are done.
 - [ ] Update `docs/release/launch_kit/WOW_MOMENTS.md` row #2 ("60-sec screencast") - mark the recording as DONE.
-- [ ] Update `docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md` Phase 0 checkbox "Demo video recorded" to checked.
+- [ ] Update `docs/internal/release-process/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md` Phase 0 checkbox "Demo video recorded" to checked.
 - [ ] Commit asset paths in a single PR: `release: ship 60-sec demo video + poster + asciinema cast (v0.2.0 launch)`.
 
 ---

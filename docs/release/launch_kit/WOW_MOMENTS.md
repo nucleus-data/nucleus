@@ -17,7 +17,7 @@
 **Backing artifact**:
 
 - [`scripts/beachhead_e2e.py`](../../../scripts/beachhead_e2e.py) — the 8-gate script. 8/8 PASS on WSL Linux 2026-05-14.
-- [`docs/release/e2e_results_20260514T190132.md`](../e2e_results_20260514T190132.md) — last full E2E run output.
+- [`docs/internal/release-process/e2e_results_20260514T190132.md`](../e2e_results_20260514T190132.md) — last full E2E run output.
 - [`docs/benchmarks/2026-05-15_baseline.md`](../../benchmarks/2026-05-15_baseline.md) §B5 — boot time **2.06s** warm-median console invocation (measured on a 4-core Windows host with 1 GB free RAM — the worst-case for boot, and still under 10 s).
 - [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §1.5 — the beachhead persona definition.
 
@@ -36,7 +36,7 @@
 - Script: [`docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`](60_SECOND_DEMO_SCRIPT.md) (shot-by-shot, 11.3 KB, retake checklist included).
 - Distribution targets per §Distribution of the script: README hero, docs site index, LinkedIn post, Twitter thread tweet 1, dev.to article opening.
 
-**Asset gap**: the **recording itself** is not yet produced. Path target: `assets/demos/v0.2/launch_60s.mp4` + `assets/demos/v0.2/launch_60s.srt` (per script §Distribution). **Surface to parent**: founder gates this; ~10 min recording + retakes per [`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](../FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md) Phase 0.
+**Asset gap**: the **recording itself** is not yet produced. Path target: `assets/demos/v0.2/launch_60s.mp4` + `assets/demos/v0.2/launch_60s.srt` (per script §Distribution). **Surface to parent**: founder gates this; ~10 min recording + retakes per [`docs/internal/release-process/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](../FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md) Phase 0.
 
 ---
 

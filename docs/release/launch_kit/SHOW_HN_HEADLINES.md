@@ -174,4 +174,4 @@ These would all fail vocabulary CI; they would also accurately predict a moderat
 
 ---
 
-*Last updated 2026-05-15. If A1 underperforms after the launch window, log the alternate title used + the engagement metrics in `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` so future launches can pick a different format.*
+*Last updated 2026-05-15. If A1 underperforms after the launch window, log the alternate title used + the engagement metrics in `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` so future launches can pick a different format.*

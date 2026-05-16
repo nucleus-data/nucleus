@@ -68,7 +68,7 @@ These workers correspond to `IN_PROGRESS` todos in the parent's todo list. Each 
 | Worker (todo id) | Expected role | Working-tree artifacts | Bucket |
 |---|---|---|---|
 | `ga-bench-suite` (Worker A1) | Empirical benchmark suite (B1-B5) | `docs/benchmarks/2026-05-15_baseline.md`, `docs/benchmarks/_results/b{1..5}_*.json`, `scripts/benchmark_cli_cold_boot.py`, `scripts/benchmarks/{__init__,_common,b1_tpch_duckdb,b2_materialize,b3_postgres_ingest,b4_concurrent_run,b5_boot_time,run_all}.py` | DONE_UNCOMMITTED |
-| `ga-chaos-tests` (Worker A2) | Chaos tests J3-J8 + run_chaos harness | `docs/release/chaos_test_results.md`, `tests/chaos/{__init__,test_chaos_smoke}.py`; modified `scripts/release_e2e/run_chaos.py` (per `6b6c606b`'s anti-collision list) | DONE_UNCOMMITTED |
+| `ga-chaos-tests` (Worker A2) | Chaos tests J3-J8 + run_chaos harness | `docs/internal/release-process/chaos_test_results.md`, `tests/chaos/{__init__,test_chaos_smoke}.py`; modified `scripts/release_e2e/run_chaos.py` (per `6b6c606b`'s anti-collision list) | DONE_UNCOMMITTED |
 | `ga-lazy-imports` (Worker B2) | Lazy-import audit + governance script + tests | `scripts/check_lazy_imports.py`, `tests/cli/test_lazy_imports.py`; modified `src/nucleus/cli/main.py` | DONE_UNCOMMITTED |
 | `ga-install-split` (Worker B4) | Install-size split (`[core]` / `[ai]` / `[all]` extras) + governance script + tests | `scripts/check_install_size.py`, `tests/test_install_extras.py`; modified `pyproject.toml`, `docs/compatibility.md`, `docs/onboarding/quickstart.md` (per `6b6c606b`'s anti-collision list) | DONE_UNCOMMITTED |
 | `ga-scale-out-audit` (Worker F1) | Scale-out / Rust-rewrite reject research | `docs/internal/research/scale_out_audit.md` | DONE_UNCOMMITTED (parent confirmed "Worker F1 done" at line 1600 of 3ce3831c transcript — this is just an artifact awaiting commit) |
@@ -123,7 +123,7 @@ Each block below proposes a focused commit. Bundling avoids one giant 20-file co
 - **Task**: Chaos test scaffold + smoke runner.
 - **Status**: completed.
 - **Artifacts**:
-  - `docs/release/chaos_test_results.md`
+  - `docs/internal/release-process/chaos_test_results.md`
   - `tests/chaos/{__init__,test_chaos_smoke}.py`
   - (plus `scripts/release_e2e/run_chaos.py` modification — bundle with this)
 - **Suggested commit**: `test(chaos): J3-J8 smoke harness + 2026-05-15 results`

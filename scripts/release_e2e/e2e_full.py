@@ -1,7 +1,7 @@
 """Nucleus v0.2 Final E2E Orchestrator.
 
-Runs all 11 suites (A–K) from docs/release/E2E_TEST_PLAN.md.
-Outputs structured JSON report + Markdown summary to docs/release/.
+Runs all 11 suites (A–K) from docs/internal/release-process/E2E_TEST_PLAN.md.
+Outputs structured JSON report + Markdown summary to docs/internal/release-process/.
 
 Usage:
     python scripts/release_e2e/e2e_full.py --suite all
@@ -9,12 +9,12 @@ Usage:
     python scripts/release_e2e/e2e_full.py --suite A --dry-run
     python scripts/release_e2e/e2e_full.py --suite I --output results.json
 
-Per docs/release/E2E_TEST_PLAN.md.
+Per docs/internal/release-process/E2E_TEST_PLAN.md.
 Suite A (Boot + Lifecycle) and Suite I (Governance) are FULLY IMPLEMENTED.
 Suites B–H, J, K are STUBBED with # TODO: implement post-Wave-1 markers.
 
 Refs:
-    docs/release/E2E_TEST_PLAN.md
+    docs/internal/release-process/E2E_TEST_PLAN.md
     docs/specs/nucleus_cli_spec.md §3–§8
     AGENTS.md §11.8 (beachhead metric)
     scripts/beachhead_e2e.py (existing E2E baseline)
@@ -42,7 +42,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent.parent
 SCRIPTS_DIR = REPO_ROOT / "scripts"
-DOCS_RELEASE_DIR = REPO_ROOT / "docs" / "release"
+DOCS_RELEASE_DIR = REPO_ROOT / "docs" / "internal" / "release-process"
 GOVERNANCE_SCRIPTS = [
     "check_vocabulary.py",
     "check_pinning.py",
@@ -233,7 +233,7 @@ def _stub(name: str, suite: str, scenario_id: str) -> ScenarioResult:
 def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
     """Suite A: Boot + Lifecycle (10 scenarios).
 
-    Per docs/release/E2E_TEST_PLAN.md §"Suite A".
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §"Suite A".
     Ref: docs/specs/nucleus_cli_spec.md §3.1–§3.3, §3.7; v4.1 §11.2.
     """
     suite = SuiteResult("A", "Boot + Lifecycle")
@@ -507,7 +507,7 @@ def run_suite_a(tmpdir: Path, nucleus: list[str], dry_run: bool) -> SuiteResult:
 def run_suite_i(dry_run: bool) -> SuiteResult:
     """Suite I: Governance (8 scenarios).
 
-    Per docs/release/E2E_TEST_PLAN.md §"Suite I".
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §"Suite I".
     Ref: AGENTS.md §11.7; scripts/check_*.py.
     """
     suite = SuiteResult("I", "Governance")
@@ -952,7 +952,7 @@ SUITE_MAP: dict[str, Callable] = {}  # populated in main
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Nucleus v0.2 E2E orchestrator (docs/release/E2E_TEST_PLAN.md)."
+        description="Nucleus v0.2 E2E orchestrator (docs/internal/release-process/E2E_TEST_PLAN.md)."
     )
     parser.add_argument(
         "--suite",
@@ -963,7 +963,7 @@ def main(argv: list[str] | None = None) -> int:
         "--output",
         default=None,
         type=Path,
-        help="JSON output path (default: docs/release/e2e_results_<ts>.json)",
+        help="JSON output path (default: docs/internal/release-process/e2e_results_<ts>.json)",
     )
     parser.add_argument(
         "--dry-run",

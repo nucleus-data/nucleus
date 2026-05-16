@@ -1,6 +1,6 @@
 """Nucleus v0.2 Release Smoke Tests.
 
-A subset of E2E scenarios from docs/release/E2E_TEST_PLAN.md runnable via pytest.
+A subset of E2E scenarios from docs/internal/release-process/E2E_TEST_PLAN.md runnable via pytest.
 10 highest-value scenarios selected for fast CI feedback.
 
 Runnable NOW (no Wave-1 features required):
@@ -28,7 +28,7 @@ Usage:
     pytest tests/release_e2e/ -m integration
 
 Refs:
-    docs/release/E2E_TEST_PLAN.md
+    docs/internal/release-process/E2E_TEST_PLAN.md
     docs/specs/nucleus_cli_spec.md §3, §8
     AGENTS.md §11.8 (beachhead metric)
     scripts/beachhead_e2e.py (existing E2E baseline)
@@ -109,7 +109,7 @@ def _is_stub(stderr: str) -> bool:
 class TestA1VersionColdBoot:
     """A1: nucleus version cold boot < 1.5s.
 
-    Per docs/release/E2E_TEST_PLAN.md §A1.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §A1.
     Ref: docs/specs/nucleus_cli_spec.md §3.7.
     """
 
@@ -157,7 +157,7 @@ class TestA1VersionColdBoot:
     def test_version_cold_boot_speed(self) -> None:
         """nucleus version P95 of 3 calls < 1.5s.
 
-        Per docs/release/E2E_TEST_PLAN.md §K1.
+        Per docs/internal/release-process/E2E_TEST_PLAN.md §K1.
         """
         nucleus = _nucleus_cmd()
         times = []
@@ -179,7 +179,7 @@ class TestA1VersionColdBoot:
 class TestI1GovernanceScriptsPass:
     """I1: All 8 governance scripts EXIT 0.
 
-    Per docs/release/E2E_TEST_PLAN.md §I1.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §I1.
     Ref: AGENTS.md §11.7.
     """
 
@@ -200,7 +200,7 @@ class TestI1GovernanceScriptsPass:
 class TestI2LocBudgetGreen:
     """I2: src/nucleus/ LOC < 8,000 (v0.1 ceiling).
 
-    Per docs/release/E2E_TEST_PLAN.md §I2.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §I2.
     Ref: AGENTS.md §11.6; docs/budget_history.md.
     """
 
@@ -242,7 +242,7 @@ class TestI2LocBudgetGreen:
 class TestH1FixHintPresent:
     """H1: Every NucleusError subclass has error_code defined; fix_hint is wirable.
 
-    Per docs/release/E2E_TEST_PLAN.md §H1.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §H1.
     Ref: docs/specs/nucleus_cli_spec.md §5.4; ADR-006.
 
     Note on fix_hint: `fix_hint` is an *instance* attribute set via NucleusError.__init__()
@@ -335,7 +335,7 @@ class TestH1FixHintPresent:
 class TestA3InitScaffold:
     """A3: nucleus init creates valid 6-file scaffold.
 
-    Per docs/release/E2E_TEST_PLAN.md §A3.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §A3.
     Ref: docs/specs/nucleus_cli_spec.md §3.1; scripts/beachhead_e2e.py step 3.
     """
 
@@ -384,7 +384,7 @@ class TestA3InitScaffold:
 class TestA5UpBootsWithin10s:
     """A5: nucleus up boots within 10s.
 
-    Per docs/release/E2E_TEST_PLAN.md §A5.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §A5.
     Ref: docs/specs/nucleus_cli_spec.md §3.2; v4.1 §11.2 / §16.1.
     Requires: Docker daemon + initialized project.
     """
@@ -440,7 +440,7 @@ class TestA5UpBootsWithin10s:
 class TestB5DryRunNoWrites:
     """B5: nucleus run --dry-run resolves DAG, prints plan, NO writes.
 
-    Per docs/release/E2E_TEST_PLAN.md §B5.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §B5.
     Ref: docs/specs/nucleus_cli_spec.md §3.4.
     """
 
@@ -488,7 +488,7 @@ class TestB5DryRunNoWrites:
 class TestC1QuerySelect1:
     """C1: nucleus query 'SELECT 1' — basic connectivity.
 
-    Per docs/release/E2E_TEST_PLAN.md §C1.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §C1.
     Ref: docs/specs/nucleus_cli_spec.md §3.6.
     Requires: nucleus up running.
     """
@@ -521,7 +521,7 @@ class TestC1QuerySelect1:
 class TestD2BadCredsCleanError:
     """D2: Postgres bad credentials → clean NE1001 + fix_hint, no classname leaks.
 
-    Per docs/release/E2E_TEST_PLAN.md §D2.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §D2.
     Ref: docs/specs/nucleus_cli_spec.md §3.5; ADR-006 H1+H17.
     Does NOT require a running Postgres — tests the error path only.
     """
@@ -636,7 +636,7 @@ class TestD2BadCredsCleanError:
 class TestK1VersionPerfP95:
     """K1: nucleus version P95 of 5 calls < 1.5s.
 
-    Per docs/release/E2E_TEST_PLAN.md §K1.
+    Per docs/internal/release-process/E2E_TEST_PLAN.md §K1.
     Ref: docs/specs/nucleus_cli_spec.md §3.7; Suite A1.
     """
 
@@ -659,5 +659,5 @@ class TestK1VersionPerfP95:
         assert p95 <= VERSION_THRESHOLD_S, (
             f"nucleus version P95={p95:.3f}s exceeds {VERSION_THRESHOLD_S}s.\n"
             f"All times: {[round(t, 3) for t in times]}\n"
-            f"Per docs/release/E2E_TEST_PLAN.md §K1."
+            f"Per docs/internal/release-process/E2E_TEST_PLAN.md §K1."
         )
