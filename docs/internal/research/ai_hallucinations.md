@@ -355,3 +355,13 @@ So the swarm's WORKBENCH code edit was real, but EVERY documentation/governance 
 **Reality**: No such extension found in chDB v4.1.6 docs or GitHub README. chDB supports 80+ formats but Iceberg was not listed. Marked as NEEDS VERIFICATION (NV-3) in `docs/internal/research/inspiration/modern_query_engines.md §4.5`.
 **Detection**: chDB README and ClickHouse docs search — no "Iceberg" mention in chDB context.
 **Fix**: Do not assume chDB can read Iceberg tables. Verify at `https://github.com/chdb-io/chdb` before suggesting.
+
+---
+
+## 2026-05-16: sqlglot.errors.LineageError (does NOT exist)
+
+**Caught in**: `docs/internal/research/ultimate_upgrade/02_technical_source_mining_v2.md` §3.D + §8.1 (technical source-mining v2 pass — Daft + sqlglot).
+**AI suggested** (earlier draft): `sqlglot.errors.LineageError` as the concrete exception class raised by `sqlglot.lineage.lineage()` on a malformed or non-SELECT query.
+**Reality**: The actual `sqlglot.errors` hierarchy is `SqlglotError` (base) → `UnsupportedError / ParseError / TokenError / OptimizeError / SchemaError / ExecuteError`. No `LineageError` class exists. Lineage failures are raised as the generic `SqlglotError` — verified at [`sqlglot/lineage.py:107`](https://raw.githubusercontent.com/tobymao/sqlglot/main/sqlglot/lineage.py) `raise SqlglotError("Cannot build lineage, sql must be SELECT")` and [`sqlglot/errors.py:25-77`](https://raw.githubusercontent.com/tobymao/sqlglot/main/sqlglot/errors.py).
+**Detection**: Live `WebFetch` of upstream raw GitHub source for `sqlglot/errors.py` during the 2026-05-16 source-mining pass; cross-referenced existing internal `docs/internal/research/sqlglot.md` §8 which already catalogued this risk.
+**Fix**: Doc corrected before publish. Future code wrapping `lineage()` exceptions must catch `SqlglotError` and translate to `NucleusLineageError` per v4.1 §6.4 — never write `except sqlglot.errors.LineageError` because the class does not exist.
