@@ -11,6 +11,7 @@ Most Nucleus problems fall into one of three buckets. Start with the bucket that
 |--------|------|-------------|
 | Install / setup | [Install Issues](install-issues.md) | `pip install` fails, wrong Python version, missing wheels, venv confusion |
 | Runtime errors | [Common Errors](common-errors.md) | The most frequent `NE`-codes (`nucleus up`, `nucleus run`, `nucleus ingest`) and their quick fixes |
+| Windows concurrency | [Common Errors — Concurrent runs on Windows](common-errors.md#concurrent-runs-on-windows-beta-tier-2) | Two overlapping `nucleus run` shells on Windows both commit snapshots for one asset (**v0.2.1** fix) |
 | Network / corporate | [Corporate Proxy](proxy-corporate-network.md) | Behind a corporate proxy (Bosch, SAP, banks): pip TLS, Docker pulls, MinIO endpoint trust |
 
 If your symptom doesn't match any of those, jump to the [Error Reference](../errors/index.md) and search by `NE`-code. Every error has a one-line **Fix** and a docs URL printed in the error envelope itself.
