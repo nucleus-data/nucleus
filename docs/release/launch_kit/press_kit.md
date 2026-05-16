@@ -53,7 +53,7 @@
 
 ### Performance numbers (HONEST — empirical baseline 2026-05-15)
 
-> *We publish empirical numbers, not aspirations. The baseline below was measured on Windows 11, 4 physical cores, 15.7 GB RAM (only 1.0 GB available at run start — host was paging). Beachhead-spec re-measurement is tracked for v0.2.1. Source: `docs/benchmarks/2026-05-15_baseline.md`.*
+> *We publish empirical numbers, not aspirations. The baseline below was measured on Windows 11, 4 physical cores, 15.7 GB RAM (only 1.0 GB available at run start — host was paging). Beachhead-spec re-measurement is tracked for v0.2.1. Source: `docs/internal/benchmarks/2026-05-15_baseline.md`.*
 
 | Metric | Claim (perf doc) | Empirical | Verdict |
 |---|---|---|---|
@@ -179,4 +179,4 @@ Please support them.
 
 ---
 
-*Last updated 2026-05-15. Source of truth for stats: `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` + `docs/benchmarks/2026-05-15_baseline.md` + repo scans 2026-05-15.*
+*Last updated 2026-05-15. Source of truth for stats: `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` + `docs/internal/benchmarks/2026-05-15_baseline.md` + repo scans 2026-05-15.*

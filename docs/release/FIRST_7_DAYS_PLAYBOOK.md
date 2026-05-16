@@ -58,7 +58,7 @@ Response stance:
 Public reply template:
 
 ```text
-That is a fair read: Nucleus deliberately wraps the proven pieces instead of rebuilding them. The product bet is that a 5-20 engineer team benefits from one CLI, one error namespace, one asset model, and Iceberg portability without doing the integration work themselves. The rough parts are documented in docs/benchmarks/2026-05-15_baseline.md, including the Windows concurrent-run gap.
+That is a fair read: Nucleus deliberately wraps the proven pieces instead of rebuilding them. The product bet is that a 5-20 engineer team benefits from one CLI, one error namespace, one asset model, and Iceberg portability without doing the integration work themselves. The rough parts are documented in docs/internal/benchmarks/2026-05-15_baseline.md, including the Windows concurrent-run gap.
 ```
 
 ## Security Reports

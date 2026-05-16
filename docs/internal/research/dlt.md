@@ -339,7 +339,7 @@ new module, mirroring the existing SQLite branch. ADR-014 proposes
 Naming is deliberate: `ingest_postgres_to_iceberg(...)` matches the existing
 `ingest_sqlite_to_iceberg(...)` shape, NOT a class hierarchy. No
 `SourceEngineFactory`, no `BackendRegistry`, no `PostgresIngester` class —
-the swap interface lives in `docs/swap/dlt.md` and only formalizes if a
+the swap interface lives in `docs/internal/swap/dlt.md` and only formalizes if a
 second wrapped engine appears (Anti-Over-Engineering §2: one caller = inline).
 
 ### §13.5 Connection string + auth scope (Stage 1 minimum)

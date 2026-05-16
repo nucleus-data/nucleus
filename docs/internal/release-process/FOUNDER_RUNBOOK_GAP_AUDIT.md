@@ -59,7 +59,7 @@ These are founder-gated steps that exist on the surface but are NOT yet anywhere
 
 ### B-7. PoC #5 compensation + Calendly link pre-flight
 
-- **Empirical fact**: `docs/poc/p5_beachhead/RECRUITMENT_PLAN.md` still has `<TBD>` placeholders for compensation and Calendly link per the v0.2_FOUNDER_CLOSE_CHECKLIST.md cross-reference. Phase 0 step 6 currently sweeps for `<ORG>|<DOCS_URL>|CALENDLY_LINK_HERE|\[BOOK_30MIN_HERE\]` but does NOT include the actual placeholder tokens in the recruitment plan.
+- **Empirical fact**: `docs/internal/poc/p5_beachhead/RECRUITMENT_PLAN.md` still has `<TBD>` placeholders for compensation and Calendly link per the v0.2_FOUNDER_CLOSE_CHECKLIST.md cross-reference. Phase 0 step 6 currently sweeps for `<ORG>|<DOCS_URL>|CALENDLY_LINK_HERE|\[BOOK_30MIN_HERE\]` but does NOT include the actual placeholder tokens in the recruitment plan.
 - **Fix needed**: extend the rg pattern to include `<TBD>` and `compensation:` and `calendly\\.com/<you>` so the Phase 0 sweep catches the recruitment-plan placeholders too.
 
 ---
@@ -156,7 +156,7 @@ Anchor: the `rg -n "<ORG>|<DOCS_URL>|CALENDLY_LINK_HERE|\[BOOK_30MIN_HERE\]"` bl
 Replace with:
 
 ```powershell
-rg -n "<ORG>|<DOCS_URL>|CALENDLY_LINK_HERE|\[BOOK_30MIN_HERE\]|<TBD>|compensation: \\\$<|calendly\.com/<you>" docs/release/launch_kit/ docs/poc/p5_beachhead/
+rg -n "<ORG>|<DOCS_URL>|CALENDLY_LINK_HERE|\[BOOK_30MIN_HERE\]|<TBD>|compensation: \\\$<|calendly\.com/<you>" docs/release/launch_kit/ docs/internal/poc/p5_beachhead/
 ```
 
 Expected: 0 hits.
@@ -248,7 +248,7 @@ Empirical findings reproducible at audit time (2026-05-15 23:45 UTC). If any val
 - NOT a v2 replacement for the runbook (the bones are right; inline patches above are the smaller remedy).
 - NOT a list of ADRs (those live under `docs/decisions/`).
 - NOT a substitute for the founder reading the runbook end-to-end on launch day.
-- NOT a security audit (that is `docs/security/dependabot_alert_dispositions.md` and the GHAS gate).
+- NOT a security audit (that is `docs/internal/security/dependabot_alert_dispositions.md` and the GHAS gate).
 
 ---
 

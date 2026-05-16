@@ -59,7 +59,7 @@ coverage.xml
 .nox/
 .cache
 nosetests.xml
-.benchmarks/
+.internal/benchmarks/
 
 # ----------------------------------------------------------------------------
 # Type checking & linting

@@ -2,7 +2,7 @@
 """Tests for ``nucleus list`` — PoC #5 Checkpoint 7 close.
 
 Covers the discoverability surface promised by
-``docs/poc/p5_beachhead/FEEDBACK_FORM.md`` Friction #5 / "What would make me a paying user" #3.
+``docs/internal/poc/p5_beachhead/FEEDBACK_FORM.md`` Friction #5 / "What would make me a paying user" #3.
 
 T01  Empty project (no assets) shows a helpful hint
 T02  Bundled example asset (``example.greeting``) is listed by default

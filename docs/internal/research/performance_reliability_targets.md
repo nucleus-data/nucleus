@@ -9,7 +9,7 @@
 > B2 materialize-10 GB peak RAM (8.4 GB vs 6 GB claim).
 >
 > The v0.2.0 empirical actuals are documented in
-> [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md)
+> [`docs/internal/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md)
 > and reproduced in summary form at [§13 v0.2.0 empirical actuals](#13--v020-empirical-actuals-2026-05-15-baseline) below.
 > PoC #5 testers run the empirical numbers — the v0.2 release stance is
 > "honest actuals; v0.3 closes the gap".
@@ -298,7 +298,7 @@ Format: `Inject → Expected NucleusError → Acceptance criterion`.
 | 5 | Schema drift (add column) | `ALTER TABLE public.orders ADD COLUMN discount_pct FLOAT` then re-ingest | `full_refresh` mode auto-evolves; contract-protected mode → `NE2004` naming the differing column | Error or evolution per contract config; column name in message |
 | 6 | Concurrent run race | Launch `nucleus run my_asset` from 2 terminals simultaneously | Advisory lock: 2nd waits (v0.1) or `NE5002 run in progress` (v0.2) | Zero data corruption; exactly one snapshot per logical run |
 | 7 | Clock skew on schedule | System clock skewed 2h; `nucleus schedule preview my_asset` | Croniter 3.0.4 uses system clock; next-run time is wrong | Document system clock dependency; emit NTP-unreachable warning |
-| 8 | Catalog metadata corrupt | Truncate `metadata.json` in `<warehouse>/.../metadata/` | pyiceberg parse error → `NE4001` "Catalog metadata corrupt — run 'nucleus repair'" | Clean NE4001 with recovery hint; no stack trace in user output |
+| 8 | Catalog metadata corrupt | Truncate `metadata.json` in `<warehouse>/.../../metadata/` | pyiceberg parse error → `NE4001` "Catalog metadata corrupt — run 'nucleus repair'" | Clean NE4001 with recovery hint; no stack trace in user output |
 
 ---
 
@@ -400,7 +400,7 @@ No `compact_table()`, no `TPCH_BENCH()`, no Delta Lake APIs mixed into Iceberg d
 
 ## 14. v0.2.0 empirical actuals (2026-05-15 baseline)
 
-> Appended 2026-05-15 by the v0.2 close-out batch (`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.9). Demotes §2 from a v0.2 SLO to a v0.3+ aspirational target. Full per-benchmark evidence in [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) (internal-facing baseline) and [`docs/internal/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) (release-facing user report — adds B6 multi-asset DAG, B7 check overhead, B8 Workbench API, B9 ctx.sql overhead per the second builder wave 2026-05-15).
+> Appended 2026-05-15 by the v0.2 close-out batch (`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §1.9). Demotes §2 from a v0.2 SLO to a v0.3+ aspirational target. Full per-benchmark evidence in [`docs/internal/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) (internal-facing baseline) and [`docs/internal/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) (release-facing user report — adds B6 multi-asset DAG, B7 check overhead, B8 Workbench API, B9 ctx.sql overhead per the second builder wave 2026-05-15).
 
 ### 14.1 Headline actuals vs §2 claims
 
@@ -443,10 +443,10 @@ These are the v0.2.0 release contract. Everything in §2 above demotes to roadma
 
 ### 14.5 Cross-references
 
-- [`docs/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) — per-benchmark raw output + hardware caveats (B1–B5).
+- [`docs/internal/benchmarks/2026-05-15_baseline.md`](../benchmarks/2026-05-15_baseline.md) — per-benchmark raw output + hardware caveats (B1–B5).
 - [`docs/internal/research/benchmarks_v0.2.0.md`](benchmarks_v0.2.0.md) — release-facing user report adding B6–B9 (this builder wave, 2026-05-15).
-- [`docs/internal/release-process/chaos_test_results.md`](../internal/release-process/chaos_test_results.md) — J1–J8 results (J3 + J8 closed in v0.2; see CF-1 + CF-2 fix in this same close-out batch).
-- [`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](../internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md) §1.9 — pre-sprint blocker #8 (this reconciliation).
+- [`docs/internal/release-process/chaos_test_results.md`](../../internal/release-process/chaos_test_results.md) — J1–J8 results (J3 + J8 closed in v0.2; see CF-1 + CF-2 fix in this same close-out batch).
+- [`docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md`](../../internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md) §1.9 — pre-sprint blocker #8 (this reconciliation).
 
 ### 14.6 Additional benchmarks (B6–B9, added 2026-05-15 builder wave)
 

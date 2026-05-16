@@ -51,7 +51,7 @@ Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 - **Optional dep**: `dlt[snowflake]==1.26.0` + transitively `snowflake-connector-python` (~60 MB, C extensions). This is opt-in only — base `pip install nucleus` is unaffected.
 - **License**: `snowflake-connector-python` is Apache-2.0 · GREEN. `snowflake-sqlalchemy` is Apache-2.0 · GREEN.
 - **Maintenance ownership**: connector expansion builder; error translator owned by coordination layer.
-- **Swap target**: if `dlt` is swapped per `docs/swap/dlt.md`, the Snowflake connector must be re-implemented. The swap interface is `ingest_snowflake_to_iceberg(conn_str, source_table, ...)`.
+- **Swap target**: if `dlt` is swapped per `docs/internal/swap/dlt.md`, the Snowflake connector must be re-implemented. The swap interface is `ingest_snowflake_to_iceberg(conn_str, source_table, ...)`.
 - **Tests**: 10 unit tests in `tests/ctx/test_copy_from_snowflake.py`; no real Snowflake account required (dlt mocked).
 - **Upgrade smoke**: add `tests/upgrade_smoke/test_dlt_snowflake.py` before next `dlt` version bump.
 

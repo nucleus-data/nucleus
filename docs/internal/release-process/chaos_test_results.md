@@ -37,7 +37,7 @@
 | Nucleus | 0.2.0 |
 | pyiceberg | 0.11.1 (pin) |
 | pydantic-core | 2.x (transitive) |
-| Docker daemon | Docker Desktop 29.2.1 — **API returns HTTP 500** on this host (`request returned 500 Internal Server Error for API route .../containers/json`). All Docker-dependent scenarios use Python-level injection instead; see per-scenario "Inject" notes. |
+| Docker daemon | Docker Desktop 29.2.1 — **API returns HTTP 500** on this host (`request returned 500 Internal Server Error for API route .../../containers/json`). All Docker-dependent scenarios use Python-level injection instead; see per-scenario "Inject" notes. |
 
 Per the anti-hallucination directive: every wrapped-library API used (pyiceberg, croniter, fcntl/msvcrt, json) was verified against pinned-version official docs before the test was authored — see `scripts/release_e2e/run_chaos.py` module docstring.
 

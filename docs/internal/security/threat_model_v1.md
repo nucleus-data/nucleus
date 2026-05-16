@@ -181,7 +181,7 @@ The four PROPOSED gates are the bridge between this threat model and shipping co
 
 ## Cross-references
 
-- **Predecessor**: `docs/security/threat_model_v0.md` — canonical for §2 deployment shape and §5 STRIDE walkthrough.
+- **Predecessor**: `docs/internal/security/threat_model_v0.md` — canonical for §2 deployment shape and §5 STRIDE walkthrough.
 - **ADRs locked**: ADR-001, ADR-002, ADR-006, ADR-007, ADR-008, ADR-009, ADR-010, ADR-011, ADR-012.
 - **Architecture**: `docs/specs/nucleus_architecture_v4.1.md` §3.1, §6.4, §13, §15.
 - **Constraints**: AGENTS.md §3 Hard Constraints #6 + #11; §7; §11.7; §11.13.

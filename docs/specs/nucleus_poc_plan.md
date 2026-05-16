@@ -102,7 +102,7 @@ def test_asset_failure_translation():
 
 ### Definition of done
 
-PR review by all founding engineers. Test suite passes. `/docs/swap/dagster.md` updated with findings. Decision recorded in architecture log.
+PR review by all founding engineers. Test suite passes. `/docs/internal/swap/dagster.md` updated with findings. Decision recorded in architecture log.
 
 ---
 
@@ -199,9 +199,9 @@ If >10s but <15s: optimize startup order, lazy-init non-critical components. If 
 
 > **Status**: `KIT_READY` (external recruitment kit finalized 2026-05-13)
 >
-> **Recruitment readiness**: `READY` — automated walker evidence captured in [`docs/poc/p5_beachhead/EVIDENCE.md`](docs/poc/p5_beachhead/EVIDENCE.md) (PASS on Windows `.venv`, 2026-05-13); human sessions still required per methodological rule below.
+> **Recruitment readiness**: `READY` — automated walker evidence captured in [`docs/internal/poc/p5_beachhead/EVIDENCE.md`](docs/internal/poc/p5_beachhead/EVIDENCE.md) (PASS on Windows `.venv`, 2026-05-13); human sessions still required per methodological rule below.
 >
-> **Outstanding gaps**: Minor — walker omits full Docker + Postgres + S3 quickstart path; align [`docs/poc/p5_beachhead/SCENARIO.md`](docs/poc/p5_beachhead/SCENARIO.md) + legacy **How to recruit** bullets below with [`docs/poc/p5_beachhead/RECRUITMENT.md`](docs/poc/p5_beachhead/RECRUITMENT.md) (experience band now ≥3 yr per kit).
+> **Outstanding gaps**: Minor — walker omits full Docker + Postgres + S3 quickstart path; align [`docs/internal/poc/p5_beachhead/SCENARIO.md`](docs/internal/poc/p5_beachhead/SCENARIO.md) + legacy **How to recruit** bullets below with [`docs/internal/poc/p5_beachhead/RECRUITMENT.md`](docs/internal/poc/p5_beachhead/RECRUITMENT.md) (experience band now ≥3 yr per kit).
 >
 > **Next action**: Founder ratification of compensation amount + Calendly setup + outreach channel pick (see recruitment kit).
 >

@@ -41,7 +41,7 @@ Total: under 90 minutes for the entire on-ramp. If you only have 30, do (1) and 
 | **Docker Desktop** | Boots the local MinIO object store (skip if you point at a remote S3 endpoint) | `docker ps` |
 | **Git** | Projects are git-native; the catalog and asset graph live in your repo | `git --version` |
 | **A SQL source** | Postgres, MySQL, or SQLite to ingest from. None handy? `nucleus init` ships with a starter SQLite fixture so you can finish the quickstart with no external dependency. | n/a |
-| **Disk space** | ~2 GB for Iceberg data + Docker image cache (the [PoC #4 boot test](https://github.com/nucleus-data/nucleus/blob/main/poc/p4_local_stack/) measured the local stack at 117 MB RAM and ~5.8 s warm boot) | `df -h .` |
+| **Disk space** | ~2 GB for Iceberg data + Docker image cache (the [PoC #4 boot test](https://github.com/nucleus-data/nucleus/blob/main/internal/poc/p4_local_stack/) measured the local stack at 117 MB RAM and ~5.8 s warm boot) | `df -h .` |
 
 ## After Getting Started
 

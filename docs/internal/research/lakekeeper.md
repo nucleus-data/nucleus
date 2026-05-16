@@ -46,7 +46,7 @@ Every fact below cites this set. Verified by `WebFetch` 2026-05-13.
 - User-supplied URLs `https://docs.lakekeeper.io/{concepts,configuration,authentication,storage,api}/` (no `/docs/nightly/` prefix) **all 404**. Live URLs use `/docs/nightly/...`.
 - `/docs/nightly/api/` is a stub redirecting to https://github.com/lakekeeper/lakekeeper/tree/main/docs/docs/api. Use `/swagger-ui` on a running server for interactive exploration.
 - `/docs/nightly/upgrade/` 404s — no central upgrade doc. Use concepts §Upgrades & Migration + per-release CHANGELOG.
-- `github.com/.../blob/main/{README.md,LICENSE}` returns empty via `WebFetch` (GitHub blob-viewer issue, not a real 404). License confirmed Apache-2.0 from docs landing + repo description; verify in-repo before pinning if paranoid.
+- `github.com/.../../blob/main/{README.md,LICENSE}` returns empty via `WebFetch` (GitHub blob-viewer issue, not a real 404). License confirmed Apache-2.0 from docs landing + repo description; verify in-repo before pinning if paranoid.
 
 ---
 

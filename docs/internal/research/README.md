@@ -18,7 +18,7 @@ Open standards and reference implementations Nucleus treats as durable per `docs
 
 ## Tier 1 — Wrappable engines + libraries
 
-Default OSS we wrap behind `ctx`. Every entry has a swap interface + smoke tests in `docs/swap/` per Hard Constraint #9; full adapters built on-demand only.
+Default OSS we wrap behind `ctx`. Every entry has a swap interface + smoke tests in `docs/internal/swap/` per Hard Constraint #9; full adapters built on-demand only.
 
 - **[daft.md](./daft.md)** (pin: candidate `daft==0.7.11`, license: Apache-2.0, tier: 1, v0.5+ optional) — Multimodal DataFrame engine for the v0.5 ADR; opt-in via `@nucleus.asset(engine="daft")`. *2026-05-13.*
 - **[dbt-duckdb.md](./dbt-duckdb.md)** (pin: candidate `dbt-duckdb==1.10.1` + `dbt-core==1.10.x`, license: Apache-2.0, tier: 1, v0.3+ optional) — Forward-leverage adapter for "drop your existing dbt project in"; PoC #2 fallback only — **do not import in v0.1**. *2026-05-13.*
@@ -58,4 +58,4 @@ Inputs to ADR-002 (Mid-2026 Strategic Refresh).
 
 ---
 
-*Last updated 2026-05-13 (alignment sweep #1). Add new research files here as they land — keep entries to one line, group by tier, and link `docs/swap/<component>.md` from the anchor (not from this index).*
+*Last updated 2026-05-13 (alignment sweep #1). Add new research files here as they land — keep entries to one line, group by tier, and link `docs/internal/swap/<component>.md` from the anchor (not from this index).*

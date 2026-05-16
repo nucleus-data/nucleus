@@ -2,7 +2,7 @@
 
 *One file, five channels, zero placeholders. Every post is final-form ready to copy-paste. Companion file to `twitter_thread.md`, `linkedin_post.md`, `reddit_r_dataengineering.md`, and `hn_post.md`, which carry the long-form versions; this file is the launch-day quick-fire surface for the founder. Last updated 2026-05-15.*
 
-> **Stat sources:** all numbers and claims herein are cross-checked against `docs/release/launch_kit/press_kit.md` §key stats and `docs/benchmarks/2026-05-15_baseline.md`. If a number disagrees, press-kit + benchmarks doc win.
+> **Stat sources:** all numbers and claims herein are cross-checked against `docs/release/launch_kit/press_kit.md` §key stats and `docs/internal/benchmarks/2026-05-15_baseline.md`. If a number disagrees, press-kit + benchmarks doc win.
 
 ---
 
@@ -278,7 +278,7 @@ Founder here. Three things I want to be upfront about because HN deserves it.
 
 2. What it is NOT. Not a Spark replacement. Not a Databricks competitor. Not "AI-native" — it's AI-ready, the Copilot is one optional chat command via litellm. Not a database, not a SQL engine, not a vector DB. The proprietary code is ~13K LOC of glue (with a 30K LOC ceiling we will hit before v1.0); 95% of execution time at any meaningful workload runs in C++ (DuckDB, pyarrow), Rust (Polars), or wire-bound network I/O. The thesis is wrap-not-build. <!-- banned-term: AI-native -->
 
-3. Honest disclosures. It's beta — v0.2.0 is the first publicly available release. Performance numbers in `docs/benchmarks/2026-05-15_baseline.md` show 11 measured failures vs aspirational targets, including B5 boot ~2 s on a contention-loaded host with 1 GB free RAM vs the original <500 ms claim, and B4 concurrent-run safety FAILing on Windows because NTFS lock semantics differ from POSIX (Linux/WSL passes). I'm publishing the numbers honestly rather than re-running until they pass. This is a solo project. The Mo 24 decision gate per ADR-002 §8.3 forces an explicit founder choice (raise / hand off / accept indie); no default extension permitted.
+3. Honest disclosures. It's beta — v0.2.0 is the first publicly available release. Performance numbers in `docs/internal/benchmarks/2026-05-15_baseline.md` show 11 measured failures vs aspirational targets, including B5 boot ~2 s on a contention-loaded host with 1 GB free RAM vs the original <500 ms claim, and B4 concurrent-run safety FAILing on Windows because NTFS lock semantics differ from POSIX (Linux/WSL passes). I'm publishing the numbers honestly rather than re-running until they pass. This is a solo project. The Mo 24 decision gate per ADR-002 §8.3 forces an explicit founder choice (raise / hand off / accept indie); no default extension permitted.
 
 The architecture doc (docs/specs/nucleus_architecture_v4.1.md, ~50 min read) is the source of truth. The "yield to giants" strategy is explicit: the day a team outgrows Nucleus, they point Databricks/Snowflake at the same S3 + Iceberg catalog and they're done. Mode 1 graduation is zero effort because it's just Iceberg portability — there is no Nucleus byte format to migrate off.
 
@@ -306,7 +306,7 @@ Happy to answer the obvious questions: why not dbt, why not Dagster directly, wh
 | Do NOT chain hashtags / vendor tags | Looks spammy on Twitter; LinkedIn deprioritizes posts with multiple external links in body; Reddit auto-bans for cross-posting same content |
 | Be online and responsive for first 4 h on every channel | Comment velocity in the first 4 h drives ranking on HN, LinkedIn, Reddit, and Twitter algorithms |
 | Do NOT respond to hostile comments with hostility | Per `AGENTS.md` §10.4 — "be brutally honest about scope" cuts both ways: take legitimate criticism, ignore content-free hostility |
-| Do NOT post any number not in `docs/benchmarks/2026-05-15_baseline.md` or `docs/release/launch_kit/press_kit.md` | Drift in stats across channels destroys credibility; pick the canonical numbers and stick to them |
+| Do NOT post any number not in `docs/internal/benchmarks/2026-05-15_baseline.md` or `docs/release/launch_kit/press_kit.md` | Drift in stats across channels destroys credibility; pick the canonical numbers and stick to them |
 | Do NOT use forbidden framings per `AGENTS.md` §8 | "Data OS", "Spark killer", "Databricks killer", "AI-native", "AI-first", "Iceberg company" — all banned <!-- banned-term: multiple --> |
 
 ---

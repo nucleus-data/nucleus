@@ -4,7 +4,7 @@
 |---|---|
 | **Created** | 2026-05-15 |
 | **Status** | DEFERRED — execute after ratification builder + UI v0.3 builder complete |
-| **ADR** | [ADR-037](../decisions/ADR-037-root-md-reorg.md) |
+| **ADR** | [ADR-037](../../decisions/ADR-037-root-md-reorg.md) |
 | **Phase 1 completed** | 2026-05-15 (cruft deleted, stale doc archived, `.gitignore` updated) |
 
 ---
@@ -31,7 +31,7 @@
 | `docs/specs/nucleus_ctx_sdk_spec.md` | 17.8 KB | 2026-05-15 | Spec | **MOVE** → `docs/architecture/ctx-sdk-spec.md` |
 | `docs/specs/nucleus_project_anatomy.md` | 13.4 KB | 2026-05-15 | Spec | **MOVE** → `docs/architecture/project-anatomy.md` |
 | `docs/specs/nucleus_vs_databricks.md` | 22.0 KB | 2026-05-14 | Spec | **MOVE** → `docs/architecture/vs-databricks.md` |
-| `docs/specs/nucleus_poc_plan.md` | 25.1 KB | 2026-05-14 | Plan | **MOVE** → `docs/poc/poc-plan.md` |
+| `docs/specs/nucleus_poc_plan.md` | 25.1 KB | 2026-05-14 | Plan | **MOVE** → `docs/internal/poc/poc-plan.md` |
 | `docs/specs/nucleus_implementation_readiness.md` | 11.9 KB | 2026-05-12 | Plan | **MOVE** → `docs/architecture/implementation-readiness.md` |
 | `docs/specs/nucleus_red_team_review.md` | 35.6 KB | 2026-05-12 | Review | **MOVE** → `docs/architecture/red-team-review.md` |
 
@@ -121,7 +121,7 @@ STEP 3: Execute moves using git mv (preserves history).
         git mv docs/specs/nucleus_ctx_sdk_spec.md docs/architecture/ctx-sdk-spec.md
         git mv docs/specs/nucleus_project_anatomy.md docs/architecture/project-anatomy.md
         git mv docs/specs/nucleus_vs_databricks.md docs/architecture/vs-databricks.md
-        git mv docs/specs/nucleus_poc_plan.md docs/poc/poc-plan.md
+        git mv docs/specs/nucleus_poc_plan.md docs/internal/poc/poc-plan.md
         git mv docs/specs/nucleus_implementation_readiness.md docs/architecture/implementation-readiness.md
         git mv docs/specs/nucleus_red_team_review.md docs/architecture/red-team-review.md
 
@@ -136,7 +136,7 @@ STEP 4: Update cross-references in every referencing .md / .mdc / .yml file.
         - .cursor/rules/nucleus.mdc (multiple @-reference hints)
         - README.md
         - All ADR files in docs/decisions/
-        - All docs/recipes/, docs/patterns/, docs/swap/, docs/dev-guides/
+        - All docs/recipes/, docs/patterns/, docs/internal/swap/, docs/dev-guides/
         - All poc/ README and PROMOTION files
         - mkdocs.yml nav section (if paths are listed)
         DO NOT update:

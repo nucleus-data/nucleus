@@ -33,9 +33,9 @@ Probe against `chrislusf/seaweedfs:4.23` started via `wsl -e docker run -d --nam
 | `GET /v1/namespaces/nucleus_probe` | `200` | full `GetNamespaceResponse` |
 | `HEAD /v1/namespaces/nucleus_probe` | `204` | per spec |
 | `GET /v1/namespaces/nucleus_probe/tables` | `200` | `{"identifiers":[]}` |
-| `POST .../tables` body `{"name":"smoke","schema":{...long+string...}}` | `200` | full `LoadTableResponse` w/ `format-version: 2`, `metadata-location`, table-uuid, schemas/specs/sort-orders |
-| `GET .../tables` (after) | `200` | `{"identifiers":[{"namespace":["nucleus_probe"],"name":"smoke"}]}` |
-| `GET .../tables/smoke` | `200` | identical metadata round-trip |
+| `POST .../../tables` body `{"name":"smoke","schema":{...long+string...}}` | `200` | full `LoadTableResponse` w/ `format-version: 2`, `metadata-location`, table-uuid, schemas/specs/sort-orders |
+| `GET .../../tables` (after) | `200` | `{"identifiers":[{"namespace":["nucleus_probe"],"name":"smoke"}]}` |
+| `GET .../../tables/smoke` | `200` | identical metadata round-trip |
 
 Errors use the `{"error":{"message","type","code"}}` envelope with proper Iceberg exception names (`NoSuchNamespaceException`, `BadRequestException`, `ForbiddenException`, `InternalServerError`). Per-protocol Iceberg REST namespace + table CRUD is **real and spec-compliant**.
 

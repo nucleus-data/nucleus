@@ -4,9 +4,9 @@
 **Goal**: A first-time tester reaches a BI-ready Iceberg table starting from `git clone`.
 **Persona**: ≥3 years data engineering experience (per `RECRUITMENT.md` hard eligibility), MacBook / Linux laptop, Python 3.11 installed.
 
-> Success metric per [`AGENTS.md` §11.8](../../../AGENTS.md) + [`docs/specs/nucleus_architecture_v4.1.md` §1.5](../../specs/nucleus_architecture_v4.1.md): 5-engineer startup team, `git clone` → BI-ready Iceberg table in **<30 minutes**. PoC #5 tests a single-tester subset of that promise on the SQLite → filesystem-Iceberg path validated by PoC #3 (Postgres + S3 path is v0.3+ scope).
+> Success metric per [`AGENTS.md` §11.8](../../../../AGENTS.md) + [`docs/specs/nucleus_architecture_v4.1.md` §1.5](../../../specs/nucleus_architecture_v4.1.md): 5-engineer startup team, `git clone` → BI-ready Iceberg table in **<30 minutes**. PoC #5 tests a single-tester subset of that promise on the SQLite → filesystem-Iceberg path validated by PoC #3 (Postgres + S3 path is v0.3+ scope).
 
-> **State as of 2026-05-13**: `nucleus init` ships live; `nucleus ingest` / `nucleus query` / `nucleus run` are expected live before recruitment opens; `nucleus up` / `nucleus down` remain stubs and the tester will use `docker compose up -d` directly. Re-verify against [`docs/onboarding/quickstart.md`](../../onboarding/quickstart.md) the morning sessions begin — abort PoC #5 if any in-scope command is still a stub.
+> **State as of 2026-05-13**: `nucleus init` ships live; `nucleus ingest` / `nucleus query` / `nucleus run` are expected live before recruitment opens; `nucleus up` / `nucleus down` remain stubs and the tester will use `docker compose up -d` directly. Re-verify against [`docs/onboarding/quickstart.md`](../../../onboarding/quickstart.md) the morning sessions begin — abort PoC #5 if any in-scope command is still a stub.
 
 ---
 
@@ -48,7 +48,7 @@
 
 ## Beachhead path (20 min)
 
-Reference recipe: [`docs/recipes/sqlite_to_iceberg.md`](../../recipes/sqlite_to_iceberg.md). You **may not open the recipe during the test** — it is the founder-side reference, not yours. The steps below are the only path you should follow.
+Reference recipe: [`docs/recipes/sqlite_to_iceberg.md`](../../../recipes/sqlite_to_iceberg.md). You **may not open the recipe during the test** — it is the founder-side reference, not yours. The steps below are the only path you should follow.
 
 5. Boot the local storage substrate (SeaweedFS via Docker):
 
@@ -56,7 +56,7 @@ Reference recipe: [`docs/recipes/sqlite_to_iceberg.md`](../../recipes/sqlite_to_
    docker compose up -d
    ```
 
-   `nucleus up` is a stub at v0.1 start; `docker compose` is the supported substitute per [`quickstart.md`](../../onboarding/quickstart.md) Step 4.
+   `nucleus up` is a stub at v0.1 start; `docker compose` is the supported substitute per [`quickstart.md`](../../../onboarding/quickstart.md) Step 4.
 
 6. Create a fresh Nucleus project in a sibling directory:
 

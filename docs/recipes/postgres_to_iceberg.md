@@ -171,7 +171,7 @@ Done. Total: **<25 min** if nothing went sideways.
 
 Per [AGENTS.md §11.12](../../AGENTS.md), uncertain claims logged so PoC #5 can confirm or reject:
 
-1. **`nucleus ingest postgres://...`** is spec-only as of 2026-05; PoC #3 validates SQLite only ([`poc/p3_ingest/STATUS.md`](../../poc/p3_ingest/STATUS.md)). Postgres lands once the scaffold graduates to `src/nucleus/ctx/copy_from.py` (~200 LOC per [v4.1 §5.5.1](../specs/nucleus_architecture_v4.1.md)).
+1. **`nucleus ingest postgres://...`** is spec-only as of 2026-05; PoC #3 validates SQLite only ([`poc/p3_ingest/STATUS.md`](../../internal/poc/p3_ingest/STATUS.md)). Postgres lands once the scaffold graduates to `src/nucleus/ctx/copy_from.py` (~200 LOC per [v4.1 §5.5.1](../specs/nucleus_architecture_v4.1.md)).
 2. **`nucleus init --template=basic`** scaffold content unspecified beyond the template name in [`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §3.1.
 3. **`@nucleus.asset` + `ctx.read(..., as_="polars")`** are v0.1 per the ctx SDK table ([v4.1 §13.2](../specs/nucleus_architecture_v4.1.md)) but no implementation lives in `src/nucleus/` yet (AGENTS.md §11.1 phase gate).
 4. **`nucleus sql` auto-resolves Iceberg asset names to DuckDB tables** — pyiceberg supports the underlying `.to_duckdb(name)` ([`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §5); the `ctx`-side glue is unimplemented.

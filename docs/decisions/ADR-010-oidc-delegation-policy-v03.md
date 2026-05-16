@@ -3,11 +3,11 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: oidc, auth, security, v0.3, delegation, constraint-6
-> **Related**: ADR-002 §6 (yield-to-giants), ADR-004 (catalog OIDC integration), ADR-006 (`NE5xxx` band reserved for `NucleusAuthProviderUnavailable`), ADR-007 (Authentik MIT GREEN, Keycloak Apache-2.0 GREEN, Okta + Entra ID = commercial SaaS), AGENTS.md §3 Hard Constraint #6, `docs/specs/nucleus_architecture_v4.1.md` §15.1, `docs/internal/research/oidc_providers.md` (Worker W, ~32 KB), `docs/security/threat_model_v0.md` §6 + §11.
+> **Related**: ADR-002 §6 (yield-to-giants), ADR-004 (catalog OIDC integration), ADR-006 (`NE5xxx` band reserved for `NucleusAuthProviderUnavailable`), ADR-007 (Authentik MIT GREEN, Keycloak Apache-2.0 GREEN, Okta + Entra ID = commercial SaaS), AGENTS.md §3 Hard Constraint #6, `docs/specs/nucleus_architecture_v4.1.md` §15.1, `docs/internal/research/oidc_providers.md` (Worker W, ~32 KB), `docs/internal/security/threat_model_v0.md` §6 + §11.
 
 ## Context
 
-AGENTS.md §3 Hard Constraint #6: "**No custom auth system — always delegate to OIDC**." The constraint is binding architecture; this ADR makes it *policy* before v0.3 catalog work or Workbench Cloud (v0.5+) starts wiring auth ad hoc. Worker W validates four OIDC providers against the OpenID Connect Core 1.0 + Discovery 1.0 surface Nucleus consumes (Worker W §1 + §3 + §4) and confirms the Constraint #9 payoff — *swapping providers is a `nucleus_config.toml` edit, never a code change* (Worker W §8). v0.1 has no auth at all (`docs/security/threat_model_v0.md` §6 — single-user laptop, OS-account boundary, deliberate); v0.3 lights up multi-user mode through ADR-004 (Lakekeeper + Polaris both consume OIDC at the catalog layer, never at Nucleus).
+AGENTS.md §3 Hard Constraint #6: "**No custom auth system — always delegate to OIDC**." The constraint is binding architecture; this ADR makes it *policy* before v0.3 catalog work or Workbench Cloud (v0.5+) starts wiring auth ad hoc. Worker W validates four OIDC providers against the OpenID Connect Core 1.0 + Discovery 1.0 surface Nucleus consumes (Worker W §1 + §3 + §4) and confirms the Constraint #9 payoff — *swapping providers is a `nucleus_config.toml` edit, never a code change* (Worker W §8). v0.1 has no auth at all (`docs/internal/security/threat_model_v0.md` §6 — single-user laptop, OS-account boundary, deliberate); v0.3 lights up multi-user mode through ADR-004 (Lakekeeper + Polaris both consume OIDC at the catalog layer, never at Nucleus).
 
 ## Decision
 

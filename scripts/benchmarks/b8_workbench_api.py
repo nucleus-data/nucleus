@@ -305,7 +305,7 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
         elapsed_total = benchmark_clock() - started
         result = BenchResult(
             name="B8: Workbench HTTP API latency",
-            script="scripts/benchmarks/b8_workbench_api.py",
+            script="scripts/internal/benchmarks/b8_workbench_api.py",
             command=(
                 f"{sys.executable} -m scripts.benchmarks.b8_workbench_api "
                 f"--runs {args.runs} --rows {args.rows}"
@@ -350,7 +350,7 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
         elapsed_total = benchmark_clock() - started
         result = BenchResult(
             name="B8: Workbench HTTP API latency",
-            script="scripts/benchmarks/b8_workbench_api.py",
+            script="scripts/internal/benchmarks/b8_workbench_api.py",
             command=f"{sys.executable} -m scripts.benchmarks.b8_workbench_api --runs {args.runs}",
             started_at=started_at,
             completed_at=completed_at,
@@ -401,7 +401,7 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
         elapsed_total = benchmark_clock() - started
         result = BenchResult(
             name="B8: Workbench HTTP API latency",
-            script="scripts/benchmarks/b8_workbench_api.py",
+            script="scripts/internal/benchmarks/b8_workbench_api.py",
             command=f"{sys.executable} -m scripts.benchmarks.b8_workbench_api --runs {args.runs}",
             started_at=started_at,
             completed_at=completed_at,
@@ -509,7 +509,7 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0912, PLR0915 — fl
 
     result = BenchResult(
         name="B8: Workbench HTTP API latency",
-        script="scripts/benchmarks/b8_workbench_api.py",
+        script="scripts/internal/benchmarks/b8_workbench_api.py",
         command=(
             f"{sys.executable} -m scripts.benchmarks.b8_workbench_api "
             f"--runs {args.runs} --rows {args.rows}"

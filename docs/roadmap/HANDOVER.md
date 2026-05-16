@@ -57,7 +57,7 @@ python scripts/loc_budget.py             # must show GREEN
 | What shipped (version history) | `CHANGELOG.md` |
 | Dependency pins + upgrade history | `docs/compatibility.md` |
 | Research notes on wrapped libs | `docs/internal/research/<lib>.md` |
-| Swap interfaces + migration paths | `docs/swap/<lib>.md` |
+| Swap interfaces + migration paths | `docs/internal/swap/<lib>.md` |
 | AI hallucination log | `docs/internal/research/ai_hallucinations.md` |
 | LOC budget history | `docs/budget_history.md` |
 | Known open decisions | `docs/FOUNDER_ACTION_QUEUE.md` |

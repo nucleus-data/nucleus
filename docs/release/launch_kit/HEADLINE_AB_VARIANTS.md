@@ -43,7 +43,7 @@ Each variant is 80 characters max (HN soft limit). Each carries a single rhetori
 - **Framing**: lead with the empirically-validated beachhead metric (PoC #5 WSL E2E, 8/8 gates PASS, 2026-05-14). Concrete number, concrete persona.
 - **Audience**: CTOs and tech leads of 5-20 engineer startups who feel the data-platform setup tax weekly.
 - **Predicted objection**: "30 minutes is suspiciously fast - what corners are cut?"
-- **Counter (one line)**: Zero - `scripts/beachhead_e2e.py` is in the repo, the WSL run output is at `docs/internal/release-process/e2e_results_20260514T190132.md`, and the eleven empirical performance gaps are published before launch in `docs/benchmarks/2026-05-15_baseline.md`.
+- **Counter (one line)**: Zero - `scripts/beachhead_e2e.py` is in the repo, the WSL run output is at `docs/internal/release-process/e2e_results_20260514T190132.md`, and the eleven empirical performance gaps are published before launch in `docs/internal/benchmarks/2026-05-15_baseline.md`.
 - **WHY THIS VARIANT**: 1. Time-to-value beats feature lists on HN; 2. Persona specificity ("5-engineer team") signals scope discipline, not over-reach.
 
 ---
@@ -179,7 +179,7 @@ Schema-aware v0.3. Lineage-aware v0.5. The data path is the product.
 HONEST disclosures, because this community deserves them:
 
 - It is beta
-- Empirical perf baseline failed 11 metrics vs aspirational targets - publishing the numbers anyway at docs/benchmarks/2026-05-15_baseline.md
+- Empirical perf baseline failed 11 metrics vs aspirational targets - publishing the numbers anyway at docs/internal/benchmarks/2026-05-15_baseline.md
 - B4 concurrent-run safety fails on Windows; Linux/WSL passes
 ```
 
@@ -218,7 +218,7 @@ If something breaks, file an issue with the NE#### error code so we can find it 
 > - **You eliminate the integration tax.** Nucleus is 8,484 lines of proprietary code wrapping ~1.2M lines of production-grade open source (DuckDB, Polars, pyiceberg, Dagster, OpenLineage). The 30K LOC v1.0 ceiling is a Hard Constraint, not a target. Less code we maintain means less code your team has to debug.
 > - **You stay credible with senior engineers.** We publish empirical performance numbers before launch, including 11 measured failures vs aspirational targets. We translate every wrapped library exception to a stable `NE####` error code with a `docs_url`. We do not say "AI-native" or "Spark killer" - the architecture document `AGENTS.md` section 8 explicitly forbids those framings. <!-- banned-term: launch-forbidden-framings -->
 >
-> If you lead a 5-20 engineer team building greenfield analytics on Iceberg, we would value your eyes on the v0.2 launch. We are accepting paid 90-minute usability sessions through PoC #5 (`docs/poc/p5_beachhead/`).
+> If you lead a 5-20 engineer team building greenfield analytics on Iceberg, we would value your eyes on the v0.2 launch. We are accepting paid 90-minute usability sessions through PoC #5 (`docs/internal/poc/p5_beachhead/`).
 >
 > Repo: <https://github.com/nucleus-data/nucleus> | License: Apache 2.0.
 >
@@ -255,7 +255,7 @@ If something breaks, file an issue with the NE#### error code so we can find it 
 >
 > **What "wrap" means here, concretely.** Every external exception from a wrapped library is intercepted at the `ctx` SDK boundary and re-emitted as a `NucleusError` subclass with a stable `NE####` code and a `docs_url`. User-facing strings MUST NOT contain wrapped-library class names. CI enforces this (`scripts/dagster_leak_check.py`, release-blocking). This is the discipline that makes "wrap, not build" actually different from "redistribute and hope".
 >
-> **Empirical performance numbers** (full baseline at `docs/benchmarks/2026-05-15_baseline.md`):
+> **Empirical performance numbers** (full baseline at `docs/internal/benchmarks/2026-05-15_baseline.md`):
 >
 >   B5 boot time:        2.06 s warm median (target was <500 ms; demoted to v0.3)
 >   B2 materialize 1 GB / 10M: 38.77 s wall-clock
@@ -267,7 +267,7 @@ If something breaks, file an issue with the NE#### error code so we can find it 
 >
 > **What is shipping in v0.2** (one paragraph each in `CHANGELOG.md` and `docs/release/v0.2.0_RELEASE_NOTES.md` if you want the full bullets): 8-command CLI, 7 connectors via one `ctx.copy_from()` dispatcher, Workbench v0.3 web IDE (FastAPI + React, single uvicorn worker default), active scheduling daemon (5s-poll cron via croniter), durable NDJSON run ledger, DuckDB `memory_limit` guard, cross-platform advisory file lock, Iceberg branch+tag CLI, `nucleus.db` BI handshake, and a single-turn AI chat through `litellm` (your provider key, no Nucleus servers).
 >
-> **Paid testers wanted (PoC #5).** I am recruiting 20 engineers for 90-minute paid usability sessions over the next 6 weeks. Compensation is in `docs/poc/p5_beachhead/RECRUITMENT_PLAN.md` (founder is finalizing the number this week; the placeholder is `$150`). Eligibility: a working data engineer at a 5-20 engineer company, with at least one greenfield Iceberg / DuckDB / Polars production deployment under your belt. Email or DM if interested, or book directly via the Calendly link in the recruitment doc once it is live.
+> **Paid testers wanted (PoC #5).** I am recruiting 20 engineers for 90-minute paid usability sessions over the next 6 weeks. Compensation is in `docs/internal/poc/p5_beachhead/RECRUITMENT_PLAN.md` (founder is finalizing the number this week; the placeholder is `$150`). Eligibility: a working data engineer at a 5-20 engineer company, with at least one greenfield Iceberg / DuckDB / Polars production deployment under your belt. Email or DM if interested, or book directly via the Calendly link in the recruitment doc once it is live.
 >
 > **What we are not.** Not a Spark replacement. Not a Databricks/Snowflake competitor (we feed them via graduation). Not an ML training platform. Not a vector database (we use Lance). Not an identity system (we delegate to OIDC). The full Non-Goals list is `docs/specs/nucleus_architecture_v4.1.md` section 20.
 >

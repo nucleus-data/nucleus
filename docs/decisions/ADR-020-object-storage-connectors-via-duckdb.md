@@ -80,8 +80,8 @@ Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 - **LOC budget impact**: ~400 LOC total (three connectors + error translators). LOC at 82.3% of v0.1 ceiling after expansion.
 - **New optional dep**: `gcsfs==2026.5.0` (BSD-3-Clause · GREEN) in `[project.optional-dependencies] gcs`. All other connectors add zero deps.
-- **Maintenance**: connectors follow same error-translation pattern as Postgres/MySQL; DuckDB upgrade path documented in `docs/swap/duckdb.md`.
-- **Swap target**: if DuckDB is swapped, the swap implementation reads `pyarrow.parquet.read_table` + `pyarrow.fs` as the fallback. Smoke tests in `tests/swap/test_duckdb_swap.py` already exist.
+- **Maintenance**: connectors follow same error-translation pattern as Postgres/MySQL; DuckDB upgrade path documented in `docs/internal/swap/duckdb.md`.
+- **Swap target**: if DuckDB is swapped, the swap implementation reads `pyarrow.parquet.read_table` + `pyarrow.fs` as the fallback. Smoke tests in `tests/internal/swap/test_duckdb_swap.py` already exist.
 - **Tests**: 10 unit tests per connector (30 total in `tests/ctx/`). No real cloud accounts required (DuckDB mocked).
 - **Known limitation**: IAM role / instance profile credentials for S3 require `SET s3_use_credential_chain=true` in DuckDB, which the caller must enable via env var passthrough; Nucleus does not invoke this automatically (no custom credential code per task spec).
 

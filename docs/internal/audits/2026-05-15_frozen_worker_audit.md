@@ -57,7 +57,7 @@ These are children spawned by the active parent over the day's work. Per Cursor'
 | `3a61172d` | wave2-p0-1-daemon | DONE_COMMITTED | daemon.py + schedule.py + test_daemon.py all `tracked=True` |
 | `ce642613` | wave2-p0-3-reliability | DONE_COMMITTED | locks.py + snapshot_maintenance.py + error_budget.py all `tracked=True` |
 | `8f5690c8` | v020-verifier (read-only) | DONE_COMMITTED | no artifacts expected |
-| `5e33eb3c` | poc5-kit-polish | DONE_COMMITTED | 9 files in docs/poc/p5_beachhead/ all `tracked=True` |
+| `5e33eb3c` | poc5-kit-polish | DONE_COMMITTED | 9 files in docs/internal/poc/p5_beachhead/ all `tracked=True` |
 
 ### 2.2 Inline subagents inferred DONE_UNCOMMITTED via working-tree artifacts
 
@@ -67,7 +67,7 @@ These workers correspond to `IN_PROGRESS` todos in the parent's todo list. Each 
 
 | Worker (todo id) | Expected role | Working-tree artifacts | Bucket |
 |---|---|---|---|
-| `ga-bench-suite` (Worker A1) | Empirical benchmark suite (B1-B5) | `docs/benchmarks/2026-05-15_baseline.md`, `docs/benchmarks/_results/b{1..5}_*.json`, `scripts/benchmark_cli_cold_boot.py`, `scripts/benchmarks/{__init__,_common,b1_tpch_duckdb,b2_materialize,b3_postgres_ingest,b4_concurrent_run,b5_boot_time,run_all}.py` | DONE_UNCOMMITTED |
+| `ga-bench-suite` (Worker A1) | Empirical benchmark suite (B1-B5) | `docs/internal/benchmarks/2026-05-15_baseline.md`, `docs/internal/benchmarks/_results/b{1..5}_*.json`, `scripts/benchmark_cli_cold_boot.py`, `scripts/benchmarks/{__init__,_common,b1_tpch_duckdb,b2_materialize,b3_postgres_ingest,b4_concurrent_run,b5_boot_time,run_all}.py` | DONE_UNCOMMITTED |
 | `ga-chaos-tests` (Worker A2) | Chaos tests J3-J8 + run_chaos harness | `docs/internal/release-process/chaos_test_results.md`, `tests/chaos/{__init__,test_chaos_smoke}.py`; modified `scripts/release_e2e/run_chaos.py` (per `6b6c606b`'s anti-collision list) | DONE_UNCOMMITTED |
 | `ga-lazy-imports` (Worker B2) | Lazy-import audit + governance script + tests | `scripts/check_lazy_imports.py`, `tests/cli/test_lazy_imports.py`; modified `src/nucleus/cli/main.py` | DONE_UNCOMMITTED |
 | `ga-install-split` (Worker B4) | Install-size split (`[core]` / `[ai]` / `[all]` extras) + governance script + tests | `scripts/check_install_size.py`, `tests/test_install_extras.py`; modified `pyproject.toml`, `docs/compatibility.md`, `docs/onboarding/quickstart.md` (per `6b6c606b`'s anti-collision list) | DONE_UNCOMMITTED |
@@ -112,8 +112,8 @@ Each block below proposes a focused commit. Bundling avoids one giant 20-file co
 - **Task**: Build B1-B5 benchmark harness (TPC-H DuckDB, materialize, Postgres ingest, concurrent runs, boot time) + baseline doc.
 - **Status**: completed; final_summary present in inline subagent transcript (sample-verified pattern).
 - **Artifacts**:
-  - `docs/benchmarks/2026-05-15_baseline.md`
-  - `docs/benchmarks/_results/{b1_tpch_duckdb,b2_materialize,b3_postgres_ingest,b4_concurrent_run,b5_boot_time}.json`
+  - `docs/internal/benchmarks/2026-05-15_baseline.md`
+  - `docs/internal/benchmarks/_results/{b1_tpch_duckdb,b2_materialize,b3_postgres_ingest,b4_concurrent_run,b5_boot_time}.json`
   - `scripts/benchmark_cli_cold_boot.py`
   - `scripts/benchmarks/{__init__,_common,b1_tpch_duckdb,b2_materialize,b3_postgres_ingest,b4_concurrent_run,b5_boot_time,run_all}.py`
 - **Suggested commit**: `feat(bench): empirical benchmark suite B1-B5 + 2026-05-15 baseline`

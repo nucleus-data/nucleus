@@ -5,7 +5,7 @@ Verifies the Polars wrap surface we depend on today (2 exception classes
 registered in ``coordination/error_translation.py:314-317`` + DataFrame /
 LazyFrame methods user assets return) AND that DataFusion is reachable
 via ``find_spec`` (no install in CI — full swap on-demand only).
-Reference: ``docs/swap/polars.md``.
+Reference: ``docs/internal/swap/polars.md``.
 Docs: https://docs.pola.rs/api/python/stable/reference/index.html
 """
 
@@ -50,7 +50,7 @@ def test_polars_exception_classes_registered_today() -> None:
 
 
 def test_polars_dataframe_method_surface_for_future_engine() -> None:
-    """User-asset return type surface (docs/swap/polars.md API table)."""
+    """User-asset return type surface (docs/internal/swap/polars.md API table)."""
     df = pl.DataFrame({"x": [1]})
     for m in ("to_arrow", "select", "filter", "with_columns", "group_by"):
         assert hasattr(df, m), f"pl.DataFrame.{m} missing"

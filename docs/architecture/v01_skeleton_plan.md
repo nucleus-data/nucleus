@@ -86,7 +86,7 @@ Each is a **thin** wrap over one `ctx.*` call per `docs/specs/nucleus_cli_spec.m
 |---|---:|---|
 | `physics/iceberg_io.py` | 100 | `load_catalog_from_config`, `load_or_create_table` (minimal; `ctx.read/write` reach pyiceberg directly per `C4_component.md` §3) |
 | `physics/type_mapping.py` | 150 | `sequence_ingestion.md` §1 step 2; hypothesis-tested per `engineering.md` §6.6 |
-| `engines/_protocol.py` | 50 | `Engine` Protocol per `engineering.md` §7.2; smoke-test target only (Constraint #9 + `docs/swap/{duckdb,polars}.md`; §7 NV #5) |
+| `engines/_protocol.py` | 50 | `Engine` Protocol per `engineering.md` §7.2; smoke-test target only (Constraint #9 + `docs/internal/swap/{duckdb,polars}.md`; §7 NV #5) |
 | `engines/duckdb_engine.py` | 300 | owns `iceberg_scan(...)` registration |
 | `engines/polars_engine.py` | 250 | `LazyFrame` plumbing |
 | `_internal/config.py` | 200 | Load + validate `nucleus.toml` via msgspec 0.18.6 (`engineering.md` §8.2); schema = `cli_spec` §7 |

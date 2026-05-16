@@ -42,10 +42,10 @@ UML sequence specs for every critical end-to-end path. Each cites its companion 
 - **Layers numbered bottom-up** per v4.1 §3.1: L0 = Physics, L4 = Experience. C4 component IDs match `src/nucleus/<layer>/`.
 - **No invented APIs.** Every method/type cited in a sequence must exist in the wrapped library or be explicitly marked `NEEDS VERIFICATION` per [`AGENTS.md`](../../AGENTS.md) §11.12.
 - **One sequence per critical path.** New paths (`nucleus optimize`, `ctx.snapshot`, etc.) get a new file; do not append to an existing sequence.
-- **Diagram drift is caught quarterly** — see [`../audits/`](../audits/) and [`sequence_swap_drill.md`](./sequence_swap_drill.md).
+- **Diagram drift is caught quarterly** — see [`../internal/audits/`](../internal/audits/) and [`sequence_swap_drill.md`](./sequence_swap_drill.md).
 
 ---
 
-[← `docs/specs/nucleus_architecture_v4.1.md` §3 + §6](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — swap/](../swap/README.md) · [Sibling — research/](../research/README.md) · [Sibling — patterns/](../patterns/README.md)
+[← `docs/specs/nucleus_architecture_v4.1.md` §3 + §6](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — swap/](../internal/swap/README.md) · [Sibling — research/](../research/README.md) · [Sibling — patterns/](../patterns/README.md)
 
 *Last updated 2026-05-13. Add new diagrams by appending to the appropriate group; group is set by which architecture layer (L0..L4) or process the artifact serves. Keep entries to one line each.*

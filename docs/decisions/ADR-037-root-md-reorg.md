@@ -7,7 +7,7 @@
 | **Author** | swarm-implementer (root-cleanup wave) |
 | **Reviewers** | Founder |
 | **Supersedes** | — |
-| **Execution plan** | [docs/reorg/2026-05-15_root_md_reorg.md](../reorg/2026-05-15_root_md_reorg.md) |
+| **Execution plan** | [docs/internal/reorg/2026-05-15_root_md_reorg.md](../internal/reorg/2026-05-15_root_md_reorg.md) |
 
 ---
 
@@ -32,7 +32,7 @@ Move 10 root-level spec and plan files to organised subdirectories under `docs/`
 | `docs/specs/nucleus_ctx_sdk_spec.md` | `docs/architecture/ctx-sdk-spec.md` |
 | `docs/specs/nucleus_project_anatomy.md` | `docs/architecture/project-anatomy.md` |
 | `docs/specs/nucleus_vs_databricks.md` | `docs/architecture/vs-databricks.md` |
-| `docs/specs/nucleus_poc_plan.md` | `docs/poc/poc-plan.md` |
+| `docs/specs/nucleus_poc_plan.md` | `docs/internal/poc/poc-plan.md` |
 | `docs/specs/nucleus_implementation_readiness.md` | `docs/architecture/implementation-readiness.md` |
 | `docs/specs/nucleus_red_team_review.md` | `docs/architecture/red-team-review.md` |
 
@@ -66,9 +66,9 @@ Files that remain at root: `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `AGEN
 
 ## Open Questions
 
-1. **Rename convention**: Move as kebab-case (e.g., `architecture-v4.1.md`) or preserve snake_case? — see [§E.2 of execution plan](../reorg/2026-05-15_root_md_reorg.md#e2--file-naming-convention-on-move).
-2. **Docker Compose consolidation**: Consolidate 3 root `docker-compose*.yml` files, or keep at root? — see [§E.1](../reorg/2026-05-15_root_md_reorg.md#e1--docker-compose-consolidation).
-3. **MkDocs nav assignment**: Assign nav update to Phase 2 executor or handle separately? — see [§E.3](../reorg/2026-05-15_root_md_reorg.md#e3--mkdocs-nav-section).
+1. **Rename convention**: Move as kebab-case (e.g., `architecture-v4.1.md`) or preserve snake_case? — see [§E.2 of execution plan](../internal/reorg/2026-05-15_root_md_reorg.md#e2--file-naming-convention-on-move).
+2. **Docker Compose consolidation**: Consolidate 3 root `docker-compose*.yml` files, or keep at root? — see [§E.1](../internal/reorg/2026-05-15_root_md_reorg.md#e1--docker-compose-consolidation).
+3. **MkDocs nav assignment**: Assign nav update to Phase 2 executor or handle separately? — see [§E.3](../internal/reorg/2026-05-15_root_md_reorg.md#e3--mkdocs-nav-section).
 
 ---
 
@@ -84,4 +84,4 @@ Execute Phase 2 only after:
 2. Ratification builder wave completes
 3. UI v0.3 builder wave completes
 
-See [execution plan](../reorg/2026-05-15_root_md_reorg.md) Steps 1–8 for the full sequenced procedure.
+See [execution plan](../internal/reorg/2026-05-15_root_md_reorg.md) Steps 1–8 for the full sequenced procedure.

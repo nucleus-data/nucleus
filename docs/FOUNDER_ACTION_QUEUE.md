@@ -31,7 +31,7 @@
 - `docs/release/launch_kit/LAUNCH_DAY_TIMELINE.md` (timeline worker)
 - `docs/release/launch_kit/SOCIAL_POSTS.md` (already landed, exemption fixed during consolidation)
 - `docs/release/launch_kit/SHOW_HN_HEADLINES.md`, `HN_REDDIT_FAQ.md`, `60_SECOND_DEMO_SCRIPT.md`
-- `docs/internal/research/benchmarks_v0.2.0.md` (current empirical truth at `docs/benchmarks/2026-05-15_baseline.md`)
+- `docs/internal/research/benchmarks_v0.2.0.md` (current empirical truth at `docs/internal/benchmarks/2026-05-15_baseline.md`)
 
 **Closeable now (zero blockers, founder-side)**: Phases 0, 1, 4, 5, 6, 7. **Hard-blocked on founder hands**: Phase 2 (PyPI account + OIDC trusted publisher) and Phase 3 (tag push) per AGENTS.md §3 — these CANNOT be performed by any agent.
 
@@ -48,7 +48,7 @@ Foreground sweep against `mtoanng/nucleus` repo state on 2026-05-15: **8 open De
 | Action | Result | Commit / artifact |
 |---|---|---|
 | Patch `changelog.yml` — exempt Dependabot from both `CHANGELOG.md updated` and `docs/compatibility.md updated` checks | Both jobs now short-circuit green when `github.event.pull_request.user.login == 'dependabot[bot]'`. Reason is logged in the workflow output for audit. | Bundled into `97a243d` (Worker B1's coordination commit — concurrent file-system collision; the Dependabot exemption diff is the changelog.yml section only) |
-| Dismiss 14 open Dependabot alerts as `tolerable_risk` with per-alert rationale | All 14 transitioned `state=dismissed`, `dismissed_reason=tolerable_risk` via `gh api -X PATCH`. Per-alert verification greps captured. | New file: [`docs/security/dependabot_alert_dispositions.md`](./security/dependabot_alert_dispositions.md) (re-open conditions table at the bottom) |
+| Dismiss 14 open Dependabot alerts as `tolerable_risk` with per-alert rationale | All 14 transitioned `state=dismissed`, `dismissed_reason=tolerable_risk` via `gh api -X PATCH`. Per-alert verification greps captured. | New file: [`docs/internal/security/dependabot_alert_dispositions.md`](./internal/security/dependabot_alert_dispositions.md) (re-open conditions table at the bottom) |
 | Close PR #4 (dagster 1.9.5 → 1.13.4 — MAJOR) | Closed with rationale; label `needs-adr` applied | https://github.com/mtoanng/nucleus/pull/4 |
 | Close PR #5 (opentelemetry-sdk 1.29.0 → 1.41.1) | Closed with rationale; label `blocked-by-in-flight-work` applied (ADR-011 α-split amendment in flight) | https://github.com/mtoanng/nucleus/pull/5 |
 | Close PR #8 (vite 5.4.11 → 6.4.2 — MAJOR npm) | Closed with rationale; label `needs-adr` applied | https://github.com/mtoanng/nucleus/pull/8 |
@@ -129,7 +129,7 @@ rg "get_notebook_data|jupyter" src/                                         # ex
 
 ~6:00 PM local time, Cursor IDE shut down unexpectedly mid-session. The parent agent was about to commit a batch of post-Wave-2 worker artifacts. 6 workers were re-fired (RETRY) after a Bosch APAC proxy socket error at 8:32 AM; all returned successfully but the parent missed their completion notifications when the IDE crashed.
 
-### Audit result (`docs/audit/2026-05-15_frozen_worker_audit.md`)
+### Audit result (`docs/internal/audits/2026-05-15_frozen_worker_audit.md`)
 
 - 78 transcripts modified today (13 top-level + 65 inline subagents)
 - **0 FROZEN workers** - every worker reached final_summary or wrote complete artifacts before crash
@@ -167,7 +167,7 @@ Skipped sections (already in HEAD):
 
 ### Untracked files left in tree (intentional)
 
-- `docs/audit/2026-05-15_frozen_worker_audit.md` (this audit) - meta-doc, may stay or be moved to `.scratch/`
+- `docs/internal/audits/2026-05-15_frozen_worker_audit.md` (this audit) - meta-doc, may stay or be moved to `.scratch/`
 - `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` (the close checklist) - has 1 banned-term violation; founder fix or commit-as-is choice
 
 ### Founder decisions required (added to queue)
@@ -176,7 +176,7 @@ Skipped sections (already in HEAD):
 |---|---|---|---|
 | 12 | Bump `scripts/loc_budget.py` reference phase v0.1 -> v0.2 (8,000 -> 18,000 ceiling) | Per AGENTS.md 1, v0.2.0 already bundled 2026-05-15; the script's reference phase wasn't bumped because the audit-planned 3.9 commit had no actual diff to apply | Edit `Reference phase: v0.1` -> `v0.2` and ceiling `8,000` -> `18,000` in `loc_budget.py`; commit with `chore(governance): loc budget phase v0.1->v0.2 per audit recommendation` |
 | 13 | Decide fate of untracked `docs/internal/release-process/v0.2_FOUNDER_CLOSE_CHECKLIST.md` | Has 1 banned-term hit ("data OS"); also a useful close-checklist artifact | Either fix the line + commit, or move to `.scratch/`, or accept-as-is with `<!-- banned-term: Data OS -->` exemption |
-| 14 | Decide fate of untracked `docs/audit/2026-05-15_frozen_worker_audit.md` | Meta-audit document of this session | Either commit under `docs/audit/` for the trail, or move to `.scratch/` |
+| 14 | Decide fate of untracked `docs/internal/audits/2026-05-15_frozen_worker_audit.md` | Meta-audit document of this session | Either commit under `docs/internal/audits/` for the trail, or move to `.scratch/` |
 | 15 | Add `.venv-*` exclusion to `scripts/check_vocabulary.py` | 5 false-positive hits today from Worker B4 test venv pollute the gate | One-line walk-skip pattern; commit with `fix(governance): exclude .venv-* dirs from vocabulary scan` |
 
 ### Still founder-gated
@@ -288,7 +288,7 @@ Skipped sections (already in HEAD):
 ### Cleanup executed
 
 - `SESSION_STATE_2026-05-13.md` deleted
-- `docs/security/threat_model_v0.md` deleted
+- `docs/internal/security/threat_model_v0.md` deleted
 - `nucleus_architecture_v3.md` → `docs/archive/architecture-v3.md`
 - `nucleus_architecture_v4.md` → `docs/archive/architecture-v4.md`
 - `.gitignore` updated (`_build_verify/` added)
@@ -441,8 +441,8 @@ After triage of the rescued verifier findings, the following landed foreground (
 | 3 | `src/nucleus/intelligence/translate.py` | ImportError fix_hint | `pip install nucleus[copilot]` → `pip install nucleus` (the `[copilot]` extra does not exist in `pyproject.toml`; broken UX) |
 | 4 | `src/nucleus/intelligence/translate.py` | `_BANNED_NAMES` regex | Added `re.IGNORECASE` so capitalized variants `Anthropic`/`OpenAI`/`Ollama` are stripped from user-facing strings (closes a leak path AGENTS.md §11.7 forbids) |
 | 5 | `src/nucleus/intelligence/copilot.py` | LiteLLM ImportError fix_hint | Same `nucleus[copilot]` fix as translate.py + Ollama offline-fallback hint |
-| 6 | `docs/swap/pyiceberg.md` | header block | `Current default: pyiceberg…==0.8.1` → `…==0.11.1`; ADR-003 0.8.1→0.11 migration marked as **landed** (during PoC #1 promotion) instead of "queued"; `Last touched` bumped to 2026-05-14 |
-| 7 | `docs/swap/README.md` | Tier 2 + new Tier 3 sections | Added `workbench.md` (Tier 2 sub-component swaps for Fork B) + new Tier 3 row for `litellm.md` (v0.2 AI Copilot wrapper, ADR-015). The previous index missed 2 of the 9 swap docs. |
+| 6 | `docs/internal/swap/pyiceberg.md` | header block | `Current default: pyiceberg…==0.8.1` → `…==0.11.1`; ADR-003 0.8.1→0.11 migration marked as **landed** (during PoC #1 promotion) instead of "queued"; `Last touched` bumped to 2026-05-14 |
+| 7 | `docs/internal/swap/README.md` | Tier 2 + new Tier 3 sections | Added `workbench.md` (Tier 2 sub-component swaps for Fork B) + new Tier 3 row for `litellm.md` (v0.2 AI Copilot wrapper, ADR-015). The previous index missed 2 of the 9 swap docs. |
 
 **Post-fix verification (foreground, this session)**:
 
@@ -466,8 +466,8 @@ The 7 foreground fixes above close the v0.1-blocking subset. The remaining rescu
 3. **MINOR — Top-level `nucleus/__init__.py` does not re-export `chat` / `CopilotReply`** (verifier 1 finding 7): consumers must use `from nucleus.intelligence.copilot import chat`, not `from nucleus import chat`. **Architectural intent question**: was the AI Copilot intentionally kept under the submodule (Beta tier, ADR-015 prefers explicit imports) or is this a re-export oversight? Recommend: **keep as-is** — Beta tier surface lives under `nucleus.intelligence` namespace until ADR-015 promotes to Stable in v0.5+, which matches the deferral pattern used for other Beta features.
 4. **MINOR — `docs/specs/nucleus_project_anatomy.md` is stale (v3-era)** (verifier 2 finding C8/A1): references `nucleus.yaml`, mentions a different directory layout, references `.nucleus/warehouse/` rather than the v4.1 `nucleus_project.yaml` + `data/` layout the actual CLI emits. Per `AGENTS.md §2` v4.1 spec wins, so the doc just needs a "Superseded by v4.1 §3.1" header until rewritten. **Suggested**: 5-min foreground header add; defer the full rewrite.
 5. **MINOR — `tests/templates/` directory does not exist** (verifier 2 finding A7): no dedicated template-content regression tests; coverage exists transitively via `tests/cli/test_init.py` (24 tests covering happy paths + edge cases + byte-content checks). **Acceptable for v0.1** — defer to v0.1.1 patch if any template drift is observed.
-6. **MINOR — `docs/swap/lakekeeper.md` and `docs/swap/dlt.md` reference test files at `tests/swap/` that don't exist** (verifier 2 finding C5): both are v0.3+ components, so the "v0.3+ deps land their smoke tests there when promoted" pattern in the README defends them. **Suggested**: edit those two docs to explicitly mark the test paths as "TBD when promoted" rather than current-pointing claims. 5-min foreground.
-7. **MINOR — `docs/swap/workbench.md` lacks formal Composability sections (interface / smoke tests / migration / owner)** (verifier 2 finding C1, C8): workbench documents 4 internal sub-component swaps (xyflow ↔ Cytoscape, Monaco ↔ CodeMirror, FastAPI ↔ Litestar, web ↔ Tauri) but doesn't follow the 4-section template. **Acceptable** — workbench is a v0.2+ surface and the doc is intentionally structured around per-sub-component swap conditions rather than a single Tier 1 wrap. Founder may want a stylistic re-structure pre-v0.2 but it's not v0.1-blocking.
+6. **MINOR — `docs/internal/swap/lakekeeper.md` and `docs/internal/swap/dlt.md` reference test files at `tests/internal/swap/` that don't exist** (verifier 2 finding C5): both are v0.3+ components, so the "v0.3+ deps land their smoke tests there when promoted" pattern in the README defends them. **Suggested**: edit those two docs to explicitly mark the test paths as "TBD when promoted" rather than current-pointing claims. 5-min foreground.
+7. **MINOR — `docs/internal/swap/workbench.md` lacks formal Composability sections (interface / smoke tests / migration / owner)** (verifier 2 finding C1, C8): workbench documents 4 internal sub-component swaps (xyflow ↔ Cytoscape, Monaco ↔ CodeMirror, FastAPI ↔ Litestar, web ↔ Tauri) but doesn't follow the 4-section template. **Acceptable** — workbench is a v0.2+ surface and the doc is intentionally structured around per-sub-component swap conditions rather than a single Tier 1 wrap. Founder may want a stylistic re-structure pre-v0.2 but it's not v0.1-blocking.
 
 #### License watch items (from `check_licenses.py` evidence above)
 
@@ -489,7 +489,7 @@ Foreground sniff confirmed the following workers shipped without surfacing notif
 
 - **AI Chat MVP builder** → `src/nucleus/intelligence/{__init__,copilot,translate,context}.py` (4 files) + `src/nucleus/cli/commands/chat.py` + chat command registered at `cli/main.py:1289-1291` + 5 NE4xxx codes in `errors.py` + 2 tests in `tests/intelligence/test_copilot{,_smoke}.py` — **VERIFIER IN FLIGHT** (worker 1 above; composer-2-fast hallucination history makes this audit critical).
 - **nucleus init swarm-implementer** → `cli/main.py:642-704` (init command) + `cli/main.py:136-258` (5 template helpers) + `src/nucleus/templates/v01/` (6 files: `assets/example.py`, `assets/__init__.py`, `nucleus_project.yaml`, `README.md`, `gitignore`, `data/gitkeep`) + `tests/cli/test_init.py` — **VERIFIER IN FLIGHT** (worker 2 above).
-- **Swap docs** → 9 files in `docs/swap/`: `README.md`, `duckdb.md`, `polars.md`, `pyiceberg.md`, `lakekeeper.md`, `dlt.md`, `dagster.md`, `litellm.md`, `workbench.md` — **VERIFIER IN FLIGHT** (worker 2 above; Composability Constitution compliance check).
+- **Swap docs** → 9 files in `docs/internal/swap/`: `README.md`, `duckdb.md`, `polars.md`, `pyiceberg.md`, `lakekeeper.md`, `dlt.md`, `dagster.md`, `litellm.md`, `workbench.md` — **VERIFIER IN FLIGHT** (worker 2 above; Composability Constitution compliance check).
 - **Onboarding polish swarm** → presumed completed; verifier coverage delegated to worker 2's docs scope.
 
 **Known gaps already surfaced (verifier will confirm/refute)**:
@@ -666,7 +666,7 @@ The Loop Mode rule landed at 17:14 ICT (founder directive "go into loop mode" �
 
 1. **Data-plane CLI builder** (builder, expected landing 18:30 ICT): wires `nucleus run` / `ingest` / `query` real bodies; adds `cli/rendering.py` Rich/JSON/CSV helpers; ~30 new tests; SQLite-only for `ingest`, single-asset for `run`, no `--file`/`--asset` modes for `query` (all deferred to v0.3+).
 2. **Beachhead E2E automation** (swarm-implementer, expected landing 18:00 ICT): `scripts/beachhead_e2e.py` walks the full chain `init → version → seed-sqlite → ingest → query → run` with stub-detection fallback; PASS-WITH-SKIPS until data-plane lands; ≤ 180 LOC stdlib-only.
-3. **PoC #5 tester scenario + recruitment** (researcher, expected landing 18:00 ICT): `docs/poc/p5_beachhead/SCENARIO.md` + `RECRUITMENT.md` + `FEEDBACK_FORM.md` — 5-engineer external-tester playbook gated by AGENTS.md §11.9 (testers MUST be external).
+3. **PoC #5 tester scenario + recruitment** (researcher, expected landing 18:00 ICT): `docs/internal/poc/p5_beachhead/SCENARIO.md` + `RECRUITMENT.md` + `FEEDBACK_FORM.md` — 5-engineer external-tester playbook gated by AGENTS.md §11.9 (testers MUST be external).
 
 ### Items surfaced for founder review (small, decide at v0.1 ship gate)
 

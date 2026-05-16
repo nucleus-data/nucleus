@@ -1,6 +1,6 @@
 # Swap Target: Polars → Apache DataFusion DataFrame API
 
-**Tier**: 1 (engines, default DataFrame engine, per `docs/specs/nucleus_architecture_v4.1.md` §5.1, §9.2) · **Default**: `polars==1.18.0` (`pyproject.toml:43`) · **Swap target (v0.1)**: Apache DataFusion DataFrame API (Python — candidate `datafusion>=43.0`; co-versioned with DuckDB → DataFusion in `docs/swap/duckdb.md`) · **Swap target (v0.5+ secondary)**: Daft (multimodal-only — out of scope for this doc; see `docs/internal/research/daft.md`) · **Status (2026-05-13)**: Interface documented + smoke tests in CI; full swap on-demand only per v4.1 §9.3.
+**Tier**: 1 (engines, default DataFrame engine, per `docs/specs/nucleus_architecture_v4.1.md` §5.1, §9.2) · **Default**: `polars==1.18.0` (`pyproject.toml:43`) · **Swap target (v0.1)**: Apache DataFusion DataFrame API (Python — candidate `datafusion>=43.0`; co-versioned with DuckDB → DataFusion in `docs/internal/swap/duckdb.md`) · **Swap target (v0.5+ secondary)**: Daft (multimodal-only — out of scope for this doc; see `docs/internal/research/daft.md`) · **Status (2026-05-13)**: Interface documented + smoke tests in CI; full swap on-demand only per v4.1 §9.3.
 
 ## What we use Polars for
 
@@ -101,4 +101,4 @@ Until one fires, we maintain interface + smoke tests only, never a full second i
 - `datafusion-iceberg`: https://github.com/apache/datafusion-iceberg
 - Architecture: `docs/specs/nucleus_architecture_v4.1.md` §5.1 (Engines), §9.2 (composability tier table), §9.3 (swap discipline)
 - Research notes: `docs/internal/research/polars.md` · `docs/internal/research/daft.md` (v0.5+ secondary swap target)
-- Related: `docs/swap/duckdb.md` (natural co-swap if both DuckDB and Polars retire together)
+- Related: `docs/internal/swap/duckdb.md` (natural co-swap if both DuckDB and Polars retire together)

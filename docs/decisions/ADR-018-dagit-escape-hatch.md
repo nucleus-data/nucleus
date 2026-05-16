@@ -167,7 +167,7 @@ All 8 questions answered YES or NEUTRAL. The decision passes the gate.
 - [ ] Upgrade smoke pending: when `dagster-webserver` is added to the install matrix (separate ADR), `tests/upgrade_smoke/test_dagster_webserver.py` must verify the `--workspace` / `--port` / `--host` flag names remain stable.
 - [x] Error codes registered: `scripts/check_error_codes.py` enumerates NE5009-NE5011 alongside the prior NE5005-NE5008 block.
 - [x] Dagster-leak check: this command's `--help` text + error strings pass `scripts/dagster_leak_check.py` because the literal token `dagit` is not in the script's banned list (the script bans `dagster.X` identifier patterns, not the substrate brand name).
-- [ ] Documented in: `docs/swap/dagster.md` (extend with a note that `nucleus dagit` is the v0.1.1 Tier 3 escape hatch — pending a separate doc-enrich worker).
+- [ ] Documented in: `docs/internal/swap/dagster.md` (extend with a note that `nucleus dagit` is the v0.1.1 Tier 3 escape hatch — pending a separate doc-enrich worker).
 
 ---
 

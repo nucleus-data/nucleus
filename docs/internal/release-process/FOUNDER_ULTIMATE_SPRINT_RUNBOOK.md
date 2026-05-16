@@ -9,7 +9,7 @@
 - **Total founder hands-on time**: ~2 h pre-launch + 4–8 h launch-day monitoring.
 - **Founder-only steps**: 34 (every `[ ]` below). 0 AI-completable.
 - **Hard prerequisite for tag push**: PyPI OIDC trusted publisher registered (Phase 2). Without it, `release.yml` fails on first tag — register, then re-run the failed workflow (no re-tag needed).
-- **Concurrent worker artifacts referenced** (assume they land; fall back inline if missing): `v0.2.0_RELEASE_NOTES.md`, `v0.2.0_RELEASE_READINESS.md`, `launch_kit/LAUNCH_DAY_TIMELINE.md`, `launch_kit/SOCIAL_POSTS.md`, `launch_kit/SHOW_HN_HEADLINES.md`, `launch_kit/HN_REDDIT_FAQ.md`, `launch_kit/60_SECOND_DEMO_SCRIPT.md`, `research/benchmarks_v0.2.0.md` (current empirical truth at `docs/benchmarks/2026-05-15_baseline.md`).
+- **Concurrent worker artifacts referenced** (assume they land; fall back inline if missing): `v0.2.0_RELEASE_NOTES.md`, `v0.2.0_RELEASE_READINESS.md`, `launch_kit/LAUNCH_DAY_TIMELINE.md`, `launch_kit/SOCIAL_POSTS.md`, `launch_kit/SHOW_HN_HEADLINES.md`, `launch_kit/HN_REDDIT_FAQ.md`, `launch_kit/60_SECOND_DEMO_SCRIPT.md`, `research/benchmarks_v0.2.0.md` (current empirical truth at `docs/internal/benchmarks/2026-05-15_baseline.md`).
 
 ---
 
@@ -32,9 +32,9 @@
 - [ ] **Benchmark numbers memorized** for HN-comment defense. _(5 min reading)_
 
   ```powershell
-  rg -n "^(BLOCKER|MEDIUM|LOW)" docs/benchmarks/2026-05-15_baseline.md
+  rg -n "^(BLOCKER|MEDIUM|LOW)" docs/internal/benchmarks/2026-05-15_baseline.md
   ```
-  Memorize: boot ~2.1 s warm, 10 GB materialize peak 8.4 GB RAM, B4 concurrent-run race FAILS on Windows / PASSES on Linux+WSL. Lead message for HN: "honest baseline at `docs/benchmarks/`; 11 measured gaps vs aspirational targets; v0.3 closes them; numbers published before launch, not after."
+  Memorize: boot ~2.1 s warm, 10 GB materialize peak 8.4 GB RAM, B4 concurrent-run race FAILS on Windows / PASSES on Linux+WSL. Lead message for HN: "honest baseline at `docs/internal/benchmarks/`; 11 measured gaps vs aspirational targets; v0.3 closes them; numbers published before launch, not after."
 
 - [ ] **Demo video recorded** following `60_SECOND_DEMO_SCRIPT.md` (fallback: 8-command happy path from `docs/onboarding/quickstart.md`); upload to YouTube **unlisted** first. _(4 min)_
 
@@ -204,7 +204,7 @@ Follow `launch_kit/LAUNCH_DAY_TIMELINE.md` if present; otherwise the order below
   Start-Process "docs/release/launch_kit/twitter_thread.md"
   ```
 
-- [ ] **T+10 min** — Email PoC #5 round-2 testers using `docs/poc/p5_beachhead/OUTREACH_EMAIL_TEMPLATE.md`. Include the HN submission URL + PyPI install one-liner. _(5 min)_
+- [ ] **T+10 min** — Email PoC #5 round-2 testers using `docs/internal/poc/p5_beachhead/OUTREACH_EMAIL_TEMPLATE.md`. Include the HN submission URL + PyPI install one-liner. _(5 min)_
 
 - [ ] **T+30 min** — Cross-post: `r/dataengineering` (body: `reddit_r_dataengineering.md`), LinkedIn (`linkedin_post.md`), dev.to/Hashnode/Medium (`blog_post_launch.md`). _(10 min total)_
 
@@ -249,7 +249,7 @@ Follow `launch_kit/LAUNCH_DAY_TIMELINE.md` if present; otherwise the order below
   curl.exe -fsS "https://pypistats.org/api/packages/nucleus/recent" | python -m json.tool
   ```
 
-- [ ] **PoC #5 round-2 feedback** → triage into v0.3 backlog at `docs/poc/p5_beachhead/AGGREGATE_FINDINGS.md`. _(30 min review)_
+- [ ] **PoC #5 round-2 feedback** → triage into v0.3 backlog at `docs/internal/poc/p5_beachhead/AGGREGATE_FINDINGS.md`. _(30 min review)_
 
 - [ ] **Update** `docs/FOUNDER_ACTION_QUEUE.md` — prepend a new `## §0.4` section summarizing launch outcome + new founder-gated items surfaced. _(15 min)_
 

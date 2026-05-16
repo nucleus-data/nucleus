@@ -40,7 +40,7 @@ Plus: **"data product" defined explicitly** in `README.md` and `AGENTS.md §0` a
 
 Tagline locking deferred to PoC #5 external-tester field test per ADR-002 §8.4.
 
-**Evening-pass follow-up (2026-05-12).** Worker B's drift sweep (`docs/audits/positioning_drift_2026-05-12.md`) surfaced 2 items the initial v4.1.3 apply log missed: (a) `docs/architecture/C4_context.md:29` Mermaid label still carried the pre-v4.1.3 thesis — fixed; the initial ADR-002 §8.6 apply log didn't include C4 diagrams. (b) `§1.2` trend table row 6 contained `"AI-native data contracts"` (banned vocab per `scripts/check_vocabulary.py`) — renamed to `"AI-assisted contract authoring"`; this was a pre-existing drift, not caused by v4.1.3, but fixed opportunistically since v4.1 was being touched. ADR-002 §8.6.1 carries the extended apply log. <!-- banned-term: AI-native -->
+**Evening-pass follow-up (2026-05-12).** Worker B's drift sweep (`docs/internal/audits/positioning_drift_2026-05-12.md`) surfaced 2 items the initial v4.1.3 apply log missed: (a) `docs/architecture/C4_context.md:29` Mermaid label still carried the pre-v4.1.3 thesis — fixed; the initial ADR-002 §8.6 apply log didn't include C4 diagrams. (b) `§1.2` trend table row 6 contained `"AI-native data contracts"` (banned vocab per `scripts/check_vocabulary.py`) — renamed to `"AI-assisted contract authoring"`; this was a pre-existing drift, not caused by v4.1.3, but fixed opportunistically since v4.1 was being touched. ADR-002 §8.6.1 carries the extended apply log. <!-- banned-term: AI-native -->
 
 **Alignment sweep #1 follow-up (2026-05-13).** Worker R's research (`docs/internal/research/lance.md` §9 item 7 + §10 risk #4) flagged that §4 Tier 0 row 4 claimed Lance is *"Linux Foundation aligned"* — no public LF announcement enumerates Lance as of 2026-05-13. Phrasing downgraded to *"ASF-inspired governance, open spec"* (the verifiable claim per Lance's three-tier PMC/Maintainers/Contributors model + the `lance-format/lance` repo separation from LanceDB Inc.'s commercial brand). Tier 0 case stands on Lance's other 6 qualifications (`docs/internal/research/lance.md` §9 items 1-6); only the marketing phrasing changed.
 
@@ -672,7 +672,7 @@ If any test fails before v1.0 GA, **release blocked.**
 
 Migration: 30 days. Lost capabilities: advanced backfill UI, some sensor types, dynamic partitioning. Public `ctx` API: **unchanged**.
 
-Documented in `/docs/swap/dagster.md`.
+Documented in `/docs/internal/swap/dagster.md`.
 
 ---
 
@@ -805,7 +805,7 @@ Every run snapshotted (code git hash, input snapshots, config, output). Replay a
 >   1. **A clean swap interface** (types compile, API surface matches) — ALWAYS maintained
 >   2. **Basic smoke tests** (5-10 tests, not full E2E) — ALWAYS run in CI
 >   3. **Full swap implementation** — built **on-demand** when trigger event fires (vendor death, license pivot, perf regression, community demand)
->   4. **Migration path documented** in `/docs/swap/{component}.md`
+>   4. **Migration path documented** in `/docs/internal/swap/{component}.md`
 >
 > If a component cannot be swapped, it MUST be Tier 0 (immortal standard).
 

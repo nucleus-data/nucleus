@@ -2,7 +2,7 @@
 
 > **Stability**: Beta (v0.2) · **Spec**: `docs/specs/nucleus_cli_spec.md` §3
 > **Closes**: PoC #5 Checkpoint 7 — asset discoverability blocker
-> (`docs/poc/p5_beachhead/FEEDBACK_FORM.md` Friction #5 + "What would make
+> (`docs/internal/poc/p5_beachhead/FEEDBACK_FORM.md` Friction #5 + "What would make
 > me a paying user" #3).
 
 List every registered asset (and check) in the current Nucleus project,

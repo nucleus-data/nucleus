@@ -1,6 +1,6 @@
 # MinIO Research — Local S3 Storage Substrate
 
-> **Status**: **ALTERNATE substrate per [ADR-008](../decisions/ADR-008-storage-substrate-v01.md) (dual-track docker-compose).** SeaweedFS is now the documentation default (`docker-compose.yml`, Apache-2.0, actively maintained — release 2025-05-04); MinIO preserved as opt-in alternate via `docker-compose.minio.yml` for teams with existing MinIO tooling. Supply-chain context retained below: `github.com/minio/minio` (OSS server) was **archived 2026-04-25**; last release `RELEASE.2025-09-07T16-13-09Z` (2025-10-15). MinIO Inc. publicly labels OSS MinIO **"unmaintained"** ([blog](https://blog.min.io/blog/minio-aistor-vs-minio-oss-technical-comparison): *"13,000+ commits separating AIStor from unmaintained OSS"*). ADR-008 resolved the AGENTS.md §9 Stop Condition this research originally triggered; this file remains the archived-substrate reference for the alternate compose template.
+> **Status**: **ALTERNATE substrate per [ADR-008](../../decisions/ADR-008-storage-substrate-v01.md) (dual-track docker-compose).** SeaweedFS is now the documentation default (`docker-compose.yml`, Apache-2.0, actively maintained — release 2025-05-04); MinIO preserved as opt-in alternate via `docker-compose.minio.yml` for teams with existing MinIO tooling. Supply-chain context retained below: `github.com/minio/minio` (OSS server) was **archived 2026-04-25**; last release `RELEASE.2025-09-07T16-13-09Z` (2025-10-15). MinIO Inc. publicly labels OSS MinIO **"unmaintained"** ([blog](https://blog.min.io/blog/minio-aistor-vs-minio-oss-technical-comparison): *"13,000+ commits separating AIStor from unmaintained OSS"*). ADR-008 resolved the AGENTS.md §9 Stop Condition this research originally triggered; this file remains the archived-substrate reference for the alternate compose template.
 > **Date**: 2026-05-13 · **Owner**: Solo founder
 > **Tier**: **S3 API = Tier 0** (immortal) per `docs/specs/nucleus_architecture_v4.1.md` §3.1 + §4.1 + §5.8; **MinIO server = Tier 1 implementation** (swappable per Constraint #9).
 > **Wrapping mode**: ZERO Python import in the hot path. Nucleus does NOT `import minio`. It speaks the S3 API via `pyiceberg`'s `PyArrowFileIO` and `s3fs` (transitive via `pyiceberg[s3fs]==0.8.1`). The MinIO **server** is a runtime dependency (docker container or single binary), not a Python pin.
@@ -206,7 +206,7 @@ S3 API is Tier 0 immortal (v4.1 §4.1); the implementation is swappable. Given �
 | 6 | `fsspec` local filesystem (`file://`) | OSS various | Dev-mode fallback only | When Docker is unavailable |
 | 7 | MinIO archived release | AGPLv3 | Frozen 2026-04-25 | Backwards-compat template for users with existing MinIO familiarity |
 
-**`docs/swap/minio.md` action**: document the **MinIO → SeaweedFS** drill. Same S3 URIs, identical smoke tests (pyiceberg write + DuckDB scan + Polars read). Drill should run in CI per Constraint #9 (basic smoke tests, full adapter on-demand).
+**`docs/internal/swap/minio.md` action**: document the **MinIO → SeaweedFS** drill. Same S3 URIs, identical smoke tests (pyiceberg write + DuckDB scan + Polars read). Drill should run in CI per Constraint #9 (basic smoke tests, full adapter on-demand).
 
 ---
 
@@ -270,7 +270,7 @@ Both satisfy the S3-API contract identically as far as Nucleus's hot path can te
 - AIStor commercial docs + license (out of scope): <https://docs.min.io/aistor/> · <https://docs.min.io/license/>
 - pyiceberg S3 FileIO: <https://py.iceberg.apache.org/configuration/#s3> · DuckDB httpfs S3: <https://duckdb.org/docs/current/core_extensions/httpfs/s3api.html>
 - **SeaweedFS** (primary swap target) + releases + LICENSE (Apache-2.0): <https://github.com/seaweedfs/seaweedfs> · <https://github.com/seaweedfs/seaweedfs/releases> · <https://raw.githubusercontent.com/seaweedfs/seaweedfs/master/LICENSE>
-- Internal: [`lakekeeper.md`](./lakekeeper.md) §6, [`polaris.md`](./polaris.md) §6, [`pyiceberg.md`](./pyiceberg.md) §5, [`ai_hallucinations.md`](./ai_hallucinations.md), [`pyproject.toml`](../../pyproject.toml), [`poc/p4_boot_time/measure.py`](../../poc/p4_boot_time/measure.py), `docs/specs/nucleus_architecture_v4.1.md` §3.1 + §4.1 + §5.8, `AGENTS.md` §3 #1/#10/#11 + §9.
+- Internal: [`lakekeeper.md`](./lakekeeper.md) §6, [`polaris.md`](./polaris.md) §6, [`pyiceberg.md`](./pyiceberg.md) §5, [`ai_hallucinations.md`](./ai_hallucinations.md), [`pyproject.toml`](../../../pyproject.toml), [`poc/p4_boot_time/measure.py`](../../../poc/p4_boot_time/measure.py), `docs/specs/nucleus_architecture_v4.1.md` §3.1 + §4.1 + §5.8, `AGENTS.md` §3 #1/#10/#11 + §9.
 
 ---
 

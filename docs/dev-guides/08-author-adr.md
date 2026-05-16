@@ -117,7 +117,7 @@ Reference the Five Pillars and beachhead metric if relevant.>
 |---|---|---|---|
 | `<package>` | `X.Y.Z` | MIT | GREEN |
 
-**Swap target** (for Tier 1/2 dependencies): `docs/swap/<component>.md`
+**Swap target** (for Tier 1/2 dependencies): `docs/internal/swap/<component>.md`
 
 **Rollback**: `pip install <old-package>==<old-version>` (or: no rollback path after vX.Y merge)
 

@@ -15,7 +15,7 @@
 - [ ] CI on `main` is green immediately before tag push.
 - [ ] `python scripts/check_vocabulary.py` exits 0.
 - [ ] `python scripts/dagster_leak_check.py` exits 0.
-- [ ] `docs/benchmarks/2026-05-15_baseline.md` known gaps are reflected in public-facing copy: 11 measured deltas, Windows concurrent-run failure, and v0.2.1 follow-up.
+- [ ] `docs/internal/benchmarks/2026-05-15_baseline.md` known gaps are reflected in public-facing copy: 11 measured deltas, Windows concurrent-run failure, and v0.2.1 follow-up.
 - [ ] Screenshots and demo status are explicit. If `assets/demos/v0.2/launch_60s.mp4` or `assets/screenshots/v0.2/` outputs are missing, do not use media-heavy posts until Workstream C produces them.
 
 ## SHOULD PASS before public

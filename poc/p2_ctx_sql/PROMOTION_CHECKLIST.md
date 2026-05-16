@@ -38,7 +38,7 @@
 
 ## §5 Rollback plan
 
-`git revert <promotion_commit_sha>` (PR uses *Squash and merge* → atomic). Resolver stays in `poc/p2_ctx_sql/` for one minor version as dual-source; remove the `poc/` copy only after **30 consecutive days** of zero `NucleusInternalError` fallbacks attributable to resolver gaps AND zero open `NEEDS VERIFICATION` markers in the promoted module. If post-promotion CI fails: document the failure in `poc/p2_ctx_sql/PROMOTION_FAILURES.md` (new file) and re-iterate inside `/poc/` before the next attempt.
+`git revert <promotion_commit_sha>` (PR uses *Squash and merge* → atomic). Resolver stays in `poc/p2_ctx_sql/` for one minor version as dual-source; remove the `poc/` copy only after **30 consecutive days** of zero `NucleusInternalError` fallbacks attributable to resolver gaps AND zero open `NEEDS VERIFICATION` markers in the promoted module. If post-promotion CI fails: document the failure in `poc/p2_ctx_sql/PROMOTION_FAILURES.md` (new file) and re-iterate inside `/internal/poc/` before the next attempt.
 
 ## §6 Downstream consumers (sequencing matters)
 

@@ -42,7 +42,7 @@ Source: `https://pypi.org/pypi/pyiceberg/0.8.1/json` + `https://pypi.org/simple/
 
 - **Layer**: L0 (Physics). Wrapped at L2 by the Asset Materialization Adapter.
 - **Only way Nucleus writes tables** — Constraint #4 forbids a custom table format.
-- **Atomic commits delegated** — per [ADR-001](../decisions/ADR-001-no-iceberg-commit-service.md), no custom commit service. PyIceberg + its configured catalog handle atomicity.
+- **Atomic commits delegated** — per [ADR-001](../../decisions/ADR-001-no-iceberg-commit-service.md), no custom commit service. PyIceberg + its configured catalog handle atomicity.
 - **Catalog-pluggable from day 1** — filesystem (v0.1) → SQL (v0.3) → REST/Lakekeeper (v0.3+) is a config swap, not a code rewrite. Satisfies Constraint #9.
 - **Graduation-friendly** — tables are bit-identical to those written by Spark/Trino/Snowflake/Databricks. Yield-to-giants Mode 1 free.
 - **Alternative rejected for v0.1**: [iceberg-rust](https://github.com/apache/iceberg-rust) — fewer catalog backends, less mature write path. Tracked as a long-horizon swap target.
@@ -94,7 +94,7 @@ Vocabulary (per `engineering.md` §15): **tables** when raw Iceberg, **assets** 
 
 ## §6. Exception types we'll translate (critical for PoC #1)
 
-All defined in [`pyiceberg.exceptions`](https://py.iceberg.apache.org/api/#exceptions). Mappings authoritative in [`sequence_error_translation.md` §4.4](../architecture/sequence_error_translation.md).
+All defined in [`pyiceberg.exceptions`](https://py.iceberg.apache.org/api/#exceptions). Mappings authoritative in [`sequence_error_translation.md` §4.4](../../architecture/sequence_error_translation.md).
 
 | PyIceberg exception | When raised | NucleusError target | Note |
 |---|---|---|---|

@@ -51,5 +51,5 @@ containing the timeline + post-session ratings. stdlib only — no
 ## Promotion target
 
 **None** — PoC #5 is methodology. Results land in
-`docs/audits/poc5_beachhead_<YYYY-MM-DD>.md` and feed the v0.1
+`docs/internal/audits/poc5_beachhead_<YYYY-MM-DD>.md` and feed the v0.1
 ship / no-ship decision at `docs/specs/nucleus_poc_plan.md` §13.

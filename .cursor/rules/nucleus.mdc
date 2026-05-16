@@ -61,7 +61,7 @@ Every Tier 1/2 dependency MUST have:
 1. **Clean swap interface** (types compile, API surface matches) — ALWAYS maintained
 2. **Basic smoke tests** (5-10 tests, not full E2E) — ALWAYS run in CI
 3. **Full swap implementation** — built **on-demand** when trigger event fires (vendor death, license pivot, perf regression >2x, community demand)
-4. Migration path documented in `/docs/swap/{component}.md`
+4. Migration path documented in `/docs/internal/swap/{component}.md`
 
 Tier 0 (immortal) only: Apache Arrow, Iceberg, Parquet, Lance, S3 API, OpenLineage, OpenTelemetry.
 
@@ -228,7 +228,7 @@ When a background worker completes:
 3. **Rebuild the auto-queue** at end-of-day batch (or when it drops below 2 items). Sources, in priority order:
    - (a) v0.1 critical-path remaining (CLI wiring, AMA, beachhead E2E)
    - (b) Verifier caveats not yet cleared
-   - (c) ADR-flagged stubs (e.g., `docs/errors/`, `docs/swap/*`)
+   - (c) ADR-flagged stubs (e.g., `docs/errors/`, `docs/internal/swap/*`)
    - (d) End-of-day tracking-doc batch sweep
    - (e) PoC #5 readiness work
 4. **Anti-collision check** before every launch: confirm the new worker's file ownership is disjoint from in-flight workers. If unavoidable collision, queue sequentially.
@@ -275,9 +275,9 @@ These rules supplement `AGENTS.md §11` (universal workflow discipline) with Cur
 
 If user asks for v0.1 module code now, response is:
 
-> Per AGENTS.md §11.1, we cannot write production code until PoC #1 passes. Current PoC status: [check `/poc/` folder]. Suggested next step: [PoC #1 work].
+> Per AGENTS.md §11.1, we cannot write production code until PoC #1 passes. Current PoC status: [check `/internal/poc/` folder]. Suggested next step: [PoC #1 work].
 
-PoC work goes in `/poc/` directory, NOT `/nucleus/`.
+PoC work goes in `/internal/poc/` directory, NOT `/nucleus/`.
 
 ### @-Reference Hygiene
 
@@ -482,11 +482,11 @@ Do NOT create these files (they would cause drift):
 DO create:
 
 - ✅ `/docs/decisions/ADR-NNN-<title>.md` for build-vs-wrap decisions
-- ✅ `/docs/swap/<component>.md` for swap target documentation
+- ✅ `/docs/internal/swap/<component>.md` for swap target documentation
 - ✅ `/docs/internal/research/<component>.md` for official docs notes (per Constraint #10)
 - ✅ `/docs/internal/research/ai_hallucinations.md` to log AI-fabricated APIs (per Constraint #10)
 - ✅ `/docs/compatibility.md` for version matrix (per Constraint #11)
-- ✅ `/poc/poc<N>_<name>/` for PoC stubs
+- ✅ `/internal/poc/poc<N>_<name>/` for PoC stubs
 - ✅ `/scripts/<discipline>.py` for CI enforcement scripts
 
 ### Official Documentation Verification (mandatory, per Constraint #10)

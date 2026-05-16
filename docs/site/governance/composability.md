@@ -9,7 +9,7 @@ Per [architecture v4.1 §9](https://github.com/nucleus-data/nucleus/blob/main/nu
 
 1. **A clean swap interface** — types compile, API surface matches — ALWAYS maintained
 2. **Basic smoke tests** (5-10 tests) — ALWAYS run in CI
-3. **A documented migration path** in `/docs/swap/<component>.md`
+3. **A documented migration path** in `/docs/internal/swap/<component>.md`
 
 Full swap implementations are built **on-demand** when a trigger fires, not speculatively.
 
@@ -45,16 +45,16 @@ A full swap implementation is built when **any** of these fire:
 
 ## Swap docs
 
-Swap migration paths are documented in `/docs/swap/`:
+Swap migration paths are documented in `/docs/internal/swap/`:
 
 | File | Component |
 |------|-----------|
-| `docs/swap/duckdb.md` | DataFusion as DuckDB swap |
-| `docs/swap/polars.md` | DataFusion DF as Polars swap |
-| `docs/swap/dagster.md` | nucleus-mini-scheduler fallback |
-| `docs/swap/lakekeeper.md` | Apache Polaris as Lakekeeper swap |
-| `docs/swap/pyiceberg.md` | pyiceberg version upgrade notes |
-| `docs/swap/dlt.md` | Sling/Singer as dlt swap |
+| `docs/internal/swap/duckdb.md` | DataFusion as DuckDB swap |
+| `docs/internal/swap/polars.md` | DataFusion DF as Polars swap |
+| `docs/internal/swap/dagster.md` | nucleus-mini-scheduler fallback |
+| `docs/internal/swap/lakekeeper.md` | Apache Polaris as Lakekeeper swap |
+| `docs/internal/swap/pyiceberg.md` | pyiceberg version upgrade notes |
+| `docs/internal/swap/dlt.md` | Sling/Singer as dlt swap |
 
 ## CI enforcement
 

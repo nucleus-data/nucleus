@@ -24,7 +24,7 @@ Your prompt MUST include:
 
 1. **Component name** (e.g., `pyiceberg`, `lakekeeper`, `marimo`)
 2. **Current pin** in `pyproject.toml` (or "not yet pinned" if greenfield evaluation)
-3. **Target doc path** — typically `docs/internal/research/<component>.md` or `docs/swap/<component>.md`
+3. **Target doc path** — typically `docs/internal/research/<component>.md` or `docs/internal/swap/<component>.md`
 4. **Scope** — what questions the founder is trying to answer (e.g., "Is X production-ready for v0.3?", "What's the swap cost from A to B?")
 5. **Tier** (per AGENTS.md §1 Hard Constraints):
    - Tier 0 (immortal): Apache Arrow, Iceberg, Parquet, Lance, S3 API, OpenLineage, OpenTelemetry

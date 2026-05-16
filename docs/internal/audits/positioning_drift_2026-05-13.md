@@ -10,7 +10,7 @@
 
 **Method**: `.venv\Scripts\python.exe scripts/check_vocabulary.py` (banned terms loaded from `pyproject.toml [tool.nucleus]`).
 
-**1 hit, FAILing CI exit-1**: [`docs/architecture/C4_component.md:168`](../architecture/C4_component.md) — `AI-native` in a legitimate negation context (*"we are AI-**ready**, not AI-native"*) but missing the inline `<!-- banned-term: AI-native -->` exemption required by `scripts/check_vocabulary.py:91`. Same root cause as 2026-05-12 §1 row 2 (`v4.1.md:170`, since fixed).
+**1 hit, FAILing CI exit-1**: [`docs/architecture/C4_component.md:168`](../../architecture/C4_component.md) — `AI-native` in a legitimate negation context (*"we are AI-**ready**, not AI-native"*) but missing the inline `<!-- banned-term: AI-native -->` exemption required by `scripts/check_vocabulary.py:91`. Same root cause as 2026-05-12 §1 row 2 (`v4.1.md:170`, since fixed).
 
 **Recommendation**: mechanical-fix — append exemption marker; `check_vocabulary.py` returns exit 0.
 
@@ -34,7 +34,7 @@
 |---|---|---|
 | `NucleusAssetNotFound` vs `…NotFoundError` | Zero `…NotFoundError` matches workspace-wide. | Clean. |
 | `AssetRef` vs `NucleusAsset` | ADR-013 §1 + NV #5 binds `AssetRef`; only outlier is skeleton plan §6 Q2 prose (owed FAQ §C3.3). | Self-disclosed. |
-| `ctx.materialize` vs `ctx.materialize_assets` | Plural drift at [`docs/specs/nucleus_cli_spec.md:52`](../specs/nucleus_cli_spec.md) inside the same paragraph that cites singular `ctx.materialize(...)`. | Self-disclosed ADR-013 NV #1 + [FAQ §C3.3](../FOUNDER_ACTION_QUEUE.md). Founder. |
+| `ctx.materialize` vs `ctx.materialize_assets` | Plural drift at [`docs/specs/nucleus_cli_spec.md:52`](../../specs/nucleus_cli_spec.md) inside the same paragraph that cites singular `ctx.materialize(...)`. | Self-disclosed ADR-013 NV #1 + [FAQ §C3.3](../../FOUNDER_ACTION_QUEUE.md). Founder. |
 | `nucleus run` vs `nucleus materialize` | CLI = `nucleus run`; SDK = `ctx.materialize`. Documented split (`sequence_asset_materialization.md:75`). | Clean (intentional). |
 | `NE3004` vs `NE.3004` vs `NE-3004` | Zero `NE-\d{4}` or `NE\.\d{4}` matches. Only canonical `NE[1-5]\d{3}`. | Clean. |
 | `Iceberg REST catalog` vs `Iceberg catalog` vs `REST catalog` | Disciplined: REST form for transport-specific (`seaweedfs.md`, lakekeeper row); bare form for the generic primitive (`README.md:7`, `errors.py:195`). | Clean (intentional). |
@@ -47,7 +47,7 @@
 
 **Method**: `Grep "^>\s*\*\*Status\*\*:" docs/decisions/ADR-*.md` + read of `AGENTS.md` §1 + `docs/specs/nucleus_poc_plan.md` + `loc_budget.py` verdict.
 
-**Clean.** ADRs 002–013 all PROPOSED (ADR-001 = Accepted, pre-existing); `docs/specs/nucleus_poc_plan.md` zero `PROMOTED` / `ACCEPTED` matches; [`AGENTS.md:42-46`](../../AGENTS.md) phase-gate rows still `[ ] PoC #1 …` through `[ ] v0.1 implementation`; LOC budget GREEN (227 / 8000 = 2.8 %). Informational only: [`budget_history.md:64`](../budget_history.md) records PoC total `1,344 LOC` (point-in-time); live `loc_budget.py` reports `1,644 LOC` (+300 from same-day PROMOTION_PR_DRAFTs / REVIEW_NOTES). Not drift; reconciles next monthly snapshot.
+**Clean.** ADRs 002–013 all PROPOSED (ADR-001 = Accepted, pre-existing); `docs/specs/nucleus_poc_plan.md` zero `PROMOTED` / `ACCEPTED` matches; [`AGENTS.md:42-46`](../../../AGENTS.md) phase-gate rows still `[ ] PoC #1 …` through `[ ] v0.1 implementation`; LOC budget GREEN (227 / 8000 = 2.8 %). Informational only: [`budget_history.md:64`](../../budget_history.md) records PoC total `1,344 LOC` (point-in-time); live `loc_budget.py` reports `1,644 LOC` (+300 from same-day PROMOTION_PR_DRAFTs / REVIEW_NOTES). Not drift; reconciles next monthly snapshot.
 
 ---
 
@@ -63,11 +63,11 @@
 
 **Still stale — NOT in FAQ (newly surfaced this audit)**:
 
-- [`README.md:211`](../../README.md) — *"the archived MinIO `RELEASE.2025-10-15T17-29-55Z` is preserved …"* · **MEDIUM** (user-visible quickstart).
-- [`docs/specs/nucleus_architecture_v4.1.md:47`](../specs/nucleus_architecture_v4.1.md) — MinIO tag (alignment-sweep-#2 prose) · **MEDIUM** (critical doc, founder-only).
+- [`README.md:211`](../../../README.md) — *"the archived MinIO `RELEASE.2025-10-15T17-29-55Z` is preserved …"* · **MEDIUM** (user-visible quickstart).
+- [`docs/specs/nucleus_architecture_v4.1.md:47`](../../specs/nucleus_architecture_v4.1.md) — MinIO tag (alignment-sweep-#2 prose) · **MEDIUM** (critical doc, founder-only).
 - `docs/specs/nucleus_architecture_v4.1.md:529` — MinIO tag + SeaweedFS year (storage-substrate paragraph) · MEDIUM.
 - [`docs/internal/research/README.md:39`](../research/README.md) — MinIO row pin string · LOW (FAQ §E5.3 flags as optional polish).
-- [`docs/NEEDS_VERIFICATION_INDEX.md:216`](../NEEDS_VERIFICATION_INDEX.md) — *"pin candidate post-**2026**-05-04 per ADR-008"* · LOW. Brief cited `:185`; actual location is `:216`.
+- [`docs/NEEDS_VERIFICATION_INDEX.md:216`](../../NEEDS_VERIFICATION_INDEX.md) — *"pin candidate post-**2026**-05-04 per ADR-008"* · LOW. Brief cited `:185`; actual location is `:216`.
 
 **Confirmed corrected** (no action): `minio.md:3,25,65,217,237` · `docker-compose.yml:8` (SeaweedFS `4.23`/`2025-05-04`, Worker B sha-verified) · `docker-compose.minio.yml:8` (MinIO `RELEASE.2025-09-07T16-13-09Z`, sha-verified). **Meta-commentary** (DO NOT fix): `ai_hallucinations.md:41-47` · `nucleus-wrapped-api-verify/SKILL.md:59` · `compatibility.md:109` · `FOUNDER_ACTION_QUEUE.md:163` · `minio.md:245`.
 
@@ -96,17 +96,17 @@
 
 **Same single hit as §1** — `C4_component.md:168` `AI-native` without exemption.
 
-All others clean: **inline-exempted** at `lance.md:226`, `slack_bot_on_data.md:18`, `README.md:79`, `docs/specs/nucleus_vs_databricks.md:347`, `AGENTS.md:14/194/199`, `v4.1.md:43/239`, `.cursor/rules/nucleus.mdc:129-140`; **whole-file-exempt** per `check_vocabulary.py:81-87` (`docs/decisions/`, `docs/audits/`, `docs/internal/research/strategic/`, `nucleus_architecture_v3.md`, `nucleus_architecture_v4.md`, `pyproject.toml`); **quoted negation** in spec / convention (`AGENTS.md §3/§7/§8`, `.cursor/rules/nucleus.mdc` Forbidden Framings, `docs/specs/nucleus_vs_databricks.md:214/337`, `PR template:69`). §1 fix retires this category.
+All others clean: **inline-exempted** at `lance.md:226`, `slack_bot_on_data.md:18`, `README.md:79`, `docs/specs/nucleus_vs_databricks.md:347`, `AGENTS.md:14/194/199`, `v4.1.md:43/239`, `.cursor/rules/nucleus.mdc:129-140`; **whole-file-exempt** per `check_vocabulary.py:81-87` (`docs/decisions/`, `docs/internal/audits/`, `docs/internal/research/strategic/`, `nucleus_architecture_v3.md`, `nucleus_architecture_v4.md`, `pyproject.toml`); **quoted negation** in spec / convention (`AGENTS.md §3/§7/§8`, `.cursor/rules/nucleus.mdc` Forbidden Framings, `docs/specs/nucleus_vs_databricks.md:214/337`, `PR template:69`). §1 fix retires this category.
 
 ---
 
 ## §8. Top-5 most severe (sorted)
 
-1. **[`docs/architecture/C4_component.md:168`](../architecture/C4_component.md)** · `AI-native` missing exemption · **mechanical-fix** · 1-line · trips CI today.
-2. **[`README.md:211`](../../README.md)** · stale `RELEASE.2025-10-15T17-29-55Z` in user-visible quickstart · **mechanical-fix** · bundle with A1.14 PR.
-3. **[`docs/specs/nucleus_architecture_v4.1.md:47, :529`](../specs/nucleus_architecture_v4.1.md)** · 2× stale MinIO tag + 1× SeaweedFS year typo in critical doc · **founder-amendment** · bundle with A1.14 + A1.15.
-4. **[`ADR-008-storage-substrate-v01.md` lines 10/16/32/33/66/109](../decisions/ADR-008-storage-substrate-v01.md)** · 6 stale refs in URGENT pre-v0.1-blocker ADR · **founder-amendment** · already queued FAQ §C3.1 + sign-off step 7.
-5. **[`docs/specs/nucleus_cli_spec.md:52`](../specs/nucleus_cli_spec.md)** · `ctx.materialize_assets([...])` plural drift in `nucleus run` Wraps line · **founder-amendment** · already queued ADR-013 NV #1 + FAQ §C3.3 sign-off step 9.
+1. **[`docs/architecture/C4_component.md:168`](../../architecture/C4_component.md)** · `AI-native` missing exemption · **mechanical-fix** · 1-line · trips CI today.
+2. **[`README.md:211`](../../../README.md)** · stale `RELEASE.2025-10-15T17-29-55Z` in user-visible quickstart · **mechanical-fix** · bundle with A1.14 PR.
+3. **[`docs/specs/nucleus_architecture_v4.1.md:47, :529`](../../specs/nucleus_architecture_v4.1.md)** · 2× stale MinIO tag + 1× SeaweedFS year typo in critical doc · **founder-amendment** · bundle with A1.14 + A1.15.
+4. **[`ADR-008-storage-substrate-v01.md` lines 10/16/32/33/66/109](../../decisions/ADR-008-storage-substrate-v01.md)** · 6 stale refs in URGENT pre-v0.1-blocker ADR · **founder-amendment** · already queued FAQ §C3.1 + sign-off step 7.
+5. **[`docs/specs/nucleus_cli_spec.md:52`](../../specs/nucleus_cli_spec.md)** · `ctx.materialize_assets([...])` plural drift in `nucleus run` Wraps line · **founder-amendment** · already queued ADR-013 NV #1 + FAQ §C3.3 sign-off step 9.
 
 (Sixth: ADR-012:61/62 + research/README.md:39 + NV-INDEX:216 — all mechanical-fix LOW; same A1.14/A1.15 PR.)
 
@@ -136,4 +136,4 @@ Volume ballooned (16+ workers · ~30 files · 11 new ADRs · threat model · 3 P
 
 ---
 
-*Last verified 2026-05-13. Per [`docs/audits/README.md`](README.md): audits are append-only; un-fixed findings flow forward. Auto-fix log to be appended when the §1 vocab fix lands; founder-territory items (§5 stale residuals + §3 `_assets` plural) flow forward after FAQ §C3.1+§C3.2+§C3.3 sign-off.*
+*Last verified 2026-05-13. Per [`docs/internal/audits/README.md`](README.md): audits are append-only; un-fixed findings flow forward. Auto-fix log to be appended when the §1 vocab fix lands; founder-territory items (§5 stale residuals + §3 `_assets` plural) flow forward after FAQ §C3.1+§C3.2+§C3.3 sign-off.*

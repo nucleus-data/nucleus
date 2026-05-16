@@ -365,7 +365,7 @@ def main(argv: list[str] | None = None) -> int:
 
     result = BenchResult(
         name="B7: Schema check overhead",
-        script="scripts/benchmarks/b7_check_overhead.py",
+        script="scripts/internal/benchmarks/b7_check_overhead.py",
         command=f"{sys.executable} -m scripts.benchmarks.b7_check_overhead --scale {args.scale}",
         started_at=started_at,
         completed_at=completed_at,

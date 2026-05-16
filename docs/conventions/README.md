@@ -29,7 +29,7 @@ This file is a navigation index. Read the linked convention before opening any P
 - [`../research/`](../research/) — official-docs anchors per Hard Constraint #10
 - [`../decisions/`](../decisions/) — ADRs that amend a convention (e.g., ADR-005 SDK API freeze, ADR-006 error code numbering, ADR-007 license tier policy)
 - [`../patterns/secret_management.md`](../patterns/secret_management.md) — `pydantic.SecretStr` + `ctx.secrets` discipline (cross-cutting pattern)
-- [`../security/threat_model_v0.md`](../security/threat_model_v0.md) — security implications of convention drift
+- [`../internal/security/threat_model_v0.md`](../internal/security/threat_model_v0.md) — security implications of convention drift
 
 ---
 

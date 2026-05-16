@@ -378,7 +378,7 @@ def main(argv: list[str] | None = None) -> int:
 
     result = BenchResult(
         name="B6: Multi-asset DAG materialize",
-        script="scripts/benchmarks/b6_dag_materialize.py",
+        script="scripts/internal/benchmarks/b6_dag_materialize.py",
         command=(
             f"{sys.executable} -m scripts.benchmarks.b6_dag_materialize "
             f"--shape {args.shape} --rows {args.rows}"

@@ -119,7 +119,7 @@ Channels are ordered by expected yield-to-effort ratio, based on community size 
 | Day | Action |
 |---|---|
 | Day 15–16 | Aggregate all 5 feedback forms. Count friction entries per checkpoint. Compute NPS average. Identify top-3 friction themes. |
-| Day 17 | Write `docs/poc/p5_beachhead/results/AGGREGATE_SUMMARY.md` (see template structure below). |
+| Day 17 | Write `docs/internal/poc/p5_beachhead/results/AGGREGATE_SUMMARY.md` (see template structure below). |
 | Day 18–19 | Convert top-3 friction themes to backlog issues with severity + owner + resolution estimate. |
 | Day 20 | Founder decision: did we pass the PoC #5 gate? (see success criteria below) |
 | Day 21 | If PASS → unlock v0.1 ship gate per `docs/specs/nucleus_poc_plan.md` §13. If FAIL → schedule fix sprint and re-test. |
@@ -145,7 +145,7 @@ Per `docs/specs/nucleus_poc_plan.md` §5 and `AGENTS.md` §11.8:
 
 ## Aggregate summary template
 
-After all sessions complete, create `docs/poc/p5_beachhead/results/AGGREGATE_SUMMARY.md` with this structure:
+After all sessions complete, create `docs/internal/poc/p5_beachhead/results/AGGREGATE_SUMMARY.md` with this structure:
 
 ```markdown
 # PoC #5 Aggregate Summary

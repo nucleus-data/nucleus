@@ -3,11 +3,11 @@
 > **Created**: 2026-05-15 — GitHub repo Dependabot setup audit (foreground sweep).
 > **Repo**: `mtoanng/nucleus` (private, beta).
 > **Reviewer**: founder (via swarm-implementer foreground sweep, parent-supervised).
-> **Cross-refs**: `AGENTS.md` §11.13 (Constraint #11 — upgrade discipline), `docs/security/threat_model_v1.md` §11 (action items), `docs/security/README.md` (security docs nav).
+> **Cross-refs**: `AGENTS.md` §11.13 (Constraint #11 — upgrade discipline), `docs/internal/security/threat_model_v1.md` §11 (action items), `docs/internal/security/README.md` (security docs nav).
 
 This file is the **single source of truth** for *why* a given Dependabot alert was dismissed. The dismissal comment posted on each alert links back here for the full rationale (the GitHub API limits inline dismissal comments to 280 characters, so the alert-side comment is a pointer + one-line summary; the audit trail lives below).
 
-When you `gh api ".../dependabot/alerts/{N}" --jq .dismissed_reason` you will see `tolerable_risk`. When you read this file you will see *exactly which Nucleus code path makes that risk N/A in production* — pinned to file + line where applicable.
+When you `gh api ".../../dependabot/alerts/{N}" --jq .dismissed_reason` you will see `tolerable_risk`. When you read this file you will see *exactly which Nucleus code path makes that risk N/A in production* — pinned to file + line where applicable.
 
 If a future Nucleus change introduces the vulnerable code path, the corresponding alert MUST be re-opened by editing `state=open` via `gh api -X PATCH`. The verification greps below are the canonical "did this change re-open the attack surface?" probes.
 

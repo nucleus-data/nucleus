@@ -38,7 +38,7 @@ https://github.com/nucleus-data/nucleus
 >
 > **3. Honest disclosures.**
 > - It's beta. v0.2.0 is the first publicly available release; v0.1.0 was an internal beta two days ago.
-> - Performance numbers in `docs/benchmarks/2026-05-15_baseline.md` show 11 measured failures vs aspirational targets. Boot time is ~2 s on a contention-loaded host (target was <500 ms — the host had only 1 GB free RAM during the run, so re-measurement on a freshly-booted laptop is tracked for v0.2.1). The B4 concurrent-run safety test FAILs on Windows because NTFS lock semantics differ from POSIX (`fcntl.flock` works; `msvcrt.locking` byte-range doesn't serialize the same way) — Linux/WSL passes. I'm publishing the numbers honestly rather than re-running until they pass.
+> - Performance numbers in `docs/internal/benchmarks/2026-05-15_baseline.md` show 11 measured failures vs aspirational targets. Boot time is ~2 s on a contention-loaded host (target was <500 ms — the host had only 1 GB free RAM during the run, so re-measurement on a freshly-booted laptop is tracked for v0.2.1). The B4 concurrent-run safety test FAILs on Windows because NTFS lock semantics differ from POSIX (`fcntl.flock` works; `msvcrt.locking` byte-range doesn't serialize the same way) — Linux/WSL passes. I'm publishing the numbers honestly rather than re-running until they pass.
 > - This is a solo project. There is no team behind it (yet). The Mo 24 decision gate per ADR-002 §8.3 forces me to commit to (a) raise, (b) hand off, or (c) accept indie outcome — no default extension permitted.
 >
 > The architecture doc (`docs/specs/nucleus_architecture_v4.1.md`, ~50 min read) is the source of truth. The "yield to giants" strategy is explicit: the day a team outgrows Nucleus, they point Databricks/Snowflake at the same S3 + Iceberg catalog and they're done. Mode 1 graduation is zero effort because it's just Iceberg portability — there is no Nucleus byte format to migrate off.
@@ -126,7 +126,7 @@ https://github.com/nucleus-data/nucleus
 - ❌ "Show HN: AI-native data platform" (banned framing) <!-- banned-term: AI-native -->
 - ❌ "Show HN: Nucleus — Spark killer" (banned framing) <!-- banned-term: Spark killer -->
 - ❌ Any comparison that bashes Databricks / Snowflake / dbt / Dagster — be respectful, they are excellent products that we wrap or yield to
-- ❌ Any LOC / benchmark number that is not in `docs/benchmarks/2026-05-15_baseline.md` or `docs/internal/research/scale_out_audit.md`
+- ❌ Any LOC / benchmark number that is not in `docs/internal/benchmarks/2026-05-15_baseline.md` or `docs/internal/research/scale_out_audit.md`
 - ❌ Any claim about "production-ready" — Nucleus v0.2 is **beta**
 
 ---

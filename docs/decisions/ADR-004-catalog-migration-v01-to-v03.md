@@ -41,7 +41,7 @@ ADR-002 §4.2 P2 elevated **Apache Polaris** to co-default with **Lakekeeper** a
 3. `pyiceberg.RestCatalog` → Polaris alternate via `nucleus enable polaris`; compose adds `apache/polaris:apache-polaris-1.4.1` + admin-tool init container + `postgres:15-alpine` (Worker H §4.2 + §5.1).
 4. `nucleus catalog migrate --from filesystem --to {lakekeeper|polaris}` per `docs/specs/nucleus_cli_spec.md` §4.2. **Metadata-only**: Iceberg data files in MinIO / SeaweedFS / S3 stay put; only `(namespace, table) → metadata_location` moves. Canonical v4.1 §10.1 Mode 1 primitive applied internally.
 5. OIDC per Constraint #6 — both `external`-only; Polaris's internal `TokenBroker` explicitly disabled + `polaris.realm-context.require-header=true` (Worker H §5.2); Lakekeeper's `LAKEKEEPER__OPENID_AUDIENCE` set (Worker F §5.2).
-6. Swap-drill: `docs/architecture/sequence_swap_drill.md` §4 happy-path extended to Lakekeeper↔Polaris; `docs/swap/lakekeeper.md` already in place; `docs/swap/polaris.md` companion authored in the v0.3 PR.
+6. Swap-drill: `docs/architecture/sequence_swap_drill.md` §4 happy-path extended to Lakekeeper↔Polaris; `docs/internal/swap/lakekeeper.md` already in place; `docs/internal/swap/polaris.md` companion authored in the v0.3 PR.
 
 Per AGENTS.md §7: user-facing copy says **catalog** uniformly. Polaris's "metastore" (its persistence backend) and Lakekeeper's "warehouse" (its per-storage-profile partition) are upstream-internal terms the Asset Materialization Adapter abstracts. <!-- banned-term: metastore -->
 
@@ -77,7 +77,7 @@ If Lakekeeper proves unstable at v0.3 launch (breaking minor, single-vendor risk
 
 ## Trigger
 
-Status flips **PROPOSED → ACCEPTED** when (1) founder signs off on Lakekeeper-default + Polaris-opt-in; (2) `docs/specs/nucleus_cli_spec.md` §4.2 `nucleus catalog migrate` surface confirmed (already drafted); (3) `docs/swap/polaris.md` companion authored.
+Status flips **PROPOSED → ACCEPTED** when (1) founder signs off on Lakekeeper-default + Polaris-opt-in; (2) `docs/specs/nucleus_cli_spec.md` §4.2 `nucleus catalog migrate` surface confirmed (already drafted); (3) `docs/internal/swap/polaris.md` companion authored.
 
 **Not gated on PoC #1** — this governs v0.3 (Mo 14-20), well-deferred; ADR can ACCEPT immediately. **Is** sequentially gated on ADR-003 reaching ACCEPTED (both catalogs target REST OpenAPI spec coverage 0.11.x exposes). If founder review prefers Polaris-default (Mo 24 customer-pilot scenario), this ADR is amended in place per ADR-004a; the architecture is unchanged.
 

@@ -105,7 +105,7 @@ ctx.sql("""
 ### 2.4 Anti-features: things NOT to expose
 
 1. **DuckDB UI Extension** — Ships a full web browser UI inside DuckDB. Would compete with Nucleus Workbench and violate the "one product" principle. Keep hidden.
-2. **MotherDuck integration** — Cloud DuckDB service. Not relevant for local-first beachhead. If users want cloud DuckDB, they graduate. Document in `docs/swap/duckdb.md` as graduation path, not a feature to expose.
+2. **MotherDuck integration** — Cloud DuckDB service. Not relevant for local-first beachhead. If users want cloud DuckDB, they graduate. Document in `docs/internal/swap/duckdb.md` as graduation path, not a feature to expose.
 3. **Full DuckDB Python Function API** (`@duckdb.udf`) — Exposes Dagster-internal DuckDB connection handles to user code. Violates v4.1 §6.3 (hide Dagster behind ctx). Keep DuckDB connection strictly internal.
 4. **DuckLake write path** — DuckLake is a competing lakehouse format (metadata in SQLite/DuckDB, data in Parquet). For Nucleus, Iceberg is Tier 0 immortal. DuckLake READS are fine for `ctx.sql` users who want to read external DuckLake tables, but **never expose DuckLake as an alternative write target** to Iceberg.
 5. **Vortex extension** — Experimental columnar storage format. Not production-ready. Monitor only.
@@ -419,7 +419,7 @@ Arrow Flight SQL is a gRPC-based protocol that allows any client to execute SQL 
   - OIDC: delegates to Authentik/Keycloak (satisfies Hard Constraint #6)
 - **Gap vs Polaris**: Less battle-tested at Spark/Flink scale; Polaris has broader engine support. For Nucleus beachhead (DuckDB/Polars only), this gap doesn't matter.
 
-### 7.3 Verdict: Lakekeeper for `docs/swap/catalog.md`
+### 7.3 Verdict: Lakekeeper for `docs/internal/swap/catalog.md`
 
 **Lakekeeper is the recommended v0.3 swap target for the filesystem catalog.**
 

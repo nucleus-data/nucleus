@@ -4,7 +4,7 @@ Per AGENTS.md Hard Constraint #9 + ``docs/specs/nucleus_architecture_v4.1.md`` �
 Verifies the DuckDB wrap surface we depend on today (5 exception classes
 in ``coordination/error_translation.py:326-330`` + future engine method
 surface) AND that DataFusion is reachable via ``find_spec`` (no install
-in CI — full swap on-demand only). Reference: ``docs/swap/duckdb.md``.
+in CI — full swap on-demand only). Reference: ``docs/internal/swap/duckdb.md``.
 Docs: https://duckdb.org/docs/stable/clients/python/overview
 """
 
@@ -58,7 +58,7 @@ def test_duckdb_exception_classes_registered_today() -> None:
 
 
 def test_duckdb_connection_method_surface_for_future_engine() -> None:
-    """Future engines/duckdb_engine.py surface (docs/swap/duckdb.md API table)."""
+    """Future engines/duckdb_engine.py surface (docs/internal/swap/duckdb.md API table)."""
     conn = duckdb.connect(":memory:")
     try:
         for m in ("execute", "sql", "from_arrow", "register", "close"):

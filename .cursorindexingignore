@@ -23,7 +23,7 @@ __pycache__/
 .coverage
 .coverage.*
 htmlcov/
-.benchmarks/
+.internal/benchmarks/
 
 # Virtual environment — big and never useful as agent context
 .venv/

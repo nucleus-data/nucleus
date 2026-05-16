@@ -13,7 +13,7 @@
 
 ### 1.1 The current state
 
-Nucleus v0.2.0 runs **all** asset compute in-process via DuckDB and Polars (`docs/specs/nucleus_architecture_v4.1.md` section 5.1, section 5.2). This is exactly right for the beachhead persona -- a 5-20-engineer startup team, 100 GB to 5 TB total, greenfield (`v4.1` section 1.5). Cold boot ~ 6 s; idle RAM ~ 117 MB; queries on 100M-row Parquet finish in seconds (per `docs/benchmarks/2026-05-15_baseline.md`).
+Nucleus v0.2.0 runs **all** asset compute in-process via DuckDB and Polars (`docs/specs/nucleus_architecture_v4.1.md` section 5.1, section 5.2). This is exactly right for the beachhead persona -- a 5-20-engineer startup team, 100 GB to 5 TB total, greenfield (`v4.1` section 1.5). Cold boot ~ 6 s; idle RAM ~ 117 MB; queries on 100M-row Parquet finish in seconds (per `docs/internal/benchmarks/2026-05-15_baseline.md`).
 
 The **honest evaluation pinned in `docs/internal/research/parity_vs_databricks_snowflake.md` section 1** flagged a documentation gap and an implementation gap:
 
@@ -363,7 +363,7 @@ Pre-implementation (when v0.3+ wave starts):
 - [ ] LOC budget delta tracked per provider PR (~200-500 LOC per provider).
 - [ ] Smoke test per provider lives in `tests/smoke/dispatch/test_<provider>.py`.
 - [ ] Beachhead E2E (`scripts/beachhead_e2e.py`) extended to verify `compute=` round-trip when a credential is provided; otherwise skipped.
-- [ ] Per-provider `docs/swap/<provider>.md` documents the swap-out path off that provider per `v4.1` section 9.3.
+- [ ] Per-provider `docs/internal/swap/<provider>.md` documents the swap-out path off that provider per `v4.1` section 9.3.
 
 ---
 

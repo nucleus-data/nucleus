@@ -28,7 +28,7 @@ What you give up vs dbt: macro ecosystem, snapshots (SCD Type 2), doc generation
 
 ## Q3. Why DuckDB and not DataFusion?
 
-DuckDB is the **default**; DataFusion is the **swap target** (`docs/specs/nucleus_architecture_v4.1.md` §5.1 + `docs/swap/duckdb.md`).
+DuckDB is the **default**; DataFusion is the **swap target** (`docs/specs/nucleus_architecture_v4.1.md` §5.1 + `docs/internal/swap/duckdb.md`).
 
 Why DuckDB as the default for v0.1: (1) more mature SQL surface in 2026, especially for window functions and complex `JOIN` planning (DuckDB published TPC-H 10 GB at ~2.5 s; DataFusion is competitive but newer); (2) richer Python ecosystem integration via `duckdb-engine` for BI tools; (3) battle-tested on small-to-mid datasets which is exactly the v0.1 envelope (100 GB–5 TB).
 
@@ -88,7 +88,7 @@ If you want Dagster's web UI directly, `nucleus enable compat-dagster` (Tier 3 e
 
 **Apache 2.0 forever.** No BSL/SSPL pivot.
 
-A license pivot is explicitly forbidden by `AGENTS.md` Hard Constraint trajectory and `docs/specs/nucleus_architecture_v4.1.md` §17.3. If we ever pivoted, it would auto-trigger the "vendor went hostile" composability fork condition documented in `docs/swap/dagster.md`, which would be a darkly self-referential outcome.
+A license pivot is explicitly forbidden by `AGENTS.md` Hard Constraint trajectory and `docs/specs/nucleus_architecture_v4.1.md` §17.3. If we ever pivoted, it would auto-trigger the "vendor went hostile" composability fork condition documented in `docs/internal/swap/dagster.md`, which would be a darkly self-referential outcome.
 
 What this means concretely:
 
@@ -125,7 +125,7 @@ What we add on top: an advisory file lock for **single-machine** concurrent-run 
 
 **No, it's beta.** v0.2.0 is the first publicly available release; v0.1.0 was an internal beta two days ago. Treat anything labeled "stability tier: Beta" as subject to small breaking changes within 0.x.
 
-That said: the WSL beachhead E2E (8/8 gates PASS, ~7 min boot) does pass, real Iceberg snapshots are written (snapshot ID `7070059669214185406` validated 2026-05-14), error translation discipline is enforced in CI, and 873+ tests pass. Empirical baseline at `docs/benchmarks/2026-05-15_baseline.md` documents what's verified and what's still in flight.
+That said: the WSL beachhead E2E (8/8 gates PASS, ~7 min boot) does pass, real Iceberg snapshots are written (snapshot ID `7070059669214185406` validated 2026-05-14), error translation discipline is enforced in CI, and 873+ tests pass. Empirical baseline at `docs/internal/benchmarks/2026-05-15_baseline.md` documents what's verified and what's still in flight.
 
 The honest position is **"stable enough to evaluate seriously; not stable enough to bet your job on yet."** Recommended for greenfield analytics on 100 GB–5 TB; not recommended for mission-critical production today. If you do deploy, follow `docs/cookbook/production-deployment.md` and pin every dependency exactly per Hard Constraint #11.
 
@@ -285,7 +285,7 @@ Your bet is on **Iceberg + open standards**, not on Nucleus the company. The Mo 
 Companion files:
 - `docs/release/launch_kit/comparison_vs_databricks_snowflake.md` — full capability matrix
 - `docs/internal/research/scale_out_audit.md` — honest scale-out assessment
-- `docs/swap/dagster.md` — composability swap rationale
+- `docs/internal/swap/dagster.md` — composability swap rationale
 - `docs/specs/nucleus_architecture_v4.1.md` — ~50 min read, source of truth
 
 ---

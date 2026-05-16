@@ -1,4 +1,4 @@
-"""Pytest config for /poc/ — minimal sibling of tests/conftest.py.
+"""Pytest config for /internal/poc/ — minimal sibling of tests/conftest.py.
 
 Adds ``src/`` to ``sys.path`` so PoC tests can ``import nucleus.*`` even
 without an editable install. Once ``pip install -e .[dev]`` is done, this

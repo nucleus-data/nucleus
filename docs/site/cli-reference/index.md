@@ -79,7 +79,7 @@ Every error code is documented under the [Error Reference](../errors/index.md). 
 | Surface | Stability through v1.0 | Notes |
 |---------|------------------------|-------|
 | Command **names** | **Frozen at v0.1** | `init`, `up`, `down`, `run`, `ingest`, `query`, `schedule`, `chat`, `workbench`, `version` |
-| Flag taxonomy | Beta through v1.5 | We absorb [PoC #5](https://github.com/nucleus-data/nucleus/blob/main/poc/p5_beachhead/) external-tester feedback before locking |
+| Flag taxonomy | Beta through v1.5 | We absorb [PoC #5](https://github.com/nucleus-data/nucleus/blob/main/internal/poc/p5_beachhead/) external-tester feedback before locking |
 | Output **wording** | Beta | The schema (`error_code`, `fix_hint`, `docs_url`) is stable; the human prose may improve |
 | Output **schema** (NDJSON) | Versioned via `_schema_version` | Bumps documented in `CHANGELOG.md` |
 

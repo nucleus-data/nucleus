@@ -2,7 +2,7 @@
 
 > **Pinned**: 1.9.5  •  **Verified**: 2026-05-12  •  **Docs**: https://docs.dagster.io/
 > **Used in**: `src/nucleus/coordination/` (post PoC #1). Constraint #2 + #6.4.
-> **Companion**: [`docs/architecture/sequence_error_translation.md`](../architecture/sequence_error_translation.md).
+> **Companion**: [`docs/architecture/sequence_error_translation.md`](../../architecture/sequence_error_translation.md).
 
 Official-docs anchor per AGENTS.md Hard Constraint #10. Read before touching `coordination/` or starting PoC #1.
 
@@ -30,7 +30,7 @@ Verified via `https://pypi.org/pypi/dagster/1.9.5/json` + `https://github.com/da
 | Gap | ~16 months / multiple minor releases. **Informational, not blocking.** |
 | CVEs affecting 1.9.5 | None. CVE-2025-51481 (LFI in `dagster._grpc.impl.get_notebook_data`) is in 1.10.14, fixed in 1.10.16; does **not** affect 1.9.5. |
 
-The gap is intentional pre-Heartbeat: stabilize the wrap against a known release before chasing minors. Upgrade workflow: [`docs/compatibility.md`](../compatibility.md) §4.
+The gap is intentional pre-Heartbeat: stabilize the wrap against a known release before chasing minors. Upgrade workflow: [`docs/compatibility.md`](../../compatibility.md) §4.
 
 ---
 
@@ -127,7 +127,7 @@ PoC #1 Week 1 = trigger each of the 8 scenarios in `sequence_error_translation.m
 - **Errors**: caught at the Adapter boundary → Error Translation Layer (`coordination/error_translation.py`, PoC #1) → re-raised as `NucleusError`. `scripts/dagster_leak_check.py` greps test output for `dagster.` — must be 0 in CI.
 - **Lineage**: read from Dagster's static asset graph, emitted as OpenLineage events from the Adapter. Asset-level only in v0.1.
 
-Container-level diagram: [`docs/architecture/C4_container.md`](../architecture/C4_container.md) §2.2.
+Container-level diagram: [`docs/architecture/C4_container.md`](../../architecture/C4_container.md) §2.2.
 
 ---
 

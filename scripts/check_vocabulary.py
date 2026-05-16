@@ -99,8 +99,8 @@ SKIP_PATTERNS = [
     # cite banned vocabulary as the subject of discussion.
     "docs/archive/",  # archived deprecated docs (moved 2026-05-15 REORG PR-A)
     "architecture_design_conversation.md",  # superseded historical conversation (v4.1 line 17)
-    "docs/audits/",  # audit trails MUST contain banned terms as evidence
-    "docs/audit/",  # audit trails MUST contain banned terms as evidence (alt spelling)
+    "docs/internal/audits/",  # audit trails MUST contain banned terms as evidence (moved here in v0.2 docs reorg, 2026-05-16)
+    "docs/internal/release-process/",  # release runbooks cite competitor framings + chaos-test output that quotes external classnames verbatim
     "docs/decisions/",  # ADRs MAY discuss what was decided NOT to do
     "docs/internal/research/",  # research files cite competitor positioning narratives and ecosystem analysis
     "docs/research/ultimate_upgrade/",  # concurrent researcher subagent output; untracked, awaits founder review (post-reorg residue, 2026-05-16)

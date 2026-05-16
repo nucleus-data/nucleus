@@ -388,4 +388,4 @@ Remove the ADR's Status from ACCEPTED back to PROPOSED with a note explaining th
 - dlt verified sources: https://dlthub.com/docs/dlt-ecosystem/verified-sources
 - ADR-014 (dlt Postgres) — the template ADR for connectors
 - `docs/dev-guides/06-error-translation-guide.md` — NE-codes and translator patterns
-- `docs/swap/dlt.md` — swap target documentation for dlt
+- `docs/internal/swap/dlt.md` — swap target documentation for dlt

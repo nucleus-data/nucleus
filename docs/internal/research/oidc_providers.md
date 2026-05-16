@@ -1,6 +1,6 @@
 # Research: OIDC Providers — Authentik, Keycloak, Okta, Microsoft Entra ID
 
-> **Component status in Nucleus**: Hard Constraint #6 — **always delegate to OIDC; never own identity** (AGENTS.md §3 + `docs/specs/nucleus_architecture_v4.1.md` §15.1 + Amendment 9 / D17). v0.1 has **no auth** (single-user laptop — `docs/security/threat_model_v0.md` §6); v0.3+ Lakekeeper / Polaris catalogs delegate to OIDC; v0.5+ Workbench Cloud delegates to OIDC; post-v1.0 CLI remote ops use OIDC device-code flow.
+> **Component status in Nucleus**: Hard Constraint #6 — **always delegate to OIDC; never own identity** (AGENTS.md §3 + `docs/specs/nucleus_architecture_v4.1.md` §15.1 + Amendment 9 / D17). v0.1 has **no auth** (single-user laptop — `docs/internal/security/threat_model_v0.md` §6); v0.3+ Lakekeeper / Polaris catalogs delegate to OIDC; v0.5+ Workbench Cloud delegates to OIDC; post-v1.0 CLI remote ops use OIDC device-code flow.
 > **Self-hosted candidates**: **Authentik 2026.2** (Python / Django, **MIT**), **Keycloak 26.6.1** (JVM / Quarkus, **Apache-2.0**).
 > **Hosted SaaS candidates**: **Okta** (incl. Auth0 / Customer Identity), **Microsoft Entra ID** (formerly Azure AD).
 > **Spec**: OpenID Connect Core 1.0 — https://openid.net/specs/openid-connect-core-1_0.html. All four are OpenID Certified (https://openid.net/certification/).
@@ -25,7 +25,7 @@ Official-docs anchor per AGENTS.md Hard Constraint #10. Read before any v0.3+ PR
 
 ## §2. What OIDC is, in Nucleus terms
 
-**OpenID Connect = identity layer on top of OAuth 2.0.** OAuth 2.0 (RFC 6749) defines *authorization* — a scoped access token. OIDC adds *authentication* — the **ID Token** says "the user is Alice, signed by provider P." They are **not interchangeable** (per Okta `/docs/concepts/oauth-openid/`: "OIDC extends OAuth 2.0 with user authentication and SSO"). Nucleus does not store passwords (Hard Constraint #6), runs no session table, issues no JWTs — we **consume** JWTs minted by one of the four providers. OIDC owns Trust Boundary #1 in `docs/security/threat_model_v0.md` §4 — currently the OS user account (v0.1), eventually the provider's `sub` claim (v0.3+).
+**OpenID Connect = identity layer on top of OAuth 2.0.** OAuth 2.0 (RFC 6749) defines *authorization* — a scoped access token. OIDC adds *authentication* — the **ID Token** says "the user is Alice, signed by provider P." They are **not interchangeable** (per Okta `/docs/concepts/oauth-openid/`: "OIDC extends OAuth 2.0 with user authentication and SSO"). Nucleus does not store passwords (Hard Constraint #6), runs no session table, issues no JWTs — we **consume** JWTs minted by one of the four providers. OIDC owns Trust Boundary #1 in `docs/internal/security/threat_model_v0.md` §4 — currently the OS user account (v0.1), eventually the provider's `sub` claim (v0.3+).
 
 | OIDC term | Nucleus term | Notes |
 |---|---|---|
@@ -100,7 +100,7 @@ v0.3 ADR opens with **one** OIDC config block in `nucleus_config.toml`; Nucleus 
 
 ### §5.2 Workbench auth (v0.5+ multi-user only)
 
-v0.2 Workbench is single-user, local — **no OIDC**. v0.5+ Workbench Cloud is multi-tenant — **OIDC mandatory**. Standard PKCE Authorization Code: browser → provider → redirect URI → Workbench session cookie keyed off `sub`. No password stored. Session cookie lifetime = provider's `id_token` (typically 1h), refreshes back-channel. **Triggers `docs/security/threat_model_v0.md` §6 + §7 rewrite per §12 review cadence.**
+v0.2 Workbench is single-user, local — **no OIDC**. v0.5+ Workbench Cloud is multi-tenant — **OIDC mandatory**. Standard PKCE Authorization Code: browser → provider → redirect URI → Workbench session cookie keyed off `sub`. No password stored. Session cookie lifetime = provider's `id_token` (typically 1h), refreshes back-channel. **Triggers `docs/internal/security/threat_model_v0.md` §6 + §7 rewrite per §12 review cadence.**
 
 ### §5.3 CLI auth (v0.3+ remote ops; v1.0+ for `nucleus deploy`)
 
@@ -114,7 +114,7 @@ nucleus: To sign in, visit https://idp.example/device and enter code WXYZ-9876.
 
 ### §5.4 `ctx.secrets` + token refresh (v0.3+)
 
-Refresh token stashed in `ctx.secrets` (v4.1 §15.3) — OS keyring locally, AWS Secrets Manager / Azure Key Vault in cloud. Access-token refresh **before** the catalog request — check `exp - now > 60s`, refresh if not; retry once on 401. **Never log either token** (`docs/security/threat_model_v0.md` §5.1 + `engineering.md §5.3`).
+Refresh token stashed in `ctx.secrets` (v4.1 §15.3) — OS keyring locally, AWS Secrets Manager / Azure Key Vault in cloud. Access-token refresh **before** the catalog request — check `exp - now > 60s`, refresh if not; retry once on 401. **Never log either token** (`docs/internal/security/threat_model_v0.md` §5.1 + `engineering.md §5.3`).
 
 **JWT library candidates**: **PyJWT** (https://pyjwt.readthedocs.io/, MIT — fewer transitive deps, better JWKS handling) vs **python-jose** (https://python-jose.readthedocs.io/, MIT — fuller JWE/JWS we won't need). **Provisional pin `PyJWT==2.8.x`** — decision deferred to v0.3 ADR; **NEEDS VERIFICATION** of current PyPI version at pin time.
 
@@ -171,7 +171,7 @@ docker run -p 8080:8080 \
 
 **Setup**: Okta org (free for ≤10 users via Okta Integrator Free Plan — https://developer.okta.com/signup/) → create OIDC app integration → record `Client ID`, `Client secret`, Issuer URL (= `https://<org>.okta.com/oauth2/default`) → paste into `nucleus_config.toml`.
 
-**OIDC endpoints**: `https://<org>.okta.com/oauth2/default/v1/{authorize,token,userinfo,keys,logout}` + `.../.well-known/openid-configuration`. `default` is the org's default AS; custom servers require the API Access Management add-on.
+**OIDC endpoints**: `https://<org>.okta.com/oauth2/default/v1/{authorize,token,userinfo,keys,logout}` + `.../../.well-known/openid-configuration`. `default` is the org's default AS; custom servers require the API Access Management add-on.
 
 **Pricing — NEEDS VERIFICATION** (Okta pricing churns quarterly; re-fetch https://www.okta.com/pricing/ before quoting):
 
@@ -191,11 +191,11 @@ docker run -p 8080:8080 \
 
 ### §6.4 Microsoft Entra ID (ex-Azure AD) — corporate Microsoft option
 
-**Why include**: default for Microsoft 365 / Azure shops. OIDC Core 1.0 + Discovery 1.0 compliant per `learn.microsoft.com/.../v2-protocols-oidc`.
+**Why include**: default for Microsoft 365 / Azure shops. OIDC Core 1.0 + Discovery 1.0 compliant per `learn.microsoft.com/.../../v2-protocols-oidc`.
 
 **Setup** (per `quickstart-register-app`): register app in Entra admin center → pick platform (Web for Workbench, Mobile/Desktop for CLI) → set redirect URI → enable ID tokens under "Authentication > Implicit grant and hybrid flows" → record `Application (client) ID`, `Directory (tenant) ID` → create client secret OR use certificate auth.
 
-**OIDC endpoints** (per fetched config 2026-05-13): `https://login.microsoftonline.com/{tenant}/oauth2/v2.0/{authorize,token,logout}` • `https://graph.microsoft.com/oidc/userinfo` • `.../discovery/v2.0/keys` (JWKS) • `.../v2.0/.well-known/openid-configuration`. `{tenant}` = `common` | `organizations` | `consumers` | `<tenant-guid>`. **Always specify tenant GUID in production** — `common` allows cross-tenant token reuse if `aud` is loose.
+**OIDC endpoints** (per fetched config 2026-05-13): `https://login.microsoftonline.com/{tenant}/oauth2/v2.0/{authorize,token,logout}` • `https://graph.microsoft.com/oidc/userinfo` • `.../../discovery/v2.0/keys` (JWKS) • `.../../v2.0/.well-known/openid-configuration`. `{tenant}` = `common` | `organizations` | `consumers` | `<tenant-guid>`. **Always specify tenant GUID in production** — `common` allows cross-tenant token reuse if `aud` is loose.
 
 **Real gotchas (in docs)**:
 
@@ -215,7 +215,7 @@ The v0.3 `nucleus init` auth prompt should surface this in plain language.
 
 | Scenario | Recommendation | Why |
 |---|---|---|
-| Solo founder, dev only (v0.1 / v0.2) | **None** | v0.1 is intentionally auth-less (`docs/security/threat_model_v0.md` §6). |
+| Solo founder, dev only (v0.1 / v0.2) | **None** | v0.1 is intentionally auth-less (`docs/internal/security/threat_model_v0.md` §6). |
 | Small team (5-20), self-hosted (v0.3) | **Authentik** | MIT, no-JVM, Docker-friendly, smallest footprint, matches Nucleus posture. |
 | Small team, wants maximum maturity / breadth | **Keycloak** | Apache-2.0, broadest ecosystem, JVM caveat acceptable as external service. |
 | Mid-market customer already on SSO | Customer's existing provider | If they have Okta → Okta. Entra → Entra. Never make them install a second IdP. |
@@ -315,7 +315,7 @@ OIDC providers are external services. Python deps interact via JWT libraries + H
 
 **Why bundling four in one doc**: OIDC is a *standard*, not four products. Integration surface is uniform; per-provider differences confined to §6.1-§6.4. Four parallel docs invite drift on the 90% they share.
 
-**Why deferring to v0.3+**: per `docs/security/threat_model_v0.md` §6, v0.1 has no auth (intentional, documented). Adding OIDC to v0.1 = +1 container + ~500 MB RAM + JWT lib + claim mapping = blocks the 30-min beachhead metric (v4.1 §1.5). **Defer.** When v0.3 catalogs (Lakekeeper / Polaris) land they bring OIDC; our work is the wrapper.
+**Why deferring to v0.3+**: per `docs/internal/security/threat_model_v0.md` §6, v0.1 has no auth (intentional, documented). Adding OIDC to v0.1 = +1 container + ~500 MB RAM + JWT lib + claim mapping = blocks the 30-min beachhead metric (v4.1 §1.5). **Defer.** When v0.3 catalogs (Lakekeeper / Polaris) land they bring OIDC; our work is the wrapper.
 
 **Never**: build a custom auth system. Hard Constraint #6. Pillar #2 + Pillar #5 violation (every IdP graduation target hostile-ifies). No exceptions.
 
@@ -332,7 +332,7 @@ Integration ADR: `docs/decisions/ADR-NNN-oidc-v03-auth.md` — opens with v0.3 c
 - [ ] **Device Authorization Grant for CLI** (RFC 8628) — verify all four providers; design `nucleus deploy`; target v1.0+.
 - [ ] **Claim → role mapping at catalog layer** — Lakekeeper's `groups` recipe vs Polaris's `principal-roles-mapper` regex. Reconcile in catalog ADR.
 - [ ] **Entra ID `oid` vs `sub` test fixture** — multi-provider claim normalization in CI smoke test.
-- [ ] **Threat model rewrite** — `docs/security/threat_model_v0.md` §6 + §7 graduate per §11 action item v0.3.
+- [ ] **Threat model rewrite** — `docs/internal/security/threat_model_v0.md` §6 + §7 graduate per §11 action item v0.3.
 - [ ] **Okta pricing refresh** — re-verify https://www.okta.com/pricing/ before any external claim.
 - [ ] **OpenFGA / OPA integration sketch** — fine-grained authz above OIDC (Lakekeeper OpenFGA; Polaris OPA-based External PDP). v0.5+ multi-tenant.
 - [ ] **`ctx.secrets` refresh-token storage** — OS-keyring (Linux/macOS), Credential Manager (Windows); encrypted-SQLite fallback for headless CI.
@@ -346,7 +346,7 @@ Integration ADR: `docs/decisions/ADR-NNN-oidc-v03-auth.md` — opens with v0.3 c
 - **Keycloak** (Apache-2.0): https://www.keycloak.org/documentation • https://www.keycloak.org/docs/latest/server_admin/ • https://github.com/keycloak/keycloak/releases • https://www.keycloak.org/security
 - **Okta**: https://developer.okta.com/docs/ • https://developer.okta.com/docs/concepts/oauth-openid/ • https://www.okta.com/pricing/ • https://developer.okta.com/signup/ (free integrator)
 - **Microsoft Entra ID**: https://learn.microsoft.com/en-us/entra/identity-platform/ • https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc • https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app • https://learn.microsoft.com/en-us/entra/identity-platform/signing-key-rollover
-- **Companion Nucleus docs**: `docs/internal/research/lakekeeper.md` §5.2 • `docs/internal/research/polaris.md` §5.2 • `docs/security/threat_model_v0.md` §6 • `docs/decisions/ADR-002-positioning-decision-2026-05.md` §8 • `docs/specs/nucleus_architecture_v4.1.md` §15.
+- **Companion Nucleus docs**: `docs/internal/research/lakekeeper.md` §5.2 • `docs/internal/research/polaris.md` §5.2 • `docs/internal/security/threat_model_v0.md` §6 • `docs/decisions/ADR-002-positioning-decision-2026-05.md` §8 • `docs/specs/nucleus_architecture_v4.1.md` §15.
 
 ---
 

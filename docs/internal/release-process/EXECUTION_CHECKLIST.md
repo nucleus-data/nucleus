@@ -131,7 +131,7 @@ Per CLEANUP_INVENTORY §1:
 Remove-Item .\SESSION_STATE_2026-05-13.md
 
 # 3.2.2 — superseded threat model v0
-git rm docs/security/threat_model_v0.md
+git rm docs/internal/security/threat_model_v0.md
 
 # 3.2.3 — architecture_design_conversation.md (archive if has content; delete if stub)
 # Check first: rg "unique-insights" architecture_design_conversation.md
@@ -145,7 +145,7 @@ git rm docs/security/threat_model_v0.md
 ```
 
 - [ ] `SESSION_STATE_2026-05-13.md` removed
-- [ ] `docs/security/threat_model_v0.md` removed
+- [ ] `docs/internal/security/threat_model_v0.md` removed
 - [ ] `architecture_design_conversation.md` archived or removed
 - [ ] `frontend/` removed (after Wave-1A confirmed)
 
@@ -159,15 +159,15 @@ Per CLEANUP_INVENTORY §4:
 # 3.3.1 — Add SUPERSEDED header to docs/specs/nucleus_project_anatomy.md
 # Edit: add the SUPERSEDED header block at top of file
 
-# 3.3.2 — Fix docs/swap/lakekeeper.md (mark test paths as TBD)
+# 3.3.2 — Fix docs/internal/swap/lakekeeper.md (mark test paths as TBD)
 # Edit: find "tests/swap/" references; add "(TBD when v0.3+ promotes)" note
 
-# 3.3.3 — Fix docs/swap/dlt.md similarly
+# 3.3.3 — Fix docs/internal/swap/dlt.md similarly
 ```
 
 - [ ] `docs/specs/nucleus_project_anatomy.md` has SUPERSEDED header
-- [ ] `docs/swap/lakekeeper.md` TBD notes added
-- [ ] `docs/swap/dlt.md` TBD notes added
+- [ ] `docs/internal/swap/lakekeeper.md` TBD notes added
+- [ ] `docs/internal/swap/dlt.md` TBD notes added
 
 Commit: `"docs: mark stale docs and add TBD notes for unrealized test paths"`
 

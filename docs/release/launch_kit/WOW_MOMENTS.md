@@ -18,7 +18,7 @@
 
 - [`scripts/beachhead_e2e.py`](../../../scripts/beachhead_e2e.py) — the 8-gate script. 8/8 PASS on WSL Linux 2026-05-14.
 - [`docs/internal/release-process/e2e_results_20260514T190132.md`](../e2e_results_20260514T190132.md) — last full E2E run output.
-- [`docs/benchmarks/2026-05-15_baseline.md`](../../benchmarks/2026-05-15_baseline.md) §B5 — boot time **2.06s** warm-median console invocation (measured on a 4-core Windows host with 1 GB free RAM — the worst-case for boot, and still under 10 s).
+- [`docs/internal/benchmarks/2026-05-15_baseline.md`](../../internal/benchmarks/2026-05-15_baseline.md) §B5 — boot time **2.06s** warm-median console invocation (measured on a 4-core Windows host with 1 GB free RAM — the worst-case for boot, and still under 10 s).
 - [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §1.5 — the beachhead persona definition.
 
 **Asset gap**: a 1-screenshot timer overlay showing E2E elapsed time would help on HN comment threads. **Surface to parent**: should we record a screenshot of the E2E script's final summary line for the launch-kit `assets/` folder? (~5 min effort.)
@@ -68,8 +68,8 @@
 
 **Backing artifact**:
 
-- [`docs/benchmarks/2026-05-15_baseline.md`](../../benchmarks/2026-05-15_baseline.md) — full empirical baseline.
-- [`scripts/benchmarks/run_all.py`](../../../scripts/benchmarks/) — re-runnable.
+- [`docs/internal/benchmarks/2026-05-15_baseline.md`](../../internal/benchmarks/2026-05-15_baseline.md) — full empirical baseline.
+- [`scripts/internal/benchmarks/run_all.py`](../../../scripts/internal/benchmarks/) — re-runnable.
 - [`docs/release/v0.2.0_RELEASE_NOTES.md`](../v0.2.0_RELEASE_NOTES.md) §"Known issues" — the same disclosure in release-notes form.
 
 **Honest disclaimer (per `AGENTS.md` §10.8)**: numbers were measured on a 4-core Windows host with 1 GB free RAM at run start, which is below the beachhead-persona target (8-12 cores, 16-32 GB RAM). Re-measurement on beachhead-spec hardware is queued for v0.2.1 — but we publish the worst-case numbers first rather than the best-case.

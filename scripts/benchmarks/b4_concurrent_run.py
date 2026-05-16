@@ -421,7 +421,7 @@ def main(argv: list[str] | None = None) -> int:
 
     result = BenchResult(
         name="B4: Concurrent run safety",
-        script="scripts/benchmarks/b4_concurrent_run.py",
+        script="scripts/internal/benchmarks/b4_concurrent_run.py",
         command=f"{python} -m scripts.benchmarks.b4_concurrent_run --hold {args.hold}",
         started_at=started_at,
         completed_at=completed_at,

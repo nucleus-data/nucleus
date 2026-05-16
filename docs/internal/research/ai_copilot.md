@@ -272,7 +272,7 @@ Verified against `.cursor/rules/nucleus.mdc` §"Forbidden Framings" + AGENTS.md 
 | Clean swap **interface** | LiteLLM IS the swap interface: any new provider that LiteLLM supports is a config-string change, no Python edit. |
 | Smoke tests (5-10) | `tests/intelligence/test_copilot_smoke.py` — one round-trip per provider with mocked HTTP (no network); proves the wrap survives a provider swap. |
 | Full swap **implementation** | LiteLLM owns it. If LiteLLM dies (license pivot, vendor death — `.cursor/rules/nucleus.mdc` §Constitution §3 triggers), swap target is **direct `anthropic` SDK + `httpx` for OpenAI + Ollama HTTP** — ~200 LOC of glue, deferred until trigger fires (Constitution §3 "on-demand, not pre-emptively"). |
-| Swap doc | `docs/swap/litellm.md` to be drafted at v0.2 implementation time (≤ 100 LOC). |
+| Swap doc | `docs/internal/swap/litellm.md` to be drafted at v0.2 implementation time (≤ 100 LOC). |
 
 Tier classification (per ADR-007 + Constraint #9): **Tier 2 — Intelligence engine wrap.** Not Tier 0 (LLMs are not immortal substrates the way Iceberg/Arrow/OL are; provider economics could pivot at any time). License GREEN (MIT).
 
@@ -285,7 +285,7 @@ Tier classification (per ADR-007 + Constraint #9): **Tier 2 — Intelligence eng
 | Research + ADR (this doc + ADR-015) | 1 day | Researcher |
 | `intelligence/copilot.py` + `cli/commands/chat.py` wire-up + mocked tests | ~1 week | Builder tier |
 | Prompt tuning + privacy review (opt-in flow, redaction edge cases) + cost-ceiling unit tests | ~1 week | Swarm tier |
-| `docs/swap/litellm.md` + `docs/internal/research/ai_hallucinations.md` audit + `docs/specs/nucleus_cli_spec.md` amendment (chat = 8th command) + ADR-006 NE4xxx allocation + README + SETUP changes | ~0.5 week | Swarm tier |
+| `docs/internal/swap/litellm.md` + `docs/internal/research/ai_hallucinations.md` audit + `docs/specs/nucleus_cli_spec.md` amendment (chat = 8th command) + ADR-006 NE4xxx allocation + README + SETUP changes | ~0.5 week | Swarm tier |
 | **Total** | **~2.5-3 weeks at max velocity** | mixed |
 
 Architecture v4.1 §7.2 says "4 weeks" — that number assumes Workbench integration. CLI-only de-scopes 1+ week of Workbench wiring (no Monaco editor, no streaming SSE plumbing, no auth proxy). Open question §14 #1 below.

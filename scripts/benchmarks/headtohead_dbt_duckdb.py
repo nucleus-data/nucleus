@@ -545,7 +545,7 @@ def _run_full(args: argparse.Namespace) -> tuple[BenchResult, int]:
 
     result = BenchResult(
         name="head-to-head: Nucleus vs dbt-duckdb (TPC-H Q1)",
-        script="scripts/benchmarks/headtohead_dbt_duckdb.py",
+        script="scripts/internal/benchmarks/headtohead_dbt_duckdb.py",
         command=(
             f"{sys.executable} -m scripts.benchmarks.headtohead_dbt_duckdb "
             f"--runs {args.runs} --rows {args.rows}"
@@ -613,7 +613,7 @@ def _run_dry(args: argparse.Namespace) -> int:
     elapsed_total = benchmark_clock() - started
     result = BenchResult(
         name="head-to-head: Nucleus vs dbt-duckdb (DRY-RUN)",
-        script="scripts/benchmarks/headtohead_dbt_duckdb.py",
+        script="scripts/internal/benchmarks/headtohead_dbt_duckdb.py",
         command=(f"{sys.executable} -m scripts.benchmarks.headtohead_dbt_duckdb --dry-run"),
         started_at=started_at,
         completed_at=now_iso(),

@@ -123,7 +123,7 @@ Seeking **3+ yrs hands-on data eng**, CLI/git/Python-comfy, **90-minute slot**, 
 
 Book here: `[BOOK_30MIN_HERE]`
 
-Consent overview: `docs/poc/p5_beachhead/CONSENT.md`
+Consent overview: `docs/internal/poc/p5_beachhead/CONSENT.md`
 
 Interested?
 

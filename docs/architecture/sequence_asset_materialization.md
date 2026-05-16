@@ -76,7 +76,7 @@ Dagster appears in the middle but its types never cross the AMA boundary (v4.1 �
 | 3, 17 | OpenLineage `RunEvent(START / COMPLETE)` w/ asset + snapshot_id | v4.1 §6.2 step 4, §12.4; [`../research/openlineage.md`](../research/openlineage.md) §4 |
 | 4–5 | `dagster.materialize([asset], instance=DagsterInstance.ephemeral())`; **zero Dagster types reach `ctx`** | [`../research/dagster.md`](../research/dagster.md) §5; v4.1 §6.5 row 2 |
 | 6–8 | `ctx.read("staging.orders", as_="polars")` → `Catalog.load_table(...).scan().to_polars()` | [`../research/pyiceberg.md`](../research/pyiceberg.md) §5 |
-| 9 | Jinja `{{ ref('schema.name') }}` + arity / cycle / unknown-asset checks | PoC #2 — [`../../poc/p2_ctx_sql/resolver.py`](../../poc/p2_ctx_sql/resolver.py) |
+| 9 | Jinja `{{ ref('schema.name') }}` + arity / cycle / unknown-asset checks | PoC #2 — [`../../internal/poc/p2_ctx_sql/resolver.py`](../../internal/poc/p2_ctx_sql/resolver.py) |
 | 10–12 | DuckDB executes; Arrow → Polars zero-copy | v4.1 §5.1, §5.2 |
 | 13 | Contract pre-write: schema + nullability (v0.1). Fail → `NucleusSchemaError` ([`sequence_error_translation.md`](sequence_error_translation.md) §4.3) | v4.1 §6.2 step 1, §12.5 |
 | 14–16 | `Table.append(arrow)` → catalog atomically swaps `metadata.json` → `snapshot_id`. **Catalog owns atomicity** (Hard Constraint #5) | [ADR-001](../decisions/ADR-001-no-iceberg-commit-service.md), [`../research/pyiceberg.md`](../research/pyiceberg.md) §5 |
@@ -123,7 +123,7 @@ sequenceDiagram
     CLI-->>User: ✗ marts.daily_revenue failed (no Dagster / pyiceberg classname leaks)
 ```
 
-`CommitFailedException` is illustrative; equivalent paths exist for every row in the error-translation tables. The PoC #1 baseline at [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py) already covers the Dagster wrapper + DuckDB + Polars + PyIceberg + stdlib handlers.
+`CommitFailedException` is illustrative; equivalent paths exist for every row in the error-translation tables. The PoC #1 baseline at [`../../internal/poc/p1_error_translation/translator.py`](../../internal/poc/p1_error_translation/translator.py) already covers the Dagster wrapper + DuckDB + Polars + PyIceberg + stdlib handlers.
 
 ---
 
@@ -155,6 +155,6 @@ Per AGENTS.md §11.12, each wrapped-library step needs official-docs + triggered
 
 ## §6. Cross-references
 
-Companion: [`sequence_error_translation.md`](sequence_error_translation.md) (on-failure twin), [`C4_container.md`](C4_container.md) (same actors as containers), [ADR-001](../decisions/ADR-001-no-iceberg-commit-service.md) (Catalog owns atomicity). Architecture: [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5 / §6.2 / §6.3 / §6.4 / §6.5 / §12. Other inline refs are linked from §2 / §5: [`../research/dagster.md`](../research/dagster.md), [`../research/pyiceberg.md`](../research/pyiceberg.md), [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py), [`../../poc/p2_ctx_sql/resolver.py`](../../poc/p2_ctx_sql/resolver.py).
+Companion: [`sequence_error_translation.md`](sequence_error_translation.md) (on-failure twin), [`C4_container.md`](C4_container.md) (same actors as containers), [ADR-001](../decisions/ADR-001-no-iceberg-commit-service.md) (Catalog owns atomicity). Architecture: [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5 / §6.2 / §6.3 / §6.4 / §6.5 / §12. Other inline refs are linked from §2 / §5: [`../research/dagster.md`](../research/dagster.md), [`../research/pyiceberg.md`](../research/pyiceberg.md), [`../../internal/poc/p1_error_translation/translator.py`](../../internal/poc/p1_error_translation/translator.py), [`../../internal/poc/p2_ctx_sql/resolver.py`](../../internal/poc/p2_ctx_sql/resolver.py).
 
 *Next: when PoC #1 closes, reconcile every §5 flag against the running 1.9.5 / 0.8.1 stack and log drift to [`../research/ai_hallucinations.md`](../research/ai_hallucinations.md).*

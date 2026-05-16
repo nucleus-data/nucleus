@@ -256,7 +256,7 @@ def main(argv: list[str] | None = None) -> int:
         elapsed_total = benchmark_clock() - started
         result = BenchResult(
             name="B1: TPC-H 10 GB",
-            script="scripts/benchmarks/b1_tpch_duckdb.py",
+            script="scripts/internal/benchmarks/b1_tpch_duckdb.py",
             command=(
                 f"{sys.executable} -m scripts.benchmarks.b1_tpch_duckdb "
                 f"--scale-factor {args.scale_factor} --runs {args.runs}"
@@ -347,7 +347,7 @@ def main(argv: list[str] | None = None) -> int:
 
     result = BenchResult(
         name="B1: TPC-H 10 GB",
-        script="scripts/benchmarks/b1_tpch_duckdb.py",
+        script="scripts/internal/benchmarks/b1_tpch_duckdb.py",
         command=(
             f"{sys.executable} -m scripts.benchmarks.b1_tpch_duckdb "
             f"--scale-factor {args.scale_factor} --runs {args.runs}"

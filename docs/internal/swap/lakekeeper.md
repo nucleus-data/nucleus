@@ -20,7 +20,7 @@ Data plane is **shared** (`pyiceberg.RestCatalog`). Only the management plane di
 
 ```python
 # Sketch — implementation lands in src/nucleus/catalog/catalog_protocol.py
-# Per v4.1 §5.7. Data-plane Protocol = docs/swap/pyiceberg.md §2.
+# Per v4.1 §5.7. Data-plane Protocol = docs/internal/swap/pyiceberg.md §2.
 
 from typing import Protocol
 
@@ -37,7 +37,7 @@ class CatalogManagementProtocol(Protocol):
     def health(self) -> "HealthStatus": ...
 ```
 
-Data plane: identical to `docs/swap/pyiceberg.md` §2. Management plane: each method above maps to different HTTP paths + body schemas across the two engines (§5 risk 2). Out of scope: per-engine UI surfaces, Polaris two-tier role model (flattened), Lakekeeper OPA authorizer (Tier 3 escape hatch).
+Data plane: identical to `docs/internal/swap/pyiceberg.md` §2. Management plane: each method above maps to different HTTP paths + body schemas across the two engines (§5 risk 2). Out of scope: per-engine UI surfaces, Polaris two-tier role model (flattened), Lakekeeper OPA authorizer (Tier 3 escape hatch).
 
 ## 3. Smoke-test sketch (CI)
 
@@ -54,7 +54,7 @@ def catalog_impl(request):
     return _load_catalog(request.param)
 
 
-# Shared data plane (also in docs/swap/pyiceberg.md — re-run here against REST)
+# Shared data plane (also in docs/internal/swap/pyiceberg.md — re-run here against REST)
 def test_create_namespace_idempotent(catalog_impl): ...
 def test_append_arrow_table_produces_snapshot(catalog_impl): ...
 def test_commit_conflict_raises_translatable_error(catalog_impl): ...
@@ -102,7 +102,7 @@ Lowest-LOC swap of the six docs — `pyiceberg.RestCatalog` carries 90% of the w
 
 ## 7. NEEDS VERIFICATION
 
-- **Polaris `pyiceberg.RestCatalog` smoke-test parity.** Run §3 data-plane suite against a Polaris container; reconcile any divergence in commit semantics, snapshot handling, or error response shape with `docs/swap/pyiceberg.md` §3. "Config-flip only" is design intent until measured — highest-priority.
+- **Polaris `pyiceberg.RestCatalog` smoke-test parity.** Run §3 data-plane suite against a Polaris container; reconcile any divergence in commit semantics, snapshot handling, or error response shape with `docs/internal/swap/pyiceberg.md` §3. "Config-flip only" is design intent until measured — highest-priority.
 - **Polaris cold-start + memory baseline.** No Nucleus benchmark yet. Repeat under PoC #4 conditions; §5 risk 1 numbers are industry-typical Quarkus, not Polaris measurements.
 - **Polaris management-API + vended-credentials default.** §2 assumes `/api/management/v1/...`; verify against https://github.com/apache/polaris/tree/main/spec. Lakekeeper 0.12.0 flipped default to `vended-credentials` (`docs/internal/research/lakekeeper.md` §9); Polaris default may differ — affects `X-Iceberg-Access-Delegation` handling.
 - **Polaris OIDC matrix + Idempotency-Key.** Re-verify Keycloak / Entra-ID / Okta / Authentik / Google against Polaris (Authentik against either is `NEEDS VERIFICATION`); confirm Idempotency-Key + ETag support before production swap.
