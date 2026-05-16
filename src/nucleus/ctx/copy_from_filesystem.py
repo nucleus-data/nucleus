@@ -10,7 +10,7 @@ Architecture refs:
     nucleus_architecture_v4.1.md §5.5 (Ingestion — local filesystem branch)
     nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-020-object-storage-connectors-via-duckdb.md (scope)
-    docs/research/filesystem_duckdb.md §3-§6 (DuckDB local file reading)
+    docs/internal/research/filesystem_duckdb.md §3-§6 (DuckDB local file reading)
 
 Pins/docs:
     duckdb==1.1.3 — https://duckdb.org/docs/data/parquet/overview

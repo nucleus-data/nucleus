@@ -483,8 +483,8 @@ DO create:
 
 - ✅ `/docs/decisions/ADR-NNN-<title>.md` for build-vs-wrap decisions
 - ✅ `/docs/swap/<component>.md` for swap target documentation
-- ✅ `/docs/research/<component>.md` for official docs notes (per Constraint #10)
-- ✅ `/docs/research/ai_hallucinations.md` to log AI-fabricated APIs (per Constraint #10)
+- ✅ `/docs/internal/research/<component>.md` for official docs notes (per Constraint #10)
+- ✅ `/docs/internal/research/ai_hallucinations.md` to log AI-fabricated APIs (per Constraint #10)
 - ✅ `/docs/compatibility.md` for version matrix (per Constraint #11)
 - ✅ `/poc/poc<N>_<name>/` for PoC stubs
 - ✅ `/scripts/<discipline>.py` for CI enforcement scripts
@@ -523,7 +523,7 @@ DO create:
    - Respond: "Let me check the official docs at <URL>" + read it
    - If you cannot access docs, say "I'm not certain; please verify at <URL>"
 
-6. **Log every caught hallucination** in `/docs/research/ai_hallucinations.md`:
+6. **Log every caught hallucination** in `/docs/internal/research/ai_hallucinations.md`:
    ```markdown
    ## YYYY-MM-DD: <library>.<method>
    AI suggested: <fabricated API>

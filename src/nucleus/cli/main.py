@@ -250,7 +250,7 @@ def _copy_traversable(
     Skips Python bytecode artefacts (``__pycache__/``, ``*.pyc``) that may
     leak into the installed ``templates/v01/`` tree if anyone runs
     ``compileall`` against the package — see the 2026-05-14 entry in
-    ``docs/research/ai_hallucinations.md`` for the original detection.
+    ``docs/internal/research/ai_hallucinations.md`` for the original detection.
     Bytecode files would otherwise blow up the ``read_text(encoding="utf-8")``
     call below with a ``UnicodeDecodeError``.
     """
@@ -1083,7 +1083,7 @@ def ingest(
         # sqlite / postgresql / postgres internally; the CLI no longer
         # re-implements scheme branching here.
         # Lazy import keeps boot-time cost off the hot path per PoC #4 +
-        # docs/research/dlt.md §6.
+        # docs/internal/research/dlt.md §6.
         from nucleus.ctx import copy_from as _copy_from
 
         rows_written = _copy_from(

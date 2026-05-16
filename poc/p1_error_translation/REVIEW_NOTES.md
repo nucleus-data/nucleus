@@ -10,7 +10,7 @@
 
 ## 9 handlers — looks good as-shipped (no rewrite)
 
-Verbatim wording matches `errors.py` + `docs/research/<lib>.md`. All preserve `cause`, leak-check clean, approved vocab.
+Verbatim wording matches `errors.py` + `docs/internal/research/<lib>.md`. All preserve `cause`, leak-check clean, approved vocab.
 
 | # | Handler (`:line`) | Catches → Maps to | Why it works |
 |---|---|---|---|

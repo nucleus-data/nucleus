@@ -43,7 +43,7 @@ https://github.com/nucleus-data/nucleus
 >
 > The architecture doc (`nucleus_architecture_v4.1.md`, ~50 min read) is the source of truth. The "yield to giants" strategy is explicit: the day a team outgrows Nucleus, they point Databricks/Snowflake at the same S3 + Iceberg catalog and they're done. Mode 1 graduation is zero effort because it's just Iceberg portability — there is no Nucleus byte format to migrate off.
 >
-> The honest pitch: if you're a small team building greenfield analytics on 100 GB–5 TB of data and the existing menu (Fivetran + dbt + Airflow + warehouse + catalog + BI = 6 tools) feels like overkill before any value flows, give this a try. If you have 100+ engineers and a 100 TB warehouse, it is genuinely not for you yet (and may never be — see the scale-out audit at `docs/research/scale_out_audit.md` for why a Rust rewrite of Nucleus internals would be the wrong optimization).
+> The honest pitch: if you're a small team building greenfield analytics on 100 GB–5 TB of data and the existing menu (Fivetran + dbt + Airflow + warehouse + catalog + BI = 6 tools) feels like overkill before any value flows, give this a try. If you have 100+ engineers and a 100 TB warehouse, it is genuinely not for you yet (and may never be — see the scale-out audit at `docs/internal/research/scale_out_audit.md` for why a Rust rewrite of Nucleus internals would be the wrong optimization).
 >
 > Quickstart:
 >
@@ -126,7 +126,7 @@ https://github.com/nucleus-data/nucleus
 - ❌ "Show HN: AI-native data platform" (banned framing) <!-- banned-term: AI-native -->
 - ❌ "Show HN: Nucleus — Spark killer" (banned framing) <!-- banned-term: Spark killer -->
 - ❌ Any comparison that bashes Databricks / Snowflake / dbt / Dagster — be respectful, they are excellent products that we wrap or yield to
-- ❌ Any LOC / benchmark number that is not in `docs/benchmarks/2026-05-15_baseline.md` or `docs/research/scale_out_audit.md`
+- ❌ Any LOC / benchmark number that is not in `docs/benchmarks/2026-05-15_baseline.md` or `docs/internal/research/scale_out_audit.md`
 - ❌ Any claim about "production-ready" — Nucleus v0.2 is **beta**
 
 ---

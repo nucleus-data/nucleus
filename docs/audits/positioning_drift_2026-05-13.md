@@ -66,7 +66,7 @@
 - [`README.md:211`](../../README.md) — *"the archived MinIO `RELEASE.2025-10-15T17-29-55Z` is preserved …"* · **MEDIUM** (user-visible quickstart).
 - [`nucleus_architecture_v4.1.md:47`](../../nucleus_architecture_v4.1.md) — MinIO tag (alignment-sweep-#2 prose) · **MEDIUM** (critical doc, founder-only).
 - `nucleus_architecture_v4.1.md:529` — MinIO tag + SeaweedFS year (storage-substrate paragraph) · MEDIUM.
-- [`docs/research/README.md:39`](../research/README.md) — MinIO row pin string · LOW (FAQ §E5.3 flags as optional polish).
+- [`docs/internal/research/README.md:39`](../research/README.md) — MinIO row pin string · LOW (FAQ §E5.3 flags as optional polish).
 - [`docs/NEEDS_VERIFICATION_INDEX.md:216`](../NEEDS_VERIFICATION_INDEX.md) — *"pin candidate post-**2026**-05-04 per ADR-008"* · LOW. Brief cited `:185`; actual location is `:216`.
 
 **Confirmed corrected** (no action): `minio.md:3,25,65,217,237` · `docker-compose.yml:8` (SeaweedFS `4.23`/`2025-05-04`, Worker B sha-verified) · `docker-compose.minio.yml:8` (MinIO `RELEASE.2025-09-07T16-13-09Z`, sha-verified). **Meta-commentary** (DO NOT fix): `ai_hallucinations.md:41-47` · `nucleus-wrapped-api-verify/SKILL.md:59` · `compatibility.md:109` · `FOUNDER_ACTION_QUEUE.md:163` · `minio.md:245`.
@@ -96,7 +96,7 @@
 
 **Same single hit as §1** — `C4_component.md:168` `AI-native` without exemption.
 
-All others clean: **inline-exempted** at `lance.md:226`, `slack_bot_on_data.md:18`, `README.md:79`, `nucleus_vs_databricks.md:347`, `AGENTS.md:14/194/199`, `v4.1.md:43/239`, `.cursor/rules/nucleus.mdc:129-140`; **whole-file-exempt** per `check_vocabulary.py:81-87` (`docs/decisions/`, `docs/audits/`, `docs/research/strategic/`, `nucleus_architecture_v3.md`, `nucleus_architecture_v4.md`, `pyproject.toml`); **quoted negation** in spec / convention (`AGENTS.md §3/§7/§8`, `.cursor/rules/nucleus.mdc` Forbidden Framings, `nucleus_vs_databricks.md:214/337`, `PR template:69`). §1 fix retires this category.
+All others clean: **inline-exempted** at `lance.md:226`, `slack_bot_on_data.md:18`, `README.md:79`, `nucleus_vs_databricks.md:347`, `AGENTS.md:14/194/199`, `v4.1.md:43/239`, `.cursor/rules/nucleus.mdc:129-140`; **whole-file-exempt** per `check_vocabulary.py:81-87` (`docs/decisions/`, `docs/audits/`, `docs/internal/research/strategic/`, `nucleus_architecture_v3.md`, `nucleus_architecture_v4.md`, `pyproject.toml`); **quoted negation** in spec / convention (`AGENTS.md §3/§7/§8`, `.cursor/rules/nucleus.mdc` Forbidden Framings, `nucleus_vs_databricks.md:214/337`, `PR template:69`). §1 fix retires this category.
 
 ---
 

@@ -17,7 +17,7 @@ Verifies ``ingest_gcs_to_iceberg()``:
     10. FileNotFoundError from gcsfs: raises NucleusSourceNotFound (NE1008).
 
 Architecture refs:
-    docs/research/gcs_duckdb.md §6 (error classification)
+    docs/internal/research/gcs_duckdb.md §6 (error classification)
     nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
 """
 

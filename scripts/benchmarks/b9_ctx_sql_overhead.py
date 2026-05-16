@@ -5,7 +5,7 @@ Measures the cost of routing a SELECT through ``nucleus.ctx.sql`` (Jinja
 registration + DuckDB execute) compared to running the same SQL directly
 against raw DuckDB on the same Parquet data.
 
-The user-facing claim in `docs/research/benchmarks_v0.2.0.md` is
+The user-facing claim in `docs/internal/research/benchmarks_v0.2.0.md` is
 
     "ctx.sql adds <5% overhead vs raw DuckDB on a single-asset query."
 

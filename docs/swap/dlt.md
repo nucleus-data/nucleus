@@ -32,7 +32,7 @@ Then implement path A: a native `ingest_postgres_to_iceberg(...)` in `src/nucleu
 # ~150 LOC — mirrors ingest_sqlite_to_iceberg() shape verbatim.
 # Uses: sqlalchemy==2.0.36 + psycopg[binary]==3.2.3 (already pinned) + pyiceberg.
 # No new runtime dependencies; drops dlt==1.26.0.
-# Reference: docs/research/dlt.md §13.11 Q1.
+# Reference: docs/internal/research/dlt.md §13.11 Q1.
 def ingest_postgres_to_iceberg(conn_str, source_table, *, warehouse_dir, ...) -> int: ...
 ```
 
@@ -42,10 +42,10 @@ User-side data is unaffected — Iceberg tables remain readable (Tier 0 immortal
 
 Per v4.1 §9.3, swap fires only on:
 
-- [ ] **Vendor death / license pivot** — dltHub Inc. dissolves OR `dlt-hub/dlt` `main` silent >12 mo (single VC-backed concentration — `docs/research/dlt.md` §8), OR Apache-2.0 → BSL/SSPL/AGPL.
-- [ ] **Performance regression** — Postgres→Iceberg throughput regresses >2x against v0.3 baseline (`docs/research/dlt.md` §6), OR `import dlt` cold-start breaks `nucleus up <10s` on lazy-import paths.
+- [ ] **Vendor death / license pivot** — dltHub Inc. dissolves OR `dlt-hub/dlt` `main` silent >12 mo (single VC-backed concentration — `docs/internal/research/dlt.md` §8), OR Apache-2.0 → BSL/SSPL/AGPL.
+- [ ] **Performance regression** — Postgres→Iceberg throughput regresses >2x against v0.3 baseline (`docs/internal/research/dlt.md` §6), OR `import dlt` cold-start breaks `nucleus up <10s` on lazy-import paths.
 - [ ] **Community demand** — ≥30% of `@nucleus.source(engine="dlt")` users request Sling/Singer.
-- [ ] **Constraint violation** — dlt adds JVM dep, drops `pyiceberg>=0.9.1` floor incompatible with our PyIceberg pin (`docs/research/dlt.md` §7), or Iceberg destination drops partition-evolution / merge parity (§5.2).
+- [ ] **Constraint violation** — dlt adds JVM dep, drops `pyiceberg>=0.9.1` floor incompatible with our PyIceberg pin (`docs/internal/research/dlt.md` §7), or Iceberg destination drops partition-evolution / merge parity (§5.2).
 
 ## 2. Swap interface
 
@@ -138,16 +138,16 @@ def test_credential_missing_translates_to_NucleusConfigError(source_impl): ...
 
 ## 5. Critical risks specific to this swap
 
-1. **State-location reconciliation — THE central design risk.** Per `docs/research/dlt.md` §5.3 (KEY FINDING), dlt holds state in two places: `~/.dlt/pipelines/<name>/state.json` *and* a `_dlt_pipeline_state` table at the destination. Sling uses one state file; Singer uses state.json over stdio. **Mid-flight migration loses cursors** unless the script reads BOTH dlt stores, reconciles, and writes Nucleus-owned `CursorState` before the first Sling/Singer run. Trigger-time cost: 3-5 days; one shot to get right.
-2. **Iceberg write-path depth.** dlt's `filesystem + table_format="iceberg"` calls PyIceberg directly (`docs/research/dlt.md` §5.2). Sling/Singer typically stage Parquet first then load into Iceberg (`target-iceberg` for Singer; Sling Iceberg maturity unverified). Partition evolution, merge upserts, schema-evolution-with-merge — parity-tested at trigger time.
-3. **Connector breadth gap.** dlt 8000+ sources (`docs/research/dlt.md` §1); Sling <100; Singer 600+ mixed quality. Some user source assets may have no Sling tap — `ctx.copy_from` fallback or custom Python required.
-4. **Schema-contract + license audit.** dlt ships `evolve / freeze / discard_value / discard_row` modes (`docs/research/dlt.md` §5.4); Sling has `add_new_columns`; Singer relies on per-tap schemas. Nucleus routes user contracts through `@nucleus.check` (v4.1 §15) so engine-level is best-effort. Singer-only: taps independently licensed with AGPL-3.0 entries (`docs/research/dlt.md` §8) — each shipped tap audited individually.
+1. **State-location reconciliation — THE central design risk.** Per `docs/internal/research/dlt.md` §5.3 (KEY FINDING), dlt holds state in two places: `~/.dlt/pipelines/<name>/state.json` *and* a `_dlt_pipeline_state` table at the destination. Sling uses one state file; Singer uses state.json over stdio. **Mid-flight migration loses cursors** unless the script reads BOTH dlt stores, reconciles, and writes Nucleus-owned `CursorState` before the first Sling/Singer run. Trigger-time cost: 3-5 days; one shot to get right.
+2. **Iceberg write-path depth.** dlt's `filesystem + table_format="iceberg"` calls PyIceberg directly (`docs/internal/research/dlt.md` §5.2). Sling/Singer typically stage Parquet first then load into Iceberg (`target-iceberg` for Singer; Sling Iceberg maturity unverified). Partition evolution, merge upserts, schema-evolution-with-merge — parity-tested at trigger time.
+3. **Connector breadth gap.** dlt 8000+ sources (`docs/internal/research/dlt.md` §1); Sling <100; Singer 600+ mixed quality. Some user source assets may have no Sling tap — `ctx.copy_from` fallback or custom Python required.
+4. **Schema-contract + license audit.** dlt ships `evolve / freeze / discard_value / discard_row` modes (`docs/internal/research/dlt.md` §5.4); Sling has `add_new_columns`; Singer relies on per-tap schemas. Nucleus routes user contracts through `@nucleus.check` (v4.1 §15) so engine-level is best-effort. Singer-only: taps independently licensed with AGPL-3.0 entries (`docs/internal/research/dlt.md` §8) — each shipped tap audited individually.
 
 ## 6. Cited docs
 
 - Current (dlt): https://dlthub.com/docs/intro (subpages `/general-usage/{pipeline,state}`, `/dlt-ecosystem/destinations/iceberg`)
 - Swap targets: https://docs.slingdata.io/ • https://github.com/slingdata-io/sling • https://www.singer.io/ • https://github.com/MeltanoLabs
-- Research: `docs/research/dlt.md` • `docs/research/pyiceberg.md` §B.3
+- Research: `docs/internal/research/dlt.md` • `docs/internal/research/pyiceberg.md` §B.3
 - Related: `docs/decisions/ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md` • `docs/swap/pyiceberg.md` §7
 
 ## 7. NEEDS VERIFICATION
@@ -156,4 +156,4 @@ def test_credential_missing_translates_to_NucleusConfigError(source_impl): ...
 - **Sling Iceberg destination maturity.** Whether `sling run --tgt-conn iceberg` ships native writes through PyIceberg / Lakekeeper REST, or stages Parquet + manual register-table. If staged-Parquet-only, §4 row 3 grows by 3-4 days.
 - **Singer `target-iceberg` quality + ADR-001 atomicity.** Whether a canonical `target-iceberg` exists, its commit semantics, and single-table-atomicity compliance. Expect to write or fork.
 - **`ctx.copy_from` always-live parity.** Confirm v0.1 `SourceEngineProtocol` for `ctx.copy_from` matches the v0.3 dlt adapter — if they drift, the §3 matrix loses its in-house baseline and Constraint #9 is hollow.
-- **PyIceberg floor.** dlt's `pyiceberg>=0.9.1` floor (`docs/research/dlt.md` §7); if swap fires **before** ADR-003 lands, the dlt path is already broken. Sequence after ADR-003 or document rollback to `ctx.copy_from`.
+- **PyIceberg floor.** dlt's `pyiceberg>=0.9.1` floor (`docs/internal/research/dlt.md` §7); if swap fires **before** ADR-003 lands, the dlt path is already broken. Sequence after ADR-003 or document rollback to `ctx.copy_from`.

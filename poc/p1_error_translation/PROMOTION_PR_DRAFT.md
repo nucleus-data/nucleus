@@ -67,8 +67,8 @@ Two structural changes were applied to `translator.py` by the bring-up worker AF
 Per `ADR-003` §Trigger and §Downstream:
 
 1. **ADR-003 PyIceberg `0.8.1 → 0.11.x`** auto-flips PROPOSED → ACCEPTED; opens its own one-component-per-PR upgrade per `AGENTS.md` §11.13.
-2. **v0.3 `dlt[pyiceberg]` connector framework** unlocks (requires `pyiceberg>=0.9.1` per `docs/research/dlt.md` §6).
-3. **`ExpireSnapshots` API** available for snapshot-retention pattern docs per `docs/research/pyiceberg.md` §B.3.
+2. **v0.3 `dlt[pyiceberg]` connector framework** unlocks (requires `pyiceberg>=0.9.1` per `docs/internal/research/dlt.md` §6).
+3. **`ExpireSnapshots` API** available for snapshot-retention pattern docs per `docs/internal/research/pyiceberg.md` §B.3.
 4. **PoC #2 promotion** can proceed in parallel — Layer 3 Coordination boundary now has a real `error_translation.py` to wrap library exceptions through.
 
 ---

@@ -47,7 +47,7 @@ phase gate — no production code in `src/nucleus/` until then).
 + SQLite URI + `file://` warehouse), mirroring `poc/p3_ingest/ingest.py`.
 The task spec mentioned a `type='memory'` variant — `InMemoryCatalog` exists
 upstream but its registration string in 0.8.1 is unverified. Log to
-[`docs/research/ai_hallucinations.md`](../../docs/research/ai_hallucinations.md)
+[`docs/internal/research/ai_hallucinations.md`](../../docs/internal/research/ai_hallucinations.md)
 if a different string is required at runtime.
 
 ## Promotion target

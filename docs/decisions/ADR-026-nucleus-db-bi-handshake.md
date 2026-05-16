@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder
 **Priority**: P0
 **Target phase**: v0.2
-**Source research**: `docs/research/inspiration/embedded_analytics_bi.md` §1, §5, §7, §10
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §3 #2
+**Source research**: `docs/internal/research/inspiration/embedded_analytics_bi.md` §1, §5, §7, §10
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §3 #2
 
 ---
 

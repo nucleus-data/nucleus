@@ -11,7 +11,7 @@ Architecture refs:
     nucleus_architecture_v4.1.md §5.5 (Ingestion — object storage branch)
     nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-020-object-storage-connectors-via-duckdb.md (scope)
-    docs/research/s3_duckdb.md (DuckDB httpfs + S3 credential resolution)
+    docs/internal/research/s3_duckdb.md (DuckDB httpfs + S3 credential resolution)
 
 Pins/docs:
     duckdb==1.1.3 — https://duckdb.org/docs/extensions/httpfs/s3api

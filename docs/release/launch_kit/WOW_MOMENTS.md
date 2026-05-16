@@ -2,7 +2,7 @@
 
 > *The 5-7 most compelling demos / numbers / artifacts that should be front-and-center on launch day. For each: what it is, where it lives, why it lands. Numbers are empirical (cited paths); claims that are aspirational are explicitly marked. Vocabulary per [`AGENTS.md`](../../../AGENTS.md) §7; forbidden framings per §8. Last updated 2026-05-15.*
 >
-> **Honesty contract** ([`AGENTS.md`](../../../AGENTS.md) §10.8): every number here is reproducible from a path on disk. No marketing-massaged figures. When a number disagrees with an aspirational target in [`docs/research/performance_reliability_targets.md`](../../research/performance_reliability_targets.md), the **measured number wins** and the target is documented as "v0.3 goal" rather than "v0.2 claim".
+> **Honesty contract** ([`AGENTS.md`](../../../AGENTS.md) §10.8): every number here is reproducible from a path on disk. No marketing-massaged figures. When a number disagrees with an aspirational target in [`docs/internal/research/performance_reliability_targets.md`](../../research/performance_reliability_targets.md), the **measured number wins** and the target is documented as "v0.3 goal" rather than "v0.2 claim".
 
 ---
 
@@ -86,7 +86,7 @@
 
 - [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §10.1 — Mode 1 graduation strategy.
 - [`docs/site/guides/graduate-to-databricks.md`](../../site/guides/graduate-to-databricks.md) — user-facing recipe.
-- [`docs/research/parity_vs_databricks_snowflake.md`](../../research/parity_vs_databricks_snowflake.md) — capability matrix (proves Nucleus does NOT compete on breadth).
+- [`docs/internal/research/parity_vs_databricks_snowflake.md`](../../research/parity_vs_databricks_snowflake.md) — capability matrix (proves Nucleus does NOT compete on breadth).
 - [`docs/release/launch_kit/comparison_vs_databricks_snowflake.md`](comparison_vs_databricks_snowflake.md) — the launch-kit comparison piece.
 
 **Asset gap**: a short "graduate in 5 commands" sequence-diagram would be a strong sub-asset for LinkedIn / Twitter. **Surface to parent**: defer to post-launch — not blocking for v0.2.0.

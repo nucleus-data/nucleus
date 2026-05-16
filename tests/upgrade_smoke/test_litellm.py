@@ -62,7 +62,7 @@ def test_litellm_response_shape_usage_tokens():
 def test_litellm_exception_timeout_class_name():
     """Verify litellm.Timeout exists (NOT litellm.TimeoutError).
 
-    See docs/research/ai_hallucinations.md entry 2026-05-13.
+    See docs/internal/research/ai_hallucinations.md entry 2026-05-13.
     Docs: https://docs.litellm.ai/docs/exception_mapping
     """
     assert hasattr(litellm, "Timeout"), (

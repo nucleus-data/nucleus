@@ -218,7 +218,7 @@ Code bloat in earlier phases consumes LOC budget; v1.0 features can't land witho
 AI-generated code uses fabricated APIs that fail silently or late.
 
 **Mitigation**:
-1. `docs/research/ai_hallucinations.md` log — every caught hallucination is recorded.
+1. `docs/internal/research/ai_hallucinations.md` log — every caught hallucination is recorded.
 2. AI Output Verification Checklist (per `.cursor/rules/nucleus.mdc`) run after every AI generation.
 3. CI verifies that all external library calls match pinned-version docs.
 4. `# NEEDS VERIFICATION` annotation required whenever AI suggests an unfamiliar API.

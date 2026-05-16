@@ -15,7 +15,7 @@
 - **(a) §2 pillar #3 / engineering layer context** — `.cursor/rules/nucleus.mdc:100`; `AGENTS.md:152`; `nucleus_architecture_v4.1.md:7,34,255`; `docs/architecture/C4_container.md:144`; `docs/architecture/C4_context.md:75,96`. Per ADR-002 §8.5.
 - **(b) ADR-002 / v4.1.3 retirement notes + forbidden-framings** — `nucleus_architecture_v4.1.md:7,34`; `docs/decisions/ADR-002-positioning-decision-2026-05.md` (5 hits); `README.md:79`; `AGENTS.md:14,194,199,200`; `.cursor/rules/nucleus.mdc:133-135`.
 - **(c) Deprecated v4.0/v3 docs** — `nucleus_architecture_v4.md:31,128,185`; `nucleus_architecture_v3.md:8`.
-- **(d) Strategic research files** — `docs/research/strategic/ai_agent_data_infra_2026.md` (multi); `docs/research/strategic/competitive_landscape_2026.md` (multi).
+- **(d) Strategic research files** — `docs/internal/research/strategic/ai_agent_data_infra_2026.md` (multi); `docs/internal/research/strategic/competitive_landscape_2026.md` (multi).
 - **(e) Ban-enforcement infra itself** — `pyproject.toml:318`; `scripts/check_vocabulary.py:10,11,61`; `docs/conventions/engineering.md:449`; `.github/workflows/ci.yml:82`.
 - **(f) PR-label convention** (`provenance:ai-assisted`, not the marketing tagline) — `docs/conventions/engineering.md:396,400`; `CONTRIBUTING.md:11`.
 

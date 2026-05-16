@@ -70,7 +70,7 @@ user-facing detail, not Nucleus wording) — see H6/H10 precedents in
 `dagster.materialize()` (1.9.5) re-raises the user's original exception — NOT
 a Dagster wrapper — with a synthetic `__cause__` cycle through
 `DagsterExecutionStepExecutionError` (see 2026-05-13 entry in
-`@docs/research/ai_hallucinations.md`). Translators MUST iterate candidates
+`@docs/internal/research/ai_hallucinations.md`). Translators MUST iterate candidates
 outer→inner, prefer specific (non-Dagster) handlers, and fall back to the
 Dagster handler only when no specific match exists. Re-verify on every
 Dagster minor upgrade per `@AGENTS.md §11.13`.
@@ -79,7 +79,7 @@ Dagster minor upgrade per `@AGENTS.md §11.13`.
 
 If the catch revealed a library API that differed from initial assumption
 (wrong exception class, moved namespace, dead package, changed `__cause__`
-chain), append an entry to `@docs/research/ai_hallucinations.md` using the
+chain), append an entry to `@docs/internal/research/ai_hallucinations.md` using the
 established date / AI suggestion / reality / detection / fix format. The
 PoC #1 two-pass discovery and the `openlineage-dagster` dead-package catch
 are model entries.

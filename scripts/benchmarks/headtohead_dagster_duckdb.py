@@ -45,7 +45,7 @@ What's measured
 Honest methodology
 ------------------
 * Single host, single OS. Numbers are not portable to other hardware.
-  The companion report ``docs/research/headtohead_dagster_duckdb.md``
+  The companion report ``docs/internal/research/headtohead_dagster_duckdb.md``
   documents the exact run host.
 * Both implementations write Iceberg snapshots (filesystem catalog).
   The asymmetry is in the work the developer must perform to get there.

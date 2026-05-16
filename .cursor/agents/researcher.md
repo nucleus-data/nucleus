@@ -24,7 +24,7 @@ Your prompt MUST include:
 
 1. **Component name** (e.g., `pyiceberg`, `lakekeeper`, `marimo`)
 2. **Current pin** in `pyproject.toml` (or "not yet pinned" if greenfield evaluation)
-3. **Target doc path** — typically `docs/research/<component>.md` or `docs/swap/<component>.md`
+3. **Target doc path** — typically `docs/internal/research/<component>.md` or `docs/swap/<component>.md`
 4. **Scope** — what questions the founder is trying to answer (e.g., "Is X production-ready for v0.3?", "What's the swap cost from A to B?")
 5. **Tier** (per AGENTS.md §1 Hard Constraints):
    - Tier 0 (immortal): Apache Arrow, Iceberg, Parquet, Lance, S3 API, OpenLineage, OpenTelemetry
@@ -44,7 +44,7 @@ If any are missing, STOP and surface.
 ### Honesty discipline (per AGENTS.md §11.12)
 
 - **NEVER fabricate APIs** that "should exist." If unsure, write `NEEDS VERIFICATION` with the doc URL to check.
-- **Log discovered hallucinations** at the end of the research doc + append to `docs/research/ai_hallucinations.md`
+- **Log discovered hallucinations** at the end of the research doc + append to `docs/internal/research/ai_hallucinations.md`
 - **Cite the AI memory caveat** — "AI training cutoff may be stale; this doc reflects docs as of YYYY-MM-DD"
 
 ### Standard structure
@@ -135,10 +135,10 @@ Final message MUST include:
 ## Reference: prior researcher outputs (good patterns)
 
 Successful prior research docs (from 2026-05-13 session):
-- `docs/research/dlt.md` (20.9 KB) — surfaced pyiceberg>=0.9.1 requirement that informs ADR-003
-- `docs/research/openlineage.md` (20.9 KB) — flagged dead openlineage-dagster bridge as architecture risk
-- `docs/research/polaris.md` (37.4 KB) — JVM heap + cold-start measurements that threatened PoC #4
-- `docs/research/sqlglot.md` (19.8 KB) — surfaced 5 column-lineage edge risks for v0.5+ feature
+- `docs/internal/research/dlt.md` (20.9 KB) — surfaced pyiceberg>=0.9.1 requirement that informs ADR-003
+- `docs/internal/research/openlineage.md` (20.9 KB) — flagged dead openlineage-dagster bridge as architecture risk
+- `docs/internal/research/polaris.md` (37.4 KB) — JVM heap + cold-start measurements that threatened PoC #4
+- `docs/internal/research/sqlglot.md` (19.8 KB) — surfaced 5 column-lineage edge risks for v0.5+ feature
 
 Aim for similar rigor.
 

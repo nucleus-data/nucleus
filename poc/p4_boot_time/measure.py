@@ -114,11 +114,11 @@ def measure_catalog_init(warehouse_dir: Path) -> tuple[float, str]:
 
     NEEDS VERIFICATION (AGENTS.md §11.12): the v0.1 'filesystem catalog' in
     arch §5.7 is realised as PyIceberg ``SqlCatalog`` (SQLite-backed) over a
-    ``file://`` warehouse — see ``docs/research/pyiceberg.md`` §4 and the
+    ``file://`` warehouse — see ``docs/internal/research/pyiceberg.md`` §4 and the
     production-shaped flow in ``poc/p3_ingest/ingest.py``. The
     ``type='memory'`` variant in the task spec is NOT used here; an upstream
     ``InMemoryCatalog`` exists (registration string ``type='in-memory'``) but
-    is unverified in 0.8.1 — log to ``docs/research/ai_hallucinations.md``.
+    is unverified in 0.8.1 — log to ``docs/internal/research/ai_hallucinations.md``.
     """
     from pyiceberg.catalog import load_catalog
 
@@ -136,7 +136,7 @@ def measure_catalog_init(warehouse_dir: Path) -> tuple[float, str]:
 
 def measure_dagster_definitions() -> tuple[float, str]:
     """Construct ``Definitions(assets=[trivial])``. Mirrors what `nucleus up`
-    will do at boot — ephemeral instance per ``docs/research/dagster.md`` §4."""
+    will do at boot — ephemeral instance per ``docs/internal/research/dagster.md`` §4."""
     import dagster as dg
 
     @dg.asset
@@ -152,7 +152,7 @@ def measure_idle_ram() -> tuple[float, str]:
     """Return ``(rss_mb, source_detail)``. psutil → resource → ``-1`` fallback.
 
     psutil isn't pinned in pyproject.toml but ships transitively via dagster
-    on Win/macOS/Linux (``docs/research/dagster.md`` §7); on posix without
+    on Win/macOS/Linux (``docs/internal/research/dagster.md`` §7); on posix without
     psutil we use ``resource.getrusage``; on Windows without psutil we return
     -1.0 with a clear message."""
     try:

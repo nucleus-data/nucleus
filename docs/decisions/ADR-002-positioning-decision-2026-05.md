@@ -15,9 +15,9 @@ Three parallel strategic research workers executed (each with web access):
 
 | # | Topic | Output | Web calls |
 |---|---|---|---|
-| 1 | Competitive landscape across 5 positioning angles (A-E) | `docs/research/strategic/competitive_landscape_2026.md` (12.5 KB) | 9 |
-| 2 | AI / agent data-infrastructure market 2026 | `docs/research/strategic/ai_agent_data_infra_2026.md` (11.4 KB) | 9 |
-| 3 | Solo-OSS execution patterns + Iceberg ecosystem maturity 2026 | `docs/research/strategic/solo_oss_patterns_and_iceberg_2026.md` (13.8 KB) | 12 |
+| 1 | Competitive landscape across 5 positioning angles (A-E) | `docs/internal/research/strategic/competitive_landscape_2026.md` (12.5 KB) | 9 |
+| 2 | AI / agent data-infrastructure market 2026 | `docs/internal/research/strategic/ai_agent_data_infra_2026.md` (11.4 KB) | 9 |
+| 3 | Solo-OSS execution patterns + Iceberg ecosystem maturity 2026 | `docs/internal/research/strategic/solo_oss_patterns_and_iceberg_2026.md` (13.8 KB) | 12 |
 
 This ADR synthesizes their findings into a single recommendation.
 
@@ -66,7 +66,7 @@ All three independently concluded:
 |---|---|---|
 | **v0.5 deliverable: `nucleus-mcp-server` (~500 LOC).** Exposes assets, contracts, lineage to MCP-compatible agents via `ctx`. Hedge against the agent-substrate scenario without pivoting. | `nucleus_architecture_v4.1.md` §18.5 | +500 LOC against 30K ceiling |
 | **Elevate Apache Polaris to co-default with Lakekeeper** for v0.3 catalog. Reason: ASF TLP Feb 18, 2026 satisfies v4.1 §9.2 Tier 0 criterion. Lakekeeper remains for Rust-fit deployments. | §5.7 (catalog table) | 0 LOC (intent change) |
-| **DuckLake = watch flank threat, not yet a swap target.** DuckLake targets exactly Nucleus's beachhead (small-team DuckDB stacks). Tier-0 formats don't swap, but we monitor. | New `docs/research/ducklake.md` stub before v0.3 (Mo 14) | 0 LOC for v0.1 |
+| **DuckLake = watch flank threat, not yet a swap target.** DuckLake targets exactly Nucleus's beachhead (small-team DuckDB stacks). Tier-0 formats don't swap, but we monitor. | New `docs/internal/research/ducklake.md` stub before v0.3 (Mo 14) | 0 LOC for v0.1 |
 | **PyIceberg upgrade 0.8.1 → 0.11.x** scheduled as the first dependency-upgrade ADR immediately after PoC #1 passes (Mo 2-3). Skipping minors is supported; gets `ExpireSnapshots` for free. | New ADR-003 (separate PR) | ~1-2 days work, ~0 net LOC |
 | **Mo 24 = explicit decision gate.** Architecture documents must state that v1.0 GA is contingent on Mo 24 founder decision: (a) convert to funded team, (b) hand off to downstream consumer, (c) accept indie-tier outcome. Default v4.1 §17.2 timeline (Mo 28-36 v1.0) is best-case-only. | §17.2 framing | 0 LOC |
 
@@ -123,9 +123,9 @@ The risk of (3) and (4) is that the README and tagline continue to read as "AI-a
 
 ## §7. References
 
-- `docs/research/strategic/competitive_landscape_2026.md` — 5-angle competitive scan
-- `docs/research/strategic/ai_agent_data_infra_2026.md` — AI / agent infra market scan
-- `docs/research/strategic/solo_oss_patterns_and_iceberg_2026.md` — solo execution + Iceberg ecosystem
+- `docs/internal/research/strategic/competitive_landscape_2026.md` — 5-angle competitive scan
+- `docs/internal/research/strategic/ai_agent_data_infra_2026.md` — AI / agent infra market scan
+- `docs/internal/research/strategic/solo_oss_patterns_and_iceberg_2026.md` — solo execution + Iceberg ecosystem
 - `nucleus_architecture_v4.1.md` §1.0, §2.1, §5.7, §17.2, §18, §20 — current architecture sections this ADR touches
 - `AGENTS.md` §3 (constraints), §4 (do-not-build), §8 (forbidden mental models)
 
@@ -220,7 +220,7 @@ Worker B's drift sweep (`docs/audits/positioning_drift_2026-05-12.md`) surfaced 
 |---|---|---|
 | `docs/architecture/C4_context.md:29` | Mermaid label replaced with §8.1 thesis (`Ship data products from a laptop / Local-first Python SDK + CLI / for Iceberg-native pipelines`) | **Patch-introduced** — C4 diagrams were absent from initial §8.6 apply log |
 | `nucleus_architecture_v4.1.md:170` | §1.2 trend row 6 `"AI-native data contracts"` → `"AI-assisted contract authoring"` (right column adjusted) | **Pre-existing** (not caused by v4.1.3) — but a vocab-check ban-list violation that the sweep made visible; fixed opportunistically since v4.1 was being touched anyway |
-| `scripts/check_vocabulary.py` + 5 primary docs (`nucleus_architecture_v4.1.md`, `AGENTS.md`, `README.md`, `.cursor/rules/nucleus.mdc`) | **Option A vocab-check hygiene pass** (per `docs/audits/positioning_drift_2026-05-12.md` §3 + this §8.6.1 follow-up): (1) extended `SKIP_PATTERNS` with 5 whole-file exemptions covering retirement-narrative docs — deprecated `nucleus_architecture_v3.md` / `v4.md`, `docs/audits/`, `docs/decisions/`, `docs/research/strategic/`; (2) added inline `<!-- banned-term: ... -->` exemptions to legitimate retirement-narrative lines in primary docs (v4.1 §1.6 + evening-pass note; `AGENTS.md` §0 + vocabulary contract + forbidden-framings list; README pillar #3; `.cursor/rules/nucleus.mdc` vocabulary + forbidden-framings list); C4 diagrams verified clean (no banned terms after the §8.6.1 Mermaid label fix above). | **Patch — CI hygiene**, no semantic / architectural change. Closes the gap the drift audit surfaced where the script would FAIL on its own primary-doc retirement narratives once `.github/workflows/ci.yml:82` is wired live. |
+| `scripts/check_vocabulary.py` + 5 primary docs (`nucleus_architecture_v4.1.md`, `AGENTS.md`, `README.md`, `.cursor/rules/nucleus.mdc`) | **Option A vocab-check hygiene pass** (per `docs/audits/positioning_drift_2026-05-12.md` §3 + this §8.6.1 follow-up): (1) extended `SKIP_PATTERNS` with 5 whole-file exemptions covering retirement-narrative docs — deprecated `nucleus_architecture_v3.md` / `v4.md`, `docs/audits/`, `docs/decisions/`, `docs/internal/research/strategic/`; (2) added inline `<!-- banned-term: ... -->` exemptions to legitimate retirement-narrative lines in primary docs (v4.1 §1.6 + evening-pass note; `AGENTS.md` §0 + vocabulary contract + forbidden-framings list; README pillar #3; `.cursor/rules/nucleus.mdc` vocabulary + forbidden-framings list); C4 diagrams verified clean (no banned terms after the §8.6.1 Mermaid label fix above). | **Patch — CI hygiene**, no semantic / architectural change. Closes the gap the drift audit surfaced where the script would FAIL on its own primary-doc retirement narratives once `.github/workflows/ci.yml:82` is wired live. |
 
 **§8.6.2 Residual vocab-check cleanup (2026-05-12 late evening pass)**
 

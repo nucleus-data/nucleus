@@ -1,7 +1,7 @@
 """Empirical NTFS atomicity harness for ``os.replace``.
 
-Per ``docs/research/performance_reliability_targets.md`` §10 #5 +
-``docs/research/windows_atomicity.md`` (companion findings doc).
+Per ``docs/internal/research/performance_reliability_targets.md`` §10 #5 +
+``docs/internal/research/windows_atomicity.md`` (companion findings doc).
 
 What this validates
 -------------------
@@ -42,7 +42,7 @@ This harness verifies steady-state contention atomicity (both writers
 return success or one raises ``PermissionError`` while the winner's
 content lands intact). It does NOT simulate the full kill-9 / power-cut
 case the perf doc §10 #5 also worries about — see
-``docs/research/windows_atomicity.md`` §"Kill -9 caveat" for that.
+``docs/internal/research/windows_atomicity.md`` §"Kill -9 caveat" for that.
 
 Docs
 ----
@@ -301,7 +301,7 @@ def _render(report: HarnessReport) -> str:
         summary_lines.append(
             "FAIL: unexpected states observed. os.replace is NOT safe on this "
             "filesystem; Nucleus must add an advisory lock for the affected "
-            "code path. See docs/research/windows_atomicity.md."
+            "code path. See docs/internal/research/windows_atomicity.md."
         )
         summary_lines.append("")
         summary_lines.append("Failing iterations (first 5):")
@@ -318,7 +318,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
             "Empirically test os.replace atomicity under contention. "
-            "Per perf doc §10 #5 + docs/research/windows_atomicity.md."
+            "Per perf doc §10 #5 + docs/internal/research/windows_atomicity.md."
         ),
     )
     parser.add_argument(

@@ -11,7 +11,7 @@ The wrapped surface is deliberately tiny. Per v4.1 §6.4 + the Anti-Over-Enginee
 - **In-process materialization** of `@nucleus.asset` definitions: the AMA translates `_AssetDefinition` → `dagster.AssetsDefinition`, then routes to `dagster.materialize` (production) or `dagster.materialize_to_memory` (dry-run). Implemented across the four AMA helpers (lines 106-341).
 - **Asset-key identity**: `dagster.AssetKey(["schema", "name"])` mirrors our 2-segment key (`asset_materialization.py:160-161`).
 - **Exception translation**: `dagster.DagsterExecutionStepExecutionError` is registered as the generic Dagster-wrapper fallback in `coordination/error_translation.py:308`; `translate(exc)` walks `__cause__`/`__context__` to prefer specific library handlers (DuckDB / Polars / pyiceberg) over the wrapper.
-- **NOT used in v0.1**: `@op`, `@job`, `@sensor`, `@schedule`, `ConfigurableResource`, the Dagster webserver / Dagit, `IOManager` (deferred until `coordination/iceberg_writer.py` lands), partitions, backfills, multi-process executors, code locations, code servers (`docs/research/dagster.md` §5).
+- **NOT used in v0.1**: `@op`, `@job`, `@sensor`, `@schedule`, `ConfigurableResource`, the Dagster webserver / Dagit, `IOManager` (deferred until `coordination/iceberg_writer.py` lands), partitions, backfills, multi-process executors, code locations, code servers (`docs/internal/research/dagster.md` §5).
 
 The swap boundary is **the four AMA helpers**: any swap target reimplements only these. Everything else stays unchanged.
 
@@ -75,7 +75,7 @@ Located at `tests/swap/test_dagster_swap.py`. Tests through `nucleus.coordinatio
 
 Per v4.1 §6.7 + §9.3, swap fires only on:
 
-- Dagster Labs abandons OSS `main` >12 months OR pivots license (current: Apache-2.0 — `docs/research/dagster.md` §1)
+- Dagster Labs abandons OSS `main` >12 months OR pivots license (current: Apache-2.0 — `docs/internal/research/dagster.md` §1)
 - `nucleus up` boot regresses >2× vs PoC #4 baseline (5.82 s, 117.3 MB validated 2026-05-12)
 - PoC #1 retroactively fails ≥6/8 error-translation scenarios on a Dagster minor bump (auto-escalates per v4.1 §6.7)
 - Architectural-constraint violation: JVM dep, mandatory webserver for `materialize()`, `IOManager` extension contract breaks (Hard Constraints #1, #3)
@@ -95,5 +95,5 @@ Until one fires, we maintain interface + smoke tests only, never a full second i
 - `dagster._core.errors`: https://docs.dagster.io/api/python-api/errors
 - Prefect 3.x (fallback): https://docs.prefect.io/3.0/
 - Architecture: `nucleus_architecture_v4.1.md` §6.3 (what we take from Dagster), §6.4 (error translation discipline), §6.5 (replaceability mandate), §6.7 (mini-scheduler design intent), §9.2-§9.3
-- Research notes: `docs/research/dagster.md` (PoC #1 anchor)
+- Research notes: `docs/internal/research/dagster.md` (PoC #1 anchor)
 - Related: `docs/decisions/ADR-013-ctx-materialize-api.md` (the public `materialize_asset` contract that survives any swap)

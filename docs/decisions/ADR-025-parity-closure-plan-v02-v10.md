@@ -4,8 +4,8 @@ Status: ACCEPTED
 Date: 2026-05-15
 Author: builder (v0.2.0 reconciliation pass)
 Sources:
-- `docs/research/parity_vs_databricks_snowflake.md` §4 (Wave 1F)
-- `docs/research/parity_vs_dbt_dagster_airflow.md` §5–6 (Wave 1G)
+- `docs/internal/research/parity_vs_databricks_snowflake.md` §4 (Wave 1F)
+- `docs/internal/research/parity_vs_dbt_dagster_airflow.md` §5–6 (Wave 1G)
 - ADR-023, ADR-024 (this release)
 - `nucleus_architecture_v4.1.md` §17 (yield-to-giants), §20 (non-goals)
 

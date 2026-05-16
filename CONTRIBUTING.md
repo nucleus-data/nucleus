@@ -23,7 +23,7 @@ Each "no" = stop and fix.
 6. **Beachhead?** Serves (or doesn't hurt) the **<30-min** target? (architecture v4.1 §1.5)
 7. **Errors translated?** Every external exception caught at a layer boundary becomes a `NucleusError`? (v4.1 §6.4)
 8. **LOC budget?** If `src/` LOC grew, is `docs/budget_history.md` updated and the tier ceiling respected? (`AGENTS.md §11.6`)
-9. **New library?** If wrapping a new lib, is `docs/research/<library>.md` written from official docs? (`AGENTS.md §11.12`)
+9. **New library?** If wrapping a new lib, is `docs/internal/research/<library>.md` written from official docs? (`AGENTS.md §11.12`)
 
 ## §3. Branching and commits
 
@@ -35,7 +35,7 @@ Each "no" = stop and fix.
 
 Six steps from `AGENTS.md §11.4`. PowerShell shown for the primary (Windows) developer.
 
-**Step 1 — Wrap-vs-build check** (~5 min, human). Ask: "Is there production-grade OSS that already does this?" (`.cursor/rules/nucleus.mdc` table). Wrap path = note in PR body. Build path = ADR via `docs/decisions/_template.md` → `docs/decisions/ADR-NNN-<title>.md` (next is **ADR-002**; status starts `Proposed`, transitions to `Accepted` in the same PR). Wrapping a new dep = `docs/research/<library>.md` is **mandatory** before merge.
+**Step 1 — Wrap-vs-build check** (~5 min, human). Ask: "Is there production-grade OSS that already does this?" (`.cursor/rules/nucleus.mdc` table). Wrap path = note in PR body. Build path = ADR via `docs/decisions/_template.md` → `docs/decisions/ADR-NNN-<title>.md` (next is **ADR-002**; status starts `Proposed`, transitions to `Accepted` in the same PR). Wrapping a new dep = `docs/internal/research/<library>.md` is **mandatory** before merge.
 
 **Step 2 — Spec the tests** (~15 min, human). Tests come *before* implementation. Mirror `src/` per `engineering.md §6.2`:
 
@@ -72,9 +72,9 @@ These apply to YOU, not the AI. The AI does what you tell it; the discipline is 
 
 - **Author the boundaries; let AI fill the inside** (`AGENTS.md §11.2`).
 - **Verify against official docs** (Hard Constraint #10). Cite the docs URL in the import comment. Never accept AI-suggested wrapped-lib calls without confirming the API exists.
-- **Log hallucinations** in `docs/research/ai_hallucinations.md`.
+- **Log hallucinations** in `docs/internal/research/ai_hallucinations.md`.
 - **Risky/Bad categories** (`AGENTS.md §11.3`) — do NOT accept AI authorship for: Error Translation Layer, `ctx.sql` Jinja resolver core, concurrency / atomicity decisions, performance-critical paths, schema evolution edge cases, direct Dagster internals.
-- **New dep proposed by AI?** Write `docs/research/<library>.md` BEFORE merging; confirm version exists on PyPI; update [`docs/compatibility.md`](docs/compatibility.md).
+- **New dep proposed by AI?** Write `docs/internal/research/<library>.md` BEFORE merging; confirm version exists on PyPI; update [`docs/compatibility.md`](docs/compatibility.md).
 - **No bulk upgrades.** One component per PR (`AGENTS.md §11.13`).
 
 ## §8. Issue triage
@@ -90,7 +90,7 @@ Templates: [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/) (`bug_report.yml
 - [ ] Vocabulary clean (engineering.md §15)
 - [ ] Tests passing locally + in CI (lint + type + unit; integration if relevant)
 - [ ] LOC under tier ceiling (`scripts/loc_budget.py --report`)
-- [ ] Docs updated as needed: docs/research/, docs/compatibility.md, ADR, CHANGELOG
+- [ ] Docs updated as needed: docs/internal/research/, docs/compatibility.md, ADR, CHANGELOG
 - [ ] PR template filled completely; no empty sections
 ```
 
@@ -115,7 +115,7 @@ Rejected on sight:
 | Vocabulary | `engineering.md §15`, `AGENTS.md §7`. `python scripts\check_vocabulary.py` lists banned terms. |
 | Tooling / install | [`SETUP.md`](SETUP.md) §7 — common fixes for first-run issues. |
 | Pinning mismatch | `python scripts\check_pinning.py` + `SETUP.md §7`. Single-component upgrade workflow in `AGENTS.md §11.13`. |
-| AI gave me garbage | Log it in `docs/research/ai_hallucinations.md`. Re-prompt with a stricter Composer template. |
+| AI gave me garbage | Log it in `docs/internal/research/ai_hallucinations.md`. Re-prompt with a stricter Composer template. |
 | Junior DE overwhelm | [`docs/onboarding/learning_path.md`](docs/onboarding/learning_path.md). |
 
 ## §12. Useful links

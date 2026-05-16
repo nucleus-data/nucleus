@@ -16,4 +16,4 @@ services:
     volumes:
       - ./.nucleus/storage:/data
     restart: unless-stopped
-# NEEDS VERIFICATION: arm64 manifest availability for this exact tag (archived upstream — no future builds per docs/research/minio.md §3.2 + SETUP.md §M8 #2).
+# NEEDS VERIFICATION: arm64 manifest availability for this exact tag (archived upstream — no future builds per docs/internal/research/minio.md §3.2 + SETUP.md §M8 #2).

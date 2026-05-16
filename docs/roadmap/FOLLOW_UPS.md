@@ -10,12 +10,12 @@ These sections use `[REFINE WITH RESEARCH FINDINGS]` placeholders. Update them w
 
 | Section | Research file needed | Placeholder location |
 |---|---|---|
-| v0.3 connector priority order | `docs/research/parity_vs_databricks_snowflake.md` | `v0.3-hardening.md` §dlt connectors |
-| v0.3 Lakekeeper config parity | `docs/research/lakekeeper.md` | `v0.3-hardening.md` §Lakekeeper |
-| v0.3 Marimo version compat | `docs/research/marimo.md` | `v0.3-hardening.md` §Marimo |
-| v0.5 Daft integration API | `docs/research/daft.md` | `v0.5-multimodal.md` §Daft |
-| v0.5 Lance API for Nucleus | `docs/research/lance.md` | `v0.5-multimodal.md` §Lance |
-| v0.5 perf targets | `docs/research/performance_reliability_targets.md` | `v0.5-multimodal.md` §Cost meter |
+| v0.3 connector priority order | `docs/internal/research/parity_vs_databricks_snowflake.md` | `v0.3-hardening.md` §dlt connectors |
+| v0.3 Lakekeeper config parity | `docs/internal/research/lakekeeper.md` | `v0.3-hardening.md` §Lakekeeper |
+| v0.3 Marimo version compat | `docs/internal/research/marimo.md` | `v0.3-hardening.md` §Marimo |
+| v0.5 Daft integration API | `docs/internal/research/daft.md` | `v0.5-multimodal.md` §Daft |
+| v0.5 Lance API for Nucleus | `docs/internal/research/lance.md` | `v0.5-multimodal.md` §Lance |
+| v0.5 perf targets | `docs/internal/research/performance_reliability_targets.md` | `v0.5-multimodal.md` §Cost meter |
 | v1.0 Python column-level lineage approach | TBD (needs architecture research) | `v1.0-production-ready.md` §Column-level lineage |
 | v1.5 differential privacy library | TBD at v1.5 design time | `v1.5-enterprise-gateway.md` §Privacy |
 

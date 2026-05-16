@@ -61,6 +61,6 @@ Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 - `nucleus_architecture_v4.1.md` §5.5 (Ingestion — connector expansion)
 - `nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline)
-- `docs/research/snowflake.md` (pre-integration research per Constraint #10)
+- `docs/internal/research/snowflake.md` (pre-integration research per Constraint #10)
 - `docs/compatibility.md` (optional dep row added)
 - `docs/decisions/ADR-012-runtime-dependency-pin-matrix-v01.md` (optional dep row added)

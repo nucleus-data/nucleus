@@ -5,7 +5,7 @@
 > **Decider(s)**: Solo founder (graduation-pathways workstream, v0.2.0 close-out polish).
 > **Tags**: yield-to-giants, layer-2-coordination, layer-4-experience, mode-2, hybrid-compute, sdk-surface, deferred-implementation
 > **Supersedes**: (none -- first ADR scoping a Mode 2 dispatch surface)
-> **Related**: `nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) - section 10.2 (Mode 2: Hybrid Compute) - section 6 (Coordination layer) - section 6.4 (Error Translation Discipline) - section 13 (`ctx` SDK Contract); `AGENTS.md` section 4 (Do-Not-Build list -- distributed compute) - section 3 #6 (No custom auth -- always delegate to OIDC); ADR-006 (NE-prefixed error codes); ADR-015 (AI Copilot single-turn chat); ADR-040 (Layer-4 peer imports); `docs/research/parity_vs_databricks_snowflake.md` section 1, section 6 (gap-closure plan); `docs/cookbook/graduate-to-databricks.md`, `graduate-to-snowflake.md`, `graduate-to-bigquery.md` (the manual hybrid recipes ADR-041 automates).
+> **Related**: `nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) - section 10.2 (Mode 2: Hybrid Compute) - section 6 (Coordination layer) - section 6.4 (Error Translation Discipline) - section 13 (`ctx` SDK Contract); `AGENTS.md` section 4 (Do-Not-Build list -- distributed compute) - section 3 #6 (No custom auth -- always delegate to OIDC); ADR-006 (NE-prefixed error codes); ADR-015 (AI Copilot single-turn chat); ADR-040 (Layer-4 peer imports); `docs/internal/research/parity_vs_databricks_snowflake.md` section 1, section 6 (gap-closure plan); `docs/cookbook/graduate-to-databricks.md`, `graduate-to-snowflake.md`, `graduate-to-bigquery.md` (the manual hybrid recipes ADR-041 automates).
 
 ---
 
@@ -15,7 +15,7 @@
 
 Nucleus v0.2.0 runs **all** asset compute in-process via DuckDB and Polars (`nucleus_architecture_v4.1.md` section 5.1, section 5.2). This is exactly right for the beachhead persona -- a 5-20-engineer startup team, 100 GB to 5 TB total, greenfield (`v4.1` section 1.5). Cold boot ~ 6 s; idle RAM ~ 117 MB; queries on 100M-row Parquet finish in seconds (per `docs/benchmarks/2026-05-15_baseline.md`).
 
-The **honest evaluation pinned in `docs/research/parity_vs_databricks_snowflake.md` section 1** flagged a documentation gap and an implementation gap:
+The **honest evaluation pinned in `docs/internal/research/parity_vs_databricks_snowflake.md` section 1** flagged a documentation gap and an implementation gap:
 
 > *Iceberg portability has not been tested on Databricks / Snowflake / BigQuery -- graduation claim is documented but not validated. Mode 2 hybrid compute dispatch is documented but not implemented.*
 
@@ -330,7 +330,7 @@ If <4 hold, the ADR returns to PROPOSED with the gaps named in the founder's rev
 
 ### Positive
 
-- Closes the documentation gap flagged in `docs/research/parity_vs_databricks_snowflake.md` section 1.
+- Closes the documentation gap flagged in `docs/internal/research/parity_vs_databricks_snowflake.md` section 1.
 - Gives the founder a concrete spec to prototype against, without committing implementation effort in v0.2.
 - Locks the user-visible API early so the cookbooks (`graduate-to-{databricks,snowflake,bigquery}.md`) can reference a stable name (`compute=`) without a syntax-drift risk.
 - Provides a forward-compatible plug interface that future providers (Trino, ClickHouse, Tinybird, R2 Data Catalog) can implement without re-spec.
@@ -377,7 +377,7 @@ Pre-implementation (when v0.3+ wave starts):
 - ADR-006 (NE-prefixed error codes -- defines the NE3xxx Coordination range that NE3008 lands in).
 - ADR-015 (AI Copilot single-turn chat MVP -- precedent for "spec the surface, build later").
 - ADR-040 (Layer-4 peer imports -- precedent for ADRs that crystallise architectural intent without runtime code change).
-- `docs/research/parity_vs_databricks_snowflake.md` section 1 (the scope statement that motivated this ADR), section 6 #1-#5 (Top 5 must-close items -- Mode 2 is the umbrella for these).
+- `docs/internal/research/parity_vs_databricks_snowflake.md` section 1 (the scope statement that motivated this ADR), section 6 #1-#5 (Top 5 must-close items -- Mode 2 is the umbrella for these).
 - `docs/cookbook/graduate-to-databricks.md` section 8 (Hybrid mode), `graduate-to-snowflake.md` section 6, `graduate-to-bigquery.md` section 6 -- the manual recipes ADR-041 will eventually automate.
 
 ### External (cited URL form, content verifiable at implementation time)

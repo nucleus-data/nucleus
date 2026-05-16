@@ -12,7 +12,7 @@
 - [ ] **Performance regression** — `Table.append()` throughput >2x worse than 0.11.x, or `Catalog.commit_table()` p99 > ~500 ms.
 - [ ] **Community demand** — ≥30% of user telemetry requests iceberg-rust.
 - [ ] **Architectural constraint violation** — JVM dep, dropped Windows wheels (PoC #4 breaks), or relaxed atomic-commit contract (ADR-001).
-- [ ] **Spec-v3 lag** — PyIceberg >12 mo behind spec v3 writes while iceberg-rust ships ahead, breaking the v0.5+ multimodal / `timestamp_ns` story (`docs/research/pyiceberg.md` §4, §7).
+- [ ] **Spec-v3 lag** — PyIceberg >12 mo behind spec v3 writes while iceberg-rust ships ahead, breaking the v0.5+ multimodal / `timestamp_ns` story (`docs/internal/research/pyiceberg.md` §4, §7).
 
 (License pivot omitted: Apache-2.0 + ASF top-level governance makes it implausible.)
 
@@ -94,22 +94,22 @@ def test_update_schema_adds_nullable_column(iceberg_impl): ...
 
 ## 5. Critical risks specific to this swap
 
-1. **Write-path maturity.** `docs/research/pyiceberg.md` §3 (2026-05) tracked iceberg-rust as "fewer catalog backends, less mature write path." `Table.append` / `overwrite` parity against our partition transforms + sort-order / partition evolution (PyIceberg 0.11 per ADR-003 §1) must be re-verified at trigger time.
-2. **Schema-evolution parity.** PyIceberg's `UpdateSchema` enforces ID-stable rules (add nullable, drop, rename, widen; reject narrow / nullable→required — `docs/research/pyiceberg.md` §7). iceberg-rust must enforce the same — else v4.1 §6.4 contract enforcement leaks.
+1. **Write-path maturity.** `docs/internal/research/pyiceberg.md` §3 (2026-05) tracked iceberg-rust as "fewer catalog backends, less mature write path." `Table.append` / `overwrite` parity against our partition transforms + sort-order / partition evolution (PyIceberg 0.11 per ADR-003 §1) must be re-verified at trigger time.
+2. **Schema-evolution parity.** PyIceberg's `UpdateSchema` enforces ID-stable rules (add nullable, drop, rename, widen; reject narrow / nullable→required — `docs/internal/research/pyiceberg.md` §7). iceberg-rust must enforce the same — else v4.1 §6.4 contract enforcement leaks.
 3. **REST catalog feature gap.** iceberg-rust's REST client may not implement every endpoint PyIceberg does (especially newer scan-planning); Lakekeeper / Polaris (v0.3+) users would feel this immediately.
-4. **Python binding ergonomics + Windows atomicity.** Whether iceberg-rust has a first-class Python surface is unsettled (§7); `Table.scan().to_duckdb(name)` / `.to_polars()` (`docs/research/pyiceberg.md` §5) may need re-implementation by us. Separately, `std::fs::rename` has its own Windows semantics, so the §4 kill-9 stress (per ADR-001's #1 risk) is non-optional.
+4. **Python binding ergonomics + Windows atomicity.** Whether iceberg-rust has a first-class Python surface is unsettled (§7); `Table.scan().to_duckdb(name)` / `.to_polars()` (`docs/internal/research/pyiceberg.md` §5) may need re-implementation by us. Separately, `std::fs::rename` has its own Windows semantics, so the §4 kill-9 stress (per ADR-001's #1 risk) is non-optional.
 
 ## 6. Cited docs
 
 - Current (PyIceberg): https://py.iceberg.apache.org/ • https://py.iceberg.apache.org/api/#exceptions
 - Iceberg spec: https://iceberg.apache.org/spec/ • https://iceberg.apache.org/spec/#commit-concurrency (ADR-001)
 - Target (iceberg-rust): https://github.com/apache/iceberg-rust • https://rust.iceberg.apache.org/ (verify at trigger time)
-- Research / decisions: `docs/research/pyiceberg.md` • `docs/research/duckdb.md` §8 • `docs/research/dlt.md` §6 • ADR-001 • ADR-003
+- Research / decisions: `docs/internal/research/pyiceberg.md` • `docs/internal/research/duckdb.md` §8 • `docs/internal/research/dlt.md` §6 • ADR-001 • ADR-003
 
 ## 7. NEEDS VERIFICATION
 
 - **Canonical iceberg-rust Python entrypoint** — sibling PyPI package, in-tree PyO3, or none at all: TBD. If absent, §4 grows by 2-3 weeks.
-- **REST catalog endpoint coverage** — whether iceberg-rust supports the scan-planning endpoint PyIceberg 0.11 added (`docs/research/pyiceberg.md` §B.3); v0.3+ users otherwise regress.
+- **REST catalog endpoint coverage** — whether iceberg-rust supports the scan-planning endpoint PyIceberg 0.11 added (`docs/internal/research/pyiceberg.md` §B.3); v0.3+ users otherwise regress.
 - **Windows atomic commit** — re-validate with the ADR-001 kill-9 harness against `std::fs::rename` semantics before announcing the swap.
-- **Exception class structure** — whether iceberg-rust surfaces `NoSuchTableError`, `CommitFailedException`, `CommitStateUnknownException`, `ValidationError` (`docs/research/pyiceberg.md` §6) as distinct classes (1:1) or collapses to one `IcebergError` (lossy). Translator design depends on this.
-- **PyArrow envelope + dlt blocker** — iceberg-rust must piggyback on `pyarrow==18.1.0` (else zero-copy breaks) AND satisfy `dlt[pyiceberg]`'s Iceberg destination (`docs/research/dlt.md` §7). A swap before v0.3 forces the dlt ADR to be re-scoped.
+- **Exception class structure** — whether iceberg-rust surfaces `NoSuchTableError`, `CommitFailedException`, `CommitStateUnknownException`, `ValidationError` (`docs/internal/research/pyiceberg.md` §6) as distinct classes (1:1) or collapses to one `IcebergError` (lossy). Translator design depends on this.
+- **PyArrow envelope + dlt blocker** — iceberg-rust must piggyback on `pyarrow==18.1.0` (else zero-copy breaks) AND satisfy `dlt[pyiceberg]`'s Iceberg destination (`docs/internal/research/dlt.md` §7). A swap before v0.3 forces the dlt ADR to be re-scoped.

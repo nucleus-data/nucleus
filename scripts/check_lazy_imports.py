@@ -9,7 +9,7 @@ or any module reachable from its top-level import set fails the check.
 Why
 ---
 ``nucleus --version`` MUST stay below 500 ms cold per
-``docs/research/performance_reliability_targets.md`` §2.1 + §10 #4.
+``docs/internal/research/performance_reliability_targets.md`` §2.1 + §10 #4.
 Heavy libraries (``litellm`` ~0.5 s, ``dlt`` ~0.3 s, ``dagster`` ~0.4 s,
 ``pyiceberg`` ~0.2 s, ``polars`` ~0.2 s, ``duckdb`` ~0.2 s, ``s3fs``
 ~0.1 s, ``psycopg2`` ~0.1 s, ``fastapi`` ~0.15 s, ``uvicorn`` ~0.1 s)

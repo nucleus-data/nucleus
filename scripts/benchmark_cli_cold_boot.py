@@ -6,7 +6,7 @@ for each run via :func:`subprocess.run`. Each invocation is therefore a
 true cold-start measurement (no in-process module cache), which is the
 metric end users actually feel when they type ``nucleus --version``.
 
-Acceptance threshold (``docs/research/performance_reliability_targets.md``
+Acceptance threshold (``docs/internal/research/performance_reliability_targets.md``
 §2.1): ``nucleus --version`` median < 500 ms cold on a beachhead-class
 laptop. Heavy libraries (``litellm``, ``dlt``, ``dagster``, ``pyiceberg``,
 ``polars``, ``duckdb``, ``s3fs``, ``psycopg2``, ``fastapi``, ``uvicorn``)
@@ -47,7 +47,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-# Per ``docs/research/performance_reliability_targets.md`` §2.1 cold target.
+# Per ``docs/internal/research/performance_reliability_targets.md`` §2.1 cold target.
 DEFAULT_THRESHOLD_MS: int = 500
 DEFAULT_RUNS: int = 10
 DEFAULT_TIMEOUT_S: float = 30.0
@@ -260,7 +260,7 @@ def main() -> int:
     else:
         print("=" * 78)
         print(" Nucleus CLI cold-boot benchmark")
-        print(" Source: docs/research/performance_reliability_targets.md §2.1 / §10 #4")
+        print(" Source: docs/internal/research/performance_reliability_targets.md §2.1 / §10 #4")
         print(f" Runs per command: {args.runs}    Threshold: {args.threshold_ms}ms cold")
         print("=" * 78)
         for label in (_argv_label(a) for a in _COMMANDS):

@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder  
 **Priority**: P1  
 **Target phase**: v0.5  
-**Source research**: `docs/research/inspiration/ai_data_tooling_2026.md` §5; `docs/research/inspiration/observability_lineage_2026.md` §8; `docs/research/inspiration/embedded_analytics_bi.md` §5  
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §3 #13, §2.3
+**Source research**: `docs/internal/research/inspiration/ai_data_tooling_2026.md` §5; `docs/internal/research/inspiration/observability_lineage_2026.md` §8; `docs/internal/research/inspiration/embedded_analytics_bi.md` §5  
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §3 #13, §2.3
 
 ---
 

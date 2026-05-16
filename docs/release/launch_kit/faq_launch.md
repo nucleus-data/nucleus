@@ -131,7 +131,7 @@ Secrets never appear in logs, run metadata, or AI Copilot context.
 
 ### Q10. Can Nucleus scale to 100+ engineers / 100 TB warehouse?
 
-**Honestly, no — and that's by design.** Per `docs/research/scale_out_audit.md`, the documented data envelope is 100 GB–5 TB and the documented engineer envelope is 5–20 (per `nucleus_architecture_v4.1.md` §1.5). Above that, three real gaps surface:
+**Honestly, no — and that's by design.** Per `docs/internal/research/scale_out_audit.md`, the documented data envelope is 100 GB–5 TB and the documented engineer envelope is 5–20 (per `nucleus_architecture_v4.1.md` §1.5). Above that, three real gaps surface:
 
 1. **Cross-machine concurrency** — `coordination/locks.py` is filesystem-local only; multi-host coordination is the catalog's job. Closure path: Lakekeeper REST catalog (v0.3+).
 2. **Workbench at 50+ concurrent users** — single uvicorn worker by default. Closure path: `uvicorn --workers=N` or k8s replicas. Documentation, not code.

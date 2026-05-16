@@ -227,7 +227,7 @@ Thanks for reading. 🙏
 - ❌ "Spark killer / Databricks killer" framings (banned per `AGENTS.md` §8) <!-- banned-term: Spark killer --> <!-- banned-term: Databricks killer -->
 - ❌ "AI-native data platform" (banned) <!-- banned-term: AI-native -->
 - ❌ "Better than X" (we are *different*, not *better-of-the-same*)
-- ❌ Any number not in `docs/benchmarks/2026-05-15_baseline.md` or `docs/research/scale_out_audit.md` or `pyproject.toml`
+- ❌ Any number not in `docs/benchmarks/2026-05-15_baseline.md` or `docs/internal/research/scale_out_audit.md` or `pyproject.toml`
 - ❌ "Production-ready" / "enterprise-ready" — this is beta
 - ❌ Memes about competitor failures (we are friendly to giants)
 - ❌ Engagement-bait CTAs ("Like + RT if you've ever spent a week wiring orchestrators…")

@@ -82,7 +82,7 @@ nucleus sql "SELECT count(*), min(signup_ts), max(signup_ts) FROM raw.customers"
 # Expected: 5 | 2026-01-05T08:23:00Z | 2026-03-08T14:30:00Z
 ```
 
-`nucleus sql` runs DuckDB zero-copy against the Iceberg asset via `Table.scan().to_duckdb(...)` ([`docs/research/pyiceberg.md`](../research/pyiceberg.md) §5).
+`nucleus sql` runs DuckDB zero-copy against the Iceberg asset via `Table.scan().to_duckdb(...)` ([`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §5).
 
 ## Step 6: Add a monthly partition for BI (~3 min, optional)
 
@@ -142,7 +142,7 @@ Per [AGENTS.md §11.12](../../AGENTS.md):
 4. **`nucleus snapshot list / restore`** — deferred to v0.5 per spec §4.1. Use `nucleus sql` against the asset until the snapshot subcommand ships.
 5. **`docs/recipes/README.md` index does not yet list this file** — the v0.1 beachhead table contains only `postgres_to_iceberg.md` + `csv_to_iceberg.md`. Adding a row is a follow-up PR (out of scope per the no-modify constraint).
 
-Hit any of these? Log to [`docs/research/ai_hallucinations.md`](../research/ai_hallucinations.md).
+Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../research/ai_hallucinations.md).
 
 ---
 

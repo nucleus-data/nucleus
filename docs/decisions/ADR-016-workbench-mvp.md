@@ -12,7 +12,7 @@
 > 6. **Tauri**: deferred to v0.5+ packaging ADR; v0.2 ships SPA + FastAPI architecture (Tauri-compatible).
 > **Tags**: workbench, frontend, fastapi, react, v0.2, layer-4-experience
 > **Supersedes**: (none — first Workbench architecture ADR)
-> **Related**: `nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §8.1 (Layer 4 Experience surface matrix) · §11.2 (perf targets) · §16.3 (Workbench RAM ≤1 GB) · §18.2 (v0.2 roadmap) · §20 (non-goals); ADR-002 §4.2 (`nucleus-mcp-server` shares OpenAPI surface); ADR-005 §2 (Internal-tier API stability); ADR-006 (NE-codes); ADR-013 (`ctx.materialize` API consumed by Workbench); `docs/research/workbench.md` (companion research, this ADR's evidence base); `docs/research/marimo.md` §5.5 (Workbench vs Marimo boundary); `nucleus_vs_databricks.md` §1-§4 (workspace paradigm difference); `AGENTS.md §3 #1` (No JVM) · §3 #2 (No public plugin SDK) · §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND.
+> **Related**: `nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §8.1 (Layer 4 Experience surface matrix) · §11.2 (perf targets) · §16.3 (Workbench RAM ≤1 GB) · §18.2 (v0.2 roadmap) · §20 (non-goals); ADR-002 §4.2 (`nucleus-mcp-server` shares OpenAPI surface); ADR-005 §2 (Internal-tier API stability); ADR-006 (NE-codes); ADR-013 (`ctx.materialize` API consumed by Workbench); `docs/internal/research/workbench.md` (companion research, this ADR's evidence base); `docs/internal/research/marimo.md` §5.5 (Workbench vs Marimo boundary); `nucleus_vs_databricks.md` §1-§4 (workspace paradigm difference); `AGENTS.md §3 #1` (No JVM) · §3 #2 (No public plugin SDK) · §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND.
 
 ---
 
@@ -27,12 +27,12 @@ Two architectural forks are real:
 
 Forces in tension:
 
-- **Velocity vs brand-coherence** — Fork A ships in 4-6 weeks; Fork B in 10-14 weeks (per `docs/research/workbench.md` §12).
+- **Velocity vs brand-coherence** — Fork A ships in 4-6 weeks; Fork B in 10-14 weeks (per `docs/internal/research/workbench.md` §12).
 - **Wrap-not-build (`AGENTS.md §4` default) vs Layer 4 Experience ownership (`AGENTS.md §0` "we own three things, forever: ... unified developer-first experience")** — Layer 4 is on the explicit BUILD list per `.cursor/rules/nucleus.mdc` ("Build only the experience and intelligence layers: ... Workbench (v0.2+)").
 - **Hard Constraint #1 (No JVM in core path) vs Marquez** — Marquez's API server is Java Spring Boot per the [MarquezProject GitHub](https://github.com/MarquezProject/marquez); the React frontend cannot ship standalone.
 - **v4.1 §6.5 Dagster Replaceability Mandate (D21) vs Dagster UI exposure** — exposing Dagster's UI directly leaks Dagster vocabulary ("Op", "Code Location", "Definitions") and breaks the by-v1.0 zero-Dagster-grep mandate.
 
-Companion research at `docs/research/workbench.md` (155 LOC, 25 distinct docs URLs cited) is this ADR's evidence base; founder is expected to read both before ratification.
+Companion research at `docs/internal/research/workbench.md` (155 LOC, 25 distinct docs URLs cited) is this ADR's evidence base; founder is expected to read both before ratification.
 
 ---
 
@@ -97,9 +97,9 @@ If a future external reviewer cites "Fork A," confirm which alternative they mea
 
 **Pros**: Marimo IS our notebook substrate per `AGENTS.md §4`; reusing it as the Workbench saves a stack.
 
-**Cons**: per `docs/research/marimo.md` §5.5, Marimo and Workbench serve different purposes — Marimo = ephemeral reactive exploration; Workbench = always-on dashboard for prod-bound asset work. Marimo lacks the asset-graph + run-history + lineage-panel surfaces. Marimo also adds 38.8 MB wheel weight per `marimo.md` §6.
+**Cons**: per `docs/internal/research/marimo.md` §5.5, Marimo and Workbench serve different purposes — Marimo = ephemeral reactive exploration; Workbench = always-on dashboard for prod-bound asset work. Marimo lacks the asset-graph + run-history + lineage-panel surfaces. Marimo also adds 38.8 MB wheel weight per `marimo.md` §6.
 
-**Why rejected**: different problems; both ship (Workbench v0.2, Marimo v0.3). Documented composability in `docs/research/workbench.md` §10.
+**Why rejected**: different problems; both ship (Workbench v0.2, Marimo v0.3). Documented composability in `docs/internal/research/workbench.md` §10.
 
 ---
 
@@ -124,17 +124,17 @@ If a future external reviewer cites "Fork A," confirm which alternative they mea
 - **Risk**: Pydantic vs msgspec friction (FastAPI uses Pydantic; Nucleus core uses msgspec). **Mitigation**: thin adapter at the FastAPI boundary; reconsider Litestar at v0.3 if friction is real, not theoretical.
 - **Risk**: Bundle-size creep (Monaco alone is ~1 MB ungzipped). **Mitigation**: route-based code splitting; CI bundle-budget gate; Monaco only loads when SQL editor route opens.
 - **Risk**: AI chat sidebar dependency on ADR-015 (sibling worker). **Mitigation**: ship Workbench without the sidebar if ADR-015 stalls; the other 4 wow-factor features carry the v0.2 demo.
-- **Risk**: `@xyflow/react` cannot scale past ~5000 asset nodes (anecdotal from upstream issue tracker; not yet measured). **Mitigation**: v0.2 ships at the ≤1000-asset scale per `docs/research/workbench.md` §7; Cytoscape.js swap is interface-only at v0.2, full at v0.5+ if scale demands.
-- **Risk**: We accidentally rebuild Tableau / Looker / Metabase. **Mitigation**: Forbidden Mental Models check in `docs/research/workbench.md` §11; Drift Detection Pass (`AGENTS.md §11.11`) every 4 weeks during v0.2 build.
+- **Risk**: `@xyflow/react` cannot scale past ~5000 asset nodes (anecdotal from upstream issue tracker; not yet measured). **Mitigation**: v0.2 ships at the ≤1000-asset scale per `docs/internal/research/workbench.md` §7; Cytoscape.js swap is interface-only at v0.2, full at v0.5+ if scale demands.
+- **Risk**: We accidentally rebuild Tableau / Looker / Metabase. **Mitigation**: Forbidden Mental Models check in `docs/internal/research/workbench.md` §11; Drift Detection Pass (`AGENTS.md §11.11`) every 4 weeks during v0.2 build.
 
 ---
 
 ## Implementation notes
 
-Sequencing (10-14 weeks; full breakdown in `docs/research/workbench.md` §12):
+Sequencing (10-14 weeks; full breakdown in `docs/internal/research/workbench.md` §12):
 
 1. **Weeks 1-2**: Scaffold (Vite + React + TS + Tailwind + shadcn + FastAPI app shell + CI bundle-budget script).
-2. **Weeks 3-4**: Backend API surface + tests (asset list / detail, run list / detail, query). Per `docs/research/workbench.md` §8.
+2. **Weeks 3-4**: Backend API surface + tests (asset list / detail, run list / detail, query). Per `docs/internal/research/workbench.md` §8.
 3. **Weeks 5-7**: Asset graph page + xyflow integration + asset detail page.
 4. **Weeks 8-9**: SQL editor page + Monaco lazy-load + DuckDB connection sharing with `coordination/`.
 5. **Weeks 10-11**: Run history + run detail + log tailing.
@@ -158,12 +158,12 @@ Sequencing (10-14 weeks; full breakdown in `docs/research/workbench.md` §12):
 
 ## Compliance / verification
 
-- [ ] Test added: `tests/workbench/test_api_surface.py` (every endpoint per `docs/research/workbench.md` §8 returns 200 / NucleusError-shaped errors).
+- [ ] Test added: `tests/workbench/test_api_surface.py` (every endpoint per `docs/internal/research/workbench.md` §8 returns 200 / NucleusError-shaped errors).
 - [ ] Test added: `tests/workbench/test_no_dagster_leaks.py` (scan API responses + frontend strings — zero "dagster", "Op", "Code Location", "Definitions").
 - [ ] CI check added: `scripts/check_bundle_size.py` (fail if initial JS gzipped > 500 KB).
 - [ ] CI check extended: `scripts/dagster_leak_check.py` to scan `src/nucleus/workbench/` + `frontend/src/`.
 - [ ] CI check extended: `scripts/check_vocabulary.py` (already runs; verify Workbench docs add no banned terms).
-- [ ] Documented in: `docs/research/workbench.md` (this ADR's evidence base); `docs/swap/workbench.md` (NEW at v0.2 build start).
+- [ ] Documented in: `docs/internal/research/workbench.md` (this ADR's evidence base); `docs/swap/workbench.md` (NEW at v0.2 build start).
 - [ ] Architecture sections updated on acceptance: v4.1 §8.1 row "Workbench v0.2" annotated with "(Vite + React + FastAPI per ADR-016)"; v4.1 Appendix B Question 3 marked RESOLVED-by-ADR-016.
 
 ---
@@ -181,13 +181,13 @@ Sequencing (10-14 weeks; full breakdown in `docs/research/workbench.md` §12):
 
 ## References
 
-- `docs/research/workbench.md` — companion research (this ADR's evidence base; 25 docs URLs cited).
+- `docs/internal/research/workbench.md` — companion research (this ADR's evidence base; 25 docs URLs cited).
 - `nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline) · §6.5 (Dagster Replaceability Mandate) · §8.1 (Layer 4 Experience surfaces) · §16.3 (RAM target) · §18.2 (v0.2 roadmap) · §20 (non-goals) · Appendix B Q3 (Workbench technology question — this ADR resolves the web/desktop fork).
 - ADR-005 §2 (Internal-tier API stability) · ADR-006 (NE-codes) · ADR-013 (`ctx.materialize` consumed by Workbench).
 - `AGENTS.md §3 #1` (No JVM in core path) · `§3 #2` (No public plugin SDK in v1) · `§4` (do-not-build list) · `§11.12` (docs-before-integration discipline).
 - `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND + Velocity Discipline.
 - `nucleus_vs_databricks.md` §1-§4 (workspace paradigm) · §11 (we are NOT a BI tool).
-- External docs (full list cited in `docs/research/workbench.md` §1-§14): [Vite](https://vitejs.dev/guide/), [React Flow / xyflow](https://reactflow.dev/learn), [Monaco](https://microsoft.github.io/monaco-editor/), [FastAPI](https://fastapi.tiangolo.com/), [shadcn/ui](https://ui.shadcn.com/docs), [Dagster webserver](https://docs.dagster.io/guides/operate/webserver), [Marquez](https://marquezproject.github.io/marquez/).
+- External docs (full list cited in `docs/internal/research/workbench.md` §1-§14): [Vite](https://vitejs.dev/guide/), [React Flow / xyflow](https://reactflow.dev/learn), [Monaco](https://microsoft.github.io/monaco-editor/), [FastAPI](https://fastapi.tiangolo.com/), [shadcn/ui](https://ui.shadcn.com/docs), [Dagster webserver](https://docs.dagster.io/guides/operate/webserver), [Marquez](https://marquezproject.github.io/marquez/).
 
 ---
 

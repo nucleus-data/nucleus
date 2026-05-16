@@ -1,6 +1,6 @@
 """Regression tests for the CLI lazy-import discipline.
 
-Per ``docs/research/performance_reliability_targets.md`` §10 #4 +
+Per ``docs/internal/research/performance_reliability_targets.md`` §10 #4 +
 ``scripts/check_lazy_imports.py``: heavy libraries (litellm, dlt,
 dagster, pyiceberg, polars, duckdb, s3fs, psycopg, fastapi, uvicorn,
 sqlalchemy, croniter) must NOT be loaded simply by importing

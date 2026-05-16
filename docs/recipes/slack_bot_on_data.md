@@ -105,7 +105,7 @@ The audit trail is the differentiator vs "ChatGPT with read access to a CSV": ev
 ## What's next
 
 - **Build the Postgres pipeline first**: [`postgres_to_iceberg.md`](./postgres_to_iceberg.md) — needed before any exposure.
-- **Architecture**: [v4.1 §7.3](../../nucleus_architecture_v4.1.md) (`ctx.agent` sandbox) · [ADR-002 §4.2](../decisions/ADR-002-positioning-decision-2026-05.md) · [`docs/research/strategic/ai_agent_data_infra_2026.md`](../research/strategic/ai_agent_data_infra_2026.md).
+- **Architecture**: [v4.1 §7.3](../../nucleus_architecture_v4.1.md) (`ctx.agent` sandbox) · [ADR-002 §4.2](../decisions/ADR-002-positioning-decision-2026-05.md) · [`docs/internal/research/strategic/ai_agent_data_infra_2026.md`](../research/strategic/ai_agent_data_infra_2026.md).
 
 ---
 

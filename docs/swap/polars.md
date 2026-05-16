@@ -1,13 +1,13 @@
 # Swap Target: Polars → Apache DataFusion DataFrame API
 
-**Tier**: 1 (engines, default DataFrame engine, per `nucleus_architecture_v4.1.md` §5.1, §9.2) · **Default**: `polars==1.18.0` (`pyproject.toml:43`) · **Swap target (v0.1)**: Apache DataFusion DataFrame API (Python — candidate `datafusion>=43.0`; co-versioned with DuckDB → DataFusion in `docs/swap/duckdb.md`) · **Swap target (v0.5+ secondary)**: Daft (multimodal-only — out of scope for this doc; see `docs/research/daft.md`) · **Status (2026-05-13)**: Interface documented + smoke tests in CI; full swap on-demand only per v4.1 §9.3.
+**Tier**: 1 (engines, default DataFrame engine, per `nucleus_architecture_v4.1.md` §5.1, §9.2) · **Default**: `polars==1.18.0` (`pyproject.toml:43`) · **Swap target (v0.1)**: Apache DataFusion DataFrame API (Python — candidate `datafusion>=43.0`; co-versioned with DuckDB → DataFusion in `docs/swap/duckdb.md`) · **Swap target (v0.5+ secondary)**: Daft (multimodal-only — out of scope for this doc; see `docs/internal/research/daft.md`) · **Status (2026-05-13)**: Interface documented + smoke tests in CI; full swap on-demand only per v4.1 §9.3.
 
 ## What we use Polars for
 
 In v0.1 (post-PoC #1 promotion), Polars usage is narrow:
 
 - **Exception-class registration**: `coordination/error_translation.py` lazy-imports `polars.exceptions` to register handlers for `SchemaError` and `ColumnNotFoundError` (lines 311-319). Three deferred classes (`NoDataError`, `ComputeError`, `ShapeError`) are documented as "next iteration" in the same module's tail comment.
-- **User-facing return type for assets**: `templates/v01/assets/example.py:13` returns `pl.DataFrame`; the AMA's `IcebergIOManager` (pending promotion) will `df.to_arrow()` before handing to PyIceberg (zero-copy via Arrow C-data — `docs/research/polars.md` §8).
+- **User-facing return type for assets**: `templates/v01/assets/example.py:13` returns `pl.DataFrame`; the AMA's `IcebergIOManager` (pending promotion) will `df.to_arrow()` before handing to PyIceberg (zero-copy via Arrow C-data — `docs/internal/research/polars.md` §8).
 - **Decorator docstrings**: `sdk/decorators.py` references `pl.col(...)` in `@nucleus.asset` and `@nucleus.check` examples; the SDK never imports `polars` itself.
 - **No engine-side Polars execution wired in v0.1**: `engines/polars_engine.py` is not yet promoted. `ctx.read(...)` returning a `LazyFrame` lights up alongside the engine.
 
@@ -24,7 +24,7 @@ Today (v0.1, exception registry + return-type only — `coordination/error_trans
 | `pl.DataFrame` (asset return) | `templates/v01/assets/example.py:13` | DataFusion has no eager DataFrame primitive; users return `pyarrow.Table` instead (breaks user code) |
 | `pl.col(...)` (in docstrings) | `sdk/decorators.py:304, 385` | `datafusion.col(...)` (NEEDS VERIFICATION) |
 
-Future (when `engines/polars_engine.py` lights up — `docs/research/polars.md` §5):
+Future (when `engines/polars_engine.py` lights up — `docs/internal/research/polars.md` §5):
 
 | Symbol | Wrap responsibility | DataFusion equivalent |
 |---|---|---|
@@ -66,7 +66,7 @@ class DataFusionDataFrameEngine:
         return df.to_arrow_table()
 ```
 
-Caveats: Polars's expression API (`.over()` window strategies, `pl.struct`, `.list.eval`, `.str.json_path_match`) is wider than DataFusion's Python DF facade — many transforms live in DataFusion SQL only, so user `@nucleus.asset` bodies that chain Polars-specific expressions break and need rewrites or a SQL fallback. Type system: `pl.Categorical` (runtime-only — `docs/research/polars.md` §7.2) and `pl.List(T)` vs `pl.Array(T,n)` distinctions don't exist in DataFusion (it works at PyArrow level); user code dropping `Categorical` is required. Streaming: `lf.collect(streaming=True)` is incomplete-but-useful in Polars (§7.6); DataFusion streams natively with different trigger semantics. NaN ≠ NULL is preserved by both via Arrow.
+Caveats: Polars's expression API (`.over()` window strategies, `pl.struct`, `.list.eval`, `.str.json_path_match`) is wider than DataFusion's Python DF facade — many transforms live in DataFusion SQL only, so user `@nucleus.asset` bodies that chain Polars-specific expressions break and need rewrites or a SQL fallback. Type system: `pl.Categorical` (runtime-only — `docs/internal/research/polars.md` §7.2) and `pl.List(T)` vs `pl.Array(T,n)` distinctions don't exist in DataFusion (it works at PyArrow level); user code dropping `Categorical` is required. Streaming: `lf.collect(streaming=True)` is incomplete-but-useful in Polars (§7.6); DataFusion streams natively with different trigger semantics. NaN ≠ NULL is preserved by both via Arrow.
 
 ## Smoke tests
 
@@ -80,9 +80,9 @@ Located at `tests/swap/test_polars_swap.py`. Verifies the **default (Polars) wra
 
 Per v4.1 §9.3, swap fires only on:
 
-- Pola.rs abandons OSS `main` >12 months OR pivots license (current: MIT — `docs/research/polars.md` §1)
+- Pola.rs abandons OSS `main` >12 months OR pivots license (current: MIT — `docs/internal/research/polars.md` §1)
 - v4.1 §11.2 "100M-row aggregation <2s on laptop" regresses >2× on a 1.18.0+ minor
-- `pl.from_arrow()` zero-copy guarantee breaks (Arrow C-data interop is the substrate — `docs/research/polars.md` §8)
+- `pl.from_arrow()` zero-copy guarantee breaks (Arrow C-data interop is the substrate — `docs/internal/research/polars.md` §8)
 - Polars adds JVM dep (Hard Constraint #1) or drops Windows / macOS-arm64 wheels
 - Community demand: ≥30% of telemetry requests DataFusion DF (likely co-fires with DuckDB → DataFusion)
 
@@ -100,5 +100,5 @@ Until one fires, we maintain interface + smoke tests only, never a full second i
 - DataFusion Python: https://datafusion.apache.org/python/  (re-verify on PyPI at trigger time per `AGENTS.md` §11.12)
 - `datafusion-iceberg`: https://github.com/apache/datafusion-iceberg
 - Architecture: `nucleus_architecture_v4.1.md` §5.1 (Engines), §9.2 (composability tier table), §9.3 (swap discipline)
-- Research notes: `docs/research/polars.md` · `docs/research/daft.md` (v0.5+ secondary swap target)
+- Research notes: `docs/internal/research/polars.md` · `docs/internal/research/daft.md` (v0.5+ secondary swap target)
 - Related: `docs/swap/duckdb.md` (natural co-swap if both DuckDB and Polars retire together)

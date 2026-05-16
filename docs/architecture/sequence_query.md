@@ -78,8 +78,8 @@ sequenceDiagram
 Notes:
 
 - The **Jinja env** is freshly constructed per call in v0.1 (`poc/p2_ctx_sql/resolver.py` lines 142-147). Caching is a v0.3 optimisation.
-- The **ref resolver** validates the asset name (`<schema>.<name>`, lowercase, no injection shape — `poc/p2_ctx_sql/resolver.py` `_REF_NAME_RE`), looks up the asset's current snapshot via the catalog, and returns a DuckDB-scannable expression. v0.1 prefers `Table.scan().to_duckdb(name)` over `iceberg_scan('…/metadata.json')` (composes with the Asset Materialization Adapter; `docs/research/duckdb.md` §8).
-- DuckDB runs in `:memory:` (v4.1 §5.1, `docs/research/duckdb.md` §4). Persistence is Iceberg, not the DuckDB file. The Iceberg extension is **read-only** in 1.1.3; writes never go through this sequence — they belong to [`sequence_ingestion.md`](sequence_ingestion.md) and [`sequence_error_translation.md`](sequence_error_translation.md) §2.
+- The **ref resolver** validates the asset name (`<schema>.<name>`, lowercase, no injection shape — `poc/p2_ctx_sql/resolver.py` `_REF_NAME_RE`), looks up the asset's current snapshot via the catalog, and returns a DuckDB-scannable expression. v0.1 prefers `Table.scan().to_duckdb(name)` over `iceberg_scan('…/metadata.json')` (composes with the Asset Materialization Adapter; `docs/internal/research/duckdb.md` §8).
+- DuckDB runs in `:memory:` (v4.1 §5.1, `docs/internal/research/duckdb.md` §4). Persistence is Iceberg, not the DuckDB file. The Iceberg extension is **read-only** in 1.1.3; writes never go through this sequence — they belong to [`sequence_ingestion.md`](sequence_ingestion.md) and [`sequence_error_translation.md`](sequence_error_translation.md) §2.
 
 ---
 
@@ -144,7 +144,7 @@ sequenceDiagram
     CTX-->>User: ✗ Column 'non_col' is not defined on asset 'staging.orders'.
 ```
 
-Complete DuckDB → Nucleus translator table lives in [`sequence_error_translation.md`](sequence_error_translation.md) §4.2 and mirrors `docs/research/duckdb.md` §6. The query path reuses that registry — no per-feature duplication.
+Complete DuckDB → Nucleus translator table lives in [`sequence_error_translation.md`](sequence_error_translation.md) §4.2 and mirrors `docs/internal/research/duckdb.md` §6. The query path reuses that registry — no per-feature duplication.
 
 ### §3.3 pyiceberg snapshot-lookup failure (catalog side)
 
@@ -181,7 +181,7 @@ Per `nucleus_architecture_v4.1.md` §5.6.0 and `nucleus_poc_plan.md` §2:
 |---|---|---|
 | Templating | `{{ ref('schema.name') }}` only | `source()`, `config()`, user macros → v0.3 |
 | Built-in macros | `date_trunc`, `dateadd`, `current_timestamp` (§5.6.0) | Macro package ecosystem — **never** |
-| Engine | DuckDB (`docs/research/duckdb.md`) | DataFusion swap **interface** only; full adapter on-demand (v4.1 §9.3) |
+| Engine | DuckDB (`docs/internal/research/duckdb.md`) | DataFusion swap **interface** only; full adapter on-demand (v4.1 §9.3) |
 | Output | `pl.DataFrame`, `pyarrow.Table`, `DuckDBPyRelation` | Streaming `RecordBatchReader` for >100 MB → v0.3 |
 | Materialization strategies | `table`, `view` | `incremental` → v0.3; `snapshot` (SCD2) → v0.5 |
 | Checks | `@nucleus.check` on the output asset | dbt-style test framework — **never** in native path (§5.6.0) |
@@ -211,7 +211,7 @@ From `nucleus_poc_plan.md` §2 and the PoC #2 hardening pass (`poc/p2_ctx_sql/te
 ## §6. What this sequence doesn't do
 
 - **No SQL parsing for lineage.** Column-level lineage requires sqlglot and is deferred to v0.5. v0.1 emits asset-level lineage from the resolver's `refs` list — not from parsing the rendered SQL.
-- **No writes via DuckDB.** Iceberg writes go through pyiceberg only (Constraint #5; `docs/research/duckdb.md` §8). `ctx.sql` is read-only against assets. Materializing a query result into a new asset goes through `@nucleus.sql_asset`, which routes via the Asset Materialization Adapter and [`sequence_error_translation.md`](sequence_error_translation.md) §2.
+- **No writes via DuckDB.** Iceberg writes go through pyiceberg only (Constraint #5; `docs/internal/research/duckdb.md` §8). `ctx.sql` is read-only against assets. Materializing a query result into a new asset goes through `@nucleus.sql_asset`, which routes via the Asset Materialization Adapter and [`sequence_error_translation.md`](sequence_error_translation.md) §2.
 - **No query caching.** Repeat `ctx.sql(same_template)` re-executes. A cache is a v0.5+ telemetry-driven decision per `AGENTS.md` §5 q7.
 - **No semantic layer.** v4.1 §5.6.0 hard limit.
 - **No adapter ecosystem.** No `nucleus-sql adapter for X`. v4.1 §5.6.0.
@@ -222,10 +222,10 @@ From `nucleus_poc_plan.md` §2 and the PoC #2 hardening pass (`poc/p2_ctx_sql/te
 
 Per AGENTS.md §11.12, before graduating PoC #2 → `src/nucleus/coordination/sql_resolver.py`:
 
-1. **DuckDB Iceberg extension on Windows.** `INSTALL iceberg; LOAD iceberg;` is autoloadable; Windows extension download path is `~/.duckdb/extensions/` (`docs/research/duckdb.md` §7). Air-gapped CI needs pre-download. PoC #2 has not yet exercised the extension end-to-end.
+1. **DuckDB Iceberg extension on Windows.** `INSTALL iceberg; LOAD iceberg;` is autoloadable; Windows extension download path is `~/.duckdb/extensions/` (`docs/internal/research/duckdb.md` §7). Air-gapped CI needs pre-download. PoC #2 has not yet exercised the extension end-to-end.
 2. **`Table.scan().to_duckdb(name)` zero-copy semantics across pyiceberg 0.8.1 → 0.11.x.** v0.1 prefers this over `iceberg_scan('…/metadata.json')`. [ADR-003](../decisions/ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md) queues the upgrade; smoke test required.
 3. **`duckdb.ParserException` exposes line/column position.** Translator surfaces SQL error position; PoC #1 acceptance flags verification on 1.1.3. If unavailable, downgrade to "SQL syntax error near …" without position.
-4. **`SET timezone='UTC'` applied on every connection.** Required for determinism (`engineering.md` §6.1, `docs/research/duckdb.md` §4 + §7). v0.1 resolver must wire this as a connection-init hook before any user SQL runs.
+4. **`SET timezone='UTC'` applied on every connection.** Required for determinism (`engineering.md` §6.1, `docs/internal/research/duckdb.md` §4 + §7). v0.1 resolver must wire this as a connection-init hook before any user SQL runs.
 5. **OpenLineage event schema for read-only `ctx.sql` runs.** Inputs are concrete (resolved assets); the output dataset for a transient query is ambiguous. v4.1 §6.2 specifies emission for materialization only; the query-side convention is not yet defined.
 
 ---

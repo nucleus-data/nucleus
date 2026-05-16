@@ -56,9 +56,9 @@ python scripts/loc_budget.py             # must show GREEN
 | All ADRs (why decisions were made) | `docs/decisions/ADR-*.md` |
 | What shipped (version history) | `CHANGELOG.md` |
 | Dependency pins + upgrade history | `docs/compatibility.md` |
-| Research notes on wrapped libs | `docs/research/<lib>.md` |
+| Research notes on wrapped libs | `docs/internal/research/<lib>.md` |
 | Swap interfaces + migration paths | `docs/swap/<lib>.md` |
-| AI hallucination log | `docs/research/ai_hallucinations.md` |
+| AI hallucination log | `docs/internal/research/ai_hallucinations.md` |
 | LOC budget history | `docs/budget_history.md` |
 | Known open decisions | `docs/FOUNDER_ACTION_QUEUE.md` |
 | Roadmap (this directory) | `docs/roadmap/` |
@@ -173,7 +173,7 @@ See `docs/dev-guides/12-ai-pair-programming.md`. Key rule: never trust AI output
 
 1. Re-read `AGENTS.md §12` (when in doubt).
 2. Apply the 8-question gate.
-3. Search `docs/research/` for prior research.
+3. Search `docs/internal/research/` for prior research.
 4. Open a GitHub Discussion (not a PR) for architectural questions.
 
 ---

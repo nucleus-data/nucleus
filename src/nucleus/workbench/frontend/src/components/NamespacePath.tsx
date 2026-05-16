@@ -10,7 +10,7 @@
  *   2-level form as `<namespace> · <name>` with the same chip-hierarchy
  *   visual cue so DB/SF converts immediately recognise the pattern.
  *
- * Per `docs/research/ux_familiarity_audit.md` §Rec 5.
+ * Per `docs/internal/research/ux_familiarity_audit.md` §Rec 5.
  *
  * # Stability: Internal @ v0.2
  */

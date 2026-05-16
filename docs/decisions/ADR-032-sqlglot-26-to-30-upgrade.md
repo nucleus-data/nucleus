@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder  
 **Priority**: P1  
 **Target phase**: Gate before v0.5 column lineage work  
-**Source research**: `docs/research/inspiration/observability_lineage_2026.md` §3; `docs/research/inspiration/ai_data_tooling_2026.md` §3.2  
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §3 #11, §2.5
+**Source research**: `docs/internal/research/inspiration/observability_lineage_2026.md` §3; `docs/internal/research/inspiration/ai_data_tooling_2026.md` §3.2  
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §3 #11, §2.5
 
 ---
 

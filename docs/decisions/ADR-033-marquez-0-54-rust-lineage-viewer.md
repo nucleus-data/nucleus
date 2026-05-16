@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder  
 **Priority**: P1  
 **Target phase**: v0.3  
-**Source research**: `docs/research/inspiration/observability_lineage_2026.md` §1, §2, §7, §10  
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §3 #6
+**Source research**: `docs/internal/research/inspiration/observability_lineage_2026.md` §1, §2, §7, §10  
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §3 #6
 
 ---
 

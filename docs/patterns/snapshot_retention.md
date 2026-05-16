@@ -3,7 +3,7 @@
 > **Pattern**: Big Data — Iceberg Lifecycle / Maintenance
 > **Status**: Pre-implementation reference. Not exposed in v0.1. CLI surface (`nucleus expire-snapshots`) lands in v0.3+.
 > **Audience**: Anyone reviewing the Asset Materialization Adapter; anyone debugging "we delete daily but storage keeps growing".
-> **References**: [`docs/research/pyiceberg.md`](../research/pyiceberg.md) §4, §5; [`docs/patterns/compaction.md`](./compaction.md); [`docs/patterns/partitioning.md`](./partitioning.md); [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
+> **References**: [`docs/internal/research/pyiceberg.md`](../research/pyiceberg.md) §4, §5; [`docs/patterns/compaction.md`](./compaction.md); [`docs/patterns/partitioning.md`](./partitioning.md); [`docs/decisions/ADR-001-no-iceberg-commit-service.md`](../decisions/ADR-001-no-iceberg-commit-service.md)
 > **Last reviewed**: 2026-05-12 — versions per [`docs/compatibility.md`](../compatibility.md) (`pyiceberg==0.8.1`)
 
 Read this **before** any code path that calls `Table.append`, `Table.overwrite`, or the compaction recipe in [`compaction.md`](./compaction.md). Every one of those creates a snapshot. Without retention, snapshots accumulate forever.
@@ -94,7 +94,7 @@ This section is the **most fragile** in the doc — treat as the current best un
 - **For 0.8.1**: the documented expiration flow is **catalog-side** or **manual**. Concretely:
   1. Set the `history.expire.*` properties on the table (§3) — these are read by **engines** running expiration, including Spark's `expireSnapshots` action.
   2. Trigger expiration externally (e.g., a Spark or Trino maintenance job) using the catalog the table is registered in.
-- TODO: verify on 2026-08-01. Smoke-test: in PoC #1 or its maintenance follow-up, attempt `table.maintenance.expire_snapshots()` against a 0.8.1 install. If it raises `AttributeError`, document the actual 0.8.1 path. If it works, log to `docs/research/ai_hallucinations.md` that the API IS in 0.8.1 (this section was wrong).
+- TODO: verify on 2026-08-01. Smoke-test: in PoC #1 or its maintenance follow-up, attempt `table.maintenance.expire_snapshots()` against a 0.8.1 install. If it raises `AttributeError`, document the actual 0.8.1 path. If it works, log to `docs/internal/research/ai_hallucinations.md` that the API IS in 0.8.1 (this section was wrong).
 - **For v0.1 Heartbeat**: snapshot expiration is **NOT exposed to users** regardless. Documented here for human/operator awareness.
 - **Alternative path** (v0.3+): catalog-side cron. Lakekeeper supports scheduled maintenance per-table; this is the path we'll most likely use rather than driving expiration from the AMA.
 

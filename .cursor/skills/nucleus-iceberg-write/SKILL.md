@@ -82,7 +82,7 @@ that reads "v0.5+" or "default policy".
 - On `CommitFailedException` (concurrent write): retry up to 3×, then
   surface `NucleusCommitConflictError`. On `CommitStateUnknownException`:
   do NOT retry; surface `NucleusCommitUnknownError` per
-  `@docs/research/pyiceberg.md` §6.
+  `@docs/internal/research/pyiceberg.md` §6.
 
 ## Wrapped-library access
 

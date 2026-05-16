@@ -1,6 +1,6 @@
 """Tests for DuckDB memory_limit guard at AMA connection init.
 
-Validates ADR-024 P0-1 + ``docs/research/performance_reliability_targets.md``
+Validates ADR-024 P0-1 + ``docs/internal/research/performance_reliability_targets.md``
 §10 item #2: the AMA applies ``SET memory_limit``, ``SET temp_directory``,
 and ``SET threads`` before any user query runs, preventing silent OOM on
 low-RAM machines (e.g. 16 GB MacBooks running parallel docker containers).
@@ -164,7 +164,7 @@ def test_memory_limit_param_accepted_by_materialize_asset(tmp_path: Path) -> Non
 def test_compute_memory_limit_uses_60_percent_fraction() -> None:
     """ML5: The constant _DUCKDB_RAM_FRACTION is 0.60, not the upstream 0.80.
 
-    Per ``docs/research/performance_reliability_targets.md`` §10 item #2 —
+    Per ``docs/internal/research/performance_reliability_targets.md`` §10 item #2 —
     DuckDB's upstream default of 80% RAM combined with no GROUP BY hash
     spill leaves no headroom for the host OS, IDEs, or sidecar containers.
     v0.2 lowers the AMA target to 60%.
@@ -286,7 +286,7 @@ def test_apply_memory_limit_threads_override(tmp_path: Path) -> None:
 def test_apply_memory_limit_temp_directory_set(tmp_path: Path) -> None:
     """ML7-extra: SET temp_directory is wired so GROUP BY can spill to disk.
 
-    Per ``docs/research/performance_reliability_targets.md`` §10 #2 — without
+    Per ``docs/internal/research/performance_reliability_targets.md`` §10 #2 — without
     a temp_directory, large GROUP BY aggregations OOM-kill DuckDB silently.
     """
     import duckdb

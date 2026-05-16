@@ -38,8 +38,8 @@
 
 | Stat | Value | Source |
 |---|---|---|
-| Proprietary code (LOC under `src/nucleus/`) | **12,840 LOC** | `(Get-ChildItem ... \| Measure-Object -Line)` 2026-05-15; `docs/research/scale_out_audit.md` §1.1 reports 12,944 |
-| LOC budget headroom (vs 30K v1.0 ceiling) | **57% remaining** | `scripts/loc_budget.py`; `docs/research/scale_out_audit.md` §1.1 |
+| Proprietary code (LOC under `src/nucleus/`) | **12,840 LOC** | `(Get-ChildItem ... \| Measure-Object -Line)` 2026-05-15; `docs/internal/research/scale_out_audit.md` §1.1 reports 12,944 |
+| LOC budget headroom (vs 30K v1.0 ceiling) | **57% remaining** | `scripts/loc_budget.py`; `docs/internal/research/scale_out_audit.md` §1.1 |
 | Test files (`tests/test_*.py`) | **66 files** | repo scan 2026-05-15 |
 | Tests passing (full suite) | **873+ passed / 0 failed / ≤30 skipped** | `docs/release/v0.2_FOUNDER_CLOSE_CHECKLIST.md` §3.2 |
 | Wrapped runtime dependencies (exact-pinned) | **23 mandatory + 2 optional-runtime** | `pyproject.toml`; `CHANGELOG.md` v0.1.0 entry |

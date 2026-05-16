@@ -8,7 +8,7 @@
 
 ## Performance Targets
 
-Per `nucleus_architecture_v4.1.md` §16 (# NEEDS VERIFICATION — refine with `docs/research/performance_reliability_targets.md` when available):
+Per `nucleus_architecture_v4.1.md` §16 (# NEEDS VERIFICATION — refine with `docs/internal/research/performance_reliability_targets.md` when available):
 
 | Metric | Target | Current (2026-05-14) |
 |---|---|---|
@@ -235,7 +235,7 @@ proc.wait()
 
 ## Numeric Targets Reference
 
-Cross-reference with `docs/research/performance_reliability_targets.md` when available (Wave 1H output).
+Cross-reference with `docs/internal/research/performance_reliability_targets.md` when available (Wave 1H output).
 
 Current known targets (per WSL beachhead E2E 2026-05-14):
 - Boot time: 7 s actual, 10 s target ✓
@@ -249,5 +249,5 @@ Current known targets (per WSL beachhead E2E 2026-05-14):
 - `nucleus_architecture_v4.1.md` §16 (Performance Targets)
 - DuckDB performance guide: https://duckdb.org/docs/guides/performance/overview.html
 - pyiceberg performance notes: https://py.iceberg.apache.org/configuration/
-- `docs/research/performance_reliability_targets.md` — target definitions (Wave 1H)
+- `docs/internal/research/performance_reliability_targets.md` — target definitions (Wave 1H)
 - `scripts/beachhead_e2e.py` — the authoritative E2E timing benchmark

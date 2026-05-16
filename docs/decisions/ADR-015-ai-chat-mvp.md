@@ -14,11 +14,11 @@
 > 8. **Lazy-import extras `[copilot-typed]`** = **NO** (Anti-Over-Engineering); LiteLLM is the only runtime dep needed.
 > **Tags**: copilot, intelligence-layer, v0.2, ai-assisted, litellm, wow-factor
 > **Layer**: L5 Intelligence (primary) + L4 Experience (CLI surface)
-> **Architecture refs**: `nucleus_architecture_v4.1.md` §7.2 (Copilot staging — v0.2 = "Inline AI chat … Claude API + project file context"); §7.7 (why this layer is the moat); §8.1 (surfaces by release — Workbench `❌` in v0.1 / `✅` in v0.2); §20.1 (Non-Goals: "Full AI Copilot (lineage-aware, schema-aware) in v0.1"); §11.5 (secrets never in logs / AI context); `AGENTS.md` §3 Constraint #7 (no ML platform / AI training / agent hosting), §8 Forbidden Mental Models, §11.4 (per-feature workflow), §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` §Anti-Over-Engineering + §Forbidden Framings; ADR-002 §8 (positioning — AI-assisted demoted from headline to pillar); ADR-005 §2 (tier ladder); ADR-006 (NE-codes); ADR-007 (license tiers); ADR-011 (telemetry opt-in — privacy mirror); `docs/research/ai_copilot.md` (research substrate this ADR ratifies).
+> **Architecture refs**: `nucleus_architecture_v4.1.md` §7.2 (Copilot staging — v0.2 = "Inline AI chat … Claude API + project file context"); §7.7 (why this layer is the moat); §8.1 (surfaces by release — Workbench `❌` in v0.1 / `✅` in v0.2); §20.1 (Non-Goals: "Full AI Copilot (lineage-aware, schema-aware) in v0.1"); §11.5 (secrets never in logs / AI context); `AGENTS.md` §3 Constraint #7 (no ML platform / AI training / agent hosting), §8 Forbidden Mental Models, §11.4 (per-feature workflow), §11.12 (docs-before-integration); `.cursor/rules/nucleus.mdc` §Anti-Over-Engineering + §Forbidden Framings; ADR-002 §8 (positioning — AI-assisted demoted from headline to pillar); ADR-005 §2 (tier ladder); ADR-006 (NE-codes); ADR-007 (license tiers); ADR-011 (telemetry opt-in — privacy mirror); `docs/internal/research/ai_copilot.md` (research substrate this ADR ratifies).
 
 ## Context
 
-Founder greenlit a 4-6 month ladder to v1.0 with "wow factor"; architect named **AI chat that knows your project** as the #1 wow item after the 30-minute beachhead. Architecture v4.1 §7.2 already pre-allocates v0.2 (Mo 4-8) for inline AI chat against Claude API with project file context (no schema introspection). What is missing today: the API surface, provider abstraction choice, privacy posture, error contract, and the WRAP-vs-BUILD record. `docs/research/ai_copilot.md` (2026-05-13) provides the substrate; this ADR binds the v0.2 implementation contract before any code lands under `src/nucleus/intelligence/`. AGENTS.md §11.1 Phase Gate is satisfied — PoC #1 is PROMOTED (2026-05-13) so v0.1 production work is unblocked; v0.2 work begins after v0.1 ships, but the design lock can happen now.
+Founder greenlit a 4-6 month ladder to v1.0 with "wow factor"; architect named **AI chat that knows your project** as the #1 wow item after the 30-minute beachhead. Architecture v4.1 §7.2 already pre-allocates v0.2 (Mo 4-8) for inline AI chat against Claude API with project file context (no schema introspection). What is missing today: the API surface, provider abstraction choice, privacy posture, error contract, and the WRAP-vs-BUILD record. `docs/internal/research/ai_copilot.md` (2026-05-13) provides the substrate; this ADR binds the v0.2 implementation contract before any code lands under `src/nucleus/intelligence/`. AGENTS.md §11.1 Phase Gate is satisfied — PoC #1 is PROMOTED (2026-05-13) so v0.1 production work is unblocked; v0.2 work begins after v0.1 ships, but the design lock can happen now.
 
 The 8-question gate (AGENTS.md §5):
 
@@ -201,8 +201,8 @@ External (verified 2026-05-13 — re-verify at ratification per research §15):
 - Ollama Python client: <https://github.com/ollama/ollama-python>
 - Ollama REST API: <https://github.com/ollama/ollama/blob/main/docs/api.md>
 
-Internal: `docs/research/ai_copilot.md` (substrate); `nucleus_architecture_v4.1.md` §7.2 + §7.7 + §8.1 + §20.1 + §11.5; ADR-002 / ADR-005 / ADR-006 / ADR-007 / ADR-011 / ADR-012 / ADR-013.
+Internal: `docs/internal/research/ai_copilot.md` (substrate); `nucleus_architecture_v4.1.md` §7.2 + §7.7 + §8.1 + §20.1 + §11.5; ADR-002 / ADR-005 / ADR-006 / ADR-007 / ADR-011 / ADR-012 / ADR-013.
 
 ---
 
-*Substrate: `docs/research/ai_copilot.md` (2026-05-13). PROPOSED until founder ratification + LLM-SDK re-verification at implementation time.*
+*Substrate: `docs/internal/research/ai_copilot.md` (2026-05-13). PROPOSED until founder ratification + LLM-SDK re-verification at implementation time.*

@@ -5,8 +5,8 @@
 **Author**: Synthesis — ratification required from founder  
 **Priority**: P2 (watch-list)  
 **Target phase**: v1.5+  
-**Source research**: `docs/research/inspiration/distributed_compute_2026.md` §3, §10  
-**Synthesis reference**: `docs/research/inspiration/ADOPTION_SHORTLIST.md` §2.9, §4
+**Source research**: `docs/internal/research/inspiration/distributed_compute_2026.md` §3, §10  
+**Synthesis reference**: `docs/internal/research/inspiration/ADOPTION_SHORTLIST.md` §2.9, §4
 
 ---
 

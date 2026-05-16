@@ -229,7 +229,7 @@ The full design lives in `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.
 
 ## 7. Honest caveats - what this cookbook does NOT yet validate
 
-Per `docs/research/parity_vs_databricks_snowflake.md` section 1, Iceberg portability between Nucleus and Snowflake is documented but not yet field-tested. Treat as known unknowns:
+Per `docs/internal/research/parity_vs_databricks_snowflake.md` section 1, Iceberg portability between Nucleus and Snowflake is documented but not yet field-tested. Treat as known unknowns:
 
 1. **No end-to-end test in CI today.** No Nucleus CI job spins up a Snowflake account and asserts a Nucleus-written Iceberg snapshot reads cleanly. PoC #5 external testers are the first verification path.
 2. **Iceberg spec version mismatch is possible.** Nucleus pins `pyiceberg` (see `pyproject.toml` and `docs/compatibility.md`); Snowflake's reader supports a documented Iceberg spec range (currently v1, v2; v3 features such as deletion vectors and equality deletes are being rolled out gradually). Verify against <https://docs.snowflake.com/en/user-guide/tables-iceberg> before relying on advanced spec features.
@@ -249,7 +249,7 @@ If you hit any of the above, file an issue on <https://github.com/nucleus-data/n
 - `docs/cookbook/graduate-to-databricks.md` - sibling recipe for Databricks.
 - `docs/cookbook/graduate-to-bigquery.md` - sibling recipe for BigQuery.
 - `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md` - design spec for the `compute=` decorator that automates Mode 2.
-- `docs/research/parity_vs_databricks_snowflake.md` - the honest capability matrix that motivated this cookbook.
+- `docs/internal/research/parity_vs_databricks_snowflake.md` - the honest capability matrix that motivated this cookbook.
 - `nucleus_architecture_v4.1.md` section 10 - canonical Yield-to-Giants Strategy.
 
 ## External references (verified URL form, content NEEDS VERIFICATION at integration time)
