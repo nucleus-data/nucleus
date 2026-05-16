@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/brand/nucleus-logo.png" alt="Nucleus" width="360" />
+  <img src="assets\nucleus-logo-option-2-composable.png" alt="Nucleus" width="500" />
 </p>
 
 # Nucleus
