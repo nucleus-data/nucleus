@@ -103,3 +103,19 @@ nucleus up
 ```
 
 If another SeaweedFS/MinIO instance is running from a different project, run `nucleus down` in that project first.
+
+---
+
+## Concurrent runs on Windows (Beta Tier 2)
+
+**Beta Tier 2** — v0.2.0 reliability caveat documented per `docs/internal/research/ultimate_upgrade/04_brutal_internal_audit.md` §7 F1; architectural fix tracked for **v0.2.1**.
+
+**Symptom:** Two overlapping `nucleus run` sessions against the **same asset** can **both succeed** on **Windows**, each producing **its own Iceberg snapshot** instead of enforcing a strict single logical winner — a silent double-write hazard (**row count** / snapshot divergence).
+
+**Evidence:** `docs/internal/benchmarks/2026-05-15_baseline.md` §B4 **Concurrent run safety** (**lines 148–152**).
+
+**Workarounds (until v0.2.1):**
+
+1. Serialize materializations (one **`nucleus run`** at a time).
+2. Coordinate an **external lock** across shells or CI runners if parallelism is unavoidable.
+3. Prefer **Linux** or **macOS** when overlapping materializations against one asset are required.

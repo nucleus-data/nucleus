@@ -37,7 +37,7 @@
 
 ```bash
 pip install nucleus                                  # ~16 deps, <60 s on warm pip cache
-nucleus init my-stack && cd my-stack && nucleus up   # scaffold + boot local stack (~6 s)
+nucleus init my-stack && cd my-stack && nucleus up   # scaffold + boot local stack (~5–7 s; see Why Nucleus)
 nucleus run example.greeting                         # materialize your first Iceberg snapshot
 ```
 
@@ -57,7 +57,7 @@ Full quickstart with Postgres + S3 + a BI-ready mart in <30 min: [`docs/onboardi
 ## Why Nucleus
 
 - **Graduates to giants, not away from them.** Nucleus writes plain Apache Iceberg snapshots to your own S3 (or filesystem) — no Nucleus-proprietary byte format, ever. The day you outgrow a laptop, you point Databricks, Snowflake, or any Iceberg catalog at the same bucket. Zero migration. The yield-to-giants strategy is a first-class architectural principle, not a fallback ([`docs/specs/nucleus_architecture_v4.1.md` §10](docs/specs/nucleus_architecture_v4.1.md#10-yield-to-giants-strategy)).
-- **Local-first by construction.** Cold boot ~6 s (`nucleus up`). Idle RAM ~117 MB. Iceberg snapshots, scheduling daemon, run ledger, and Workbench all run from a single `pip install` on a laptop. No cluster. No JVM. Local-identical-to-prod ([`docs/internal/benchmarks/2026-05-15_baseline.md`](docs/internal/benchmarks/2026-05-15_baseline.md)).
+- **Local-first by construction.** Empirical timings: **`nucleus up`** boot **5–7 s** (**<10 s** contract — see PoC/WSL summaries in [`docs/internal/research/performance_reliability_targets.md`](docs/internal/research/performance_reliability_targets.md)). CLI startup (**B5**): **`nucleus --help`** cold **1.67 s**, **`python -m nucleus.cli.main --help`** cold **5.98 s** ([`docs/internal/benchmarks/2026-05-15_baseline.md`](docs/internal/benchmarks/2026-05-15_baseline.md) **lines 107–117**, same host). Numbers were taken on **Windows 10** under **heavy RAM contention** (**Bosch corporate laptop**); see **`Hardware`** / **`Hardware vs beachhead persona — caveats`** in that baseline (**lines 45–59**). Idle RAM **~117 MB** (legacy PoC snapshot; expect higher on v0.2 — re-measure for v0.2.1). Iceberg snapshots, scheduling daemon, run ledger, and Workbench ship from one `pip install`. No JVM. Local-identical-to-prod ([`docs/internal/benchmarks/2026-05-15_baseline.md`](docs/internal/benchmarks/2026-05-15_baseline.md)).
 - **AI-assisted, not AI-gated.** `nucleus chat` routes through `litellm` to your provider of choice (Anthropic / OpenAI / Ollama / 100+ more), with opt-in consent, no Nucleus servers, no key logging. The Copilot is a feature; the data path is the product. Lineage-aware refactoring arrives in v0.5 ([ADR-015](docs/decisions/ADR-015-ai-chat-mvp.md)). <!-- banned-term: AI-native -->
 
 ---
@@ -71,7 +71,7 @@ We are honest about scope. v0.2.0 is the first publicly available release; treat
 - **Marimo notebooks** — v0.3+. v0.2 ships no notebook runtime.
 - **Column-level lineage** — v0.5+ for SQL; v1.0 for Python. v0.2 ships asset-level OpenLineage NDJSON.
 - **Lineage-aware AI Copilot** — v0.5+. v0.2 ships single-turn chat only.
-- **Hybrid compute dispatch** (`@nucleus.sql_asset(compute="databricks")`) — v1.5+.
+- **Hybrid compute dispatch** (Mode 2 yield-to-giants — `@nucleus.sql_asset(compute="databricks")`) — **PROPOSED** in [`docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md`](docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md); design **v0.3**, implementation **v1.5**.
 - **Nucleus Cloud** (managed catalog, managed S3, managed deploy) — v1.0+. The OSS core is and will remain free forever.
 
 If your problem requires any of these today, Nucleus is not yet for you. The full disclosure of empirical numbers (including 11 measured failures vs aspirational targets) lives at [`docs/internal/benchmarks/2026-05-15_baseline.md`](docs/internal/benchmarks/2026-05-15_baseline.md).
@@ -184,7 +184,7 @@ The day a single laptop is no longer enough, three modes (per architecture secti
   - [`docs/cookbook/graduate-to-databricks.md`](docs/cookbook/graduate-to-databricks.md)
   - [`docs/cookbook/graduate-to-snowflake.md`](docs/cookbook/graduate-to-snowflake.md)
   - [`docs/cookbook/graduate-to-bigquery.md`](docs/cookbook/graduate-to-bigquery.md)
-- **Mode 2 -- Hybrid compute (spec PROPOSED, implementation v0.3+)**: dispatch heavy assets to Databricks/Snowflake/BigQuery via `@nucleus.asset(compute="databricks://...")`. Asset graph stays local; only the heavy step yields. Design spec: [`docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md`](docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md).
+- **Mode 2 — Hybrid compute dispatch (Mode 2 yield-to-giants)** — PROPOSED in [`docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md`](docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md); design **v0.3**, implementation **v1.5**: dispatch heavy assets to Databricks/Snowflake/BigQuery via `@nucleus.asset(compute="databricks://...")`. Asset graph stays local; only the heavy step yields.
 - **Mode 3 -- Federation (v2.0+)**: Iceberg REST catalog federation for Data Mesh. Per architecture section 10.3.
 
 Honest caveats -- the graduation cookbooks document a path, not a battle-tested runbook; PoC #5 external-tester field test is the first systematic validation. Each cookbook lists its NEEDS VERIFICATION items inline.
@@ -217,6 +217,12 @@ When the project opens up:
 1. Read [`AGENTS.md`](AGENTS.md) — hard constraints are non-negotiable.
 2. Follow [`docs/conventions/engineering.md`](docs/conventions/engineering.md).
 3. Architectural forks start as recorded decisions under `docs/decisions/`.
+
+---
+
+## Known limitations
+
+**Beta Tier 2 (Windows concurrent materializations)** — overlapping `nucleus run` commands for the same asset can **both commit Iceberg snapshots** on Windows (**[`docs/site/troubleshooting/common-errors.md`](docs/site/troubleshooting/common-errors.md#concurrent-runs-on-windows-beta-tier-2)**). Fix planned **v0.2.1** per [`docs/internal/research/ultimate_upgrade/04_brutal_internal_audit.md`](docs/internal/research/ultimate_upgrade/04_brutal_internal_audit.md) (sections 7–8).
 
 ---
 
