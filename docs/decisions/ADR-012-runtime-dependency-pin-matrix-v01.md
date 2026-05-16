@@ -20,27 +20,27 @@ The 2026-05 research wave delivered ~20 component research docs (`dagster`, `pyi
 | Component | Pin | License | Tier (ADR-007) | Research | Upgrade ADR | Tier 0/1/2 |
 |---|---|---|---|---|---|---|
 | python | `>=3.11,<3.13` | PSF | GREEN | n/a | major → ADR | Tier 0 substrate |
-| litellm | `litellm==1.83.14` | MIT | GREEN | [`ai_copilot.md`](../research/ai_copilot.md) | follow-on upgrade ADR per Constraint #11; upgrade smoke: `tests/upgrade_smoke/test_litellm.py` | Tier 2 Intelligence wrap (ADR-015, 2026-05-13) |
-| duckdb | `duckdb==1.1.3` | MIT | GREEN | [`duckdb.md`](../research/duckdb.md) | none v0.1 | Tier 1 Engine (swap → DataFusion) |
-| polars | `polars==1.18.0` | MIT | GREEN | [`polars.md`](../research/polars.md) | none v0.1 | Tier 1 Engine (swap → DataFusion DF) |
-| pyarrow | `pyarrow==18.1.0` | Apache-2.0 | GREEN | [`pyarrow.md`](../research/pyarrow.md) | gated by **ADR-003** (`pyiceberg<19.0.0` ceiling) | **Tier 0** immortal |
-| pyiceberg | `pyiceberg[sql-sqlite,s3fs,duckdb]==0.11.1` | Apache-2.0 | GREEN | [`pyiceberg.md`](../research/pyiceberg.md) | **[ADR-003](./ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md)** FIRED 2026-05-13 (`0.8.1`→`0.11.1`) — required by `dlt[pyiceberg]>=0.9.1` per ADR-014. Next ADR gates the `0.12.x` move. | Tier 2 (wraps Iceberg Tier 0) |
-| s3fs | `s3fs==2026.4.0` (explicit, plus extra via `pyiceberg[s3fs]==0.8.1`) | BSD-3-Clause | GREEN | [`minio.md`](../research/minio.md) §2.2 | Explicit pin landed 2026-05-13 in `pyproject.toml:48`; NV (b) CLEARED | Tier 2 |
-| dagster | `dagster==1.9.5` | Apache-2.0 | GREEN | [`dagster.md`](../research/dagster.md) | none; mini-scheduler escalation per v4.1 §6.7 | Tier 2 Coordination (wrap; hidden behind `ctx`) |
+| litellm | `litellm==1.83.14` | MIT | GREEN | [`ai_copilot.md`](../internal/research/ai_copilot.md) | follow-on upgrade ADR per Constraint #11; upgrade smoke: `tests/upgrade_smoke/test_litellm.py` | Tier 2 Intelligence wrap (ADR-015, 2026-05-13) |
+| duckdb | `duckdb==1.1.3` | MIT | GREEN | [`duckdb.md`](../internal/research/duckdb.md) | none v0.1 | Tier 1 Engine (swap → DataFusion) |
+| polars | `polars==1.18.0` | MIT | GREEN | [`polars.md`](../internal/research/polars.md) | none v0.1 | Tier 1 Engine (swap → DataFusion DF) |
+| pyarrow | `pyarrow==18.1.0` | Apache-2.0 | GREEN | [`pyarrow.md`](../internal/research/pyarrow.md) | gated by **ADR-003** (`pyiceberg<19.0.0` ceiling) | **Tier 0** immortal |
+| pyiceberg | `pyiceberg[sql-sqlite,s3fs,duckdb]==0.11.1` | Apache-2.0 | GREEN | [`pyiceberg.md`](../internal/research/pyiceberg.md) | **[ADR-003](./ADR-003-pyiceberg-upgrade-0.8.1-to-0.11.x.md)** FIRED 2026-05-13 (`0.8.1`→`0.11.1`) — required by `dlt[pyiceberg]>=0.9.1` per ADR-014. Next ADR gates the `0.12.x` move. | Tier 2 (wraps Iceberg Tier 0) |
+| s3fs | `s3fs==2026.4.0` (explicit, plus extra via `pyiceberg[s3fs]==0.8.1`) | BSD-3-Clause | GREEN | [`minio.md`](../internal/research/minio.md) §2.2 | Explicit pin landed 2026-05-13 in `pyproject.toml:48`; NV (b) CLEARED | Tier 2 |
+| dagster | `dagster==1.9.5` | Apache-2.0 | GREEN | [`dagster.md`](../internal/research/dagster.md) | none; mini-scheduler escalation per v4.1 §6.7 | Tier 2 Coordination (wrap; hidden behind `ctx`) |
 | sqlalchemy | `sqlalchemy==2.0.36` | MIT | GREEN | n/a (`ctx.copy_from`) | none | Tier 2 |
 | psycopg | `psycopg[binary]==3.2.3` | LGPLv3+ (dynamic-link exempt per ADR-007 §Tier 2) | YELLOW | n/a | NV — confirm psycopg3 license string vs ADR-007 LGPL row | Tier 2 Postgres driver |
 | pymysql | `pymysql==1.1.1` | MIT | GREEN | n/a | none | Tier 2 MySQL driver |
 | jinja2 | `jinja2==3.1.6` | BSD-3-Clause | GREEN | n/a (`ctx.sql` resolver, PoC #2) | none; **3.1.5 → 3.1.6 2026-05-14** (security patch, no breaking changes — see amendment below) | Tier 2 templating |
-| sqlglot | `sqlglot==26.0.0` (Optional `[lineage-advanced]` 2026-05-14) | MIT | GREEN | [`sqlglot.md`](../research/sqlglot.md) | pre-v0.3 ADR `26.0.0` → `26.8.x[c]` for marimo SQL cells (`sqlglot.md` §6); on demotion to extras, the row stays version-locked because `dlt[sql_database,pyiceberg]==1.26.0` pulls `sqlglot` transitively (verified 2026-05-14 via `pip show dlt`) — the `[lineage-advanced]` extra exists for projects that import `sqlglot` directly without depending on dlt | Tier 2 Lineage / SQL parsing — **demoted to `[project.optional-dependencies] lineage-advanced` 2026-05-14** per `docs/internal/research/otel_day1_decision.md` §D2 + ADR-011 amendment 2026-05-14 |
-| click | `click==8.1.8` | BSD-3-Clause | GREEN | n/a (explicit pin for resolver determinism) | **future ADR pre-v0.3 dbt-duckdb** → `8.3.0` ([`dbt-duckdb.md`](../research/dbt-duckdb.md) §6) | Tier 2 CLI substrate |
-| structlog | `structlog==24.4.0` | Apache-2.0 / MIT dual | GREEN | n/a | none v0.1; OTEL Logs bridge in v0.5 ADR ([`opentelemetry.md`](../research/opentelemetry.md) §5) | Tier 2 logging |
+| sqlglot | `sqlglot==26.0.0` (Optional `[lineage-advanced]` 2026-05-14) | MIT | GREEN | [`sqlglot.md`](../internal/research/sqlglot.md) | pre-v0.3 ADR `26.0.0` → `26.8.x[c]` for marimo SQL cells (`sqlglot.md` §6); on demotion to extras, the row stays version-locked because `dlt[sql_database,pyiceberg]==1.26.0` pulls `sqlglot` transitively (verified 2026-05-14 via `pip show dlt`) — the `[lineage-advanced]` extra exists for projects that import `sqlglot` directly without depending on dlt | Tier 2 Lineage / SQL parsing — **demoted to `[project.optional-dependencies] lineage-advanced` 2026-05-14** per `docs/internal/research/otel_day1_decision.md` §D2 + ADR-011 amendment 2026-05-14 |
+| click | `click==8.1.8` | BSD-3-Clause | GREEN | n/a (explicit pin for resolver determinism) | **future ADR pre-v0.3 dbt-duckdb** → `8.3.0` ([`dbt-duckdb.md`](../internal/research/dbt-duckdb.md) §6) | Tier 2 CLI substrate |
+| structlog | `structlog==24.4.0` | Apache-2.0 / MIT dual | GREEN | n/a | none v0.1; OTEL Logs bridge in v0.5 ADR ([`opentelemetry.md`](../internal/research/opentelemetry.md) §5) | Tier 2 logging |
 | ~~msgspec~~ | **REMOVED 2026-05-14** | BSD-3-Clause | GREEN | n/a | n/a | **Removed** per `docs/internal/research/otel_day1_decision.md` §D3 + ADR-011 amendment 2026-05-14 — zero callers under `src/`, `tests/`, `poc/`, `scripts/`; planned `NucleusError + configs` use never materialized (Frozen `errors.py` uses pure-Python `class NucleusError(Exception)` per ADR-005). Pure-stdlib substitutes (`json`, `dataclasses`, `tomllib`) suffice. Reversible via one-line pyproject edit if v0.5+ run-event serializer benchmarks warrant it. |
 | typer | `typer==0.15.1` | MIT | GREEN | n/a | follows v0.1 CLI | Tier 2 CLI ergonomics |
 | rich | `rich==13.9.4` | MIT | GREEN | n/a | none | Tier 2 terminal UI |
-| opentelemetry-api | `opentelemetry-api==1.29.0` (core — kept) | Apache-2.0 | GREEN | [`opentelemetry.md`](../research/opentelemetry.md) | future v0.5 ADR (12 minors stale; gated by [ADR-011](./ADR-011-telemetry-and-observability-opt-in-policy.md) opt-in) | **Tier 0** immortal — substrate-by-API-only honored 2026-05-14 per ADR-011 amendment (no `TracerProvider` set → `NonRecordingSpan` no-op per https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html) |
+| opentelemetry-api | `opentelemetry-api==1.29.0` (core — kept) | Apache-2.0 | GREEN | [`opentelemetry.md`](../internal/research/opentelemetry.md) | future v0.5 ADR (12 minors stale; gated by [ADR-011](./ADR-011-telemetry-and-observability-opt-in-policy.md) opt-in) | **Tier 0** immortal — substrate-by-API-only honored 2026-05-14 per ADR-011 amendment (no `TracerProvider` set → `NonRecordingSpan` no-op per https://opentelemetry-python.readthedocs.io/en/latest/api/trace.html) |
 | opentelemetry-sdk | `opentelemetry-sdk==1.29.0` (Optional `[observability]` 2026-05-14) | Apache-2.0 | GREEN | same | version-locked to `-api`; only matters once an exporter is configured (v0.5+ per ADR-011 §5) | **Tier 0** immortal — **demoted to `[project.optional-dependencies] observability` 2026-05-14** per `docs/internal/research/otel_day1_decision.md` §D1 + ADR-011 amendment 2026-05-14. Install via `pip install nucleus[observability]`. |
-| openlineage-python | `openlineage-python==1.47.1` | Apache-2.0 | GREEN | [`openlineage.md`](../research/openlineage.md) §1 | follows OTEL cadence; no v0.1 ADR | Tier 1 lineage emitter (AMA wires START/COMPLETE/FAIL per v4.1 §6.2 step 4; promoted 2026-05-12) |
-| dlt | `dlt[sql_database,pyiceberg]==1.26.0` | Apache-2.0 | GREEN | [`dlt.md`](../research/dlt.md) | follow-on per Constraint #11; upgrade smoke: `tests/upgrade_smoke/test_dlt_upgrade.py` | Tier 2 ingest source (ADR-014, 2026-05-13) — JVM-free via pyiceberg-core Rust |
+| openlineage-python | `openlineage-python==1.47.1` | Apache-2.0 | GREEN | [`openlineage.md`](../internal/research/openlineage.md) §1 | follows OTEL cadence; no v0.1 ADR | Tier 1 lineage emitter (AMA wires START/COMPLETE/FAIL per v4.1 §6.2 step 4; promoted 2026-05-12) |
+| dlt | `dlt[sql_database,pyiceberg]==1.26.0` | Apache-2.0 | GREEN | [`dlt.md`](../internal/research/dlt.md) | follow-on per Constraint #11; upgrade smoke: `tests/upgrade_smoke/test_dlt_upgrade.py` | Tier 2 ingest source (ADR-014, 2026-05-13) — JVM-free via pyiceberg-core Rust |
 | fastapi | `fastapi==0.136.1` | MIT | GREEN | n/a (Workbench v0.2 HTTP shell, ADR-016) | follow-on per Constraint #11 | Tier 2 Workbench HTTP framework (ADR-016, 2026-05-13) |
 | uvicorn | `uvicorn[standard]==0.46.0` | BSD-3-Clause | GREEN | n/a (ASGI server for FastAPI shell) | version-paired with FastAPI | Tier 2 Workbench ASGI runtime (ADR-016, 2026-05-13) |
 | httpx | `httpx==0.28.1` | BSD-3-Clause | GREEN | n/a (Workbench HTTP testing + AI Copilot transport floor for litellm) | follow-on per Constraint #11 | Tier 2 HTTP client (ADR-016 + ADR-015, 2026-05-13) |
@@ -57,26 +57,26 @@ The 2026-05 research wave delivered ~20 component research docs (`dagster`, `pyi
 
 | Component | Pin candidate | License | Tier | When / blocker | Research |
 |---|---|---|---|---|---|
-| dbt-duckdb | `dbt-duckdb==1.10.1` | Apache-2.0 | GREEN | v0.3+ optional (blocked on click `8.1.8` → `>=8.3.0` ADR) | [`dbt-duckdb.md`](../research/dbt-duckdb.md) §6 |
-| dbt-core | `dbt-core==1.11.9` | Apache-2.0 (PyPI metadata blank — NV) | GREEN (verify) | follows dbt-duckdb | [`dbt-duckdb.md`](../research/dbt-duckdb.md) §1 |
-| soda-core | `soda-core==3.5.6` (**NEVER v4+**) | Apache-2.0 (v3 terminal) | GREEN v3 only | v0.5+ optional | [`soda.md`](../research/soda.md) + ADR-007 |
-| marimo | `marimo==0.23.6` | Apache-2.0 | GREEN | v0.3+ optional notebook wrap | [`marimo.md`](../research/marimo.md) |
-| Lakekeeper binary | `lakekeeper==0.12.2` (Rust container; verify Helm chart) | Apache-2.0 | GREEN | v0.3 default catalog per ADR-004 | [`lakekeeper.md`](../research/lakekeeper.md) |
-| Polaris binary | `apache/polaris:apache-polaris-1.4.1` | Apache-2.0 | GREEN | v0.3 alternate catalog per ADR-004 | [`polaris.md`](../research/polaris.md) |
-| SeaweedFS binary | `chrislusf/seaweedfs:<NV exact tag>` (release 2025-05-04) | Apache-2.0 | GREEN | v0.1 storage **DEFAULT** per ADR-008 | [ADR-008](./ADR-008-storage-substrate-v01.md) + [`minio.md`](../research/minio.md) §10 |
-| MinIO binary | `quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z` | **AGPLv3** | YELLOW | v0.1 storage **ALTERNATE** per ADR-008; upstream archived 2026-04-25 | [`minio.md`](../research/minio.md) + ADR-008 |
-| Authentik sidecar | `2026.2` (CalVer) | MIT (core) | GREEN | v0.3 self-hosted default per ADR-010 | [`oidc_providers.md`](../research/oidc_providers.md) §6.1 |
-| Keycloak sidecar | `quay.io/keycloak/keycloak:26.6.1` | Apache-2.0 | GREEN | v0.3 self-hosted alternate per ADR-010 | [`oidc_providers.md`](../research/oidc_providers.md) §6.2 |
-| pyjwt | `pyjwt==2.8.x` (NV at v0.3 ADR time) | MIT | GREEN | v0.3+ per ADR-010 | [`oidc_providers.md`](../research/oidc_providers.md) §5 |
-| daft | provisional `daft==0.7.11` (re-verify at v0.5 ADR; pre-1.0 monthly minors) | Apache-2.0 | GREEN | v0.5+ optional engine | [`daft.md`](../research/daft.md) |
-| pylance | `pylance==6.0.0` (PyPI; not VS Code product) | Apache-2.0 | GREEN | v0.5+ multimodal | [`lance.md`](../research/lance.md) |
-| lancedb | `lancedb==0.30.2` | Apache-2.0 | GREEN | v0.5+ vector / Copilot retrieval | [`lance.md`](../research/lance.md) |
-| Marquez sidecar | `marquezproject/marquez:0.50.0` (last released; 18 mo stalled — Mo 24 swap-to-DataHub trigger logged) | Apache-2.0 | GREEN watch | v0.5+ lineage backend per ADR-011 | [`observability_backends.md`](../research/observability_backends.md) |
-| VictoriaMetrics sidecar | `victoriametrics/victoria-metrics:v1.143.0` | Apache-2.0 | GREEN | v0.5+ metrics per ADR-011 | [`observability_backends.md`](../research/observability_backends.md) |
-| VictoriaLogs sidecar | `victoriametrics/victoria-logs:v1.50.0` | Apache-2.0 | GREEN | v0.5+ logs per ADR-011 | [`observability_backends.md`](../research/observability_backends.md) |
-| Postgres (Dagster + Lakekeeper backing DB) | `15+` | PostgreSQL License | GREEN | external service; v0.3+ | [`dagster.md`](../research/dagster.md) + [`lakekeeper.md`](../research/lakekeeper.md) |
-| boto3 | not pinned; `s3fs` covers | Apache-2.0 | GREEN | add only if a feature needs AWS SDK beyond `s3fs` | [`minio.md`](../research/minio.md) §2.2 |
-| dagster-postgres | not pinned; transitive when Dagster instance DB ships v0.3 | Apache-2.0 | GREEN | follows dagster | [`dagster.md`](../research/dagster.md) |
+| dbt-duckdb | `dbt-duckdb==1.10.1` | Apache-2.0 | GREEN | v0.3+ optional (blocked on click `8.1.8` → `>=8.3.0` ADR) | [`dbt-duckdb.md`](../internal/research/dbt-duckdb.md) §6 |
+| dbt-core | `dbt-core==1.11.9` | Apache-2.0 (PyPI metadata blank — NV) | GREEN (verify) | follows dbt-duckdb | [`dbt-duckdb.md`](../internal/research/dbt-duckdb.md) §1 |
+| soda-core | `soda-core==3.5.6` (**NEVER v4+**) | Apache-2.0 (v3 terminal) | GREEN v3 only | v0.5+ optional | [`soda.md`](../internal/research/soda.md) + ADR-007 |
+| marimo | `marimo==0.23.6` | Apache-2.0 | GREEN | v0.3+ optional notebook wrap | [`marimo.md`](../internal/research/marimo.md) |
+| Lakekeeper binary | `lakekeeper==0.12.2` (Rust container; verify Helm chart) | Apache-2.0 | GREEN | v0.3 default catalog per ADR-004 | [`lakekeeper.md`](../internal/research/lakekeeper.md) |
+| Polaris binary | `apache/polaris:apache-polaris-1.4.1` | Apache-2.0 | GREEN | v0.3 alternate catalog per ADR-004 | [`polaris.md`](../internal/research/polaris.md) |
+| SeaweedFS binary | `chrislusf/seaweedfs:<NV exact tag>` (release 2025-05-04) | Apache-2.0 | GREEN | v0.1 storage **DEFAULT** per ADR-008 | [ADR-008](./ADR-008-storage-substrate-v01.md) + [`minio.md`](../internal/research/minio.md) §10 |
+| MinIO binary | `quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z` | **AGPLv3** | YELLOW | v0.1 storage **ALTERNATE** per ADR-008; upstream archived 2026-04-25 | [`minio.md`](../internal/research/minio.md) + ADR-008 |
+| Authentik sidecar | `2026.2` (CalVer) | MIT (core) | GREEN | v0.3 self-hosted default per ADR-010 | [`oidc_providers.md`](../internal/research/oidc_providers.md) §6.1 |
+| Keycloak sidecar | `quay.io/keycloak/keycloak:26.6.1` | Apache-2.0 | GREEN | v0.3 self-hosted alternate per ADR-010 | [`oidc_providers.md`](../internal/research/oidc_providers.md) §6.2 |
+| pyjwt | `pyjwt==2.8.x` (NV at v0.3 ADR time) | MIT | GREEN | v0.3+ per ADR-010 | [`oidc_providers.md`](../internal/research/oidc_providers.md) §5 |
+| daft | provisional `daft==0.7.11` (re-verify at v0.5 ADR; pre-1.0 monthly minors) | Apache-2.0 | GREEN | v0.5+ optional engine | [`daft.md`](../internal/research/daft.md) |
+| pylance | `pylance==6.0.0` (PyPI; not VS Code product) | Apache-2.0 | GREEN | v0.5+ multimodal | [`lance.md`](../internal/research/lance.md) |
+| lancedb | `lancedb==0.30.2` | Apache-2.0 | GREEN | v0.5+ vector / Copilot retrieval | [`lance.md`](../internal/research/lance.md) |
+| Marquez sidecar | `marquezproject/marquez:0.50.0` (last released; 18 mo stalled — Mo 24 swap-to-DataHub trigger logged) | Apache-2.0 | GREEN watch | v0.5+ lineage backend per ADR-011 | [`observability_backends.md`](../internal/research/observability_backends.md) |
+| VictoriaMetrics sidecar | `victoriametrics/victoria-metrics:v1.143.0` | Apache-2.0 | GREEN | v0.5+ metrics per ADR-011 | [`observability_backends.md`](../internal/research/observability_backends.md) |
+| VictoriaLogs sidecar | `victoriametrics/victoria-logs:v1.50.0` | Apache-2.0 | GREEN | v0.5+ logs per ADR-011 | [`observability_backends.md`](../internal/research/observability_backends.md) |
+| Postgres (Dagster + Lakekeeper backing DB) | `15+` | PostgreSQL License | GREEN | external service; v0.3+ | [`dagster.md`](../internal/research/dagster.md) + [`lakekeeper.md`](../internal/research/lakekeeper.md) |
+| boto3 | not pinned; `s3fs` covers | Apache-2.0 | GREEN | add only if a feature needs AWS SDK beyond `s3fs` | [`minio.md`](../internal/research/minio.md) §2.2 |
+| dagster-postgres | not pinned; transitive when Dagster instance DB ships v0.3 | Apache-2.0 | GREEN | follows dagster | [`dagster.md`](../internal/research/dagster.md) |
 
 **Pin count (future-state)**: **20 future-pin candidates** spanning v0.3 / v0.5+. Adoption gated by their respective ADRs; never bulk-added.
 
@@ -84,8 +84,8 @@ The 2026-05 research wave delivered ~20 component research docs (`dagster`, `pyi
 
 | Component | Why blocked |
 |---|---|
-| `soda-core>=4.0` | Elastic License 2.0 (RED); Cloud bundling forbidden; v3 (`==3.5.6`) is terminal. See [`soda.md`](../research/soda.md) §1.2. |
-| `openlineage-dagster` (any version) | Package archived Oct 2025; `1.38.0` requires `dagster<=1.6.9` (incompatible with our `dagster==1.9.5`); AMA emits OL events directly. Logged in [`ai_hallucinations.md`](../research/ai_hallucinations.md). |
+| `soda-core>=4.0` | Elastic License 2.0 (RED); Cloud bundling forbidden; v3 (`==3.5.6`) is terminal. See [`soda.md`](../internal/research/soda.md) §1.2. |
+| `openlineage-dagster` (any version) | Package archived Oct 2025; `1.38.0` requires `dagster<=1.6.9` (incompatible with our `dagster==1.9.5`); AMA emits OL events directly. Logged in [`ai_hallucinations.md`](../internal/research/ai_hallucinations.md). |
 | `dbt-fusion` (Rust dbt rewrite preview) | Source-available, not OSI-approved → RED until reclassified per ADR-007 §Tier 3. |
 | `mongodb`, `redis>=7.4`, `cockroachdb>=2024`, `elasticsearch>=7.11`, `kibana>=7.11` | SSPL / BUSL / ELv2 — all RED; Cloud bundling forbidden. |
 | Anything matching a forbidden license expression in `scripts/check_licenses.py` | CI-enforced per ADR-007. |

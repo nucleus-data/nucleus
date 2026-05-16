@@ -46,6 +46,6 @@ UML sequence specs for every critical end-to-end path. Each cites its companion 
 
 ---
 
-[← `docs/specs/nucleus_architecture_v4.1.md` §3 + §6](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — swap/](../internal/swap/README.md) · [Sibling — research/](../research/README.md) · [Sibling — patterns/](../patterns/README.md)
+[← `docs/specs/nucleus_architecture_v4.1.md` §3 + §6](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — swap/](../internal/swap/README.md) · [Sibling — research/](../internal/research/README.md) · [Sibling — patterns/](../patterns/README.md)
 
 *Last updated 2026-05-13. Add new diagrams by appending to the appropriate group; group is set by which architecture layer (L0..L4) or process the artifact serves. Keep entries to one line each.*

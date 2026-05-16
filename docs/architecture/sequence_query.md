@@ -4,7 +4,7 @@
 > **Scope**: How `ctx.sql("SELECT … {{ ref('schema.asset') }} …")` becomes Arrow batches and a Polars `DataFrame`
 > **Audience**: Anyone touching `coordination/sql_resolver.py` (v0.1) or `engines/duckdb_engine.py`
 > **Status**: v0.1 native `ctx.sql` + Jinja path under the §5.6.0 ceiling. Prototyped by **PoC #2** (`poc/p2_ctx_sql/resolver.py`); graduates to `src/nucleus/coordination/sql_resolver.py` only after PoC #1 ships `nucleus.errors`.
-> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md) (TEMPLATE), [`sequence_ingestion.md`](sequence_ingestion.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5.6 + §5.6.0, [`../research/duckdb.md`](../research/duckdb.md)
+> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md) (TEMPLATE), [`sequence_ingestion.md`](sequence_ingestion.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5.6 + §5.6.0, [`../internal/research/duckdb.md`](../internal/research/duckdb.md)
 
 ---
 

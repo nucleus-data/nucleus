@@ -1,6 +1,6 @@
 # Pattern: Iceberg Time Travel
 
-> **Tier 1+** per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2. User surface (`ctx.read(..., snapshot_id=...)`, `ctx.snapshot(...)`) lands in v0.3+ ([`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §10). Full Replay & Time-Travel Debugger in v0.8+ (`docs/specs/nucleus_architecture_v4.1.md` §7.6). See also [`pyiceberg.md`](../research/pyiceberg.md) §4, §5; [`snapshot_retention.md`](./snapshot_retention.md) §3, §4; [`schema_evolution.md`](./schema_evolution.md) §5. Last reviewed 2026-05-12 against `pyiceberg==0.8.1`.
+> **Tier 1+** per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2. User surface (`ctx.read(..., snapshot_id=...)`, `ctx.snapshot(...)`) lands in v0.3+ ([`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §10). Full Replay & Time-Travel Debugger in v0.8+ (`docs/specs/nucleus_architecture_v4.1.md` §7.6). See also [`pyiceberg.md`](../internal/research/pyiceberg.md) §4, §5; [`snapshot_retention.md`](./snapshot_retention.md) §3, §4; [`schema_evolution.md`](./schema_evolution.md) §5. Last reviewed 2026-05-12 against `pyiceberg==0.8.1`.
 
 ---
 
@@ -83,14 +83,14 @@ for snap in table.history():
 ## §7. Cross-refs
 
 - [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2 (AMA emits OpenLineage with snapshot IDs), §7.6 (Replay Debugger), §14.5 (DR rollback).
-- [`pyiceberg.md`](../research/pyiceberg.md) §4, §5, §6 (`NoSuchSnapshotException` → `NucleusSnapshotExpiredError`); SDK: [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §4, §10.
+- [`pyiceberg.md`](../internal/research/pyiceberg.md) §4, §5, §6 (`NoSuchSnapshotException` → `NucleusSnapshotExpiredError`); SDK: [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §4, §10.
 - Related: [`snapshot_retention.md`](./snapshot_retention.md) §3, §4; [`schema_evolution.md`](./schema_evolution.md) §5; [`compaction.md`](./compaction.md) §6. Spec: [iceberg.apache.org/spec/#snapshots](https://iceberg.apache.org/spec/#snapshots).
 
 ---
 
 ## §8. NEEDS VERIFICATION
 
-Confirm via PoC #1 against `pyiceberg==0.8.1`; log results to [`ai_hallucinations.md`](../research/ai_hallucinations.md).
+Confirm via PoC #1 against `pyiceberg==0.8.1`; log results to [`ai_hallucinations.md`](../internal/research/ai_hallucinations.md).
 
 - [ ] Exact `Table.scan()` parameter name for pinning: docs show `snapshot_id=`; older mentions used `snapshot=`.
 - [ ] Whether 0.8.1's `Table.scan()` accepts `as_of(timestamp=...)` or requires `Table.history()` + manual lookup.

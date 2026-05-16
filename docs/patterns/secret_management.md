@@ -87,19 +87,19 @@ URL masking (v0.1): AMA splits DSNs via `urllib.parse.urlsplit` ([docs](https://
 
 - [AGENTS.md](../../AGENTS.md) §3 #6 + §11.12; [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.4, §6.6, §15.1.
 - [`threat_model_v0.md`](../internal/security/threat_model_v0.md) §3, §5.1, §6, §8, §10, §11; [`engineering.md`](../conventions/engineering.md) §5.3, §8.3, §8.4; [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §8.3.
-- Research (v0.3+): [`lakekeeper.md`](../research/lakekeeper.md); [`polaris.md`](../research/polaris.md); [`openlineage.md`](../research/openlineage.md); [`dlt.md`](../research/dlt.md).
+- Research (v0.3+): [`lakekeeper.md`](../internal/research/lakekeeper.md); [`polaris.md`](../internal/research/polaris.md); [`openlineage.md`](../internal/research/openlineage.md); [`dlt.md`](../internal/research/dlt.md).
 
 ---
 
 ## §8. NEEDS VERIFICATION
 
-Gated by code execution or policy decision; log to [`ai_hallucinations.md`](../research/ai_hallucinations.md).
+Gated by code execution or policy decision; log to [`ai_hallucinations.md`](../internal/research/ai_hallucinations.md).
 
 - [ ] `pydantic.SecretStr` redaction in f-strings — same as `repr(secret)`? Verify on our Pydantic 2.x pin.
 - [ ] `python-dotenv` precedence: `.env.local` overrides `.env` per [`engineering.md`](../conventions/engineering.md) §8.3.
 - [ ] `keyring` (v0.3+) on all three target OSes; Linux headless / CI may need a passphrase-prompted file backend.
 - [ ] OIDC client library choice — deferred to v0.3 ADR. **Do not pick from this doc.**
-- [ ] Catalog credential vending in `pyiceberg==0.8.1` REST catalog: trigger property + expiry error type (likely `AuthorizationExpiredError` per [`pyiceberg.md`](../research/pyiceberg.md) §6).
+- [ ] Catalog credential vending in `pyiceberg==0.8.1` REST catalog: trigger property + expiry error type (likely `AuthorizationExpiredError` per [`pyiceberg.md`](../internal/research/pyiceberg.md) §6).
 - [ ] v0.1 secrets-leak CI hook: `gitleaks` vs `detect-secrets` (per [`threat_model_v0.md`](../internal/security/threat_model_v0.md) §11 P1).
 
 *Normative. When code disagrees, the doc wins. **No real secrets ever appear in this file.***

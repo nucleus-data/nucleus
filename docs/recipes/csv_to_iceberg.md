@@ -119,10 +119,10 @@ nucleus run staging.events_partitioned          # <!-- pre-v0.1; docs/specs/nucl
 
 ## NEEDS VERIFICATION
 
-1. **`nucleus ingest file://...csv`** — CSV is one of v0.1's 6 source types ([`docs/specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §3) but PoC #3 validates only SQLite ([`poc/p3_ingest/STATUS.md`](../../internal/poc/p3_ingest/STATUS.md)).
+1. **`nucleus ingest file://...csv`** — CSV is one of v0.1's 6 source types ([`docs/specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §3) but PoC #3 validates only SQLite ([`poc/p3_ingest/STATUS.md`](../../poc/p3_ingest/STATUS.md)).
 2. **CSV header normalization rules** — auto-infer on spaces / unicode / duplicates is unspecified in [v4.1 §5.5.1](../specs/nucleus_architecture_v4.1.md).
 3. **`@nucleus.sql_asset(materialize="incremental")`** — per [v4.1 §13.2](../specs/nucleus_architecture_v4.1.md), `incremental` lands v0.3+, not v0.1. For a v0.1 trial use `materialize="table"` (full-refresh).
 4. **`partition_by="month(event_ts)"` string DSL** — exists in [`docs/patterns/partitioning.md`](../patterns/partitioning.md) §6 but the parser inside `@nucleus.asset` is not implemented.
 5. **One-Parquet-per-month commit semantics** — confirmable via `nucleus snapshot list` ([`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §6.1) once the snapshot CLI ships.
 
-Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../research/ai_hallucinations.md). Re-validate after PoC #3 expands beyond SQLite.
+Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../internal/research/ai_hallucinations.md). Re-validate after PoC #3 expands beyond SQLite.
