@@ -17,7 +17,7 @@
 
 > *"Ship data products from a laptop — a local-first Python SDK + CLI for building Iceberg-native pipelines and analytics stacks, AI-ready by design, graduating cleanly to any Iceberg catalog when users outgrow their laptop."*
 
-**Yield-to-giants strategy** (`nucleus_architecture_v4.1.md §10`):
+**Yield-to-giants strategy** (`docs/specs/nucleus_architecture_v4.1.md §10`):
 - **Mode 1** — Iceberg portability: graduate with zero migration
 - **Mode 2** — Hybrid compute: dispatch heavy assets to Databricks/Snowflake via `compute=...` (v1.5+)
 - **Mode 3** — Iceberg REST catalog federation for Data Mesh (v2.0+)
@@ -173,7 +173,7 @@ All items evaluated against the 8-question gate (`.cursor/rules/nucleus.mdc`). I
 
 ## 5. Honest "We Don't Compete Here" Section
 
-Per `nucleus_vs_databricks.md §Where We Deliberately Lose` and v4.1 §20: *"These are not gaps. They are focus."*
+Per `docs/specs/nucleus_vs_databricks.md §Where We Deliberately Lose` and v4.1 §20: *"These are not gaps. They are focus."*
 
 - **Distributed compute** (Spark, multi-cluster warehouses, serverless slots) → **Yield via Mode 2** (v1.5+). Per v4.1 §10.
 - **ML training / model hosting** (MLflow, Snowflake ML, BigQuery ML) → **Out-of-scope** per v4.1 §20.1. Users run MLflow OSS alongside Nucleus.
@@ -288,7 +288,7 @@ surface for this is unconfirmed. Resolved pre-write. Cited spec, not API.
 - Query Overview: https://cloud.google.com/bigquery/docs/query-overview *(partial)*
 
 **Nucleus** (local docs, all verified):
-- `nucleus_architecture_v4.1.md`, `nucleus_vs_databricks.md`, `nucleus_cli_spec.md`, `nucleus_ctx_sdk_spec.md`, `AGENTS.md`
+- `docs/specs/nucleus_architecture_v4.1.md`, `docs/specs/nucleus_vs_databricks.md`, `docs/specs/nucleus_cli_spec.md`, `docs/specs/nucleus_ctx_sdk_spec.md`, `AGENTS.md`
 
 **Other**: sqlglot lineage API: https://github.com/tobymao/sqlglot · dlt CDC: https://dlthub.com/docs/dlt-ecosystem/verified-sources/sql_database
 

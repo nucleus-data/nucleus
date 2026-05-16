@@ -1,6 +1,6 @@
 # Pattern: Secret Management
 
-> **Cross-cutting** — every connector, catalog, external service. Per [AGENTS.md](../../AGENTS.md) §3 Hard Constraint #6, Nucleus **never** owns an identity store — we delegate to OIDC from v0.3+ ([`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §15.1). See also [`threat_model_v0.md`](../security/threat_model_v0.md) §3, §5.1, §6, §11; [`engineering.md`](../conventions/engineering.md) §5.3, §8.3, §8.4; [`nucleus_ctx_sdk_spec.md`](../../nucleus_ctx_sdk_spec.md) §8.3. Last reviewed 2026-05-12.
+> **Cross-cutting** — every connector, catalog, external service. Per [AGENTS.md](../../AGENTS.md) §3 Hard Constraint #6, Nucleus **never** owns an identity store — we delegate to OIDC from v0.3+ ([`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §15.1). See also [`threat_model_v0.md`](../security/threat_model_v0.md) §3, §5.1, §6, §11; [`engineering.md`](../conventions/engineering.md) §5.3, §8.3, §8.4; [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §8.3. Last reviewed 2026-05-12.
 
 > **Zero real credentials in this file.** Every example uses `<PLACEHOLDER>`. Do **not** paste real keys into edits or PRs.
 
@@ -20,7 +20,7 @@ Every connector, catalog adapter, external service call (HTTP / S3 / LLM / telem
 
 ## §3. How (Nucleus wrap)
 
-User code never reads `os.environ` — `ctx.secrets` is the API (per [`nucleus_ctx_sdk_spec.md`](../../nucleus_ctx_sdk_spec.md) §8.3). `ctx.copy_from` parses the DSN, wraps the password in `SecretStr`, masks every log line.
+User code never reads `os.environ` — `ctx.secrets` is the API (per [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §8.3). `ctx.copy_from` parses the DSN, wraps the password in `SecretStr`, masks every log line.
 
 ```python
 import nucleus
@@ -69,7 +69,7 @@ URL masking (v0.1): AMA splits DSNs via `urllib.parse.urlsplit` ([docs](https://
 - **In `nucleus.toml`** — checked into git. Use `${ENV_VAR}` interpolation.
 - **In CLI flags** — visible via `ps aux` / Task Manager and shell history. Use `--secret-from-env <NAME>`.
 - **In Dagster `AssetMaterialization` metadata or OpenLineage events.** Both leave the trust boundary (Dagster persists to disk and is surfaced via `nucleus enable compat-dagster` per §6.6; OpenLineage facets propagate to lineage consumers). AMA strips credential-shaped values before emission.
-- **In error messages / logs / full URLs.** `SecretStr` redacts `__repr__`/`__str__` only if you don't unwrap; `.get_secret_value()` interpolated into a message defeats it. Even masked, *user* + *host* + *path* reveal infra topology — log shapes, not values (per [`engineering.md`](../conventions/engineering.md) §5.3). `NucleusError.user_message` is validated against a deny-list (per `nucleus_architecture_v4.1.md` §6.4).
+- **In error messages / logs / full URLs.** `SecretStr` redacts `__repr__`/`__str__` only if you don't unwrap; `.get_secret_value()` interpolated into a message defeats it. Even masked, *user* + *host* + *path* reveal infra topology — log shapes, not values (per [`engineering.md`](../conventions/engineering.md) §5.3). `NucleusError.user_message` is validated against a deny-list (per `docs/specs/nucleus_architecture_v4.1.md` §6.4).
 - **In `git log` / `git stash`.** A `.env` accidentally added is still in the reflog. Per [`threat_model_v0.md`](../security/threat_model_v0.md) §10, any push is a rotation event. `gitleaks` / `detect-secrets` pre-commit hook is P1 (§11).
 - **Long-lived static creds for OIDC catalogs (v0.3+)** — use vending.
 
@@ -77,7 +77,7 @@ URL masking (v0.1): AMA splits DSNs via `urllib.parse.urlsplit` ([docs](https://
 
 ## §6. Trade-offs
 
-- **`.env` vs OS keychain.** `.env` is portable but unencrypted on disk; keychain is encrypted but harder to share. v0.1 picks `.env` for the 30-min beachhead metric (per `nucleus_architecture_v4.1.md` §1.5); v0.3+ adds keychain as a **second** path.
+- **`.env` vs OS keychain.** `.env` is portable but unencrypted on disk; keychain is encrypted but harder to share. v0.1 picks `.env` for the 30-min beachhead metric (per `docs/specs/nucleus_architecture_v4.1.md` §1.5); v0.3+ adds keychain as a **second** path.
 - **Vending vs static keys.** Vending is short-TTL, namespace-scoped, but needs an IdP for cold-start. v0.1 static; v0.3+ vending with fallback.
 - **LLM keys (v0.5+) user-side, never proxied** (per [`threat_model_v0.md`](../security/threat_model_v0.md) §8 #3): no single point of compromise; cost is per-user management.
 
@@ -85,8 +85,8 @@ URL masking (v0.1): AMA splits DSNs via `urllib.parse.urlsplit` ([docs](https://
 
 ## §7. Cross-refs
 
-- [AGENTS.md](../../AGENTS.md) §3 #6 + §11.12; [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.4, §6.6, §15.1.
-- [`threat_model_v0.md`](../security/threat_model_v0.md) §3, §5.1, §6, §8, §10, §11; [`engineering.md`](../conventions/engineering.md) §5.3, §8.3, §8.4; [`nucleus_ctx_sdk_spec.md`](../../nucleus_ctx_sdk_spec.md) §8.3.
+- [AGENTS.md](../../AGENTS.md) §3 #6 + §11.12; [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.4, §6.6, §15.1.
+- [`threat_model_v0.md`](../security/threat_model_v0.md) §3, §5.1, §6, §8, §10, §11; [`engineering.md`](../conventions/engineering.md) §5.3, §8.3, §8.4; [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §8.3.
 - Research (v0.3+): [`lakekeeper.md`](../research/lakekeeper.md); [`polaris.md`](../research/polaris.md); [`openlineage.md`](../research/openlineage.md); [`dlt.md`](../research/dlt.md).
 
 ---

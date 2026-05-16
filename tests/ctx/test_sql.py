@@ -14,8 +14,8 @@ Covers ``sql()`` in ``src/nucleus/ctx/sql.py``:
     10. NucleusCatalogError on bad warehouse path.
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.6.0 (ctx.sql scope ceiling)
-    nucleus_ctx_sdk_spec.md §6.1 + §6.2 (SQL API + ref resolution)
+    docs/specs/nucleus_architecture_v4.1.md §5.6.0 (ctx.sql scope ceiling)
+    docs/specs/nucleus_ctx_sdk_spec.md §6.1 + §6.2 (SQL API + ref resolution)
     docs/decisions/ADR-005-api-stability-tiering.md §2 (Beta tier)
 """
 

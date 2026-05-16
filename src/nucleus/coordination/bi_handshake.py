@@ -16,8 +16,8 @@ iceberg_scan() views they can load the DuckDB iceberg extension and use::
         SELECT * FROM iceberg_scan('<iceberg_table_location>');
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §3 (Experience layer)
-    nucleus_architecture_v4.1.md §1.5 (beachhead <30-min metric)
+    docs/specs/nucleus_architecture_v4.1.md §3 (Experience layer)
+    docs/specs/nucleus_architecture_v4.1.md §1.5 (beachhead <30-min metric)
     ADR-026 (nucleus.db BI handshake)
 
 Docs (AGENTS.md §11.12):

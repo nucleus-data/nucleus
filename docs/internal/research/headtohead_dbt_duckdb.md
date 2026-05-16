@@ -29,7 +29,7 @@ corporate proxy environment. Nothing here is fabricated.
   lineage emit + error translation tax to every materialisation; the
   trade-off is that the output is a portable snapshot the user can
   graduate to any catalog (Polaris, Lakekeeper, Unity, R2) per
-  `nucleus_architecture_v4.1.md` Section 10 (yield to giants).
+  `docs/specs/nucleus_architecture_v4.1.md` Section 10 (yield to giants).
 * **Numerical headline**: full run blocked by network (see Section 4).
   Harness validated end-to-end via `--dry-run`; reproducer command
   documented in Section 6.
@@ -129,7 +129,7 @@ nucleus.materialize("marts.q1",      warehouse_dir=warehouse)
 ```
 
 Each `nucleus.materialize` call walks the AMA pipeline per
-`nucleus_architecture_v4.1.md` Section 6.2: validate -> partition
+`docs/specs/nucleus_architecture_v4.1.md` Section 6.2: validate -> partition
 enforce -> catalog atomic commit (ADR-001) -> OpenLineage emit ->
 registry update. The output is a real Iceberg snapshot in the
 filesystem catalog under `warehouse/marts/q1/`.
@@ -208,7 +208,7 @@ engineer reads to decide.
   Airflow + a metadata service.
 * You want your output to be **portable** -- an Iceberg snapshot you
   can read from Spark / Trino / Databricks / Snowflake without
-  changing your transformation code (`nucleus_architecture_v4.1.md`
+  changing your transformation code (`docs/specs/nucleus_architecture_v4.1.md`
   Section 10 Mode 1).
 * You want **AI-readiness by design** -- the `ctx` SDK + the MCP server
   (v0.5+) make assets first-class for LLM-based agents.
@@ -264,7 +264,7 @@ so a third-party tester can confirm or refute every number.
   asymmetric on storage by design -- the asymmetry is the
   differentiator, not a bug.
 * No cluster scale-out -- both engines are single-machine. Per the
-  beachhead persona (`nucleus_architecture_v4.1.md` Section 1.5), a
+  beachhead persona (`docs/specs/nucleus_architecture_v4.1.md` Section 1.5), a
   single laptop is the target.
 
 ## 8. References
@@ -274,7 +274,7 @@ so a third-party tester can confirm or refute every number.
 * TPC-H spec: https://www.tpc.org/tpch/
 * DuckDB published TPC-H: https://duckdb.org/2024/06/26/benchmarks-and-pretty-pictures.html
 * dbt-duckdb adapter: https://github.com/duckdb/dbt-duckdb
-* Nucleus AMA pipeline: `nucleus_architecture_v4.1.md` Section 6.2
+* Nucleus AMA pipeline: `docs/specs/nucleus_architecture_v4.1.md` Section 6.2
 * Single-engine baseline: `docs/internal/research/benchmarks_v0.2.0.md`
 * Companion report: `docs/internal/research/headtohead_dagster_duckdb.md`
 * Executive summary: `docs/internal/research/headtohead_summary.md`

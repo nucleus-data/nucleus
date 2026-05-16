@@ -25,15 +25,15 @@
 | `GOVERNANCE.md` | 1.1 KB | 2026-05-15 | Community | **KEEP** at root |
 | `MAINTAINERS.md` | 0.6 KB | 2026-05-15 | Community | **KEEP** at root |
 | `SETUP.md` | 26.9 KB | 2026-05-14 | User guide | **MOVE** → `docs/onboarding/setup.md` |
-| `nucleus_architecture_v4.1.md` | 81.4 KB | 2026-05-14 | Spec | **MOVE** → `docs/architecture/architecture-v4.1.md` |
-| `nucleus_asset_model_spec.md` | 12.1 KB | 2026-05-12 | Spec | **MOVE** → `docs/architecture/asset-model.md` |
-| `nucleus_cli_spec.md` | 27.0 KB | 2026-05-15 | Spec | **MOVE** → `docs/architecture/cli-spec.md` |
-| `nucleus_ctx_sdk_spec.md` | 17.8 KB | 2026-05-15 | Spec | **MOVE** → `docs/architecture/ctx-sdk-spec.md` |
-| `nucleus_project_anatomy.md` | 13.4 KB | 2026-05-15 | Spec | **MOVE** → `docs/architecture/project-anatomy.md` |
-| `nucleus_vs_databricks.md` | 22.0 KB | 2026-05-14 | Spec | **MOVE** → `docs/architecture/vs-databricks.md` |
-| `nucleus_poc_plan.md` | 25.1 KB | 2026-05-14 | Plan | **MOVE** → `docs/poc/poc-plan.md` |
-| `nucleus_implementation_readiness.md` | 11.9 KB | 2026-05-12 | Plan | **MOVE** → `docs/architecture/implementation-readiness.md` |
-| `nucleus_red_team_review.md` | 35.6 KB | 2026-05-12 | Review | **MOVE** → `docs/architecture/red-team-review.md` |
+| `docs/specs/nucleus_architecture_v4.1.md` | 81.4 KB | 2026-05-14 | Spec | **MOVE** → `docs/architecture/architecture-v4.1.md` |
+| `docs/specs/nucleus_asset_model_spec.md` | 12.1 KB | 2026-05-12 | Spec | **MOVE** → `docs/architecture/asset-model.md` |
+| `docs/specs/nucleus_cli_spec.md` | 27.0 KB | 2026-05-15 | Spec | **MOVE** → `docs/architecture/cli-spec.md` |
+| `docs/specs/nucleus_ctx_sdk_spec.md` | 17.8 KB | 2026-05-15 | Spec | **MOVE** → `docs/architecture/ctx-sdk-spec.md` |
+| `docs/specs/nucleus_project_anatomy.md` | 13.4 KB | 2026-05-15 | Spec | **MOVE** → `docs/architecture/project-anatomy.md` |
+| `docs/specs/nucleus_vs_databricks.md` | 22.0 KB | 2026-05-14 | Spec | **MOVE** → `docs/architecture/vs-databricks.md` |
+| `docs/specs/nucleus_poc_plan.md` | 25.1 KB | 2026-05-14 | Plan | **MOVE** → `docs/poc/poc-plan.md` |
+| `docs/specs/nucleus_implementation_readiness.md` | 11.9 KB | 2026-05-12 | Plan | **MOVE** → `docs/architecture/implementation-readiness.md` |
+| `docs/specs/nucleus_red_team_review.md` | 35.6 KB | 2026-05-12 | Review | **MOVE** → `docs/architecture/red-team-review.md` |
 
 **Net**: 9 files stay at root (repo standard + community), 10 files move.
 
@@ -76,16 +76,16 @@ Cross-references were enumerated using `Grep` (ripgrep) across the full reposito
 
 | File to move | Total occurrences | Unique source files | High-impact referrers |
 |---|---|---|---|
-| `nucleus_architecture_v4.1.md` | ~500+ | ~200 | `AGENTS.md` (9), `README.md` (10), `.cursor/rules/nucleus.mdc` (7), `docs/recipes/slack_bot_on_data.md` (13), `docs/decisions/ADR-002` (13), all ADRs, all swap docs, all pattern docs |
-| `nucleus_cli_spec.md` | ~200+ | ~90 | `src/nucleus/cli/main.py` (19), `tests/release_e2e/` (20), `docs/recipes/postgres_to_iceberg.md` (12), `SETUP.md` (9) |
-| `nucleus_ctx_sdk_spec.md` | ~150+ | ~65 | `docs/patterns/time_travel.md` (6), `docs/patterns/secret_management.md` (6), `docs/decisions/ADR-005` (8), `docs/dev-guides/05` (6) |
-| `nucleus_poc_plan.md` | ~120+ | ~55 | `poc/p5_beachhead/DESIGN.md` (7), `docs/decisions/ADR-002` (1), `.cursor/rules/nucleus.mdc` (1) |
-| `nucleus_red_team_review.md` | ~60+ | ~25 | `nucleus_vs_databricks.md` (7), `nucleus_implementation_readiness.md` (7) |
-| `SETUP.md` | ~90+ | ~25 | `CONTRIBUTING.md` (7), `nucleus_architecture_v4.1.md` (1), `docs/decisions/ADR-008` (3) |
-| `nucleus_vs_databricks.md` | ~30+ | ~14 | `AGENTS.md` (1), `docs/internal/research/workbench.md` (5) |
-| `nucleus_project_anatomy.md` | ~40+ | ~22 | `docs/architecture/v01_skeleton_plan.md` (3), `.cursor/agents/external-data-engineer-tester.md` (2) |
-| `nucleus_asset_model_spec.md` | ~30+ | ~25 | `docs/archive/architecture-v4.md` (3), `docs/architecture/v01_skeleton_plan.md` (3) |
-| `nucleus_implementation_readiness.md` | ~25+ | ~11 | `AGENTS.md` (3), `nucleus_architecture_v4.1.md` (3) |
+| `docs/specs/nucleus_architecture_v4.1.md` | ~500+ | ~200 | `AGENTS.md` (9), `README.md` (10), `.cursor/rules/nucleus.mdc` (7), `docs/recipes/slack_bot_on_data.md` (13), `docs/decisions/ADR-002` (13), all ADRs, all swap docs, all pattern docs |
+| `docs/specs/nucleus_cli_spec.md` | ~200+ | ~90 | `src/nucleus/cli/main.py` (19), `tests/release_e2e/` (20), `docs/recipes/postgres_to_iceberg.md` (12), `SETUP.md` (9) |
+| `docs/specs/nucleus_ctx_sdk_spec.md` | ~150+ | ~65 | `docs/patterns/time_travel.md` (6), `docs/patterns/secret_management.md` (6), `docs/decisions/ADR-005` (8), `docs/dev-guides/05` (6) |
+| `docs/specs/nucleus_poc_plan.md` | ~120+ | ~55 | `poc/p5_beachhead/DESIGN.md` (7), `docs/decisions/ADR-002` (1), `.cursor/rules/nucleus.mdc` (1) |
+| `docs/specs/nucleus_red_team_review.md` | ~60+ | ~25 | `docs/specs/nucleus_vs_databricks.md` (7), `docs/specs/nucleus_implementation_readiness.md` (7) |
+| `SETUP.md` | ~90+ | ~25 | `CONTRIBUTING.md` (7), `docs/specs/nucleus_architecture_v4.1.md` (1), `docs/decisions/ADR-008` (3) |
+| `docs/specs/nucleus_vs_databricks.md` | ~30+ | ~14 | `AGENTS.md` (1), `docs/internal/research/workbench.md` (5) |
+| `docs/specs/nucleus_project_anatomy.md` | ~40+ | ~22 | `docs/architecture/v01_skeleton_plan.md` (3), `.cursor/agents/external-data-engineer-tester.md` (2) |
+| `docs/specs/nucleus_asset_model_spec.md` | ~30+ | ~25 | `docs/archive/architecture-v4.md` (3), `docs/architecture/v01_skeleton_plan.md` (3) |
+| `docs/specs/nucleus_implementation_readiness.md` | ~25+ | ~11 | `AGENTS.md` (3), `docs/specs/nucleus_architecture_v4.1.md` (3) |
 
 **REVISED TOTAL CROSS-REF ESTIMATE: ~1,300+ occurrences across ~350+ unique source files** (across all file types). The earlier Wave 1I estimate of ~83 counted only top-level `.md` files; the actual scope is ~4× larger when all file types and subdirectories are included. The critical observation: most references in `src/nucleus/**/*.py` and `tests/**/*.py` are docstring citations (`# Per architecture v4.1 §6.3`), NOT filesystem paths — those do NOT need updating. Only files containing the literal filename string as a path reference need editing.
 
@@ -115,15 +115,15 @@ STEP 2: Verify clean git state.
 
 STEP 3: Execute moves using git mv (preserves history).
         git mv SETUP.md docs/onboarding/setup.md
-        git mv nucleus_architecture_v4.1.md docs/architecture/architecture-v4.1.md
-        git mv nucleus_asset_model_spec.md docs/architecture/asset-model.md
-        git mv nucleus_cli_spec.md docs/architecture/cli-spec.md
-        git mv nucleus_ctx_sdk_spec.md docs/architecture/ctx-sdk-spec.md
-        git mv nucleus_project_anatomy.md docs/architecture/project-anatomy.md
-        git mv nucleus_vs_databricks.md docs/architecture/vs-databricks.md
-        git mv nucleus_poc_plan.md docs/poc/poc-plan.md
-        git mv nucleus_implementation_readiness.md docs/architecture/implementation-readiness.md
-        git mv nucleus_red_team_review.md docs/architecture/red-team-review.md
+        git mv docs/specs/nucleus_architecture_v4.1.md docs/architecture/architecture-v4.1.md
+        git mv docs/specs/nucleus_asset_model_spec.md docs/architecture/asset-model.md
+        git mv docs/specs/nucleus_cli_spec.md docs/architecture/cli-spec.md
+        git mv docs/specs/nucleus_ctx_sdk_spec.md docs/architecture/ctx-sdk-spec.md
+        git mv docs/specs/nucleus_project_anatomy.md docs/architecture/project-anatomy.md
+        git mv docs/specs/nucleus_vs_databricks.md docs/architecture/vs-databricks.md
+        git mv docs/specs/nucleus_poc_plan.md docs/poc/poc-plan.md
+        git mv docs/specs/nucleus_implementation_readiness.md docs/architecture/implementation-readiness.md
+        git mv docs/specs/nucleus_red_team_review.md docs/architecture/red-team-review.md
 
         NOTE: Create target directories if missing:
         mkdir -p docs/architecture docs/poc (only if not already present)
@@ -212,7 +212,7 @@ Options:
 
 ### E.2 — File naming convention on move
 
-Files are currently `snake_case` (e.g., `nucleus_architecture_v4.1.md`). New paths use `kebab-case` (e.g., `architecture-v4.1.md`).
+Files are currently `snake_case` (e.g., `docs/specs/nucleus_architecture_v4.1.md`). New paths use `kebab-case` (e.g., `architecture-v4.1.md`).
 
 Options:
 - **A**: Rename to kebab-case on move (cleaner, matches MkDocs convention)

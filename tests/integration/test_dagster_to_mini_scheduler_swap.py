@@ -1,6 +1,6 @@
 """Empirical proof of the Dagster ⇄ mini-scheduler swap boundary.
 
-Per ``nucleus_architecture_v4.1.md`` §6.7 (mini-scheduler) + §9.3
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.7 (mini-scheduler) + §9.3
 (composability constitution — interface + smoke tests + on-demand swap)
 and the close-out evaluation directive "no actual swap has been done
 end-to-end yet (no real proof we can swap Dagster for mini-scheduler)".

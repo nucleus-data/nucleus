@@ -5,7 +5,7 @@ description: Step-by-step recipe for moving a Nucleus-managed Iceberg lakehouse 
 
 # Graduate to Snowflake
 
-> Architectural intent: `nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) and `AGENTS.md` section 4 (Do-Not-Build list). Iceberg is a portable open standard, so the snapshots Nucleus committed are the same snapshots Snowflake will read.
+> Architectural intent: `docs/specs/nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) and `AGENTS.md` section 4 (Do-Not-Build list). Iceberg is a portable open standard, so the snapshots Nucleus committed are the same snapshots Snowflake will read.
 
 This cookbook is the practical answer to:
 
@@ -19,17 +19,17 @@ The Snowflake side leans on **Iceberg Tables**, GA since 2024 and steadily exten
 
 ## 1. When you should graduate
 
-Nucleus serves the beachhead persona in `nucleus_architecture_v4.1.md` section 1.5: a startup data team of 5-20 engineers, 100 GB to 5 TB of total data, greenfield, laptop-first. Graduate to Snowflake when one of the following fires:
+Nucleus serves the beachhead persona in `docs/specs/nucleus_architecture_v4.1.md` section 1.5: a startup data team of 5-20 engineers, 100 GB to 5 TB of total data, greenfield, laptop-first. Graduate to Snowflake when one of the following fires:
 
 | Trigger | Why it fires graduation |
 |---|---|
 | Single asset crosses 10 TB or query latency on it crosses 30 s on a beefy laptop | Snowflake Virtual Warehouses scale horizontally and elastically; DuckDB on one node does not. |
 | Data team grows past 50 engineers | Snowflake roles, masking policies, and account-level governance become net-positive overhead; Nucleus has no native RBAC layer in v0.2. |
 | Compliance program requires SOC 2 Type II / HIPAA / PCI today | Snowflake ships these certifications; Nucleus targets them only at v1.5+. |
-| The org runs Cortex ML, Snowpark ML, or Streamlit-in-Snowflake apps | Nucleus is deliberately not an ML platform (`nucleus_architecture_v4.1.md` section 20.1). |
+| The org runs Cortex ML, Snowpark ML, or Streamlit-in-Snowflake apps | Nucleus is deliberately not an ML platform (`docs/specs/nucleus_architecture_v4.1.md` section 20.1). |
 | You want zero-copy clones (`CLONE`) for cheap branch-style experimentation | Snowflake's metadata-only clone is GA today; Nucleus equivalents arrive v0.5+. |
 
-If none of these apply, stay on Nucleus and keep the 30-minute beachhead promise (`nucleus_architecture_v4.1.md` section 1.5).
+If none of these apply, stay on Nucleus and keep the 30-minute beachhead promise (`docs/specs/nucleus_architecture_v4.1.md` section 1.5).
 
 ---
 
@@ -40,7 +40,7 @@ If none of these apply, stay on Nucleus and keep the 30-minute beachhead promise
 | Apache Iceberg snapshots and Parquet files in your S3 bucket | The Nucleus CLI - replaced by the Snowsight UI and SnowSQL |
 | Iceberg snapshot lineage, schema evolution, partition spec | The Asset Materialization Adapter - replaced by Snowflake Tasks + Dynamic Tables |
 | `@nucleus.contract` schema definitions (translatable to Snowflake `NOT NULL`, `CHECK`, masking policies) | Nucleus Workbench (`localhost:8765`) - use Snowsight worksheets |
-| OpenLineage events already emitted (Tier 0 immortal per `nucleus_architecture_v4.1.md` section 4.1) | Nucleus filesystem catalog - swap for Snowflake's native Iceberg catalog or Snowflake Open Catalog (Apache Polaris) |
+| OpenLineage events already emitted (Tier 0 immortal per `docs/specs/nucleus_architecture_v4.1.md` section 4.1) | Nucleus filesystem catalog - swap for Snowflake's native Iceberg catalog or Snowflake Open Catalog (Apache Polaris) |
 | Stable error codes (NE1xxx-NE5xxx, ADR-006) - keep for whatever Nucleus you keep | The Nucleus error translation layer - Snowflake errors surface natively |
 
 The contract surface that survives is the open-format substrate: Iceberg + Parquet + S3 + OpenLineage. Everything Nucleus-proprietary is replaceable on the Snowflake side.
@@ -250,7 +250,7 @@ If you hit any of the above, file an issue on <https://github.com/nucleus-data/n
 - `docs/cookbook/graduate-to-bigquery.md` - sibling recipe for BigQuery.
 - `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md` - design spec for the `compute=` decorator that automates Mode 2.
 - `docs/internal/research/parity_vs_databricks_snowflake.md` - the honest capability matrix that motivated this cookbook.
-- `nucleus_architecture_v4.1.md` section 10 - canonical Yield-to-Giants Strategy.
+- `docs/specs/nucleus_architecture_v4.1.md` section 10 - canonical Yield-to-Giants Strategy.
 
 ## External references (verified URL form, content NEEDS VERIFICATION at integration time)
 

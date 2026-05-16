@@ -1,6 +1,6 @@
 # Swap Target: Dagster → `nucleus-mini-scheduler`
 
-**Tier**: 2 (orchestration substrate, fully replaceable, per `nucleus_architecture_v4.1.md` §6.3, §6.7, §9.2) · **Default**: `dagster==1.9.5` (`pyproject.toml:51`) · **Swap target (primary)**: `nucleus-mini-scheduler` — in-house fallback per `AGENTS.md` §4 ("mini-scheduler as fallback only") and v4.1 §6.7. Triggered ADR-NNN at swap time (no dedicated ADR exists yet — latest is ADR-013) · **Swap target (fallback)**: Prefect 3.x — only if mini-scheduler would breach the 30K v1.0 LOC ceiling (Hard Constraint #8) · **Status (2026-05-13)**: Interface documented + smoke tests in CI; full swap on-demand only per v4.1 §9.3.
+**Tier**: 2 (orchestration substrate, fully replaceable, per `docs/specs/nucleus_architecture_v4.1.md` §6.3, §6.7, §9.2) · **Default**: `dagster==1.9.5` (`pyproject.toml:51`) · **Swap target (primary)**: `nucleus-mini-scheduler` — in-house fallback per `AGENTS.md` §4 ("mini-scheduler as fallback only") and v4.1 §6.7. Triggered ADR-NNN at swap time (no dedicated ADR exists yet — latest is ADR-013) · **Swap target (fallback)**: Prefect 3.x — only if mini-scheduler would breach the 30K v1.0 LOC ceiling (Hard Constraint #8) · **Status (2026-05-13)**: Interface documented + smoke tests in CI; full swap on-demand only per v4.1 §9.3.
 
 This swap is **categorically different** from DuckDB / Polars: the swap target is in-house, not OSS. The mini-scheduler is a **v1.0 commitment** under v4.1 §6.7, not a v0.1 commitment. v0.1 ships Dagster wrapped behind the AMA; the in-house fallback only materializes if a trigger fires.
 
@@ -94,6 +94,6 @@ Until one fires, we maintain interface + smoke tests only, never a full second i
 - `@dagster.asset`: https://docs.dagster.io/api/dagster/assets#dagster.asset
 - `dagster._core.errors`: https://docs.dagster.io/api/python-api/errors
 - Prefect 3.x (fallback): https://docs.prefect.io/3.0/
-- Architecture: `nucleus_architecture_v4.1.md` §6.3 (what we take from Dagster), §6.4 (error translation discipline), §6.5 (replaceability mandate), §6.7 (mini-scheduler design intent), §9.2-§9.3
+- Architecture: `docs/specs/nucleus_architecture_v4.1.md` §6.3 (what we take from Dagster), §6.4 (error translation discipline), §6.5 (replaceability mandate), §6.7 (mini-scheduler design intent), §9.2-§9.3
 - Research notes: `docs/internal/research/dagster.md` (PoC #1 anchor)
 - Related: `docs/decisions/ADR-013-ctx-materialize-api.md` (the public `materialize_asset` contract that survives any swap)

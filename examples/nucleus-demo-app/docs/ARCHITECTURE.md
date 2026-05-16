@@ -71,7 +71,7 @@ touching the decorator. Same trick dbt uses, same effect.
 
 Bronze assets do not have a SQL counterpart — they pure-call
 `ctx.copy_from(...)`. That helper is the canonical v0.1 ingestion entry
-point per [`nucleus_ctx_sdk_spec.md`](../../../nucleus_ctx_sdk_spec.md) §0
+point per [`docs/specs/nucleus_ctx_sdk_spec.md`](../../specs/nucleus_ctx_sdk_spec.md) §0
 ("`ctx` is the only thing users import").
 
 ---
@@ -122,7 +122,7 @@ translates them to `NucleusError` subclasses at every boundary.
 | Add a new silver/gold transform           | New `sql/<layer>_<name>.sql` + matching `assets/<layer>_<name>.py`.         |
 | Add a new quality guard                   | New `checks/<name>.py`; remember to import it from `checks/__init__.py`.    |
 | Swap source from Postgres → MySQL/SQLite  | Change the connection URL in `assets/_common.py`; `ctx.copy_from` dispatches by URL scheme. |
-| Add column-level lineage                  | v0.5+ — see `nucleus_architecture_v4.1.md` §17.                             |
+| Add column-level lineage                  | v0.5+ — see `docs/specs/nucleus_architecture_v4.1.md` §17.                             |
 
 Avoid:
 
@@ -148,5 +148,5 @@ When the dataset outgrows a single laptop:
 3. **Mode 3 — Federation.** Cross-catalog queries via the Iceberg REST
    federation surface (v2.0+).
 
-See `nucleus_architecture_v4.1.md` §10 for the full yield-to-giants
+See `docs/specs/nucleus_architecture_v4.1.md` §10 for the full yield-to-giants
 strategy.

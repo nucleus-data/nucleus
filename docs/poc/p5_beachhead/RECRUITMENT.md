@@ -56,7 +56,7 @@ That's it. You prove — or disprove — our 30-minute promise. Every stumble, t
 
 ## Beachhead persona (who Nucleus is optimizing for)
 
-From `nucleus_architecture_v4.1.md` §1.5 — **startup data group (~5–20 engineers), ~100 GB–5 TB total footprint, greenfield initiative**. Laptop-first (MacBook is the reference hardware). Production ambition skews **PostgreSQL sources + S3-compatible object storage**; PoC #5 sessions exercise the **SQLite → filesystem Iceberg** slice — still validates time-to-first-outcome and real friction.
+From `docs/specs/nucleus_architecture_v4.1.md` §1.5 — **startup data group (~5–20 engineers), ~100 GB–5 TB total footprint, greenfield initiative**. Laptop-first (MacBook is the reference hardware). Production ambition skews **PostgreSQL sources + S3-compatible object storage**; PoC #5 sessions exercise the **SQLite → filesystem Iceberg** slice — still validates time-to-first-outcome and real friction.
 
 **Tester fit**: "Hands-on IC on that squad," not enterprise platform procurement.
 
@@ -222,7 +222,7 @@ Use these to qualify candidates who reply before booking. A 5-minute DM exchange
 
 ---
 
-## Success thresholds (ties back to `nucleus_poc_plan.md` §5)
+## Success thresholds (ties back to `docs/specs/nucleus_poc_plan.md` §5)
 
 - Majority finishes timed slice ≤ **30 min** median (P90 target: < **45 min**).
 - NPS ≥ **7/10** average from all testers.

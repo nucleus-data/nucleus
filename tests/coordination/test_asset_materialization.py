@@ -1,7 +1,7 @@
 """Tests for :mod:`nucleus.coordination.asset_materialization` (the AMA).
 
 Validates the Asset Materialization Adapter end-to-end per
-``nucleus_architecture_v4.1.md`` §6.2 + ``docs/decisions/ADR-013-ctx-materialize-api.md`` §1+§2.
+``docs/specs/nucleus_architecture_v4.1.md`` §6.2 + ``docs/decisions/ADR-013-ctx-materialize-api.md`` §1+§2.
 The SDK-boundary contract (eager validation, AssetRef unwrapping,
 upstream deferred-mode rejection) is exercised in
 ``tests/sdk/test_materialize.py``; this file covers the parts the SDK

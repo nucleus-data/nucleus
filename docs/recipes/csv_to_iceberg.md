@@ -2,7 +2,7 @@
 
 > **Time**: ~15 min (no Docker, no source DB) · **Difficulty**: Junior DE · **Prereqs**: Python 3.11 / 3.12, ~500 MB disk
 > **Status**: pre-v0.1; CLI lines marked `<!-- pre-v0.1 -->`
-> **Refs**: [`postgres_to_iceberg.md`](./postgres_to_iceberg.md) · [`docs/patterns/partitioning.md`](../patterns/partitioning.md) · [`nucleus_poc_plan.md`](../../nucleus_poc_plan.md) §3 · [`nucleus_cli_spec.md`](../../nucleus_cli_spec.md)
+> **Refs**: [`postgres_to_iceberg.md`](./postgres_to_iceberg.md) · [`docs/patterns/partitioning.md`](../patterns/partitioning.md) · [`docs/specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §3 · [`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md)
 
 Shortest path from "I have a CSV" to "I have a partitioned, BI-queryable Iceberg asset". No Docker, no source database.
 
@@ -14,7 +14,7 @@ A `seasons.csv` (timestamped events) → Iceberg `raw.events` source asset → r
 
 ## Why this matters
 
-"I exported some CSV from a vendor — now what?" is most teams' first encounter. This is the smallest viable answer — the no-source-DB shape of the beachhead promise per [v4.1 §1.5](../../nucleus_architecture_v4.1.md).
+"I exported some CSV from a vendor — now what?" is most teams' first encounter. This is the smallest viable answer — the no-source-DB shape of the beachhead promise per [v4.1 §1.5](../specs/nucleus_architecture_v4.1.md).
 
 ---
 
@@ -24,7 +24,7 @@ A `seasons.csv` (timestamped events) → Iceberg `raw.events` source asset → r
 python --version    # 3.11.x or 3.12.x
 ```
 
-That's it. v0.1 default catalog is filesystem-backed ([v4.1 §5.7](../../nucleus_architecture_v4.1.md)) — writes land in `.nucleus/warehouse/`. If Python isn't installed, see [`SETUP.md`](../../SETUP.md) §1-§3.
+That's it. v0.1 default catalog is filesystem-backed ([v4.1 §5.7](../specs/nucleus_architecture_v4.1.md)) — writes land in `.nucleus/warehouse/`. If Python isn't installed, see [`SETUP.md`](../../SETUP.md) §1-§3.
 
 ## Step 2: Drop a CSV in place (~2 min)
 
@@ -44,13 +44,13 @@ event_id,event_ts,event_type,user_id,value
 ## Step 3: Initialize and boot (~2 min)
 
 ```bash
-nucleus init events-demo                         # <!-- pre-v0.1; nucleus_cli_spec.md §3.1 -->
+nucleus init events-demo                         # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §3.1 -->
 cd events-demo
 mv ../data .
-nucleus up                                       # <!-- pre-v0.1; nucleus_cli_spec.md §3.2 -->
+nucleus up                                       # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §3.2 -->
 ```
 
-Same `<10 s` boot as the Postgres recipe ([v4.1 §11.1](../../nucleus_architecture_v4.1.md)) — MinIO + filesystem catalog + Dagster substrate.
+Same `<10 s` boot as the Postgres recipe ([v4.1 §11.1](../specs/nucleus_architecture_v4.1.md)) — MinIO + filesystem catalog + Dagster substrate.
 
 ## Step 4: Ingest the CSV (~3 min)
 
@@ -63,7 +63,7 @@ Auto-infers `event_id INTEGER`, `event_ts TIMESTAMP`, `event_type STRING`, etc. 
 ## Step 5: Verify (~1 min)
 
 ```bash
-nucleus sql "SELECT count(*), min(event_ts), max(event_ts) FROM raw.events"   # <!-- pre-v0.1; nucleus_cli_spec.md §4.5 -->
+nucleus sql "SELECT count(*), min(event_ts), max(event_ts) FROM raw.events"   # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §4.5 -->
 # Expected: 5 | 2026-01-05 08:23:00 | 2026-03-08 14:30:00
 ```
 
@@ -87,7 +87,7 @@ def events_partitioned(ctx):
 ```
 
 ```bash
-nucleus run staging.events_partitioned          # <!-- pre-v0.1; nucleus_cli_spec.md §4.1 -->
+nucleus run staging.events_partitioned          # <!-- pre-v0.1; docs/specs/nucleus_cli_spec.md §4.1 -->
 ```
 
 `month(event_ts)` is one of seven Iceberg partition transforms — pick the right one per [`docs/patterns/partitioning.md`](../patterns/partitioning.md) §3 + §9 (decision tree). For 5 rows spanning 3 months you'll get one Parquet file per month.
@@ -119,10 +119,10 @@ nucleus run staging.events_partitioned          # <!-- pre-v0.1; nucleus_cli_spe
 
 ## NEEDS VERIFICATION
 
-1. **`nucleus ingest file://...csv`** — CSV is one of v0.1's 6 source types ([`nucleus_poc_plan.md`](../../nucleus_poc_plan.md) §3) but PoC #3 validates only SQLite ([`poc/p3_ingest/STATUS.md`](../../poc/p3_ingest/STATUS.md)).
-2. **CSV header normalization rules** — auto-infer on spaces / unicode / duplicates is unspecified in [v4.1 §5.5.1](../../nucleus_architecture_v4.1.md).
-3. **`@nucleus.sql_asset(materialize="incremental")`** — per [v4.1 §13.2](../../nucleus_architecture_v4.1.md), `incremental` lands v0.3+, not v0.1. For a v0.1 trial use `materialize="table"` (full-refresh).
+1. **`nucleus ingest file://...csv`** — CSV is one of v0.1's 6 source types ([`docs/specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §3) but PoC #3 validates only SQLite ([`poc/p3_ingest/STATUS.md`](../../poc/p3_ingest/STATUS.md)).
+2. **CSV header normalization rules** — auto-infer on spaces / unicode / duplicates is unspecified in [v4.1 §5.5.1](../specs/nucleus_architecture_v4.1.md).
+3. **`@nucleus.sql_asset(materialize="incremental")`** — per [v4.1 §13.2](../specs/nucleus_architecture_v4.1.md), `incremental` lands v0.3+, not v0.1. For a v0.1 trial use `materialize="table"` (full-refresh).
 4. **`partition_by="month(event_ts)"` string DSL** — exists in [`docs/patterns/partitioning.md`](../patterns/partitioning.md) §6 but the parser inside `@nucleus.asset` is not implemented.
-5. **One-Parquet-per-month commit semantics** — confirmable via `nucleus snapshot list` ([`nucleus_cli_spec.md`](../../nucleus_cli_spec.md) §6.1) once the snapshot CLI ships.
+5. **One-Parquet-per-month commit semantics** — confirmable via `nucleus snapshot list` ([`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §6.1) once the snapshot CLI ships.
 
 Hit any of these? Log to [`docs/internal/research/ai_hallucinations.md`](../research/ai_hallucinations.md). Re-validate after PoC #3 expands beyond SQLite.

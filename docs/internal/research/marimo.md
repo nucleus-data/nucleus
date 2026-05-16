@@ -1,6 +1,6 @@
 # Marimo (Reactive Python Notebook) — Research Notes
 
-> **Component status in Nucleus**: **v0.3+ optional notebook wrap.** Replaces Jupyter; coexists with the Workbench web IDE (v0.2). Per `AGENTS.md §4` (do-not-build list: "Custom notebook runtime → use Marimo") and `nucleus_architecture_v4.1.md` §3.1 (L4 Experience), §8.1 (component matrix), §18.3 (v0.3 roadmap: "Marimo notebook integration").
+> **Component status in Nucleus**: **v0.3+ optional notebook wrap.** Replaces Jupyter; coexists with the Workbench web IDE (v0.2). Per `AGENTS.md §4` (do-not-build list: "Custom notebook runtime → use Marimo") and `docs/specs/nucleus_architecture_v4.1.md` §3.1 (L4 Experience), §8.1 (component matrix), §18.3 (v0.3 roadmap: "Marimo notebook integration").
 > **Pin candidate**: `marimo==0.23.6` (released **2026-05-11**, verified on PyPI 2026-05-13). **Not pinned in `pyproject.toml` today.**
 > **License**: **Apache-2.0**  •  **JVM-free**: **YES** — pure Python kernel + bundled React/TypeScript frontend (no JVM). Hard Constraint #1 satisfied.
 > **Research date**: 2026-05-13
@@ -89,7 +89,7 @@ Wrap surface: **`nucleus.marimo`** module exposing `preview(fn) -> DataFrame`, `
 
 ### §5.2 SQL cell integration with `ctx.sql` — THE CRITICAL DESIGN QUESTION
 
-Per `nucleus_architecture_v4.1.md` §5: native `ctx.sql` resolver handles `{{ ref('asset_x') }}` Jinja → catalog lookup → DuckDB-registered view.
+Per `docs/specs/nucleus_architecture_v4.1.md` §5: native `ctx.sql` resolver handles `{{ ref('asset_x') }}` Jinja → catalog lookup → DuckDB-registered view.
 
 Marimo's `mo.sql(...)` runs SQL in a Python **f-string** wrapper, against either the default in-memory DuckDB connection or a **user-supplied engine variable discovered from cell scope**. Custom DuckDB connections are explicitly supported (https://docs.marimo.io/guides/working_with_data/sql/ §"Connecting to a custom database"):
 
@@ -130,7 +130,7 @@ Per v4.1 §6.4: every external exception crossing into `ctx/` MUST translate to 
 
 ### §5.5 Workbench vs Marimo (v0.2 vs v0.3 boundary)
 
-Per v4.1 §8.1 + §18: **Workbench (v0.2)** = Monaco web IDE (SQL editor + asset graph + run history + simple AI chat); authoritative for **production asset authoring**. **Marimo (v0.3+)** = full reactive notebook for **ad-hoc exploration** ("iterate on a transformation before committing"). They coexist; founder picks per situation — prod-bound assets → Workbench; exploration / one-off / debug → Marimo. Documented in `nucleus_project_anatomy.md` §"Notebooks vs Assets" at v0.3 time.
+Per v4.1 §8.1 + §18: **Workbench (v0.2)** = Monaco web IDE (SQL editor + asset graph + run history + simple AI chat); authoritative for **production asset authoring**. **Marimo (v0.3+)** = full reactive notebook for **ad-hoc exploration** ("iterate on a transformation before committing"). They coexist; founder picks per situation — prod-bound assets → Workbench; exploration / one-off / debug → Marimo. Documented in `docs/specs/nucleus_project_anatomy.md` §"Notebooks vs Assets" at v0.3 time.
 
 ---
 
@@ -205,7 +205,7 @@ If Marimo becomes unviable (license pivot, vendor death, perf regression >2x, ho
 
 ### Real gotchas from official docs
 
-- **No mutation tracking** (https://docs.marimo.io/guides/reactivity/ §"Variable mutations are not tracked"): `df["new_col"] = ...` and `my_list.append(...)` do **not** trigger reactive re-runs. Document in `nucleus_project_anatomy.md` notebook section.
+- **No mutation tracking** (https://docs.marimo.io/guides/reactivity/ §"Variable mutations are not tracked"): `df["new_col"] = ...` and `my_list.append(...)` do **not** trigger reactive re-runs. Document in `docs/specs/nucleus_project_anatomy.md` notebook section.
 - **Globals must be unique** — every global defined by exactly one cell. Two `@nucleus.asset` defs sharing a function name fail at Marimo's static-analysis stage before reaching Nucleus.
 - **`mo.sql` is f-strings.** `{value}` interpolation collides with Jinja `{{ ref(...) }}` (§5.2).
 - **`marimo run` vs `marimo edit`** have different runtime semantics; `run` ignores the "On startup"/"On cell change" config knobs (https://docs.marimo.io/guides/configuration/runtime_configuration/).

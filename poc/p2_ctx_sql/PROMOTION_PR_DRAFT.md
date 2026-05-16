@@ -2,7 +2,7 @@
 
 ## Summary
 
-Promotes the native `ctx.sql` Jinja resolver from `poc/p2_ctx_sql/resolver.py` to `src/nucleus/coordination/sql_resolver.py`, landing the wrap-not-build implementation mandated by `nucleus_architecture_v4.1.md` §5.6.0 (≤ 2 500 LOC; no macros, no semantic layer, no adapter framework). Ships **16/16 green tests** (`test_resolver.py:43-222`) covering `{{ ref('schema.name') }}` rendering, argument arity rejection (T1-T3), empty / non-string / malformed / injection-shaped asset-name detection (T8, T10, C5), caller-supplied circular-reference detection (T9, `resolver.py:116-121`), `difflib.get_close_matches` hints for unknown assets (T4, `:127-140`), whitespace + block-comment tolerance (T5, T7), and a §6.4 leak gate (C7) asserting no `"jinja2"` substring escapes any user-facing surface. All Jinja boundary branches translate to typed `NucleusError` subclasses (`NucleusSQLSyntaxError`, `NucleusAssetNotFound`, `NucleusInvalidAssetDefinition`) from `nucleus.errors`. Unblocks `ctx.sql` Beta per ADR-005 §2 row 2 and the `nucleus query` CLI per `nucleus_cli_spec.md` §3.6.
+Promotes the native `ctx.sql` Jinja resolver from `poc/p2_ctx_sql/resolver.py` to `src/nucleus/coordination/sql_resolver.py`, landing the wrap-not-build implementation mandated by `docs/specs/nucleus_architecture_v4.1.md` §5.6.0 (≤ 2 500 LOC; no macros, no semantic layer, no adapter framework). Ships **16/16 green tests** (`test_resolver.py:43-222`) covering `{{ ref('schema.name') }}` rendering, argument arity rejection (T1-T3), empty / non-string / malformed / injection-shaped asset-name detection (T8, T10, C5), caller-supplied circular-reference detection (T9, `resolver.py:116-121`), `difflib.get_close_matches` hints for unknown assets (T4, `:127-140`), whitespace + block-comment tolerance (T5, T7), and a §6.4 leak gate (C7) asserting no `"jinja2"` substring escapes any user-facing surface. All Jinja boundary branches translate to typed `NucleusError` subclasses (`NucleusSQLSyntaxError`, `NucleusAssetNotFound`, `NucleusInvalidAssetDefinition`) from `nucleus.errors`. Unblocks `ctx.sql` Beta per ADR-005 §2 row 2 and the `nucleus query` CLI per `docs/specs/nucleus_cli_spec.md` §3.6.
 
 ---
 
@@ -56,10 +56,10 @@ None blocking. Two soft items carry from `REVIEW_NOTES.md`; the 16-test suite pa
 
 ## Files to be updated
 
-- `nucleus_poc_plan.md` §2 — PoC #2 status `PROPOSED` → `PROMOTED 2026-05-NN`; `AGENTS.md` §1 `[ ] PoC #2-5` row stays unchecked until PoC #5 lands.
-- `nucleus_architecture_v4.1.md` §5.6 / §5.6.0 — flip "PoC #2 validates feasibility" → "shipping in v0.1".
+- `docs/specs/nucleus_poc_plan.md` §2 — PoC #2 status `PROPOSED` → `PROMOTED 2026-05-NN`; `AGENTS.md` §1 `[ ] PoC #2-5` row stays unchecked until PoC #5 lands.
+- `docs/specs/nucleus_architecture_v4.1.md` §5.6 / §5.6.0 — flip "PoC #2 validates feasibility" → "shipping in v0.1".
 - `docs/architecture/sequence_query.md` §1 — Status → "shipped"; retarget `resolver.py` line refs in §2 / §3.1.
-- `nucleus_cli_spec.md` §3.6 + §10 NV #2 — drop "Confirm at PoC #2 promotion" caveat.
+- `docs/specs/nucleus_cli_spec.md` §3.6 + §10 NV #2 — drop "Confirm at PoC #2 promotion" caveat.
 - `CHANGELOG.md` "Unreleased" — `sql_resolver: Internal → Beta, see ADR-005 §2 row 2`.
 - `docs/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot (`AGENTS.md` §11.6).
 - **IF Option B at T9**: `src/nucleus/errors.py` adds `NucleusAssetGraphError` + `__all__`; ADR-006 §"Initial code assignment" gains the new `NE3xxx` row.
@@ -74,7 +74,7 @@ Per `PROMOTION_CHECKLIST.md` §6 + ADR-005 §"Downstream consumers":
 
 1. **`ctx.sql(...)` public API** usable under `src/nucleus/`; inherits Beta tier from ADR-005 §2 row 2 until v0.5 spec lock.
 2. **`@nucleus.sql_asset` materialization path** inherits Beta; unblocks Layer-2 wiring (v4.1 §6.3 — Coordination is the only layer permitted to `import dagster` per `scripts/dagster_leak_check.py`).
-3. **`nucleus query` CLI command** unblocks per `nucleus_cli_spec.md` §3.6 (wraps `ctx.sql(query)` per SDK §6; flags "Confirm at PoC #2 promotion" for the `pyarrow.Table` return shape).
+3. **`nucleus query` CLI command** unblocks per `docs/specs/nucleus_cli_spec.md` §3.6 (wraps `ctx.sql(query)` per SDK §6; flags "Confirm at PoC #2 promotion" for the `pyarrow.Table` return shape).
 4. **PoC #1 promotion** is independent (`PROMOTION_CHECKLIST.md` §7) — both may ship in either order or stacked.
 
 ---
@@ -113,6 +113,6 @@ T9 circular-ref class decision: Option [A/B] (founder choice).
 - A: keep NucleusInvalidAssetDefinition.
 - B: add NucleusAssetGraphError (requires ADR-006 amendment).
 
-Refs: AGENTS.md §11.1, §11.7; nucleus_architecture_v4.1.md §5.6.0,
+Refs: AGENTS.md §11.1, §11.7; docs/specs/nucleus_architecture_v4.1.md §5.6.0,
 §6.3, §6.4; ADR-005 §2 row 2; ADR-006 (error code scheme).
 ```

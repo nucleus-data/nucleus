@@ -1,11 +1,11 @@
 # Workbench — research notes (v0.2 MVP design)
 
-> **Component status in Nucleus**: **v0.2 web viewer + light editor** per `nucleus_architecture_v4.1.md` §8.1 (Surfaces by Release: "Workbench: ❌ v0.1 / ✅ v0.2 Monaco + asset list + chat") + §18.2 ("v0.2 — 'Developer Experience' (Month 8-14): Workbench (web IDE): Monaco editor + asset list + run history + simple AI chat").
+> **Component status in Nucleus**: **v0.2 web viewer + light editor** per `docs/specs/nucleus_architecture_v4.1.md` §8.1 (Surfaces by Release: "Workbench: ❌ v0.1 / ✅ v0.2 Monaco + asset list + chat") + §18.2 ("v0.2 — 'Developer Experience' (Month 8-14): Workbench (web IDE): Monaco editor + asset list + run history + simple AI chat").
 > **Pin candidate**: nothing pinned in `pyproject.toml` today. v0.2 wave will pin one Python package (FastAPI) + a `package.json` lockfile for the frontend.
 > **Tier per AGENTS.md §4**: BUILD (Layer 4 Experience — one of the three things we own forever per AGENTS.md §0). Frontend stack itself wraps OSS libraries; no custom rendering / state / SQL-editor engines.
 > **Research date**: 2026-05-13. AI training cutoff may be stale; this doc reflects upstream docs verified as of today.
 
-Required reading (all consulted before drafting): `.cursor/rules/nucleus.mdc` (Anti-Over-Engineering BIND, Velocity Discipline, wrap table); `AGENTS.md` §3 #1 (No JVM), §3 #2 (No public plugin SDK in v1), §4 (Marimo for notebooks), §11.12 (docs-before-integration), §6 Pillars; `nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline), §6.5 (Dagster Replaceability Mandate), §8.1 (surface matrix), §11.2 (perf targets), §18.2 (v0.2 scope), §20 (non-goals); `docs/internal/research/marimo.md` (notebook substrate, v0.3+); `nucleus_vs_databricks.md` (90% of analyst polish deliberately deferred).
+Required reading (all consulted before drafting): `.cursor/rules/nucleus.mdc` (Anti-Over-Engineering BIND, Velocity Discipline, wrap table); `AGENTS.md` §3 #1 (No JVM), §3 #2 (No public plugin SDK in v1), §4 (Marimo for notebooks), §11.12 (docs-before-integration), §6 Pillars; `docs/specs/nucleus_architecture_v4.1.md` §6.4 (Error Translation Discipline), §6.5 (Dagster Replaceability Mandate), §8.1 (surface matrix), §11.2 (perf targets), §18.2 (v0.2 scope), §20 (non-goals); `docs/internal/research/marimo.md` (notebook substrate, v0.3+); `docs/specs/nucleus_vs_databricks.md` (90% of analyst polish deliberately deferred).
 
 ---
 
@@ -13,9 +13,9 @@ Required reading (all consulted before drafting): `.cursor/rules/nucleus.mdc` (A
 
 The Workbench is a **viewer + light editor**, not a full IDE replacement. Engineers already use Cursor / VS Code for asset *authoring*; the Workbench answers the questions that Cursor cannot — "what does my asset graph look like?", "what's in this Iceberg table right now?", "did the last run succeed?". One mental model per v4.1 §8.2: everything is an asset.
 
-Per `nucleus_vs_databricks.md` §1 verdict: *"Different paradigm. Databricks = cloud workspace database. Nucleus = git-native project."* The Workbench is the **always-on dashboard for a git-native project**, not a cloud workspace clone.
+Per `docs/specs/nucleus_vs_databricks.md` §1 verdict: *"Different paradigm. Databricks = cloud workspace database. Nucleus = git-native project."* The Workbench is the **always-on dashboard for a git-native project**, not a cloud workspace clone.
 
-**IS** (v0.2 minimum-viable): asset graph viewer · per-asset detail page · SQL editor against the local DuckDB warehouse · run history · simple AI chat sidebar (gated by ADR-015). **IS NOT** (deferred or out-of-scope forever): dataset-preview-at-scale (DuckDB is fine for that; we don't paginate billions of rows in-browser); dashboard builder (per v4.1 §1.6 "we are NOT a BI tool"); alerting routes (v0.5+ via the OTel-backed observability path); scheduling UI (Dagster's own UI does this — exposed via `nucleus enable compat-dagster` per v4.1 §6.1, never branded as Nucleus); collaboration / threaded comments / co-editing (per `nucleus_vs_databricks.md` §2 "Real gap — defer to v1.0+ if demanded").
+**IS** (v0.2 minimum-viable): asset graph viewer · per-asset detail page · SQL editor against the local DuckDB warehouse · run history · simple AI chat sidebar (gated by ADR-015). **IS NOT** (deferred or out-of-scope forever): dataset-preview-at-scale (DuckDB is fine for that; we don't paginate billions of rows in-browser); dashboard builder (per v4.1 §1.6 "we are NOT a BI tool"); alerting routes (v0.5+ via the OTel-backed observability path); scheduling UI (Dagster's own UI does this — exposed via `nucleus enable compat-dagster` per v4.1 §6.1, never branded as Nucleus); collaboration / threaded comments / co-editing (per `docs/specs/nucleus_vs_databricks.md` §2 "Real gap — defer to v1.0+ if demanded").
 
 The boundary with Marimo (v0.3+, per `docs/internal/research/marimo.md` §5.5): **Workbench = always-on dashboard for prod-bound asset work; Marimo = ephemeral reactive exploration before committing**. They coexist; founders pick per situation. Workbench is **NOT** a notebook IDE replacement.
 
@@ -43,7 +43,7 @@ Anything else (custom dashboards, alerting UI, collaboration, dataset preview at
 
 1. **Hard Constraint #1 violation (No JVM)**. Marquez's API server is a Java Spring Boot service per the [Marquez GitHub repo](https://github.com/MarquezProject/marquez) (`/api/` Java + `/web/` React). Embedding Marquez requires shipping a JVM in the local stack — direct conflict with `AGENTS.md §3 #1` and v4.1's "no JVM in core path" pillar. The React frontend cannot be embedded standalone; it talks Marquez's API contract.
 2. **v4.1 §6.4 + §6.5 Error Translation / Replaceability violation**. Dagster's UI exposes Dagster-native vocabulary EVERYWHERE — "Op", "Code Location", "Run", "Definitions", "Schedule" (per the [webserver UI reference](https://docs.dagster.io/guides/operate/webserver)). Per v4.1 §6.5 "Dagster MUST be replaceable internally by v1.0 without ANY user code changes" + Decision D21 — exposing Dagster UI as the Workbench couples users to Dagster mental model and **kills the replaceability mandate**. This is Constraint #12 in the v4.1 §19 risk register made manifest.
-3. **Brand dilution at v1.0**. Two upstream UIs (Dagster + Marquez) glued together with our header looks like exactly that. Per `nucleus_architecture_v4.1.md` §2.1 ("The Felt Moat ... one coherent UX vs 15 disjoint tools") — Fork A is 15-disjoint-tools-but-only-3, structurally identical to the Modern Data Stack we say we replace.
+3. **Brand dilution at v1.0**. Two upstream UIs (Dagster + Marquez) glued together with our header looks like exactly that. Per `docs/specs/nucleus_architecture_v4.1.md` §2.1 ("The Felt Moat ... one coherent UX vs 15 disjoint tools") — Fork A is 15-disjoint-tools-but-only-3, structurally identical to the Modern Data Stack we say we replace.
 4. **Forbidden framing trap**. Per `AGENTS.md §8` we explicitly avoid framing as "Better Databricks". Wrapping someone else's UIs and rebranding is the canonical "Databricks-but-cheaper" move.
 
 **Verdict**: Fork A **cannot ship** as documented in v4.1. Even if we accepted brand dilution, the JVM constraint alone makes Marquez non-embeddable. Could degrade to "Dagster UI only" — still violates §6.5 + bring back the leak risk that PoC #1 was built to eliminate. **Reject.**
@@ -101,7 +101,7 @@ Fork A is **not optional** — it fails Hard Constraint #1 (Marquez JVM) AND the
 **Out of v0.2** (deferred or out-of-scope forever):
 - **Lineage panel** → v0.3 (column-level needs sqlglot per v4.1 §12.4; asset-level UI needs an interaction model that's not obviously different from the asset graph view)
 - **Snapshot history table** → v0.3 polish (initial v0.2 surfaces snapshot count + last snapshot only on the asset detail page; full history is one click away in the SQL editor via `SELECT * FROM <asset>.history`)
-- **Collaboration / threaded comments / co-editing** → v1.5+ if customer demand (per `nucleus_vs_databricks.md` §2 "Real gap")
+- **Collaboration / threaded comments / co-editing** → v1.5+ if customer demand (per `docs/specs/nucleus_vs_databricks.md` §2 "Real gap")
 - **Custom dashboards / chart builder / alerting UI** → out of scope forever (per v4.1 §1.6 "we are NOT a BI tool")
 - **Scheduling UI** → reuse Dagster's via `nucleus enable compat-dagster` (v4.1 §6.6 Tier 3); we don't rebuild
 - **Multi-tenant UI (workspace switcher, RBAC editor)** → v0.3+ (v4.1 §15.2)
@@ -178,7 +178,7 @@ Per `.cursor/rules/nucleus.mdc` Forbidden Framings + `AGENTS.md §8`:
 
 - ❌ NOT "the Nucleus dashboard tool" (we are not a BI tool — v4.1 §1.6)
 - ❌ NOT "Databricks Workspace clone" (per `AGENTS.md §8` "Better Databricks" forbidden)
-- ❌ NOT "BI replacement" (per `nucleus_vs_databricks.md` §11 verdict — connect Metabase / Superset; we are not Tableau)
+- ❌ NOT "BI replacement" (per `docs/specs/nucleus_vs_databricks.md` §11 verdict — connect Metabase / Superset; we are not Tableau)
 - ❌ NOT framed with `AI-native` / `AI-first` vocabulary <!-- banned-term: AI-native --> <!-- banned-term: AI-first --> (per `pyproject.toml` `[tool.nucleus] forbidden_terms_in_docs` — Nucleus is AI-assisted, per ADR-002 §8)
 - ❌ NOT "data warehouse UI" (the warehouse is DuckDB+Iceberg; the Workbench observes it, doesn't replace it)
 

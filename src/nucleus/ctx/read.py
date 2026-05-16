@@ -1,7 +1,7 @@
 """``ctx.read()`` — lazy Iceberg table reader (L4).
 
-Per ``nucleus_architecture_v4.1.md`` §5.4 (Physics layer — Iceberg read
-path) and ``nucleus_ctx_sdk_spec.md`` §4 (Read API). Provides a standalone
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §5.4 (Physics layer — Iceberg read
+path) and ``docs/specs/nucleus_ctx_sdk_spec.md`` §4 (Read API). Provides a standalone
 ``read()`` function that opens a filesystem Iceberg table and returns its
 data in the format requested by the caller.
 
@@ -20,10 +20,10 @@ Stability (per ADR-005 §2):
     Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.4 (Iceberg read path via PyIceberg+Arrow)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
-    nucleus_ctx_sdk_spec.md §4.1 (ctx.read signature + as_ formats)
-    nucleus_ctx_sdk_spec.md §4.2 (dependency tracking — deferred)
+    docs/specs/nucleus_architecture_v4.1.md §5.4 (Iceberg read path via PyIceberg+Arrow)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_ctx_sdk_spec.md §4.1 (ctx.read signature + as_ formats)
+    docs/specs/nucleus_ctx_sdk_spec.md §4.2 (dependency tracking — deferred)
     docs/decisions/ADR-005-api-stability-tiering.md §2 (Beta tier)
 
 Pins / docs:
@@ -115,8 +115,8 @@ def read(
 
     # Stability: Beta
 
-    Per ``nucleus_ctx_sdk_spec.md`` §4.1 and
-    ``nucleus_architecture_v4.1.md`` §5.4 (Physics layer Iceberg read path).
+    Per ``docs/specs/nucleus_ctx_sdk_spec.md`` §4.1 and
+    ``docs/specs/nucleus_architecture_v4.1.md`` §5.4 (Physics layer Iceberg read path).
     Opens the filesystem catalog at ``warehouse_dir``, locates the asset by
     key, and returns its data in the format selected by ``as_``.
 

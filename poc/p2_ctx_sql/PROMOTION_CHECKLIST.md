@@ -23,9 +23,9 @@
 - [ ] `cp poc/p2_ctx_sql/resolver.py src/nucleus/coordination/sql_resolver.py`; add `# Stability: Beta` to module docstring (ADR-005 §1; tiers Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0 per §2 row 2).
 - [ ] Add `resolve_sql` to `src/nucleus/coordination/__init__.py` (create the file if PoC #1 has not promoted; package `__all__` stays Internal until `ctx.sql` wraps it).
 - [ ] Move tests: `test_resolver.py` → `tests/coordination/test_sql_resolver.py` (matches PoC #1 convention; `dagster_leak_check.py:54` allow-list covers it). Update test imports `poc.p2_ctx_sql.resolver` → `nucleus.coordination.sql_resolver`. *(Zero callers in v0.1.)*
-- [ ] Update `nucleus_architecture_v4.1.md` §5.6 / §5.6.0 — flip "PoC #2 validates feasibility" hedge to "shipping in v0.1".
+- [ ] Update `docs/specs/nucleus_architecture_v4.1.md` §5.6 / §5.6.0 — flip "PoC #2 validates feasibility" hedge to "shipping in v0.1".
 - [ ] Update `docs/architecture/sequence_query.md` §1 Status; retarget the `poc/p2_ctx_sql/resolver.py` line refs in §2 / §3.1 to the new path.
-- [ ] Mark PoC #2 PASS in `nucleus_poc_plan.md` §2 (use §12 PoC Report Template). The `[ ] PoC #2-5` checkbox in `AGENTS.md` §1 stays unchecked until PoC #5 also completes.
+- [ ] Mark PoC #2 PASS in `docs/specs/nucleus_poc_plan.md` §2 (use §12 PoC Report Template). The `[ ] PoC #2-5` checkbox in `AGENTS.md` §1 stays unchecked until PoC #5 also completes.
 - [ ] **If Option B at T9**: open ADR-006 PR (separate; NOT bundled).
 - [ ] `CHANGELOG.md` "Unreleased": `sql_resolver: Internal → Beta, see ADR-005 §2 row 2`. If Option B, also `errors: NucleusAssetGraphError added, Stable, see ADR-006`. Bump LOC row in `docs/budget_history.md`.
 
@@ -46,7 +46,7 @@
 |---|---|---|
 | `ctx.sql` public API (`C4_component.md` §2.2) | Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0 (ADR-005 §2 row 2) | At promotion — `ctx.sql` wraps the resolver |
 | `@nucleus.sql_asset` materialization path | inherits Beta | v0.1 |
-| `nucleus query` CLI (per `nucleus_cli_spec.md` — NEEDS VERIFICATION) | inherits Beta | When CLI lands |
+| `nucleus query` CLI (per `docs/specs/nucleus_cli_spec.md` — NEEDS VERIFICATION) | inherits Beta | When CLI lands |
 | Workbench SQL editor (v0.2+) | depends on `refs` list signature | v0.2 |
 | Cloud Copilot / `nucleus-mcp-server` (v0.5+) | reads `fix_hint` + `refs` | v0.5 (ADR-002 §8.2) |
 

@@ -4,7 +4,7 @@
 > **Scope**: What lives inside the `ctx` SDK container from [`C4_container.md`](C4_container.md)
 > **Audience**: Contributors implementing or reviewing changes to the public Python surface
 > **Last updated**: Month 0 (Pre-Heartbeat)
-> **Companion docs**: [`C4_context.md`](C4_context.md), [`C4_container.md`](C4_container.md), [`sequence_error_translation.md`](sequence_error_translation.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md)
+> **Companion docs**: [`C4_context.md`](C4_context.md), [`C4_container.md`](C4_container.md), [`sequence_error_translation.md`](sequence_error_translation.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md)
 
 The C4 model has 4 levels (Context → Container → Component → Code). This document is **Level 3**: it zooms into the **`ctx` SDK** container — the most important box in [`C4_container.md`](C4_container.md) §1, because per [`AGENTS.md`](../../AGENTS.md) §0 the `ctx` SDK is "the developer contract" and per v4.1 §13.1 the only public API. Every other container in L2/L3 exists to serve `ctx`.
 
@@ -189,7 +189,7 @@ Each component mapped back to the L2/L1/L0 containers from [`C4_container.md`](C
 
 ## §4. Open questions (NEEDS VERIFICATION)
 
-Items where the API surface or implementation choice is not yet locked — committed code should carry a `# NEEDS VERIFICATION` comment per [`AGENTS.md`](../../AGENTS.md) §11.12. Tracked long-form in `nucleus_architecture_v4.1.md` Appendix B.
+Items where the API surface or implementation choice is not yet locked — committed code should carry a `# NEEDS VERIFICATION` comment per [`AGENTS.md`](../../AGENTS.md) §11.12. Tracked long-form in `docs/specs/nucleus_architecture_v4.1.md` Appendix B.
 
 1. **`ctx.agent` surface (§2.7)** — Per v4.1 §7.3 the shape (`agent.scaffold_pipeline(...)`) is sketched but not locked; v4.1 §13.3 explicitly allows breaking changes in minor versions. **Do NOT lock until v0.5 design.**
 2. **`ctx.read` materialization default** — `as_="polars"` vs `as_="arrow"` default. PoC #5 beachhead testing decides; v4.1 §13.2 lists both.
@@ -204,7 +204,7 @@ Items where the API surface or implementation choice is not yet locked — commi
 - [`C4_context.md`](C4_context.md) — L1, system in environment.
 - [`C4_container.md`](C4_container.md) — L2, five layers as containers.
 - [`sequence_error_translation.md`](sequence_error_translation.md) — the critical sequence proving §2.6 (PoC #1 spec).
-- [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) — §3 (layers), §5 (engines), §6 (coordination), §13 (`ctx` contract).
+- [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) — §3 (layers), §5 (engines), §6 (coordination), §13 (`ctx` contract).
 - [`../../poc/`](../../poc/) — PoCs #1/#2/#3 that this diagram's components graduate from.
 
 ---

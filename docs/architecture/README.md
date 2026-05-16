@@ -1,6 +1,6 @@
 # Architecture Diagrams & Skeleton Plans
 
-Per [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §3 (Five Layers) and §6 (Coordination Layer), every structural artifact that visualizes the Nucleus runtime — C4 levels, sequence diagrams, the v0.1 `src/nucleus/` skeleton — lands here. These artifacts are the **derivative**; v4.1 is the **source of truth**. When v4.1 amends, this folder is the first dependent set updated; never the reverse.
+Per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §3 (Five Layers) and §6 (Coordination Layer), every structural artifact that visualizes the Nucleus runtime — C4 levels, sequence diagrams, the v0.1 `src/nucleus/` skeleton — lands here. These artifacts are the **derivative**; v4.1 is the **source of truth**. When v4.1 amends, this folder is the first dependent set updated; never the reverse.
 
 This file is a navigation index. Read the linked artifact for the actual Mermaid diagrams, scope/audience callouts, and `NEEDS VERIFICATION` markers per [`AGENTS.md`](../../AGENTS.md) §11.12. Sequence diagrams sit alongside the modules they describe (e.g., `sequence_asset_materialization.md` ↔ `coordination/asset_materialization.py`).
 
@@ -46,6 +46,6 @@ UML sequence specs for every critical end-to-end path. Each cites its companion 
 
 ---
 
-[← `nucleus_architecture_v4.1.md` §3 + §6](../../nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — swap/](../swap/README.md) · [Sibling — research/](../research/README.md) · [Sibling — patterns/](../patterns/README.md)
+[← `docs/specs/nucleus_architecture_v4.1.md` §3 + §6](../specs/nucleus_architecture_v4.1.md) · [Sibling — decisions/](../decisions/README.md) · [Sibling — swap/](../swap/README.md) · [Sibling — research/](../research/README.md) · [Sibling — patterns/](../patterns/README.md)
 
 *Last updated 2026-05-13. Add new diagrams by appending to the appropriate group; group is set by which architecture layer (L0..L4) or process the artifact serves. Keep entries to one line each.*

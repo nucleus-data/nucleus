@@ -1,14 +1,14 @@
 # 15 — Performance Profiling
 
 > **What you're doing**: Measuring and improving Nucleus performance — boot time, materialization latency, query latency.
-> **Why it matters**: The beachhead metric is `<30 min` for the full workflow and `<10 s` for cold boot. Any regression breaks the brand promise. Per `nucleus_architecture_v4.1.md` §16.
+> **Why it matters**: The beachhead metric is `<30 min` for the full workflow and `<10 s` for cold boot. Any regression breaks the brand promise. Per `docs/specs/nucleus_architecture_v4.1.md` §16.
 > **Time**: 30-60 minutes for a profiling session
 
 ---
 
 ## Performance Targets
 
-Per `nucleus_architecture_v4.1.md` §16 (# NEEDS VERIFICATION — refine with `docs/internal/research/performance_reliability_targets.md` when available):
+Per `docs/specs/nucleus_architecture_v4.1.md` §16 (# NEEDS VERIFICATION — refine with `docs/internal/research/performance_reliability_targets.md` when available):
 
 | Metric | Target | Current (2026-05-14) |
 |---|---|---|
@@ -246,7 +246,7 @@ Current known targets (per WSL beachhead E2E 2026-05-14):
 
 ## References
 
-- `nucleus_architecture_v4.1.md` §16 (Performance Targets)
+- `docs/specs/nucleus_architecture_v4.1.md` §16 (Performance Targets)
 - DuckDB performance guide: https://duckdb.org/docs/guides/performance/overview.html
 - pyiceberg performance notes: https://py.iceberg.apache.org/configuration/
 - `docs/internal/research/performance_reliability_targets.md` — target definitions (Wave 1H)

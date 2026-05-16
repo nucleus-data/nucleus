@@ -60,7 +60,7 @@ Full quickstart with Postgres + S3 + a BI-ready mart in <30 min: [`docs/onboardi
 
 ## Why Nucleus
 
-- **Graduates to giants, not away from them.** Nucleus writes plain Apache Iceberg snapshots to your own S3 (or filesystem) — no Nucleus-proprietary byte format, ever. The day you outgrow a laptop, you point Databricks, Snowflake, or any Iceberg catalog at the same bucket. Zero migration. The yield-to-giants strategy is a first-class architectural principle, not a fallback ([`nucleus_architecture_v4.1.md` §8](nucleus_architecture_v4.1.md#8-yield-to-giants-strategy)).
+- **Graduates to giants, not away from them.** Nucleus writes plain Apache Iceberg snapshots to your own S3 (or filesystem) — no Nucleus-proprietary byte format, ever. The day you outgrow a laptop, you point Databricks, Snowflake, or any Iceberg catalog at the same bucket. Zero migration. The yield-to-giants strategy is a first-class architectural principle, not a fallback ([`docs/specs/nucleus_architecture_v4.1.md` §8](docs/specs/nucleus_architecture_v4.1.md#8-yield-to-giants-strategy)).
 - **Local-first by construction.** Cold boot ~6 s (`nucleus up`). Idle RAM ~117 MB. Iceberg snapshots, scheduling daemon, run ledger, and Workbench all run from a single `pip install` on a laptop. No cluster. No JVM. Local-identical-to-prod ([`docs/benchmarks/2026-05-15_baseline.md`](docs/benchmarks/2026-05-15_baseline.md)).
 - **AI-assisted, not AI-gated.** `nucleus chat` routes through `litellm` to your provider of choice (Anthropic / OpenAI / Ollama / 100+ more), with opt-in consent, no Nucleus servers, no key logging. The Copilot is a feature; the data path is the product. Lineage-aware refactoring arrives in v0.5 ([ADR-015](docs/decisions/ADR-015-ai-chat-mvp.md)). <!-- banned-term: AI-native -->
 
@@ -68,7 +68,7 @@ Full quickstart with Postgres + S3 + a BI-ready mart in <30 min: [`docs/onboardi
 
 ## What's not in v0.2 (yet)
 
-We are honest about scope. v0.2.0 is the first publicly available release; treat it as beta. The following are **deferred** to v0.3 / v0.5 / v1.0 per the roadmap at [`nucleus_architecture_v4.1.md` §18](nucleus_architecture_v4.1.md#18-roadmap):
+We are honest about scope. v0.2.0 is the first publicly available release; treat it as beta. The following are **deferred** to v0.3 / v0.5 / v1.0 per the roadmap at [`docs/specs/nucleus_architecture_v4.1.md` §18](docs/specs/nucleus_architecture_v4.1.md#18-roadmap):
 
 - **Lakekeeper REST catalog** — v0.3+ (v0.2 stays on filesystem catalog; bytes are still valid Iceberg).
 - **`dbt-duckdb` adapter** — v0.3+ optional. v0.2 ships native `ctx.sql` + Jinja `{{ ref() }}` (~180 LOC, hard 2,500 LOC scope ceiling).

@@ -183,7 +183,7 @@ v1.0 GA — best-case Mo 28-36
 Try it:
 
 → Repo: github.com/nucleus-data/nucleus
-→ Architecture: nucleus_architecture_v4.1.md (50 min read)
+→ Architecture: docs/specs/nucleus_architecture_v4.1.md (50 min read)
 → License: Apache 2.0
 
 If you build something useful, tell me.

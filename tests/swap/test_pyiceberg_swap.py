@@ -1,5 +1,5 @@
 """Swap smoke tests — PyIceberg → iceberg-rust (PyO3 binding).
-Per AGENTS.md Hard Constraint #9 + ``nucleus_architecture_v4.1.md`` §9.3.
+Per AGENTS.md Hard Constraint #9 + ``docs/specs/nucleus_architecture_v4.1.md`` §9.3.
 Exercises today's wrap surface (filesystem SQL catalog + the 7 ``Table``
 methods consumed by ``coordination/asset_materialization.py`` and
 ``ctx/copy_from.py``); verifies iceberg-rust is installable OR doc'd as

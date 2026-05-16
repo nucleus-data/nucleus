@@ -3,7 +3,7 @@
 Mini-scheduler daemon: start/stop lifecycle, SIGTERM graceful shutdown,
 cron-firing logic, error translation, and status enumeration.
 
-Per ``nucleus_architecture_v4.1.md`` §6.3 (Coordination layer) and
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.3 (Coordination layer) and
 ADR-017 §v0.2.1 (mini-scheduler fallback).
 
 For multiprocessing safety, tests that verify live subprocess behavior

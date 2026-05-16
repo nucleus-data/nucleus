@@ -2,7 +2,7 @@
 
 > **Status**: PROPOSED — blueprint for the post-PoC-#1-promotion code phase. **Date**: 2026-05-13.
 > **Phase gate**: production code under `src/nucleus/` is **forbidden** until PoC #1 promotion lands (`AGENTS.md` §11.1; `.cursor/rules/nucleus.mdc` "Phase Gate"). Plans only.
-> **Required reading**: `AGENTS.md` §0–§11 · v4.1 §3 + §6 + §13 + §18.1 + §20 · `nucleus_cli_spec.md` §3 + §10 · `nucleus_ctx_sdk_spec.md` §0–§13 · `nucleus_asset_model_spec.md` §1–§3 · `nucleus_project_anatomy.md` §1–§5 · `ADR-002` §8 · `ADR-005` §1–§2 · `ADR-006` §Decision + §Initial · `ADR-008` / `ADR-012` · `C4_component.md` §2 + `C4_container.md` §3.1 · `engineering.md` §2.4 + §3.1 + §6.2.
+> **Required reading**: `AGENTS.md` §0–§11 · v4.1 §3 + §6 + §13 + §18.1 + §20 · `docs/specs/nucleus_cli_spec.md` §3 + §10 · `docs/specs/nucleus_ctx_sdk_spec.md` §0–§13 · `docs/specs/nucleus_asset_model_spec.md` §1–§3 · `docs/specs/nucleus_project_anatomy.md` §1–§5 · `ADR-002` §8 · `ADR-005` §1–§2 · `ADR-006` §Decision + §Initial · `ADR-008` / `ADR-012` · `C4_component.md` §2 + `C4_container.md` §3.1 · `engineering.md` §2.4 + §3.1 + §6.2.
 
 ---
 
@@ -68,7 +68,7 @@ Tier defaults: **Beta @ v0.1** for `ctx/*`, **Internal @ v0.1** for everything e
 
 ### §3.2 CLI commands (L4 — one file per command, `cli/commands/`)
 
-Each is a **thin** wrap over one `ctx.*` call per `nucleus_cli_spec.md` §1; `engineering.md` §10.3 PR-size limit drives per-file commands.
+Each is a **thin** wrap over one `ctx.*` call per `docs/specs/nucleus_cli_spec.md` §1; `engineering.md` §10.3 PR-size limit drives per-file commands.
 
 | File | Wraps | LOC | NE-codes raised + cite |
 |---|---|---:|---|
@@ -91,7 +91,7 @@ Each is a **thin** wrap over one `ctx.*` call per `nucleus_cli_spec.md` §1; `en
 | `engines/polars_engine.py` | 250 | `LazyFrame` plumbing |
 | `_internal/config.py` | 200 | Load + validate `nucleus.toml` via msgspec 0.18.6 (`engineering.md` §8.2); schema = `cli_spec` §7 |
 | `_internal/asset_names.py` | 50 | regex `^(raw\|staging\|marts\|ops)\.[a-z][a-z0-9_]*$` (2-level v0.1; §7 NV #2) |
-| `_internal/ids.py` | 50 | ULID per `nucleus_asset_model_spec.md` §2.3 |
+| `_internal/ids.py` | 50 | ULID per `docs/specs/nucleus_asset_model_spec.md` §2.3 |
 
 ---
 
@@ -112,7 +112,7 @@ Sequential within a layer; parallel where deps allow. One PR ≤500 LOC per `AGE
 11. **`ctx/__init__.py`** + **`nucleus/__init__.py`** — public re-exports + tier tags per `ADR-005` §1.
 12. **CLI commands** in dep order: `version → init → down → up → ingest → run → query`; register all in `cli/main.py`.
 13. **`tests/`** mirrors per `engineering.md` §6.2 (partially scaffolded today).
-14. **Beachhead E2E** (`scripts/beachhead_e2e.py`) — proves <30-min metric per v4.1 §1.5 + `nucleus_poc_plan.md` §5. Release-blocker for v0.1 GA.
+14. **Beachhead E2E** (`scripts/beachhead_e2e.py`) — proves <30-min metric per v4.1 §1.5 + `docs/specs/nucleus_poc_plan.md` §5. Release-blocker for v0.1 GA.
 
 ---
 
@@ -138,12 +138,12 @@ Hard ceiling **8,000 LOC** for `src/nucleus/` at v0.1 per `pyproject.toml:291` +
 
 Each = a concrete decision required before the corresponding PR can land.
 
-1. **`nucleus.toml` vs `nucleus.yaml`** — `cli_spec` §7 + `engineering.md` §8.1 mandate TOML; `nucleus_project_anatomy.md` §2 still uses YAML. **Recommend** TOML (stdlib `tomllib`, parity with `pyproject.toml`); patch project_anatomy in same sweep.
-2. **`ctx.materialize(...)` API spelling** — used by `cli_spec` §3.4 + `sequence_asset_materialization.md` §1 step 2 but **absent** from v4.1 §13.2 / `nucleus_ctx_sdk_spec.md` §12 frozen surface. **Recommend** expose as `ctx.materialize(asset_key)` Internal in v0.1; promote into v4.1 §13.2 same PR. *May warrant new ADR — §7 NV #1.*
+1. **`nucleus.toml` vs `nucleus.yaml`** — `cli_spec` §7 + `engineering.md` §8.1 mandate TOML; `docs/specs/nucleus_project_anatomy.md` §2 still uses YAML. **Recommend** TOML (stdlib `tomllib`, parity with `pyproject.toml`); patch project_anatomy in same sweep.
+2. **`ctx.materialize(...)` API spelling** — used by `cli_spec` §3.4 + `sequence_asset_materialization.md` §1 step 2 but **absent** from v4.1 §13.2 / `docs/specs/nucleus_ctx_sdk_spec.md` §12 frozen surface. **Recommend** expose as `ctx.materialize(asset_key)` Internal in v0.1; promote into v4.1 §13.2 same PR. *May warrant new ADR — §7 NV #1.*
 3. **`ctx.copy_from` mode taxonomy** — `C4_component.md` §2.4 ships `mode="full_refresh"` only; `cli_spec` §3.5 advertises `--mode overwrite|append|merge` (`merge` flagged §10 NV #9). **Recommend** v0.1 accepts `overwrite|append`; defer `merge` to v0.3 (DuckDB pin upgrade).
 4. **`nucleus query` in v0.1?** — `cli_spec` §10 NV #3 flags; v4.1 §18.1 lists only 5 commands. **Recommend** include (30-min metric implies verify-the-table step); upgrade v4.1 §18.1 to 7 commands.
 5. **`ctx.dagster_context` escape hatch** — v4.1 §13.2 r12 lists v0.1+; `ADR-005` §4 says "provisionally Internal forever". **Recommend** keep Internal (`_internal/dagster_context.py`); revisit only if telemetry shows >5% usage (v4.1 §6.6 trigger). Saves ~200 LOC.
-6. **`@nucleus.asset` import path** — Spec contract is `import nucleus; @nucleus.asset(...)` (`nucleus_ctx_sdk_spec.md` §1); implementation lives in `ctx/_decorators.py`. **Recommend** re-export from `nucleus/__init__.py`; validate via `scripts/check_public_api.py`.
+6. **`@nucleus.asset` import path** — Spec contract is `import nucleus; @nucleus.asset(...)` (`docs/specs/nucleus_ctx_sdk_spec.md` §1); implementation lives in `ctx/_decorators.py`. **Recommend** re-export from `nucleus/__init__.py`; validate via `scripts/check_public_api.py`.
 
 ---
 
@@ -152,11 +152,11 @@ Each = a concrete decision required before the corresponding PR can land.
 Per `AGENTS.md` §11.12. Each = a citation gap; resolved or downgraded before v0.1 GA.
 
 1. **`ctx.materialize` missing from v4.1 §13.2** but assumed by `cli_spec` §3.4 + `sequence_asset_materialization.md` §1 step 2. May warrant **new ADR-013** — see §6 Q2.
-2. **Asset-name cardinality** — `nucleus_asset_model_spec.md` §2.1 says 3-level; `engineering.md` §15.3 + `cli_spec` §3 + `poc/p2_ctx_sql/resolver.py:48` use 2-level (`cli_spec` §10 NV #6). v0.1 ships 2-level; 3-level at v0.3 with REST catalog.
-3. **`nucleus_project_anatomy.md` is v3-era stale** — references `nucleus.yaml`, `dlt`-by-default, modules YAML, `assets/raw|staging|dim|fact|analytics/` (v0.1 uses `raw|staging|marts|ops` per `engineering.md` §15.3). Needs a v4.1 patch sweep.
+2. **Asset-name cardinality** — `docs/specs/nucleus_asset_model_spec.md` §2.1 says 3-level; `engineering.md` §15.3 + `cli_spec` §3 + `poc/p2_ctx_sql/resolver.py:48` use 2-level (`cli_spec` §10 NV #6). v0.1 ships 2-level; 3-level at v0.3 with REST catalog.
+3. **`docs/specs/nucleus_project_anatomy.md` is v3-era stale** — references `nucleus.yaml`, `dlt`-by-default, modules YAML, `assets/raw|staging|dim|fact|analytics/` (v0.1 uses `raw|staging|marts|ops` per `engineering.md` §15.3). Needs a v4.1 patch sweep.
 4. **`openlineage-python==1.47.1` not in `pyproject.toml`** — `ADR-012` recommended-but-unpinned; step 8 blocked until pin lands per Hard Constraint #11.
 5. **`Engine` Protocol shape** — `engineering.md` §7.2 specifies `execute(plan: Plan, ctx: ExecContext) -> Arrow`; `Plan` + `ExecContext` undefined anywhere. `# NEEDS VERIFICATION` in `engines/_protocol.py` until smoke-tested vs DataFusion swap stub (v4.1 §9.3).
-6. **`ctx.read(snapshot=...)` deferred** — `nucleus_ctx_sdk_spec.md` §4.1 advertises; v4.1 §13.2 / `ADR-005` NV #1 defer `ctx.snapshot` to v0.3+. Strip `snapshot=` / `version=` kwargs from v0.1 `ctx/read.py`.
+6. **`ctx.read(snapshot=...)` deferred** — `docs/specs/nucleus_ctx_sdk_spec.md` §4.1 advertises; v4.1 §13.2 / `ADR-005` NV #1 defer `ctx.snapshot` to v0.3+. Strip `snapshot=` / `version=` kwargs from v0.1 `ctx/read.py`.
 7. **CLI per-file structure** — `engineering.md` §10.3 PR-size limit makes `cli/commands/<name>.py` the only viable layout, but no spec/ADR mandates it. Confirm at PoC #1 promo PR.
 8. **Polaris JVM exclusion** — Constraint #1 forbids JVM in core path; v4.1 §5.7 lists Polaris co-default at v0.3+. `C4_container.md` §6 r1 reconciles (Polaris JVM lives in its own docker container, not always-on). Re-verify at v0.3 catalog ADR.
 9. **`docker compose` vs `docker-compose`** — `cli/commands/up.py` shells out; v2 plugin vs v1 binary varies by host; `cli_spec` §3.2 doesn't specify. Probe at PoC #4.
@@ -176,4 +176,4 @@ Every bullet in §3 + §4 was re-checked against the **<30-min beachhead metric*
 
 ---
 
-*Blueprint locked at v4.1 + `ADR-005` + `ADR-006` + `ADR-008` + `ADR-012` + `nucleus_cli_spec.md`. No code lands under `src/nucleus/` until PoC #1 promotion (`AGENTS.md` §11.1). Founder reviews §6 → resolves → §3/§4/§5 implementation begins per §4.*
+*Blueprint locked at v4.1 + `ADR-005` + `ADR-006` + `ADR-008` + `ADR-012` + `docs/specs/nucleus_cli_spec.md`. No code lands under `src/nucleus/` until PoC #1 promotion (`AGENTS.md` §11.1). Founder reviews §6 → resolves → §3/§4/§5 implementation begins per §4.*

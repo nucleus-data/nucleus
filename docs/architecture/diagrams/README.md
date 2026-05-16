@@ -1,6 +1,6 @@
 # Nucleus Architecture - Excalidraw Diagram Set
 
-Visual companion to [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md).
+Visual companion to [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md).
 Eight diagrams covering every layer of the stack plus the two cross-cutting
 concerns (composability + yield-to-giants). **Each diagram uses the visual
 paradigm best suited to its content; we deliberately avoid a one-size-fits-all

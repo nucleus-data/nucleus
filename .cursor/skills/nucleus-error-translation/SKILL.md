@@ -13,7 +13,7 @@ description: >-
 
 Every external exception caught at the `coordination/` boundary MUST be
 translated to a `NucleusError` subclass before reaching users. Mandatory
-release blocker per `@AGENTS.md §11.7` and `@nucleus_architecture_v4.1.md §6.4`
+release blocker per `@AGENTS.md §11.7` and `@docs/specs/nucleus_architecture_v4.1.md §6.4`
 (library classnames in user-facing output = release blocked).
 
 ## Reference implementation

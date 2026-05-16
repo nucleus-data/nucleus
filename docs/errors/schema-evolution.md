@@ -23,5 +23,5 @@ A schema change on an existing asset was rejected by Iceberg's evolution rules. 
 
 - Source: `src/nucleus/errors.py` (`NucleusSchemaEvolutionError`)
 - Default fix hint: "Iceberg allows adding/widening fields; narrowing or nullable→required is not allowed. Review the contract."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

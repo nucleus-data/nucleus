@@ -479,6 +479,6 @@ Your real cost is dominated by storage growth × `snapshot_retain_days`. Tune re
 - [`docs/cookbook/production-deployment.md`](../production-deployment.md) — VM sizing for sensor workloads
 - [`docs/cookbook/ai-copilot-setup.md`](../ai-copilot-setup.md) — Copilot for ad-hoc anomaly drill-down
 - [`docs/cookbook/bi-connectivity.md`](../bi-connectivity.md) — point Grafana / Superset / Streamlit at `gold.sensor_anomalies`
-- [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §5.5 (Ingestion), §5.6 (SQL engine), §10 (Yield to giants)
+- [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §5.5 (Ingestion), §5.6 (SQL engine), §10 (Yield to giants)
 - [ADR-020 — Object storage connectors via DuckDB](../../decisions/ADR-020-object-storage-connectors-via-duckdb.md)
 - [ADR-024 — Reliability guards (snapshot retention)](../../decisions/ADR-024-reliability-guards.md)

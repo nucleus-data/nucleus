@@ -111,7 +111,7 @@ Lower-priority types (still translate, just less critical for v0.1):
 - REST: `RESTError`, `BadRequestError`, `UnauthorizedError`, `ForbiddenError`, `ServerError`, `ServiceUnavailableError` → `NucleusCatalogError` or `NucleusAuthError` (route by HTTP code).
 - `SignError` → S3 signing failure → `NucleusAuthError`.
 
-> **AI-drift caveat (PoC #1 verifies on real instances)**: exact import paths (`pyiceberg.exceptions.X` vs `pyiceberg.X`), constructor signatures, and `__cause__` chaining for `CommitFailedException` must be confirmed by **actually triggering each exception** in PoC #1 — see `nucleus_poc_plan.md` and log any drift in `docs/internal/research/ai_hallucinations.md`. Do not register translators from this doc's class names alone. Import them, raise them, catch them, then write the translator.
+> **AI-drift caveat (PoC #1 verifies on real instances)**: exact import paths (`pyiceberg.exceptions.X` vs `pyiceberg.X`), constructor signatures, and `__cause__` chaining for `CommitFailedException` must be confirmed by **actually triggering each exception** in PoC #1 — see `docs/specs/nucleus_poc_plan.md` and log any drift in `docs/internal/research/ai_hallucinations.md`. Do not register translators from this doc's class names alone. Import them, raise them, catch them, then write the translator.
 
 ---
 

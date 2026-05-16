@@ -339,7 +339,7 @@ If a future external tester (per [PoC #5](../../research/poc5_external_tester_fi
 - [`docs/cookbook/production-deployment.md`](../production-deployment.md) — backup vs snapshot interplay
 - [`docs/patterns/secret_management.md`](../../patterns/secret_management.md) — never log PII or secrets in lineage facets
 - [`AGENTS.md`](../../../AGENTS.md) Hard Constraint #6 (no custom identity), Hard Constraint #5 (no custom commit service)
-- [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §10 (Yield to giants), §20 (Non-goals)
+- [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §10 (Yield to giants), §20 (Non-goals)
 - [ADR-006 — error codes](../../decisions/ADR-006-error-codes.md)
 - [ADR-010 — OIDC delegation policy](../../decisions/ADR-010-oidc-delegation-policy-v03.md)
 - [ADR-024 — Reliability guards (snapshot retention)](../../decisions/ADR-024-reliability-guards.md)

@@ -1,6 +1,6 @@
 # Why "Wrap, Not Build" Is the Moat
 
-*One page. Numbers cited come from `nucleus_architecture_v4.1.md` section 3, section 9, section 10 and `docs/budget_history.md`. Last updated 2026-05-15.*
+*One page. Numbers cited come from `docs/specs/nucleus_architecture_v4.1.md` section 3, section 9, section 10 and `docs/budget_history.md`. Last updated 2026-05-15.*
 
 ---
 
@@ -30,10 +30,10 @@ Counted via `loc_budget.py` against `src/nucleus/` on v0.2.0; well under the 30,
 
 ## What we own forever
 
-Per `nucleus_architecture_v4.1.md` section 1.6:
+Per `docs/specs/nucleus_architecture_v4.1.md` section 1.6:
 
 1. **The asset graph** - the logical model of data products, expressed as `@nucleus.asset` Python and resolved as Iceberg snapshots.
-2. **The `ctx` SDK** - the stable contract that hides every wrapped component behind one import (spec: `nucleus_ctx_sdk_spec.md`).
+2. **The `ctx` SDK** - the stable contract that hides every wrapped component behind one import (spec: `docs/specs/nucleus_ctx_sdk_spec.md`).
 3. **The unified developer experience** - `ctx` + `nucleus` CLI + Workbench, treated as one product, with AI assistance as a feature, not the headline.
 
 ## Why this is a moat, not a weakness
@@ -45,7 +45,7 @@ Per `nucleus_architecture_v4.1.md` section 1.6:
 
 ## The honest part - what we do NOT own
 
-We yield to giants for the things giants do well, per `nucleus_architecture_v4.1.md` section 20:
+We yield to giants for the things giants do well, per `docs/specs/nucleus_architecture_v4.1.md` section 20:
 
 - Distributed compute - Databricks / Snowflake / Trino; we dispatch via Mode 2 (v1.5+).
 - Vector storage - Lance / LanceDB (v0.5+ optional).

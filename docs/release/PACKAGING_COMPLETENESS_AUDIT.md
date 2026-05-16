@@ -75,7 +75,7 @@ LOC at v0.2.0 ship: **~8,300 / 12,000 phase ceiling** (per `python scripts/loc_b
 | CLI reference (per-command pages) | PRESENT | [`docs/site/cli-reference/`](../site/cli-reference/) — 12 files (10 commands + index + `list` from Subagent A) |
 | API reference (mkdocstrings auto-gen) | PRESENT | [`docs/site/api-reference/`](../site/api-reference/) — `ctx` SDK, decorators, errors |
 | Errors directory (NE-code reference) | PRESENT | [`docs/errors/`](../errors/) — 16 NE-code remediation pages |
-| Architecture v4.1 source of truth | PRESENT | [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) at repo root |
+| Architecture v4.1 source of truth | PRESENT | [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) at repo root |
 | Public docs site (MkDocs Material) | PRESENT | [`mkdocs.yml`](../../mkdocs.yml) → docs/site/; `mkdocs build --strict` exits 0 (verified 2026-05-15) |
 | Roadmap (13 phase docs) | PRESENT | [`docs/roadmap/`](../roadmap/) — overview + 7 phase docs + HANDOVER + non-goals + risks + FOLLOW_UPS + README |
 
@@ -106,7 +106,7 @@ LOC at v0.2.0 ship: **~8,300 / 12,000 phase ceiling** (per `python scripts/loc_b
 | README hero patch proposal | PRESENT | [`docs/release/launch_kit/README_HERO_PATCH.md`](launch_kit/README_HERO_PATCH.md) |
 | 60-second demo SCRIPT | PRESENT | [`docs/release/launch_kit/60_SECOND_DEMO_SCRIPT.md`](launch_kit/60_SECOND_DEMO_SCRIPT.md) |
 | **60-second demo MP4 recording** | MISSING | **Follow-up**: founder records per script Phase 0 ([`FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md)). Target: `assets/demos/v0.2/launch_60s.mp4` + `.srt`. ~10 min effort. |
-| **Architecture diagram (rendered SVG/PNG)** | MISSING | **Follow-up**: render the 5-layer model + wrapped engines as `assets/architecture/v4.1_five_layers.svg`. Text-form lives in `nucleus_architecture_v4.1.md` §3. ~30 min effort with mermaid. |
+| **Architecture diagram (rendered SVG/PNG)** | MISSING | **Follow-up**: render the 5-layer model + wrapped engines as `assets/architecture/v4.1_five_layers.svg`. Text-form lives in `docs/specs/nucleus_architecture_v4.1.md` §3. ~30 min effort with mermaid. |
 | WOW Moments inventory | PRESENT | [`docs/release/launch_kit/WOW_MOMENTS.md`](launch_kit/WOW_MOMENTS.md) — 7 priority-ordered WOWs + asset gap matrix |
 | Show HN headlines (A/B variants) | PRESENT | [`docs/release/launch_kit/SHOW_HN_HEADLINES.md`](launch_kit/SHOW_HN_HEADLINES.md) |
 | HN post body | PRESENT | [`docs/release/launch_kit/hn_post.md`](launch_kit/hn_post.md) |

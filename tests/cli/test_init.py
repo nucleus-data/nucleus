@@ -1,4 +1,4 @@
-"""Tests for ``nucleus init`` — nucleus_cli_spec.md §3.1.
+"""Tests for ``nucleus init`` — docs/specs/nucleus_cli_spec.md §3.1.
 
 Exercises the project-scaffolding command end-to-end:
 - happy path (every template file lands and is interpolated)

@@ -1,8 +1,8 @@
-"""Smoke tests for the Nucleus CLI — nucleus_cli_spec.md §3.
+"""Smoke tests for the Nucleus CLI — docs/specs/nucleus_cli_spec.md §3.
 
 Scope of this file
 ------------------
-Per nucleus_cli_spec.md §3 + ADR-015 (AI Chat MVP): every v0.1 command
+Per docs/specs/nucleus_cli_spec.md §3 + ADR-015 (AI Chat MVP): every v0.1 command
 must respond to ``--help`` with exit code 0 and include its name in the
 help output.  All eight commands must appear in the root ``nucleus
 --help`` listing.  The ``version`` command is real (not a stub) and
@@ -22,9 +22,9 @@ Docs refs
 ---------
 - Typer testing: https://typer.tiangolo.com/tutorial/testing/
   (Pinned version: typer==0.15.1, wraps click.testing.CliRunner)
-- nucleus_cli_spec.md §3 (all seven commands)
-- nucleus_cli_spec.md §5.4 (error format — no internal class names)
-- nucleus_cli_spec.md §8 (exit-code contract)
+- docs/specs/nucleus_cli_spec.md §3 (all seven commands)
+- docs/specs/nucleus_cli_spec.md §5.4 (error format — no internal class names)
+- docs/specs/nucleus_cli_spec.md §8 (exit-code contract)
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ from nucleus.cli.main import app
 # stderr is mixed into result.stdout — useful for checking error output.
 runner = CliRunner()
 
-# All eight v0.1 commands defined in nucleus_cli_spec.md §3 + ADR-015 (chat).
+# All eight v0.1 commands defined in docs/specs/nucleus_cli_spec.md §3 + ADR-015 (chat).
 _V01_COMMANDS = ("init", "up", "down", "run", "ingest", "query", "version", "chat")
 
 
@@ -68,7 +68,7 @@ class TestRootHelp:
 
 
 # ==============================================================================
-# --version global flag (nucleus_cli_spec.md §3.7 + root callback)
+# --version global flag (docs/specs/nucleus_cli_spec.md §3.7 + root callback)
 # ==============================================================================
 
 
@@ -92,7 +92,7 @@ class TestVersionFlag:
 
 
 # ==============================================================================
-# Per-command --help smoke tests (nucleus_cli_spec.md §3.1 - §3.7)
+# Per-command --help smoke tests (docs/specs/nucleus_cli_spec.md §3.1 - §3.7)
 # ==============================================================================
 
 
@@ -121,7 +121,7 @@ class TestCommandHelp:
 
 
 # ==============================================================================
-# nucleus version (real command — nucleus_cli_spec.md §3.7)
+# nucleus version (real command — docs/specs/nucleus_cli_spec.md §3.7)
 # ==============================================================================
 
 
@@ -162,7 +162,7 @@ class TestVersionCommand:
 
 
 # ==============================================================================
-# Stub exit behaviour — nucleus_cli_spec.md §8 (exit code 1 = NucleusError)
+# Stub exit behaviour — docs/specs/nucleus_cli_spec.md §8 (exit code 1 = NucleusError)
 # ==============================================================================
 # All v0.1 commands now have real implementations (2026-05-14). Deferred flags
 # still raise NucleusInternalError with exit code 1 — see per-command test files.

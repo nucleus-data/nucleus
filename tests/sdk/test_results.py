@@ -2,8 +2,8 @@
 
 Validates the three frozen-shape value types per
 ``docs/decisions/ADR-013-ctx-materialize-api.md`` §2 (MaterializationResult),
-``nucleus_ctx_sdk_spec.md`` §3.1 + §12 (AssetRef), and
-``nucleus_asset_model_spec.md`` §10 (CheckResult).
+``docs/specs/nucleus_ctx_sdk_spec.md`` §3.1 + §12 (AssetRef), and
+``docs/specs/nucleus_asset_model_spec.md`` §10 (CheckResult).
 
 Discipline:
 - All three types MUST be ``@dataclass(frozen=True)`` so user code
@@ -85,13 +85,13 @@ class TestMaterializationResult:
         assert mr.partition == "2026-05-13"
 
     def test_reexported_from_nucleus_top_level(self) -> None:
-        # nucleus_ctx_sdk_spec.md §1+§12 — users write
+        # docs/specs/nucleus_ctx_sdk_spec.md §1+§12 — users write
         # `nucleus.MaterializationResult`, not the qualified path.
         assert nucleus.MaterializationResult is MaterializationResult
 
 
 class TestAssetRef:
-    """nucleus_ctx_sdk_spec.md §3.1 + §12 — frozen handle to an asset."""
+    """docs/specs/nucleus_ctx_sdk_spec.md §3.1 + §12 — frozen handle to an asset."""
 
     def test_is_frozen_dataclass(self) -> None:
         assert is_dataclass(AssetRef)
@@ -112,7 +112,7 @@ class TestAssetRef:
 
 
 class TestCheckResult:
-    """nucleus_ctx_sdk_spec.md §2.4 + nucleus_asset_model_spec.md §10."""
+    """docs/specs/nucleus_ctx_sdk_spec.md §2.4 + docs/specs/nucleus_asset_model_spec.md §10."""
 
     def test_is_frozen_dataclass(self) -> None:
         assert is_dataclass(CheckResult)

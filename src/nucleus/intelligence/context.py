@@ -11,7 +11,7 @@ Privacy rules (ADR-011 §3 + ADR-015 §4 — FIVE mandatory redactions):
 
 Hard cap: total context ≤ 4 KB; truncate fields if exceeded.
 
-Architecture ref: ``nucleus_architecture_v4.1.md`` §7.2 + ADR-015 §4
+Architecture ref: ``docs/specs/nucleus_architecture_v4.1.md`` §7.2 + ADR-015 §4
 Docs: https://py.iceberg.apache.org/api/catalog/  (pyiceberg==0.11.1)
 """
 

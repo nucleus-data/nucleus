@@ -4,7 +4,7 @@
 > **Target**: v0.3 implementer waves, post v0.2.0 GA.
 > **Date**: 2026-05-15
 > **Author**: Researcher tier (per AGENTS.md §11.14)
-> **Inputs**: AGENTS.md §3 / §7 / §11.12 / §11.13 · `nucleus_architecture_v4.1.md` §5.5 + §6.4 · ADR-014 / 019 / 020 · existing `src/nucleus/ctx/copy_from*.py`.
+> **Inputs**: AGENTS.md §3 / §7 / §11.12 / §11.13 · `docs/specs/nucleus_architecture_v4.1.md` §5.5 + §6.4 · ADR-014 / 019 / 020 · existing `src/nucleus/ctx/copy_from*.py`.
 > **Constraint**: READ-ONLY — this doc is the sole artifact; no `src/` changes.
 
 ---
@@ -194,7 +194,7 @@ def ingest_databricks_uc_to_iceberg(
     """Read a Unity Catalog table via Databricks SQL warehouse; write to Iceberg.
 
     Returns row count written. ONE-WAY only in v0.3 — Mode-2 dispatch per
-    nucleus_architecture_v4.1.md §3 ("yield to giants"): pull from Databricks,
+    docs/specs/nucleus_architecture_v4.1.md §3 ("yield to giants"): pull from Databricks,
     materialize locally for cheap iteration, graduate back via Iceberg portability.
     """
 ```
@@ -1009,7 +1009,7 @@ Items the implementer must confirm before merge:
 
 **Internal**
 - AGENTS.md (repo root)
-- `nucleus_architecture_v4.1.md` §3 + §5.5 + §6.4 (repo root)
+- `docs/specs/nucleus_architecture_v4.1.md` §3 + §5.5 + §6.4 (repo root)
 - ADR-006 / 007 / 014 / 019 / 020 / 039 (`docs/decisions/`)
 - `docs/internal/research/dlt.md` · `gcs_duckdb.md` · `s3_duckdb.md` · `filesystem_duckdb.md` · `pyiceberg.md` · `parity_vs_bosch_ely_adb_batch.md` · `ai_hallucinations.md`
 

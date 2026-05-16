@@ -1,7 +1,7 @@
 """``ctx.sql()`` — Jinja-resolved SQL execution via DuckDB (L4).
 
-Per ``nucleus_architecture_v4.1.md`` §5.6.0 (native ctx.sql scope) and
-``nucleus_ctx_sdk_spec.md`` §6 (SQL API). Provides a standalone
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §5.6.0 (native ctx.sql scope) and
+``docs/specs/nucleus_ctx_sdk_spec.md`` §6 (SQL API). Provides a standalone
 ``sql()`` function that:
 
     1. Opens the filesystem catalog at ``warehouse_dir`` and registers each
@@ -28,10 +28,10 @@ Stability (per ADR-005 §2):
     Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.6.0 (ctx.sql scope)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
-    nucleus_ctx_sdk_spec.md §6.1 (SQL API — ref resolution + return type)
-    nucleus_ctx_sdk_spec.md §6.2 ({{ ref() }} resolution semantics)
+    docs/specs/nucleus_architecture_v4.1.md §5.6.0 (ctx.sql scope)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_ctx_sdk_spec.md §6.1 (SQL API — ref resolution + return type)
+    docs/specs/nucleus_ctx_sdk_spec.md §6.2 ({{ ref() }} resolution semantics)
 
 Pins / docs:
     duckdb==1.1.3 — https://duckdb.org/docs/api/python/dbapi
@@ -63,7 +63,7 @@ def _build_catalog_views(
     ``refs`` maps ``"ns.tbl"`` asset keys to quoted DuckDB view names.
     The caller is responsible for closing ``conn`` via a ``try/finally``.
 
-    Per ``nucleus_architecture_v4.1.md`` §5.6.0 (ctx.sql scope); mirrors the
+    Per ``docs/specs/nucleus_architecture_v4.1.md`` §5.6.0 (ctx.sql scope); mirrors the
     ``_register_catalog_in_duckdb`` pattern from ``nucleus.cli.main ~L399``.
     """
     import duckdb  # Docs: https://duckdb.org/docs/api/python/dbapi; pin: 1.1.3
@@ -167,8 +167,8 @@ def sql(
 
     # Stability: Beta
 
-    Per ``nucleus_ctx_sdk_spec.md`` §6.1 + §6.2 and
-    ``nucleus_architecture_v4.1.md`` §5.6.0. Renders
+    Per ``docs/specs/nucleus_ctx_sdk_spec.md`` §6.1 + §6.2 and
+    ``docs/specs/nucleus_architecture_v4.1.md`` §5.6.0. Renders
     ``{{ ref('schema.name') }}`` macros using the filesystem catalog at
     ``warehouse_dir``, resolves user-supplied ``**bindings`` as Jinja
     template variables, then executes the rendered SQL via DuckDB.

@@ -5,7 +5,7 @@
 > **Decider(s)**: Solo founder (informed by F1/F2/F3 senior-review feedback)
 > **Tags**: architecture, dependencies, storage, hard-constraint
 > **Supersedes**: v4.0 architecture's "Iceberg Commit Service" component (deleted)
-> **Related**: AGENTS.md Hard Constraint #5, `nucleus_architecture_v4.1.md` §6, `docs/architecture/C4_container.md` §2.0
+> **Related**: AGENTS.md Hard Constraint #5, `docs/specs/nucleus_architecture_v4.1.md` §6, `docs/architecture/C4_container.md` §2.0
 
 ---
 
@@ -172,7 +172,7 @@ If we add **our own service** on top, we either:
 ### Files affected
 - ✓ **Created**: This ADR.
 - ✓ **Updated**: `AGENTS.md` (Hard Constraint #5 codified).
-- ✓ **Updated**: `nucleus_architecture_v4.1.md` (removed Iceberg Commit Service component, replaced with Asset Materialization Adapter).
+- ✓ **Updated**: `docs/specs/nucleus_architecture_v4.1.md` (removed Iceberg Commit Service component, replaced with Asset Materialization Adapter).
 - ⏳ **Will create** (PoC #1 phase): `src/nucleus/coordination/asset_materialization.py` (~500 LOC).
 - ⏳ **Will create** (PoC #1 phase): `tests/coordination/test_asset_materialization.py`.
 - ⏳ **Will create** (PoC #1 phase): `tests/integration/test_atomic_commit_stress.py` (Windows/Mac/Linux matrix).
@@ -209,7 +209,7 @@ How we know this decision is being followed:
 - [PyIceberg — Transactions](https://py.iceberg.apache.org/api/#transactions)
 - [PyIceberg — Catalog implementations](https://py.iceberg.apache.org/configuration/#catalogs)
 - F3 senior-review verdict (internal, captured in conversation history)
-- `nucleus_architecture_v4.1.md` §6 (the corrected architecture)
+- `docs/specs/nucleus_architecture_v4.1.md` §6 (the corrected architecture)
 - `docs/architecture/C4_container.md` §2.0 (current container diagram)
 
 ---

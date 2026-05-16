@@ -1,6 +1,6 @@
 """Durable run ledger — NDJSON append-only persistence.
 
-Per ``nucleus_architecture_v4.1.md`` §6.2 (AMA coordination layer owns run
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.2 (AMA coordination layer owns run
 history) + ADR-025 §P0-2 (run monitoring + persistence).
 
 NDJSON file location::
@@ -80,7 +80,7 @@ class RunLedger:
         for r in ledger.list(limit=20):
             print(r.run_id, r.status)
 
-    Architecture: ``nucleus_architecture_v4.1.md`` §6.2 + ADR-025 §P0-2.
+    Architecture: ``docs/specs/nucleus_architecture_v4.1.md`` §6.2 + ADR-025 §P0-2.
     """
 
     def __init__(self, project_root: Path) -> None:

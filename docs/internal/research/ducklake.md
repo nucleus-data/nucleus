@@ -1,6 +1,6 @@
 # Research: DuckLake (watch item, not a swap target)
 
-> **Status**: WATCH ITEM — Iceberg remains Tier 0 immortal per `nucleus_architecture_v4.1.md` §9.2; DuckLake is **not** a swap target.
+> **Status**: WATCH ITEM — Iceberg remains Tier 0 immortal per `docs/specs/nucleus_architecture_v4.1.md` §9.2; DuckLake is **not** a swap target.
 > **Verified**: 2026-05-12 · **Opened by**: ADR-002 §4.2.
 > **Re-evaluate before**: v0.3 ship (Mo 14).
 > **Sources**: `docs/internal/research/strategic/solo_oss_patterns_and_iceberg_2026.md` §B.4 (primary); `docs/internal/research/strategic/competitive_landscape_2026.md` §3.B + §3.E (supporting).

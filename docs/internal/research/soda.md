@@ -1,6 +1,6 @@
 # Research: Soda Core
 
-> **Component status in Nucleus**: **v0.5+ OPTIONAL data-quality wrap. Not in v0.1.** v0.1 ships native `@nucleus.check` (Python decorator) + `@nucleus.contract` (schema) per `nucleus_architecture_v4.1.md` §12.2 / §12.5. Soda is forward-leverage research — an *escape hatch* for teams arriving with existing Soda projects, not a replacement for `@nucleus.check`. Per `AGENTS.md §4`: *"data quality framework → native `@nucleus.check` (v0.1) / Soda Core (v0.5+ optional)"*.
+> **Component status in Nucleus**: **v0.5+ OPTIONAL data-quality wrap. Not in v0.1.** v0.1 ships native `@nucleus.check` (Python decorator) + `@nucleus.contract` (schema) per `docs/specs/nucleus_architecture_v4.1.md` §12.2 / §12.5. Soda is forward-leverage research — an *escape hatch* for teams arriving with existing Soda projects, not a replacement for `@nucleus.check`. Per `AGENTS.md §4`: *"data quality framework → native `@nucleus.check` (v0.1) / Soda Core (v0.5+ optional)"*.
 > **Pin candidate (if v0.5 fires)**: `soda-core==3.5.6` — **last Apache-2.0 release**, uploaded 2025-09-24 (PyPI verified 2026-05-13). **Not pinned in `pyproject.toml` today.**
 > **License**: **MIXED — boundary moved.** v3.x = **Apache-2.0**; v4.x (current main, latest 4.10.0 / 2026-05-12) = **Elastic License 2.0** (source-available; not OSI-approved; hosted-service-restricted). See §1.2 — this is the critical finding.
 > **JVM-free**: YES (pure Python). **Research date**: 2026-05-13. **Used in**: nowhere.

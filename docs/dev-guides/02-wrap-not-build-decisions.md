@@ -108,7 +108,7 @@ Step 3: 8-Question Gate
 
 ## The Swap Interface Requirement
 
-Every wrapped Tier 1/2 component MUST have a clean swap interface + smoke tests, per the Composability Constitution (`nucleus_architecture_v4.1.md` §9):
+Every wrapped Tier 1/2 component MUST have a clean swap interface + smoke tests, per the Composability Constitution (`docs/specs/nucleus_architecture_v4.1.md` §9):
 
 ```
 Tier 1 / Tier 2 dependency → requires:
@@ -185,7 +185,7 @@ See `docs/dev-guides/08-author-adr.md` for the full template and workflow.
 ```python
 # src/nucleus/ctx/copy_from_<source>.py
 
-# Per nucleus_architecture_v4.1.md §6.4 (Error Translation Layer)
+# Per docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Layer)
 # Docs: https://dlthub.com/docs/dlt-ecosystem/verified-sources/
 
 from nucleus.coordination.error_translation import translate
@@ -195,7 +195,7 @@ def copy_from_<source>(uri: str, table: str, **kwargs):
     """
     Wraps <OSS library> for <source> → Iceberg ingestion.
 
-    Per nucleus_architecture_v4.1.md §5.6.1.
+    Per docs/specs/nucleus_architecture_v4.1.md §5.6.1.
     Docs: <official docs URL>
     Pinned version: <version from pyproject.toml>
     """
@@ -231,7 +231,7 @@ def copy_from(uri: str, **kwargs):
 
 - `AGENTS.md §4` — Do-Not-Build list
 - `AGENTS.md §5` — 7-question decision framework
-- `nucleus_architecture_v4.1.md` §9 — Composability by Constitution
+- `docs/specs/nucleus_architecture_v4.1.md` §9 — Composability by Constitution
 - `docs/roadmap/non-goals.md` — forbidden builds with rationale
 - ADR-014 — example of a wrap decision (dlt Postgres)
 - ADR-002 — wrap vs build for AI Copilot

@@ -37,7 +37,7 @@ These affect the roadmap but are founder-gated:
 ## Naming Conventions Assumed (Confirm with Founder)
 
 - Phase codenames: "Public Launch", "Hardening", "Multimodal", "Cloud Tier MVP", "Production-Ready", "Enterprise Gateway", "Federation + Mesh" — these are working names. Founder may want to finalize before v0.2 announcement.
-- Version numbers in the timeline match `nucleus_architecture_v4.1.md` §18 exactly. If the roadmap shifts, both docs must be updated together.
+- Version numbers in the timeline match `docs/specs/nucleus_architecture_v4.1.md` §18 exactly. If the roadmap shifts, both docs must be updated together.
 
 ---
 
@@ -49,7 +49,7 @@ These are not code changes made by the roadmap docs (they're read-only here), bu
 |---|---|---|
 | `scripts/upgrade_smoke.py` test narrowing | Some pre-existing test failures exist (test_up_down.py, test_v01_template.py) that cause upgrade_smoke gate to fail | Fix the pre-existing tests or narrow upgrade_smoke scope |
 | `nucleus ingest` CLI bypasses `ctx.copy_from` dispatcher | `cli/main.py:1091, 1113` imports directly; verified by FOUNDER_ACTION_QUEUE | Spawn dedicated builder per FOUNDER_ACTION_QUEUE §MEDIUM finding |
-| `nucleus_project_anatomy.md` is stale (v3-era) | References `nucleus.yaml`, old layout | Add "Superseded by v4.1 §3.1" header; full rewrite in v0.2 docs sprint |
+| `docs/specs/nucleus_project_anatomy.md` is stale (v3-era) | References `nucleus.yaml`, old layout | Add "Superseded by v4.1 §3.1" header; full rewrite in v0.2 docs sprint |
 
 ---
 

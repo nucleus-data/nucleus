@@ -68,5 +68,5 @@ Recommended: **Option A** at v0.5.
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §7.3 (AI Copilot — MCP integration)
-- `nucleus_architecture_v4.1.md` §18.4 (v0.5 roadmap)
+- `docs/specs/nucleus_architecture_v4.1.md` §7.3 (AI Copilot — MCP integration)
+- `docs/specs/nucleus_architecture_v4.1.md` §18.4 (v0.5 roadmap)

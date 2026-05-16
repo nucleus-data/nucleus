@@ -1,6 +1,6 @@
 # Research: SQLGlot
 
-> **Component status in Nucleus**: pinned today, **active in v0.1 only via PoC #2** — `ctx.sql` Jinja resolver walks `exp.Table` to extract `{{ ref() }}` table references and feeds the asset-level dependency graph (`nucleus_poc_plan.md` §3). Column-level lineage lands **v0.5+** per `nucleus_architecture_v4.1.md` §12.4. Cost-Aware Planner lands **v0.7+** per arch §7.5 (brief said v0.5; arch wins per AGENTS.md §2).
+> **Component status in Nucleus**: pinned today, **active in v0.1 only via PoC #2** — `ctx.sql` Jinja resolver walks `exp.Table` to extract `{{ ref() }}` table references and feeds the asset-level dependency graph (`docs/specs/nucleus_poc_plan.md` §3). Column-level lineage lands **v0.5+** per `docs/specs/nucleus_architecture_v4.1.md` §12.4. Cost-Aware Planner lands **v0.7+** per arch §7.5 (brief said v0.5; arch wins per AGENTS.md §2).
 > **Pin candidate**: `sqlglot==26.0.0` (released **2024-12-10**, verified on PyPI 2026-05-13). **Already pinned in `pyproject.toml`.**
 > **License**: **MIT**  •  **JVM-free**: **YES** — pure Python, zero required runtime deps. Optional `[rs]` adds Rust tokenizer; `[c]` (v30.0+) adds mypyc compile. Hard Constraint #1 satisfied.
 > **Research date**: 2026-05-13
@@ -71,7 +71,7 @@ Signatures verified against 26.0.0 docs + lineage.py source.
 
 ### §4.1 v0.5+ — column-level lineage from `ctx.sql`
 
-Per arch §12.4. Surface: `nucleus lineage fact.orders --column total` (`nucleus_cli_spec.md`). Adapter target: ≤300 LOC in `intelligence/sql_lineage_adapter.py`.
+Per arch §12.4. Surface: `nucleus lineage fact.orders --column total` (`docs/specs/nucleus_cli_spec.md`). Adapter target: ≤300 LOC in `intelligence/sql_lineage_adapter.py`.
 
 ```python
 from sqlglot.lineage import lineage
@@ -143,7 +143,7 @@ Upstream benchmarks (sqlglot 30.x on Python 3.14.3 — https://github.com/tobyma
 - ✅ `SELECT`, `WITH`, `GROUP BY`, `WINDOW`, `QUALIFY`, `JOIN` (incl. ASOF / POSITIONAL); DuckDB extensions `LIST` / `STRUCT` / `MAP` / `[i:j]` slicing / `**` glob `FROM`.
 - ✅ `WITH RECURSIVE` parses; lineage walks `union_scopes` once (L261-300) — **cycle behaviour: §8**.
 - ✅ `LATERAL` / `UNNEST` parse to `exp.Lateral` — **scope-chasing non-trivial; verify v0.5 ADR (§8)**.
-- ⚠ `iceberg_scan(...)` parses as a generic table function — lineage reports `iceberg_scan` not the underlying Iceberg table. Our Jinja resolver rewrites `{{ ref() }}` to FQNs first (moot for assets); raw user SQL with `iceberg_scan(...)` has weak lineage. Document in `nucleus_cli_spec.md`.
+- ⚠ `iceberg_scan(...)` parses as a generic table function — lineage reports `iceberg_scan` not the underlying Iceberg table. Our Jinja resolver rewrites `{{ ref() }}` to FQNs first (moot for assets); raw user SQL with `iceberg_scan(...)` has weak lineage. Document in `docs/specs/nucleus_cli_spec.md`.
 
 **Upgrade workflow** (AGENTS.md §11.13, one-component PRs): (1) v0.3 prerequisite — `26.0.0 → 26.8.x[c]` for marimo SQL cells (smoke test: PoC #2 fixture suite); (2) v0.5 launch — `26.8.x → 30.x`, **ADR mandatory** (4 majors) — read every minor tag changelog and exercise lineage on the 50-query fixture set; (3) future major bumps — full ADR + lineage golden test re-baseline + benchmark regression check.
 

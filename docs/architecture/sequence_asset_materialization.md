@@ -4,7 +4,7 @@
 > **Scope**: One `@nucleus.asset` materialization, end-to-end — `nucleus run` / `ctx.materialize` → new Iceberg snapshot.
 > **Audience**: Anyone touching `coordination/asset_materialization.py` (the ~500-LOC AMA), `coordination/iceberg_io_manager.py`, or the `ctx.sql` resolver.
 > **Status**: Pre-implementation. Most steps not yet built — see §5 `NEEDS VERIFICATION`.
-> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md), [`C4_container.md`](C4_container.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.2 / §6.3 / §6.4.
+> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md), [`C4_container.md`](C4_container.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2 / §6.3 / §6.4.
 
 The **on-success twin** of [`sequence_error_translation.md`](sequence_error_translation.md). That doc owns failure translation; this one owns the happy path it defends. Together they define the full `@nucleus.asset` boundary.
 
@@ -133,7 +133,7 @@ sequenceDiagram
 - **Incremental / snapshot / view modes** — v4.1 §12.3 deferred v0.3 / v0.5; this sequence assumes `materialize="table"`.
 - **Multi-table atomic commits** — deferred per v4.1 §6.2; v1.0+ (REST Catalog v2) or v2.0+ (Nessie).
 - **Retries / backoff** — `tenacity`-wrapped `CommitFailedException` retry ([`../research/pyiceberg.md`](../research/pyiceberg.md) §6) is AMA's job, not the translator's ([`sequence_error_translation.md`](sequence_error_translation.md) §8).
-- **`@nucleus.sql_asset` specialization** — pulls `ctx.sql` to top of fn; otherwise identical. See `nucleus_asset_model_spec.md`.
+- **`@nucleus.sql_asset` specialization** — pulls `ctx.sql` to top of fn; otherwise identical. See `docs/specs/nucleus_asset_model_spec.md`.
 - **Cost meter / asset registry update** — v4.1 §6.2 step 5; post-PoC #1.
 
 ---
@@ -142,7 +142,7 @@ sequenceDiagram
 
 Per AGENTS.md §11.12, each wrapped-library step needs official-docs + triggered-in-anger confirmation. Log drift in [`../research/ai_hallucinations.md`](../research/ai_hallucinations.md). Treat each row as a **draft contract** until flipped by PoC #1 / PoC #4.
 
-1. **`ctx.materialize(...)` spelling** — not in v4.1 §13.2; may ship as `ctx.run(...)`. Lock when `nucleus_ctx_sdk_spec.md` finalizes.
+1. **`ctx.materialize(...)` spelling** — not in v4.1 §13.2; may ship as `ctx.run(...)`. Lock when `docs/specs/nucleus_ctx_sdk_spec.md` finalizes.
 2. **Dagster ↔ ctx bridging** — substituting `ctx` for `OpExecutionContext` inside a wrapped `@dagster.asset`; v4.1 §6.5 row 2 must pass.
 3. **OpenLineage event shapes** — [`../research/openlineage.md`](../research/openlineage.md) §1 + §4 lock the four nouns + three event types and pin candidate `openlineage-python==1.47.1`; remaining verifications: exact facet set per call site, console-vs-HTTP transport choice, Marquez backend wiring. Open Q: pre-fn failures emit `FAIL` or nothing?
 4. **Canonical AMA write path** — direct `Table.append` vs `IcebergIOManager.handle_output`? Confirm `DagsterInstance.ephemeral()` + `materialize` (not `_to_memory`) actually persists ([`../research/dagster.md`](../research/dagster.md) §7).
@@ -155,6 +155,6 @@ Per AGENTS.md §11.12, each wrapped-library step needs official-docs + triggered
 
 ## §6. Cross-references
 
-Companion: [`sequence_error_translation.md`](sequence_error_translation.md) (on-failure twin), [`C4_container.md`](C4_container.md) (same actors as containers), [ADR-001](../decisions/ADR-001-no-iceberg-commit-service.md) (Catalog owns atomicity). Architecture: [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §5 / §6.2 / §6.3 / §6.4 / §6.5 / §12. Other inline refs are linked from §2 / §5: [`../research/dagster.md`](../research/dagster.md), [`../research/pyiceberg.md`](../research/pyiceberg.md), [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py), [`../../poc/p2_ctx_sql/resolver.py`](../../poc/p2_ctx_sql/resolver.py).
+Companion: [`sequence_error_translation.md`](sequence_error_translation.md) (on-failure twin), [`C4_container.md`](C4_container.md) (same actors as containers), [ADR-001](../decisions/ADR-001-no-iceberg-commit-service.md) (Catalog owns atomicity). Architecture: [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5 / §6.2 / §6.3 / §6.4 / §6.5 / §12. Other inline refs are linked from §2 / §5: [`../research/dagster.md`](../research/dagster.md), [`../research/pyiceberg.md`](../research/pyiceberg.md), [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py), [`../../poc/p2_ctx_sql/resolver.py`](../../poc/p2_ctx_sql/resolver.py).
 
 *Next: when PoC #1 closes, reconcile every §5 flag against the running 1.9.5 / 0.8.1 stack and log drift to [`../research/ai_hallucinations.md`](../research/ai_hallucinations.md).*

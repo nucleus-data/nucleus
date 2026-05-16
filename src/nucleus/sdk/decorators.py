@@ -1,7 +1,7 @@
 """``@nucleus.asset`` and ``@nucleus.check`` decorators (L4).
 
-Per ``nucleus_ctx_sdk_spec.md`` §2.1 + §2.4 and
-``nucleus_asset_model_spec.md`` §3 + §10. Both decorators register the
+Per ``docs/specs/nucleus_ctx_sdk_spec.md`` §2.1 + §2.4 and
+``docs/specs/nucleus_asset_model_spec.md`` §3 + §10. Both decorators register the
 wrapped callable in the in-process registry under its canonical key, so
 the CLI (``nucleus run <key>``) and :func:`nucleus.materialize` can
 resolve the function later via :func:`get_asset` / :func:`get_check`.
@@ -55,7 +55,7 @@ from nucleus.errors import NucleusInvalidAssetDefinition, NucleusScheduleParseEr
 _KEY_RE: Final[re.Pattern[str]] = re.compile(r"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$")
 
 # ---------------------------------------------------------------------------
-# Schedule kwarg support (ADR-017 + nucleus_ctx_sdk_spec.md §5 amendment)
+# Schedule kwarg support (ADR-017 + docs/specs/nucleus_ctx_sdk_spec.md §5 amendment)
 # ---------------------------------------------------------------------------
 # Standard cron shorthand aliases per POSIX cron convention.
 # Normalised to 5-field form before storage in _AssetDefinition.schedule.
@@ -201,7 +201,7 @@ def _validate_deps(deps: object, *, key: str) -> tuple[str, ...]:
             raise NucleusInvalidAssetDefinition(
                 user_message=(
                     f"Asset {key!r} declares itself in deps. Self-edges are "
-                    "forbidden per nucleus_asset_model_spec.md §6.3."
+                    "forbidden per docs/specs/nucleus_asset_model_spec.md §6.3."
                 ),
                 fix_hint="Remove the self-reference from deps=.",
             )
@@ -328,7 +328,7 @@ def _validate_schedule(schedule: object, *, key: str) -> str | None:
 def _ensure_function(fn: object, *, role: str, key: str) -> Callable[..., Any]:
     """Reject non-function targets (classes, lambdas, instances).
 
-    Per ``nucleus_asset_model_spec.md`` §14 forbidden patterns row 6.
+    Per ``docs/specs/nucleus_asset_model_spec.md`` §14 forbidden patterns row 6.
     Lambdas are rejected because their ``__name__`` is opaque and the
     code-version hash (asset model spec §8.1) becomes meaningless.
     """
@@ -348,7 +348,7 @@ def _ensure_function(fn: object, *, role: str, key: str) -> Callable[..., Any]:
             ),
             fix_hint=(
                 "Replace the lambda with a `def` so the asset has a stable name "
-                "and code-version hash. See nucleus_asset_model_spec.md §8.1."
+                "and code-version hash. See docs/specs/nucleus_asset_model_spec.md §8.1."
             ),
         )
     return fn
@@ -372,8 +372,8 @@ def asset(
 
     # Stability: Beta
 
-    Per ``nucleus_ctx_sdk_spec.md`` §2.1 +
-    ``nucleus_asset_model_spec.md`` §3.1. The decorated function becomes
+    Per ``docs/specs/nucleus_ctx_sdk_spec.md`` §2.1 +
+    ``docs/specs/nucleus_asset_model_spec.md`` §3.1. The decorated function becomes
     the asset's compute step — the body the Asset Materialization Adapter
     (v4.1 §6.2) calls inside ``nucleus.materialize(<key>)``.
 
@@ -381,7 +381,7 @@ def asset(
         key: Canonical v0.1 2-level key (``"schema.name"``). Must match
             ``^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$``. The 3-level form
             (``catalog.schema.name``) is deferred to v0.3+ per
-            ``nucleus_cli_spec.md`` §10 NV #6.
+            ``docs/specs/nucleus_cli_spec.md`` §10 NV #6.
         deps: Explicit upstream asset keys. Optional — Nucleus auto-derives
             deps from ``ctx.read(...)`` calls inside the body
             (asset model spec §6.1). Use this kwarg only when the read
@@ -447,7 +447,7 @@ def asset(
             raise NucleusInvalidAssetDefinition(
                 user_message=(
                     f"Asset {validated_key!r} is already defined by another function. "
-                    "Two assets cannot share a key per nucleus_asset_model_spec.md §14."
+                    "Two assets cannot share a key per docs/specs/nucleus_asset_model_spec.md §14."
                 ),
                 fix_hint=(
                     "Pick a unique key for the new function or remove the existing "
@@ -480,8 +480,8 @@ def check(
 
     # Stability: Beta
 
-    Per ``nucleus_ctx_sdk_spec.md`` §2.4 +
-    ``nucleus_asset_model_spec.md`` §10. The decorated body runs after
+    Per ``docs/specs/nucleus_ctx_sdk_spec.md`` §2.4 +
+    ``docs/specs/nucleus_asset_model_spec.md`` §10. The decorated body runs after
     the target asset materializes; the function MUST return a
     :class:`nucleus.CheckResult` recording pass/fail and a metric.
 
@@ -529,7 +529,7 @@ def check(
             fix_hint=(
                 "Pass severity='error' (default) or severity='warn'. "
                 "severity='block_consumers' lights up at v0.3+ per "
-                "nucleus_asset_model_spec.md §9.2."
+                "docs/specs/nucleus_asset_model_spec.md §9.2."
             ),
         )
     severity_lit: Literal["error", "warn"] = "error" if severity == "error" else "warn"

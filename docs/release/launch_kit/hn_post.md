@@ -41,7 +41,7 @@ https://github.com/nucleus-data/nucleus
 > - Performance numbers in `docs/benchmarks/2026-05-15_baseline.md` show 11 measured failures vs aspirational targets. Boot time is ~2 s on a contention-loaded host (target was <500 ms — the host had only 1 GB free RAM during the run, so re-measurement on a freshly-booted laptop is tracked for v0.2.1). The B4 concurrent-run safety test FAILs on Windows because NTFS lock semantics differ from POSIX (`fcntl.flock` works; `msvcrt.locking` byte-range doesn't serialize the same way) — Linux/WSL passes. I'm publishing the numbers honestly rather than re-running until they pass.
 > - This is a solo project. There is no team behind it (yet). The Mo 24 decision gate per ADR-002 §8.3 forces me to commit to (a) raise, (b) hand off, or (c) accept indie outcome — no default extension permitted.
 >
-> The architecture doc (`nucleus_architecture_v4.1.md`, ~50 min read) is the source of truth. The "yield to giants" strategy is explicit: the day a team outgrows Nucleus, they point Databricks/Snowflake at the same S3 + Iceberg catalog and they're done. Mode 1 graduation is zero effort because it's just Iceberg portability — there is no Nucleus byte format to migrate off.
+> The architecture doc (`docs/specs/nucleus_architecture_v4.1.md`, ~50 min read) is the source of truth. The "yield to giants" strategy is explicit: the day a team outgrows Nucleus, they point Databricks/Snowflake at the same S3 + Iceberg catalog and they're done. Mode 1 graduation is zero effort because it's just Iceberg portability — there is no Nucleus byte format to migrate off.
 >
 > The honest pitch: if you're a small team building greenfield analytics on 100 GB–5 TB of data and the existing menu (Fivetran + dbt + Airflow + warehouse + catalog + BI = 6 tools) feels like overkill before any value flows, give this a try. If you have 100+ engineers and a 100 TB warehouse, it is genuinely not for you yet (and may never be — see the scale-out audit at `docs/internal/research/scale_out_audit.md` for why a Rust rewrite of Nucleus internals would be the wrong optimization).
 >
@@ -66,7 +66,7 @@ https://github.com/nucleus-data/nucleus
 
 **Q: How is this different from dbt-core + Dagster + DuckDB + pyiceberg?**
 
-> Honestly? It's the same parts, with a single SDK and CLI on top so a 5-engineer team isn't doing the integration work themselves. The wins: one auth model, one boot command (`nucleus up`), one error namespace (every error is an `NE####` code with a `docs_url`), one asset graph that's the same primitive whether you write it in Python or SQL, one Workbench. The losses: dbt's macro ecosystem isn't ours (we cap our SQL resolver at 2,500 LOC by hard policy — `nucleus_architecture_v4.1.md` §5.6.0 — so we don't accidentally rebuild dbt), and Dagster's web UI is hidden by default (you opt into it with `nucleus enable compat-dagster`).
+> Honestly? It's the same parts, with a single SDK and CLI on top so a 5-engineer team isn't doing the integration work themselves. The wins: one auth model, one boot command (`nucleus up`), one error namespace (every error is an `NE####` code with a `docs_url`), one asset graph that's the same primitive whether you write it in Python or SQL, one Workbench. The losses: dbt's macro ecosystem isn't ours (we cap our SQL resolver at 2,500 LOC by hard policy — `docs/specs/nucleus_architecture_v4.1.md` §5.6.0 — so we don't accidentally rebuild dbt), and Dagster's web UI is hidden by default (you opt into it with `nucleus enable compat-dagster`).
 
 **Q: Why no JVM constraint?**
 
@@ -98,7 +98,7 @@ https://github.com/nucleus-data/nucleus
 
 **Q: Composability — what happens if Dagster goes hostile / dies?**
 
-> `nucleus-mini-scheduler` is the documented fallback (~3-5K LOC; design ready, not yet built). The full mini-scheduler ships by v1.0 per `nucleus_architecture_v4.1.md` §6.5 + ADR-024. The `ctx` SDK API surface stays unchanged through any Dagster swap — `dagster_leak_check.py` enforces zero `dagster.*` classnames in user-facing strings, and per the replaceability mandate, zero user code grep for `dagster` import will succeed. If Dagster goes hostile tomorrow, we have 30 days to ship the full mini-scheduler before users notice.
+> `nucleus-mini-scheduler` is the documented fallback (~3-5K LOC; design ready, not yet built). The full mini-scheduler ships by v1.0 per `docs/specs/nucleus_architecture_v4.1.md` §6.5 + ADR-024. The `ctx` SDK API surface stays unchanged through any Dagster swap — `dagster_leak_check.py` enforces zero `dagster.*` classnames in user-facing strings, and per the replaceability mandate, zero user code grep for `dagster` import will succeed. If Dagster goes hostile tomorrow, we have 30 days to ship the full mini-scheduler before users notice.
 
 **Q: Solo founder. What's your plan?**
 

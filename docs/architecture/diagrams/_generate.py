@@ -1950,7 +1950,7 @@ def mk_experience() -> dict[str, Any]:
             "exp",
             40,
             80,
-            "v4.1 Section 8 + nucleus_cli_spec.md + nucleus_ctx_sdk_spec.md + ADR-016 (Workbench)",
+            "v4.1 Section 8 + docs/specs/nucleus_cli_spec.md + docs/specs/nucleus_ctx_sdk_spec.md + ADR-016 (Workbench)",
         )
     )
 
@@ -2170,7 +2170,7 @@ def mk_experience() -> dict[str, Any]:
             err_panel_x + 18,
             err_panel_y + 14,
             "ERROR DISPLAY  (uniform across all 3 surfaces)\n"
-            "  per nucleus_cli_spec.md Section 5.4\n\n"
+            "  per docs/specs/nucleus_cli_spec.md Section 5.4\n\n"
             "[NE2007] NucleusResourceError:\n"
             "  Out of memory while processing 'sales.fct_orders'\n"
             "  fix_hint: add a partition filter, increase memory,\n"
@@ -2912,7 +2912,7 @@ def mk_composability_yield() -> dict[str, Any]:
 
 README = """# Nucleus Architecture - Excalidraw Diagram Set
 
-Visual companion to [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md).
+Visual companion to [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md).
 Eight diagrams covering every layer of the stack plus the two cross-cutting
 concerns (composability + yield-to-giants). **Each diagram uses the visual
 paradigm best suited to its content; we deliberately avoid a one-size-fits-all

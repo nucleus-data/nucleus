@@ -94,9 +94,9 @@ This is where most "fake done" lives. Inspect carefully.
 
 Did the worker stay in its declared scope, or did it sneak edits into off-limits files?
 - Read git status (via `Shell` if available, or inspect the recently-viewed file list)
-- Check tracking docs (`nucleus_poc_plan.md`, `docs/budget_history.md`) — workers should NOT have touched these
+- Check tracking docs (`docs/specs/nucleus_poc_plan.md`, `docs/budget_history.md`) — workers should NOT have touched these
 - Check ADRs — workers should NOT have edited
-- Check `AGENTS.md`, `.cursor/rules/nucleus.mdc`, `nucleus_architecture_v4.1.md` — architect-only files
+- Check `AGENTS.md`, `.cursor/rules/nucleus.mdc`, `docs/specs/nucleus_architecture_v4.1.md` — architect-only files
 
 If the worker drifted scope, that's a FAIL even if the work is otherwise correct — surfaces a discipline issue.
 
@@ -109,7 +109,7 @@ If the worker drifted scope, that's a FAIL even if the work is otherwise correct
 
 ### Check 8: Architecture invariants
 
-Spot-check against `nucleus_architecture_v4.1.md`:
+Spot-check against `docs/specs/nucleus_architecture_v4.1.md`:
 - Hard constraints (no JVM, no plugin SDK, no custom scheduler, etc.) — anything in §3 of nucleus.mdc
 - Layer respect: did Coordination code leak into Engines? Did Experience code touch Physics directly?
 - Composability: any non-swappable Tier 1/2 dependency added?

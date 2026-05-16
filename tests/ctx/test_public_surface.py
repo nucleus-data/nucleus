@@ -14,7 +14,7 @@ is particularly subtle: there is BOTH a ``copy_from.py`` submodule AND a
 ``__init__.py`` imports, ``nucleus.ctx.copy_from`` resolves to the FUNCTION
 (the unified dispatcher) — not the module. These tests pin that behavior.
 
-Per AGENTS.md §11.7 + nucleus_architecture_v4.1.md §13.1 (the ctx SDK is
+Per AGENTS.md §11.7 + docs/specs/nucleus_architecture_v4.1.md §13.1 (the ctx SDK is
 the single stable surface from v1.0 onward; anything else is internal).
 
 # Stability: Internal (test-only)

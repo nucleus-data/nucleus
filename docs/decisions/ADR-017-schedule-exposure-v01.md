@@ -5,8 +5,8 @@
 > **Tags**: scheduling, dagster, cron, sdk, cli, v0.1.1, v0.2.1, mini-scheduler
 > **Related**: ADR-001 (wrap-not-build precedent), ADR-005 (API freeze policy — Beta tier),
 > ADR-006 §Initial code assignment (NE5xxx allocations), ADR-012 (pin matrix),
-> `nucleus_architecture_v4.1.md` §6.3 (Coordination), §6.7 (yield-to-giants),
-> `nucleus_ctx_sdk_spec.md` §5 (decorator surface), `nucleus_cli_spec.md` §3.
+> `docs/specs/nucleus_architecture_v4.1.md` §6.3 (Coordination), §6.7 (yield-to-giants),
+> `docs/specs/nucleus_ctx_sdk_spec.md` §5 (decorator surface), `docs/specs/nucleus_cli_spec.md` §3.
 
 ---
 
@@ -98,7 +98,7 @@ NE5001-5004 are already allocated (ConfigError, AuthError, RunCancelled, Environ
 
 `schedule=` kwarg: **Beta @ v0.1.1 → Stable @ v0.5 → Frozen @ v1.0** — same ladder as
 the rest of `@nucleus.asset`.  
-`nucleus schedule list/preview`: **Beta** — governed by `nucleus_cli_spec.md`.  
+`nucleus schedule list/preview`: **Beta** — governed by `docs/specs/nucleus_cli_spec.md`.  
 `nucleus schedule on/off/trigger`: **deferred stub** — raises `NucleusFeatureDeferredError`.  
 `coordination/schedules.py`: **Internal** — not part of public surface.
 

@@ -12,7 +12,7 @@ description: >-
 
 Snapshot-producing code is the highest-leverage failure surface in the
 Coordination Layer. Catalog-side atomic commit is the only commit primitive
-per `@nucleus_architecture_v4.1.md §6.3` and
+per `@docs/specs/nucleus_architecture_v4.1.md §6.3` and
 `@docs/decisions/ADR-001-no-iceberg-commit-service.md`.
 
 ## Read these before writing snapshot code
@@ -42,13 +42,13 @@ that reads "v0.5+" or "default policy".
   AMA has been exercised on real workloads.
 - `@nucleus.asset(partition_by="day(event_ts)")` translates the string DSL
   to a `PartitionSpec` — users never `import pyiceberg.partitioning`
-  directly per `@nucleus_architecture_v4.1.md §13.1`.
+  directly per `@docs/specs/nucleus_architecture_v4.1.md §13.1`.
 
 ### Compaction
 
 - **PoC #3 and v0.1 do NOT auto-compact.** Document the surface but defer
   triggers to v0.3+ (`nucleus optimize`) and v0.5+ (default policy) per
-  `@nucleus_architecture_v4.1.md §18.3`.
+  `@docs/specs/nucleus_architecture_v4.1.md §18.3`.
 - Any compaction helper now is Tier 2 only — never fire from the hot
   materialization path.
 
@@ -77,7 +77,7 @@ that reads "v0.5+" or "default policy".
 
 - One catalog commit per snapshot. Multi-table atomicity is NOT a Nucleus
   primitive — the catalog owns the commit per
-  `@nucleus_architecture_v4.1.md §6.3` and Hard Constraint #5
+  `@docs/specs/nucleus_architecture_v4.1.md §6.3` and Hard Constraint #5
   (`@AGENTS.md §3`).
 - On `CommitFailedException` (concurrent write): retry up to 3×, then
   surface `NucleusCommitConflictError`. On `CommitStateUnknownException`:
@@ -88,5 +88,5 @@ that reads "v0.5+" or "default policy".
 
 `import pyiceberg` is permitted inside `coordination/` only. User code
 never imports it — the `ctx` SDK is the only stable public surface
-(`@nucleus_architecture_v4.1.md §13.1`). Cite docs URLs on every wrapped
+(`@docs/specs/nucleus_architecture_v4.1.md §13.1`). Cite docs URLs on every wrapped
 import per `@AGENTS.md §11.12`.

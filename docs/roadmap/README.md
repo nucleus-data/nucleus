@@ -87,4 +87,4 @@ The roadmap says *what* to build. For *how*, see:
 
 ---
 
-*Last updated: 2026-05-15. Source of truth: `nucleus_architecture_v4.1.md` §18.*
+*Last updated: 2026-05-15. Source of truth: `docs/specs/nucleus_architecture_v4.1.md` §18.*

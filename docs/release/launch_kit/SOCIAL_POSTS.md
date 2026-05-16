@@ -127,7 +127,7 @@ HONEST disclosures, because this community deserves them:
 Try it:
 
 → Repo: github.com/nucleus-data/nucleus
-→ Architecture: nucleus_architecture_v4.1.md (~50 min read)
+→ Architecture: docs/specs/nucleus_architecture_v4.1.md (~50 min read)
 → License: Apache 2.0
 
 If you build something useful, tell me.
@@ -157,7 +157,7 @@ Three honest disclosures, because credibility matters more than excitement: it i
 
 If you lead a 5–20 engineer team building a greenfield analytics stack, we would love your feedback. Try it. Tell us what breaks.
 
-Repo: github.com/nucleus-data/nucleus · Architecture: nucleus_architecture_v4.1.md · License: Apache 2.0.
+Repo: github.com/nucleus-data/nucleus · Architecture: docs/specs/nucleus_architecture_v4.1.md · License: Apache 2.0.
 
 Built on the work of Apache Arrow, Iceberg, Parquet, DuckDB, Polars, Dagster, OpenLineage, OpenTelemetry. Support them.
 
@@ -208,7 +208,7 @@ Quickstart:
   nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders
   nucleus query "SELECT count(*) FROM {{ ref('raw.orders') }}"
 
-Repo: github.com/nucleus-data/nucleus. Architecture: nucleus_architecture_v4.1.md (~50 min read; ~25K words). Apache 2.0. Tell me where I'm wrong.
+Repo: github.com/nucleus-data/nucleus. Architecture: docs/specs/nucleus_architecture_v4.1.md (~50 min read; ~25K words). Apache 2.0. Tell me where I'm wrong.
 ```
 
 > Posting tips: post **Tue–Thu 10:00–14:00 ET**, apply `Open Source` flair, be online for the first 4–6 h, do NOT cross-post to /r/Python or /r/programming the same day (Reddit's spam filter auto-flags).
@@ -280,7 +280,7 @@ Founder here. Three things I want to be upfront about because HN deserves it.
 
 3. Honest disclosures. It's beta — v0.2.0 is the first publicly available release. Performance numbers in `docs/benchmarks/2026-05-15_baseline.md` show 11 measured failures vs aspirational targets, including B5 boot ~2 s on a contention-loaded host with 1 GB free RAM vs the original <500 ms claim, and B4 concurrent-run safety FAILing on Windows because NTFS lock semantics differ from POSIX (Linux/WSL passes). I'm publishing the numbers honestly rather than re-running until they pass. This is a solo project. The Mo 24 decision gate per ADR-002 §8.3 forces an explicit founder choice (raise / hand off / accept indie); no default extension permitted.
 
-The architecture doc (nucleus_architecture_v4.1.md, ~50 min read) is the source of truth. The "yield to giants" strategy is explicit: the day a team outgrows Nucleus, they point Databricks/Snowflake at the same S3 + Iceberg catalog and they're done. Mode 1 graduation is zero effort because it's just Iceberg portability — there is no Nucleus byte format to migrate off.
+The architecture doc (docs/specs/nucleus_architecture_v4.1.md, ~50 min read) is the source of truth. The "yield to giants" strategy is explicit: the day a team outgrows Nucleus, they point Databricks/Snowflake at the same S3 + Iceberg catalog and they're done. Mode 1 graduation is zero effort because it's just Iceberg portability — there is no Nucleus byte format to migrate off.
 
 Quickstart:
 

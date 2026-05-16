@@ -1,6 +1,6 @@
 # Research: OpenTelemetry (OTEL)
 
-> **Status in Nucleus**: **Layer 0 (Physics) — immortal** per `nucleus_architecture_v4.1.md` §4.1. Library (`opentelemetry-api` + `opentelemetry-sdk`) is **already a v0.1 runtime dep** (boot-time tracing, escape-hatch counters); full stack (OTLP → VictoriaMetrics + VictoriaLogs collector) ships v0.5+ per §11.4. Cost meter (v0.5+, §6.3) sits on OTEL metrics.
+> **Status in Nucleus**: **Layer 0 (Physics) — immortal** per `docs/specs/nucleus_architecture_v4.1.md` §4.1. Library (`opentelemetry-api` + `opentelemetry-sdk`) is **already a v0.1 runtime dep** (boot-time tracing, escape-hatch counters); full stack (OTLP → VictoriaMetrics + VictoriaLogs collector) ships v0.5+ per §11.4. Cost meter (v0.5+, §6.3) sits on OTEL metrics.
 > **Pin candidate (current)**: `opentelemetry-api==1.29.0`, `opentelemetry-sdk==1.29.0` (in `pyproject.toml`; released **2024-12-11**, verified on PyPI 2026-05-13).
 > **Latest stable on PyPI**: `1.41.1` (released **2026-04-24**) — pin **12 minor versions behind**; `1.29.0 → 1.41.x` needs its own ADR (§6).
 > **License**: **Apache-2.0** (verified at `raw.githubusercontent.com/open-telemetry/opentelemetry-python/main/LICENSE`, 2026-05-13)  •  **JVM-free**: **YES** — pure Python; transitive deps `Deprecated`, `importlib-metadata`, `typing-extensions`. Hard Constraint #1 satisfied.
@@ -100,7 +100,7 @@ Per `v4.1.md` §6.1 (AMA, ~500 LOC). Target: `coordination/ama.py`. Open one roo
 
 Child span `nucleus.ctx.sql`; attributes `nucleus.sql.dialect`, `nucleus.sql.statement` (redacted), `nucleus.sql.statement_hash` (`sha256(raw)[:16]`), `nucleus.engine`, `nucleus.rows_returned`.
 
-**PII rule**: never set raw SQL containing user data. Run through the Jinja resolver's redaction pass (`{{ param.* }}` typed, secrets substituted at param-binding time per `nucleus_ctx_sdk_spec.md` §5). Long statements: hash + first ~200 chars; backends truncate ~1-4 KB anyway. Semconv key is `db.statement` (https://opentelemetry.io/docs/specs/semconv/database/) — we **prefix `nucleus.` instead** so vendor-classname leak risk doesn't sneak into attribute keys. Revisit at v0.5.
+**PII rule**: never set raw SQL containing user data. Run through the Jinja resolver's redaction pass (`{{ param.* }}` typed, secrets substituted at param-binding time per `docs/specs/nucleus_ctx_sdk_spec.md` §5). Long statements: hash + first ~200 chars; backends truncate ~1-4 KB anyway. Semconv key is `db.statement` (https://opentelemetry.io/docs/specs/semconv/database/) — we **prefix `nucleus.` instead** so vendor-classname leak risk doesn't sneak into attribute keys. Revisit at v0.5.
 
 ### §4.3 Mandatory metrics (v0.2 surface, cost meter v0.5+)
 
@@ -126,7 +126,7 @@ Per asset materialization we emit one OL `runEvent` with UUID `run.runId`. To st
 
 OTLP/gRPC and OTLP/HTTP exporters are available today but **not pinned in v0.1** (locked behind v0.5 ADR). Default destinations once wired: **VictoriaMetrics** (metrics; native OTLP — confirm at https://docs.victoriametrics.com/) and **VictoriaLogs** (logs; native OTLP/HTTP — confirm at https://docs.victoriametrics.com/victorialogs/) for Nucleus Cloud; OSS users target whatever they have (Jaeger, Tempo, Grafana, Datadog, Honeycomb, cloud-vendor — all accept OTLP via standard `OTEL_EXPORTER_OTLP_*` env vars).
 
-**v0.5 in scope**: pin one of `opentelemetry-exporter-otlp-proto-{grpc,http}` (≤30 LOC config); ship `docker-compose.observability.yml` with VM+VL for local sanity; document env-var matrix in `nucleus_cli_spec.md`. **Out of scope until v0.7+ Cloud GA**: hosting the collector, signed multi-tenant ingest, retention/quota.
+**v0.5 in scope**: pin one of `opentelemetry-exporter-otlp-proto-{grpc,http}` (≤30 LOC config); ship `docker-compose.observability.yml` with VM+VL for local sanity; document env-var matrix in `docs/specs/nucleus_cli_spec.md`. **Out of scope until v0.7+ Cloud GA**: hosting the collector, signed multi-tenant ingest, retention/quota.
 
 ---
 

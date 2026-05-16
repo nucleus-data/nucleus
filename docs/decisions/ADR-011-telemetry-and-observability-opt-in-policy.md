@@ -3,7 +3,7 @@
 > **Status**: AMENDED — 2026-05-14 — substrate-presence clarified per `docs/internal/research/otel_day1_decision.md` (no-op via API-only; SDK demoted to `[project.optional-dependencies] observability`). Originally ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0).
 > **Date**: 2026-05-13 (original) · 2026-05-14 (amendment) · **Decider**: Solo founder
 > **Tags**: telemetry, observability, otel, privacy, opt-in, cardinality, v0.5
-> **Related**: ADR-002 §8 (Cloud path), ADR-005 §1 (tier ladder — OTEL Internal v0.1 → Beta v0.3 → Stable v0.5), ADR-006 (`NE-codes` are the only error labels in metric attributes), ADR-007 (OTEL + VM + VL + Marquez all GREEN Apache-2.0 per Worker X §2.1), ADR-009 (OL emission — same opt-in shape), `AGENTS.md` §3 Constraint #6 + §7 (vocabulary) + §11.7 (no external classnames), `nucleus_architecture_v4.1.md` §6.x + §11, `docs/internal/research/opentelemetry.md` (Worker M), `docs/internal/research/observability_backends.md` (Worker X), `docs/internal/research/daft.md` §8 (Scarf trap), `docs/security/threat_model_v0.md` §3 + §6
+> **Related**: ADR-002 §8 (Cloud path), ADR-005 §1 (tier ladder — OTEL Internal v0.1 → Beta v0.3 → Stable v0.5), ADR-006 (`NE-codes` are the only error labels in metric attributes), ADR-007 (OTEL + VM + VL + Marquez all GREEN Apache-2.0 per Worker X §2.1), ADR-009 (OL emission — same opt-in shape), `AGENTS.md` §3 Constraint #6 + §7 (vocabulary) + §11.7 (no external classnames), `docs/specs/nucleus_architecture_v4.1.md` §6.x + §11, `docs/internal/research/opentelemetry.md` (Worker M), `docs/internal/research/observability_backends.md` (Worker X), `docs/internal/research/daft.md` §8 (Scarf trap), `docs/security/threat_model_v0.md` §3 + §6
 
 ## Context
 
@@ -144,7 +144,7 @@ Status flips **PROPOSED → ACCEPTED** when all three hold: (1) founder reviews 
 
 1. **`nucleus_install_id` cadence** — at `nucleus init` (per-project, persisted to `.nucleus/install_id`) or per-CLI-invocation (ephemeral)? **Default**: per-project at `nucleus init`, persisted. Lets the user join their own metrics across runs without joining across users.
 2. **Top-level `nucleus telemetry disable` CLI command** alongside `nucleus enable otel` (v0.3+)? **Default**: yes; ~10 LOC; fits Beta tier per ADR-005 §1; symmetric with `nucleus enable / disable marquez` from ADR-009.
-3. **Pre-v0.5 ADR for AI-provider telemetry** — OpenAI / Anthropic SDKs phone home regardless of our OTEL posture. **Default**: defer to v0.5 Cloud Copilot launch ADR; document in `nucleus_ctx_sdk_spec.md` as a known third-party flow under Cloud ToS, separate from OTEL.
+3. **Pre-v0.5 ADR for AI-provider telemetry** — OpenAI / Anthropic SDKs phone home regardless of our OTEL posture. **Default**: defer to v0.5 Cloud Copilot launch ADR; document in `docs/specs/nucleus_ctx_sdk_spec.md` as a known third-party flow under Cloud ToS, separate from OTEL.
 
 ---
 

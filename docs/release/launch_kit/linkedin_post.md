@@ -39,7 +39,7 @@
 >
 > If you lead a 5–20 engineer team building a greenfield analytics stack, **we'd love your feedback.** Try it. Tell us what breaks. Tell us what feels good. Tell us where the abstraction leaks.
 >
-> Repo: <https://github.com/nucleus-data/nucleus> · Architecture: `nucleus_architecture_v4.1.md` · License: Apache 2.0.
+> Repo: <https://github.com/nucleus-data/nucleus> · Architecture: `docs/specs/nucleus_architecture_v4.1.md` · License: Apache 2.0.
 >
 > Built on the work of Apache Arrow, Iceberg, Parquet, DuckDB, Polars, Dagster, OpenLineage, and OpenTelemetry. If we ship something useful, it is because these foundations exist.
 >
@@ -70,7 +70,7 @@ When commenters ask:
 | "Is it production-ready?" | "Beta. v0.2.0 is the first publicly available release. The empirical baseline at `docs/benchmarks/2026-05-15_baseline.md` documents what's verified and what's still in flight. I'd recommend it for greenfield analytics on 100 GB–5 TB; not for mission-critical production today." |
 | "Why no JVM?" | "Hard Constraint #1 in `AGENTS.md`. JVM in the always-on path means cold boot in tens of seconds and idle RAM in gigabytes. Both incompatible with the 30-min beachhead metric. Cold boot today is ~6 seconds; idle RSS is 117 MB. That's the budget." |
 | "Can I contribute?" | "External contributions are limited while Tier 1 stabilizes — open an issue first for anything large. Per the README contributing section." |
-| "What's the business model?" | "OSS core is free forever (Apache 2.0). Future tiers per `nucleus_architecture_v4.1.md` §17: managed Cloud (~$20/seat/mo target), Copilot Pro (+$50/seat for richer agent runtime, v0.5+), Enterprise ($50-500K/yr). None shipping today." |
+| "What's the business model?" | "OSS core is free forever (Apache 2.0). Future tiers per `docs/specs/nucleus_architecture_v4.1.md` §17: managed Cloud (~$20/seat/mo target), Copilot Pro (+$50/seat for richer agent runtime, v0.5+), Enterprise ($50-500K/yr). None shipping today." |
 
 ---
 

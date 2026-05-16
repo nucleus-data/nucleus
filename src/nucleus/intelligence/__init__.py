@@ -1,6 +1,6 @@
 """Nucleus Intelligence layer — AI Copilot (v0.2+).
 
-Layer 5 per ``nucleus_architecture_v4.1.md`` §7 (AI Copilot staging:
+Layer 5 per ``docs/specs/nucleus_architecture_v4.1.md`` §7 (AI Copilot staging:
 v0.2 = inline chat, CLI-only, single-turn; v0.5+ adds ``ctx.agent`` runtime).
 
 Per ADR-015: the **only** public surface is :func:`chat` and
@@ -10,7 +10,7 @@ package and must NOT be imported externally.
 
 # Stability: Internal @ v0.2 → Beta @ v0.2 ship → Stable @ v0.5
 
-Architecture ref: ``nucleus_architecture_v4.1.md`` §7.2 (v0.2 CLI chat MVP)
+Architecture ref: ``docs/specs/nucleus_architecture_v4.1.md`` §7.2 (v0.2 CLI chat MVP)
 Decision: ``docs/decisions/ADR-015-ai-chat-mvp.md``
 """
 

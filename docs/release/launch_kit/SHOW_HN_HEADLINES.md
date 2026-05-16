@@ -137,9 +137,9 @@ Lead with the result, not the project name or the pain.
 
 **Reasoning:**
 
-1. **Carries the differentiating wedge in the title.** "Graduates to Databricks" is the architecturally-correct way to describe the yield-to-giants strategy (`nucleus_architecture_v4.1.md` §10). It signals "we don't compete with Databricks; we hand off to it cleanly," which is exactly the founder-honest framing.
+1. **Carries the differentiating wedge in the title.** "Graduates to Databricks" is the architecturally-correct way to describe the yield-to-giants strategy (`docs/specs/nucleus_architecture_v4.1.md` §10). It signals "we don't compete with Databricks; we hand off to it cleanly," which is exactly the founder-honest framing.
 2. **Names the project for brand recall.** Unlike B-series and C-series, the project name "Nucleus" is in the title. HN front-page traffic that doesn't click still helps brand awareness.
-3. **Specifies the scope of competition.** "Local-first" tells the reader the persona (5–20 engineer teams on laptops, per `nucleus_architecture_v4.1.md` §1.5) and the deployment model (laptop, not cluster).
+3. **Specifies the scope of competition.** "Local-first" tells the reader the persona (5–20 engineer teams on laptops, per `docs/specs/nucleus_architecture_v4.1.md` §1.5) and the deployment model (laptop, not cluster).
 4. **Mod-risk is minimal.** No banned framing. "Graduates to" is neutral and architecturally precise.
 5. **Pairs with the strongest first comment.** The existing first-comment draft in `docs/release/launch_kit/hn_post.md` opens with "Founder here. Three things I want to be upfront about because HN deserves it" — the title sets up the post body's honesty cleanly.
 

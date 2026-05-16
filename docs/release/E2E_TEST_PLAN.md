@@ -3,7 +3,7 @@
 > **Status**: DRAFT — created by release-planner builder 2026-05-15  
 > **Version target**: v0.2.0  
 > **Owner**: Release planner (foreground reconciles after Wave-1 returns)  
-> **References**: `nucleus_architecture_v4.1.md` §1.5 (beachhead metric), `nucleus_cli_spec.md` §3–§8, `nucleus_ctx_sdk_spec.md` §2–§12, `AGENTS.md` §11.8
+> **References**: `docs/specs/nucleus_architecture_v4.1.md` §1.5 (beachhead metric), `docs/specs/nucleus_cli_spec.md` §3–§8, `docs/specs/nucleus_ctx_sdk_spec.md` §2–§12, `AGENTS.md` §11.8
 
 ---
 
@@ -16,7 +16,7 @@
 - ≥ 95% of Suite D, E, F, G, K scenarios PASS
 - ≥ 80% of Suite J chaos scenarios PASS (some require Docker infra)
 - Zero CRITICAL or HIGH severity findings (error-class leaks, exit-code violations, governance failures)
-- Cold boot (v0.1.0 baseline: **5.82s** WSL) remains < **10s** per `nucleus_cli_spec.md` §3.2; `nucleus --version` < **1.5s**; Suite K perf targets met
+- Cold boot (v0.1.0 baseline: **5.82s** WSL) remains < **10s** per `docs/specs/nucleus_cli_spec.md` §3.2; `nucleus --version` < **1.5s**; Suite K perf targets met
 
 **CI execution matrix**:
 
@@ -46,7 +46,7 @@
 **Acceptance**: elapsed < 1.5 s wall-clock (measured via `time` / `perf_counter`)  
 **Cleanup**: none  
 **Governance check**: no Dagster/DuckDB/Polars classnames in output  
-**Ref**: `nucleus_cli_spec.md` §3.7; v4.1 §11.2
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.7; v4.1 §11.2
 
 ### A2. `nucleus --help` — response time
 
@@ -63,7 +63,7 @@
 **Expected**: exits 0; creates `my_project/` with `nucleus_project.yaml`, `assets/__init__.py`, `assets/example.py`, `data/.gitkeep`, `.gitignore`, `README.md`  
 **Acceptance**: all 6 TEMPLATE_FILES present (per `beachhead_e2e.py:25`); `nucleus_project.yaml` valid YAML with `project.name`, `catalog`, `storage` keys  
 **Cleanup**: `rm -rf my_project`  
-**Ref**: `nucleus_cli_spec.md` §3.1; beachhead_e2e.py step 3
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.1; beachhead_e2e.py step 3
 
 ### A4. `nucleus init` — idempotency (existing directory)
 
@@ -72,7 +72,7 @@
 **Expected**: exits 1 with `NucleusIOError` (NE1005); user_message mentions "non-empty"; no files overwritten  
 **Acceptance**: second run does NOT destructively overwrite original files; exit 1  
 **Cleanup**: `rm -rf my_project`  
-**Ref**: `nucleus_cli_spec.md` §3.1 "Error exits"
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.1 "Error exits"
 
 ### A5. `nucleus up` — starts MinIO within 30 s
 
@@ -81,7 +81,7 @@
 **Expected**: exits 0; stdout contains `✓ MinIO ready`, `✓ Catalog ready`, `✓ Definitions loaded`; `Nucleus up in <N>s.`  
 **Acceptance**: N ≤ 10 s (cold); `docker ps` shows minio container; no Dagster classnames in output  
 **Cleanup**: `nucleus down`  
-**Ref**: `nucleus_cli_spec.md` §3.2; v4.1 §11.2 / §16.1
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.2; v4.1 §11.2 / §16.1
 
 ### A6. `nucleus down` — stops cleanly within 5 s
 
@@ -90,7 +90,7 @@
 **Expected**: exits 0; `Nucleus down. Volumes: preserved.`; no Docker container running  
 **Acceptance**: elapsed < 5 s; exit 0 even if already down (idempotent per spec §3.3)  
 **Cleanup**: none  
-**Ref**: `nucleus_cli_spec.md` §3.3
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.3
 
 ### A7. `nucleus up` → `nucleus down` → `nucleus up` — cycle stress
 
@@ -106,7 +106,7 @@
 **Steps**: `nucleus up` or `nucleus run`  
 **Expected**: exits 1 with `NucleusConfigError` or equivalent; user_message states which field is missing; fix_hint provided  
 **Acceptance**: exit 1; no Dagster classnames; YAML parse error surfaced cleanly  
-**Ref**: `nucleus_cli_spec.md` §7
+**Ref**: `docs/specs/nucleus_cli_spec.md` §7
 
 ### A9. `nucleus list` — enumerates registered assets
 
@@ -122,7 +122,7 @@
 **Steps**: `nucleus describe example.greeting`  
 **Expected**: exits 0; output includes asset key, schema (column names/types), last snapshot timestamp, lineage deps  
 **Acceptance**: all four sections present; no Dagster/Iceberg classnames in output  
-**Ref**: `nucleus_ctx_sdk_spec.md` §3.1 `ctx.asset`
+**Ref**: `docs/specs/nucleus_ctx_sdk_spec.md` §3.1 `ctx.asset`
 
 ---
 
@@ -134,7 +134,7 @@
 **Steps**: `nucleus run empty_test.zero_rows`  
 **Expected**: exit 0; `MaterializationResult` with `row_count=0`; Iceberg snapshot created in `.nucleus/`  
 **Acceptance**: `.nucleus/catalog.db` contains table entry; snapshot_id non-empty  
-**Ref**: `nucleus_ctx_sdk_spec.md` §5.1; `nucleus_architecture_v4.1.md` §6.2
+**Ref**: `docs/specs/nucleus_ctx_sdk_spec.md` §5.1; `docs/specs/nucleus_architecture_v4.1.md` §6.2
 
 ### B2. 1k-row asset materialize — snapshot, schema enforced
 
@@ -157,7 +157,7 @@
 **Steps**: `nucleus run --all`  
 **Expected**: materializes in order A → B → C; no `NucleusAssetNotMaterialized` errors  
 **Acceptance**: exit 0; three `MaterializationResult` records in correct order  
-**Ref**: `nucleus_ctx_sdk_spec.md` §4.2 (auto-dependency tracking)
+**Ref**: `docs/specs/nucleus_ctx_sdk_spec.md` §4.2 (auto-dependency tracking)
 
 ### B5. `nucleus run --dry-run` — resolves DAG, prints plan, NO writes
 
@@ -165,7 +165,7 @@
 **Steps**: `nucleus run --dry-run --all`  
 **Expected**: exit 0; prints execution plan (asset keys in topo order); ZERO Iceberg snapshots created  
 **Acceptance**: `.nucleus/` snapshot files unchanged after dry-run; output contains "dry-run" or "plan"  
-**Ref**: `nucleus_cli_spec.md` §3.4
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.4
 
 ### B6. `nucleus run --resume` — from failed checkpoint
 
@@ -181,15 +181,15 @@
 **Steps**: start `nucleus run slow_asset.compute` in background; immediately run same command in foreground  
 **Expected**: second invocation fails with `NucleusCommitConflictError` (NE1002) or queues; does NOT corrupt snapshot  
 **Acceptance**: exit 1 or 0 (queue); no partial snapshot; atomicity preserved  
-**Ref**: `nucleus_architecture_v4.1.md` §6.2 step 3 (atomic commit)
+**Ref**: `docs/specs/nucleus_architecture_v4.1.md` §6.2 step 3 (atomic commit)
 
 ### B8. Schema-contract violation — clean NE2006
 
 **Setup**: asset with `@nucleus.contract` requiring `amount > 0`; asset body returns rows with negative amounts  
 **Steps**: `nucleus run contract_test.orders_with_negatives`  
-**Expected**: exit 5 (schema/contract per `nucleus_cli_spec.md` §8); `NucleusCheckExecutionError` (NE3007 per AGENTS.md cleanup); user_message describes which check failed; no partial write  
+**Expected**: exit 5 (schema/contract per `docs/specs/nucleus_cli_spec.md` §8); `NucleusCheckExecutionError` (NE3007 per AGENTS.md cleanup); user_message describes which check failed; no partial write  
 **Acceptance**: no Iceberg snapshot committed; exit code = 5  
-**Ref**: `nucleus_ctx_sdk_spec.md` §2.4 `@nucleus.check`; `nucleus_cli_spec.md` §8
+**Ref**: `docs/specs/nucleus_ctx_sdk_spec.md` §2.4 `@nucleus.check`; `docs/specs/nucleus_cli_spec.md` §8
 
 ---
 
@@ -201,7 +201,7 @@
 **Steps**: `nucleus query "SELECT 1 AS one"`  
 **Expected**: exit 0; output contains `1` row with value `1`  
 **Acceptance**: exit 0; no Dagster/DuckDB classnames in output  
-**Ref**: `nucleus_cli_spec.md` §3.6; `nucleus_ctx_sdk_spec.md` §6.1
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.6; `docs/specs/nucleus_ctx_sdk_spec.md` §6.1
 
 ### C2. `nucleus query` — against materialized asset
 
@@ -216,7 +216,7 @@
 **Steps**: `nucleus query --format csv "SELECT id, name FROM raw.users"`  
 **Expected**: exit 0; stdout is valid CSV (header row + data rows); color/Rich suppressed  
 **Acceptance**: CSV parseable; column names match schema  
-**Ref**: `nucleus_cli_spec.md` §5.2
+**Ref**: `docs/specs/nucleus_cli_spec.md` §5.2
 
 ### C4. `nucleus query --format parquet path.parquet` — exports to file
 
@@ -231,7 +231,7 @@
 **Steps**: `nucleus query "SELECT * FROM {{ ref('raw.users'); DROP TABLE raw.users; --') }}"`  
 **Expected**: exit 1 with `NucleusSQLSyntaxError` (NE2002); `raw.users` table unaffected  
 **Acceptance**: Jinja renderer rejects the malformed ref call; exit 1; no data loss  
-**Ref**: `nucleus_cli_spec.md` §3.6; `nucleus_ctx_sdk_spec.md` §6.1
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.6; `docs/specs/nucleus_ctx_sdk_spec.md` §6.1
 
 ### C6. Large result set — 1M rows streamed without OOM
 
@@ -251,7 +251,7 @@
 **Steps**: `nucleus ingest postgres://test:test@localhost:5432/testdb --table public.users --as raw.users --mode overwrite`  
 **Expected**: exit 0; Iceberg snapshot with 1,000 rows; 10-row preview printed  
 **Acceptance**: `nucleus query "SELECT count(*) FROM raw.users"` = 1000  
-**Ref**: `nucleus_cli_spec.md` §3.5; `docs/recipes/postgres_to_iceberg.md`
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.5; `docs/recipes/postgres_to_iceberg.md`
 
 ### D2. Postgres — bad credentials → clean NE2003 + fix_hint
 
@@ -259,13 +259,13 @@
 **Steps**: `nucleus ingest postgres://bad:creds@localhost:5432/db --table users --as raw.users`  
 **Expected**: exit 1; `NucleusSourceConnectionError` (NE1001); user_message mentions connection failed; fix_hint suggests checking host/credentials; NO stack trace in default mode  
 **Acceptance**: exit 1; fix_hint present; no "sqlalchemy" or "psycopg" in output  
-**Ref**: ADR-006 H1+H17; `nucleus_cli_spec.md` §5.4
+**Ref**: ADR-006 H1+H17; `docs/specs/nucleus_cli_spec.md` §5.4
 
 ### D3. Postgres — unreachable host → clean NE1001
 
 **Setup**: host address that doesn't resolve  
 **Steps**: `nucleus ingest postgres://user:pass@10.255.255.255:5432/db --table t --as raw.t`  
-**Expected**: exit 4 (network error per `nucleus_cli_spec.md` §8); `NucleusSourceConnectionError` NE1001; fix_hint with timeout suggestion  
+**Expected**: exit 4 (network error per `docs/specs/nucleus_cli_spec.md` §8); `NucleusSourceConnectionError` NE1001; fix_hint with timeout suggestion  
 **Acceptance**: exit 4; no raw Python traceback; user_message actionable
 
 ### D4. MySQL → Iceberg — happy path
@@ -295,7 +295,7 @@
 **Setup**: local CSV file with 100 rows  
 **Steps**: `nucleus ingest ./test_data/users.csv --as raw.csv_users`  
 **Expected**: exit 0; 100 rows in snapshot; schema inferred from CSV header  
-**Ref**: `nucleus_cli_spec.md` §3.5 "Sources (v0.1)"
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.5 "Sources (v0.1)"
 
 ### D8. Filesystem glob → Iceberg — mixed schema → NE2004
 
@@ -303,7 +303,7 @@
 **Steps**: `nucleus ingest "./test_data/*.csv" --as raw.mixed`  
 **Expected**: exit 5 (`NucleusSchemaError` NE2001 or `NucleusSchemaEvolutionError` NE2004); user_message describes conflicting schemas  
 **Acceptance**: exit 5; no partial Iceberg write  
-**Ref**: `nucleus_architecture_v4.1.md` §6.2 step 1 (validate)
+**Ref**: `docs/specs/nucleus_architecture_v4.1.md` §6.2 step 1 (validate)
 
 ### D9. Snowflake → Iceberg — mocked
 
@@ -330,7 +330,7 @@
 **Steps**: `nucleus schedule list`  
 **Expected**: exit 0; table showing asset key, cron expression, next run time (UTC)  
 **Acceptance**: at minimum one row; cron format valid per croniter  
-**Ref**: `nucleus_cli_spec.md` §3.9; ADR-017
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.9; ADR-017
 
 ### E2. `nucleus schedule preview <asset>` — shows next 5 runs
 
@@ -338,7 +338,7 @@
 **Steps**: `nucleus schedule preview my_asset.daily_orders --count 5`  
 **Expected**: exit 0; 5 future datetimes listed, all at 02:00 UTC, consecutive days  
 **Acceptance**: datetimes are monotonically increasing; no Dagster daemon required for preview  
-**Ref**: `nucleus_cli_spec.md` §3.9 (croniter-based, no daemon)
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.9 (croniter-based, no daemon)
 
 ### E3. Sub-second cron expression — rejected at decoration time
 
@@ -346,7 +346,7 @@
 **Steps**: `python -c "import nucleus; @nucleus.asset(table='t', schedule='* * * * * *') def t(ctx): pass"`  
 **Expected**: `NucleusScheduleParseError` (NE5005) raised on import; clear message  
 **Acceptance**: fails at decoration (import time), not at runtime  
-**Ref**: `nucleus_ctx_sdk_spec.md` §2.1 `schedule=` kwarg; ADR-017
+**Ref**: `docs/specs/nucleus_ctx_sdk_spec.md` §2.1 `schedule=` kwarg; ADR-017
 
 ### E4. DST transition — Spring-forward handled correctly
 
@@ -436,7 +436,7 @@
 **Steps**: `nucleus chat "What assets exist in this project?"`  
 **Expected**: exit 0 OR exit 1 with `NucleusCopilotAuthError` (NE4001) — both acceptable if real key needed  
 **Acceptance**: no raw `litellm.` or `anthropic.` classnames in output; fix_hint present on auth failure  
-**Ref**: `nucleus_cli_spec.md` §3.8; ADR-015
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.8; ADR-015
 
 ### G2. Token budget guardrail — prevents runaway
 
@@ -444,7 +444,7 @@
 **Steps**: send an extremely long prompt via `nucleus chat`  
 **Expected**: exit 1 with `NucleusBudgetExceededError` (NE4005); clear message about budget  
 **Acceptance**: exit 1; NE4005 in output; no actual LLM call made beyond budget  
-**Ref**: `nucleus_cli_spec.md` §3.8; `src/nucleus/intelligence/copilot.py`
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.8; `src/nucleus/intelligence/copilot.py`
 
 ### G3. Schema-aware prompt — includes project assets
 
@@ -452,7 +452,7 @@
 **Steps**: `nucleus chat "How do I query daily revenue?"` (with LLM mock that echos prompt)  
 **Expected**: prompt sent to LLM includes asset list from `ctx.gather_context()` or equivalent  
 **Acceptance**: asset keys visible in captured prompt; no absolute filesystem paths exposed  
-**Ref**: `src/nucleus/intelligence/context.py`; `nucleus_cli_spec.md` §3.8
+**Ref**: `src/nucleus/intelligence/context.py`; `docs/specs/nucleus_cli_spec.md` §3.8
 
 ### G4. Fix-hint banner — missing API key
 
@@ -480,7 +480,7 @@
 **Steps**: `python scripts/dagster_leak_check.py`  
 **Expected**: EXIT 0; 0 leaks in 3 scanned roots  
 **Acceptance**: `dagster.`, `duckdb.`, `polars.`, `pyiceberg.`, `OpExecutionContext`, `DagsterInstance`, `DuckDBPyConnection` absent from all user-facing strings  
-**Ref**: `AGENTS.md` §11.7; `nucleus_cli_spec.md` §5.4
+**Ref**: `AGENTS.md` §11.7; `docs/specs/nucleus_cli_spec.md` §5.4
 
 ### H3. Stack traces hidden by default; `--verbose` reveals
 
@@ -488,15 +488,15 @@
 **Steps**: run without flags; run with `--verbose`  
 **Expected**: without `--verbose`, no Python traceback in stderr; with `--verbose`, `NucleusError.cause` class + stack printed  
 **Acceptance**: `Traceback` string absent in default mode; present in verbose mode  
-**Ref**: `nucleus_cli_spec.md` §6 (`--verbose` flag)
+**Ref**: `docs/specs/nucleus_cli_spec.md` §6 (`--verbose` flag)
 
 ### H4. Exit codes consistent (0/1/2/3/4/5/130)
 
 **Setup**: trigger each exit code scenario  
 **Steps**: collect exit codes from each CLI command variant  
-**Expected**: all 7 exit codes (0, 1, 2, 3, 4, 5, 130) behave per `nucleus_cli_spec.md` §8 table  
+**Expected**: all 7 exit codes (0, 1, 2, 3, 4, 5, 130) behave per `docs/specs/nucleus_cli_spec.md` §8 table  
 **Acceptance**: 0=success; 1=NucleusError; 2=usage error; 3=Docker unavailable; 4=network; 5=schema; 130=Ctrl-C  
-**Ref**: `nucleus_cli_spec.md` §8; `tests/cli/test_main.py` exit code matrix
+**Ref**: `docs/specs/nucleus_cli_spec.md` §8; `tests/cli/test_main.py` exit code matrix
 
 ### H5. `nucleus describe <typo>` — "Did you mean…?" suggestion
 
@@ -504,7 +504,7 @@
 **Steps**: `nucleus describe example.greetnig` (typo)  
 **Expected**: exit 1; `NucleusAssetNotFound` (NE3002); user_message includes "Did you mean 'example.greeting'?"  
 **Acceptance**: difflib/fuzzy suggestion present in user_message  
-**Ref**: `coordination/sql_resolver.py` "did you mean" logic; `nucleus_ctx_sdk_spec.md` §4.1 unknown asset
+**Ref**: `coordination/sql_resolver.py` "did you mean" logic; `docs/specs/nucleus_ctx_sdk_spec.md` §4.1 unknown asset
 
 ### H6. `--quiet` mode — suppresses non-error output
 
@@ -512,7 +512,7 @@
 **Steps**: `nucleus version --quiet`; `nucleus run example.greeting --quiet`  
 **Expected**: stdout empty on success; stderr shows errors only  
 **Acceptance**: no progress bars, no checkmarks, no status messages in stdout; exit code is the sole signal  
-**Ref**: `nucleus_cli_spec.md` §5.3; `nucleus_cli_spec.md` §6 (`--quiet` flag)
+**Ref**: `docs/specs/nucleus_cli_spec.md` §5.3; `docs/specs/nucleus_cli_spec.md` §6 (`--quiet` flag)
 
 ---
 
@@ -573,7 +573,7 @@
 **Steps**: `python scripts/check_vocabulary.py`  
 **Expected**: EXIT 0; 0 occurrences of banned terms (table, job, task, pipeline output, catalog/metastore, etc.) in user-facing strings <!-- banned-term: metastore -->  
 **Acceptance**: 6 terms watched; 0 violations  
-**Ref**: `AGENTS.md` §7; `nucleus_cli_spec.md` §12
+**Ref**: `AGENTS.md` §7; `docs/specs/nucleus_cli_spec.md` §12
 
 ### I7. Layering check — no cross-layer imports
 
@@ -611,7 +611,7 @@
 **Steps**: start run; send SIGKILL after 1 s; verify snapshot state  
 **Expected**: snapshot either fully committed OR fully absent (no partial state)  
 **Acceptance**: `pyiceberg` catalog shows either the old snapshot OR the new one; never a partial write  
-**Ref**: Iceberg atomic commit guarantee; `nucleus_architecture_v4.1.md` §6.2 step 3
+**Ref**: Iceberg atomic commit guarantee; `docs/specs/nucleus_architecture_v4.1.md` §6.2 step 3
 
 ### J3. MinIO down during materialize → retries + NE-coded final error
 
@@ -632,7 +632,7 @@
 **Setup**: asset with strict schema contract; source updated to add incompatible column type  
 **Steps**: `nucleus run schema_test.strict_asset` after source schema change  
 **Expected**: exit 5; `NucleusSchemaEvolutionError` (NE2004); user_message describes the incompatible field; no partial write  
-**Ref**: `docs/patterns/schema_evolution.md`; `nucleus_ctx_sdk_spec.md` §2.5
+**Ref**: `docs/patterns/schema_evolution.md`; `docs/specs/nucleus_ctx_sdk_spec.md` §2.5
 
 ### J6. Concurrent run race — lock or fail-fast
 
@@ -640,7 +640,7 @@
 **Steps**: launch two concurrent `nucleus run` invocations in parallel  
 **Expected**: exactly one succeeds (exit 0); other exits 1 with `NucleusCommitConflictError` (NE1002) OR one is queued and both eventually succeed  
 **Acceptance**: no data corruption; no `row_count` inflation  
-**Ref**: `nucleus_architecture_v4.1.md` §6.2 step 3
+**Ref**: `docs/specs/nucleus_architecture_v4.1.md` §6.2 step 3
 
 ### J7. Catalog corruption → recoverable
 
@@ -666,7 +666,7 @@
 **Steps**: time 5 consecutive `nucleus version` calls; record all; use P95  
 **Expected**: P95 < 1.5 s  
 **Acceptance**: measured baseline on 2026-05-14 was 5.82 s for `nucleus up` cold; `nucleus version` (import-only) should be faster  
-**Ref**: `nucleus_cli_spec.md` §3.7
+**Ref**: `docs/specs/nucleus_cli_spec.md` §3.7
 
 ### K2. `nucleus list` — < 2 s for 100 assets
 

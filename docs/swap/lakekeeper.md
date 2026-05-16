@@ -1,6 +1,6 @@
 # Swap target: Lakekeeper → Apache Polaris (catalog co-default flip)
 
-> **Tier**: 1 per `nucleus_architecture_v4.1.md` §3, §9.2 (Catalog).
+> **Tier**: 1 per `docs/specs/nucleus_architecture_v4.1.md` §3, §9.2 (Catalog).
 > **Current**: Lakekeeper server `0.12.2` (Apache-2.0 Rust binary). Wrapped via `pyiceberg.RestCatalog`. v0.1 ships filesystem `SqlCatalog`; v0.3+ co-defaults Lakekeeper + Polaris per v4.1 §5.7 + ADR-002 §6. Not a Python dep — external service.
 > **Swap target**: Apache Polaris (ASF top-level project 2026-02-18; Apache-2.0). Java + Quarkus. **No JVM-free guarantee** — accepted per ADR-002 §6 as the price of ASF-governance + multi-vendor signal.
 > **Doc status**: INTERFACE-ONLY. Data plane is already a config-flip; full management-plane adapter on-demand per v4.1 §9.3.

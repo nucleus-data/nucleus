@@ -1,7 +1,7 @@
 """FastAPI application factory for the Workbench API.
 
 Per ``docs/decisions/ADR-016-workbench-mvp.md`` Fork B (React SPA + FastAPI).
-``nucleus_architecture_v4.1.md`` §8.1 — Layer 4 Experience.
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 — Layer 4 Experience.
 
 Routes:
     /api/health            — health check (always available)

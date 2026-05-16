@@ -4,7 +4,7 @@ project:
   generated_at: "2026-05-15"
 
 # Local catalog — SQLite-backed Iceberg via PyIceberg's SqlCatalog.
-# Surfaced as `filesystem` to users per nucleus_cli_spec.md §10 NV #5.
+# Surfaced as `filesystem` to users per docs/specs/nucleus_cli_spec.md §10 NV #5.
 catalog:
   type: filesystem
   path: ./.nucleus/catalog.db

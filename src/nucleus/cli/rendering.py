@@ -1,10 +1,10 @@
 """CLI output rendering helpers — text / NDJSON / CSV.
 
-Per ``nucleus_cli_spec.md`` §5 (output format contract). Public functions
+Per ``docs/specs/nucleus_cli_spec.md`` §5 (output format contract). Public functions
 accept an optional ``console`` so tests can capture output via
 ``rich.console.Console(record=True)`` without monkey-patching stdout.
 
-Per ``nucleus_architecture_v4.1.md`` §6.4 + AGENTS.md §11.7: zero
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.4 + AGENTS.md §11.7: zero
 external classnames (``dagster.``, ``duckdb.``, ``polars.``,
 ``pyiceberg.``) appear here. Plain English column headers only.
 
@@ -178,7 +178,7 @@ def render_asset_list(
 ) -> None:
     """Render registered asset keys for ``nucleus list``.
 
-    Per ``nucleus_cli_spec.md`` §3 list section + poc5-blocker-list-discoverability.
+    Per ``docs/specs/nucleus_cli_spec.md`` §3 list section + poc5-blocker-list-discoverability.
     Each row shows the asset key and its namespace (left of the ``.``).
     Empty registry prints a hint directing users to ``nucleus init``.
     """
@@ -212,7 +212,7 @@ def render_schedule_list(
     Shows: asset key, cron expression, and the next scheduled run (UTC).
     An empty table is rendered with a hint when no assets have schedules.
 
-    Per ADR-017 §3 + ``nucleus_cli_spec.md`` §3 schedule section.
+    Per ADR-017 §3 + ``docs/specs/nucleus_cli_spec.md`` §3 schedule section.
     """
     from nucleus.coordination.schedules import preview_schedule
     from nucleus.errors import NucleusError

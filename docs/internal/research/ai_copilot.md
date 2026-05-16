@@ -1,7 +1,7 @@
 # AI Copilot — Research Notes (v0.2 MVP Design)
 
 > **Pin candidate**: `litellm==1.83.14` (released 2026-04, verified on PyPI 2026-05-13) — single new runtime dep wrapping 100+ provider APIs in OpenAI Chat-Completions shape.  •  **License**: MIT (LiteLLM); MIT (Anthropic SDK 0.101.0); Apache-2.0 (OpenAI SDK 2.36.0); MIT (Ollama 0.6.2).  •  **JVM-free**: YES — all pure Python.
-> **Status in Nucleus**: **v0.2 Intelligence Layer 5** per `nucleus_architecture_v4.1.md` §7.2 (4-week chat MVP). Not in v0.1. v0.5+ adds the `ctx.agent` runtime + lineage-aware Copilot (§7.3, §7.4).
+> **Status in Nucleus**: **v0.2 Intelligence Layer 5** per `docs/specs/nucleus_architecture_v4.1.md` §7.2 (4-week chat MVP). Not in v0.1. v0.5+ adds the `ctx.agent` runtime + lineage-aware Copilot (§7.3, §7.4).
 > **Research date**: 2026-05-13 — verified against AI training cutoff caveat per AGENTS.md §11.12.
 > **Used in (planned)**: `src/nucleus/intelligence/copilot.py` — the only module that imports `litellm`; `cli/commands/chat.py` (v0.2) calls `copilot.chat(question)` and prints.
 
@@ -11,7 +11,7 @@ Official-docs anchor per AGENTS.md Hard Constraint #10. Read before opening the 
 
 ## §1. What "AI Copilot" means for Nucleus
 
-Per `nucleus_architecture_v4.1.md` §7 + Forbidden Mental Models in `.cursor/rules/nucleus.mdc`: Nucleus is **AI-assisted**, not the banned framings. We **use** models; we do **not** host, train, or run agent frameworks (Hard Constraint #7). The v0.2 Copilot is a thin wrapper around (a) an LLM HTTP client and (b) auto-injected project context — no more. It is a CLI feature, not a product headline.
+Per `docs/specs/nucleus_architecture_v4.1.md` §7 + Forbidden Mental Models in `.cursor/rules/nucleus.mdc`: Nucleus is **AI-assisted**, not the banned framings. We **use** models; we do **not** host, train, or run agent frameworks (Hard Constraint #7). The v0.2 Copilot is a thin wrapper around (a) an LLM HTTP client and (b) auto-injected project context — no more. It is a CLI feature, not a product headline.
 
 Concretely: zero multi-step autonomous loops, zero tool-calls, zero RAG framework, zero vector store, zero memory beyond what each invocation injects. Single round-trip. Inline context. This is the Anti-Over-Engineering ceiling for v0.2 (`.cursor/rules/nucleus.mdc` §Anti-Over-Engineering: *"no speculative code … if there is no v0.1 caller today, the code is not added today"*).
 
@@ -285,7 +285,7 @@ Tier classification (per ADR-007 + Constraint #9): **Tier 2 — Intelligence eng
 | Research + ADR (this doc + ADR-015) | 1 day | Researcher |
 | `intelligence/copilot.py` + `cli/commands/chat.py` wire-up + mocked tests | ~1 week | Builder tier |
 | Prompt tuning + privacy review (opt-in flow, redaction edge cases) + cost-ceiling unit tests | ~1 week | Swarm tier |
-| `docs/swap/litellm.md` + `docs/internal/research/ai_hallucinations.md` audit + `nucleus_cli_spec.md` amendment (chat = 8th command) + ADR-006 NE4xxx allocation + README + SETUP changes | ~0.5 week | Swarm tier |
+| `docs/swap/litellm.md` + `docs/internal/research/ai_hallucinations.md` audit + `docs/specs/nucleus_cli_spec.md` amendment (chat = 8th command) + ADR-006 NE4xxx allocation + README + SETUP changes | ~0.5 week | Swarm tier |
 | **Total** | **~2.5-3 weeks at max velocity** | mixed |
 
 Architecture v4.1 §7.2 says "4 weeks" — that number assumes Workbench integration. CLI-only de-scopes 1+ week of Workbench wiring (no Monaco editor, no streaming SSE plumbing, no auth proxy). Open question §14 #1 below.
@@ -348,7 +348,7 @@ All docs URLs cited in this report (one place, for upgrade-PR drift checks).
 
 **LangChain (for comparison; NOT used)**: <https://python.langchain.com/docs/get_started/introduction> · <https://github.com/langchain-ai/langchain>
 
-**Nucleus internal**: `nucleus_architecture_v4.1.md` §7.2-§7.6 + §8.1 + §11 + §20.1 · `AGENTS.md` §3 (Hard Constraints) + §7 (vocabulary) + §8 (forbidden framings) + §9 (stop conditions row 9) + §11.4 + §11.12 · `.cursor/rules/nucleus.mdc` §"Forbidden Framings" + §Anti-Over-Engineering · ADR-002 (positioning) · ADR-005 (tier ladder) · ADR-006 (NE-codes) · ADR-007 (license tiers) · ADR-011 (telemetry opt-in — privacy mirror)
+**Nucleus internal**: `docs/specs/nucleus_architecture_v4.1.md` §7.2-§7.6 + §8.1 + §11 + §20.1 · `AGENTS.md` §3 (Hard Constraints) + §7 (vocabulary) + §8 (forbidden framings) + §9 (stop conditions row 9) + §11.4 + §11.12 · `.cursor/rules/nucleus.mdc` §"Forbidden Framings" + §Anti-Over-Engineering · ADR-002 (positioning) · ADR-005 (tier ladder) · ADR-006 (NE-codes) · ADR-007 (license tiers) · ADR-011 (telemetry opt-in — privacy mirror)
 
 ---
 

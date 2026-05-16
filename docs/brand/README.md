@@ -7,7 +7,7 @@
 
 5 wrapped open-source engines forming a single core + 1 offset wedge =
 swap interface + smoke tests. Per
-[`nucleus_architecture_v4.1.md` §9](../../nucleus_architecture_v4.1.md#9-composability-by-constitution)
+[`docs/specs/nucleus_architecture_v4.1.md` §9](../specs/nucleus_architecture_v4.1.md#9-composability-by-constitution)
 (Composability Law #1).
 
 ## Variant hierarchy

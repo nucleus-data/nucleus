@@ -4,7 +4,7 @@
 > **Scope**: How a Dagster failure becomes a NucleusError visible to the user
 > **Audience**: Anyone touching `coordination/error_translation.py`
 > **Status (2026-05-13)**: PoC #1 translator landed in [`../../poc/p1_error_translation/translator.py`](../../poc/p1_error_translation/translator.py) — 17 typed handlers, two-pass match in `translate()`, and a `_iter_causes` walker that traverses both `__cause__` and `__context__`. Promotion to `src/nucleus/coordination/error_translation.py` pending founder review — see [`../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md`](../../poc/p1_error_translation/PROMOTION_PR_DRAFT.md). Tests: 21/22 green.
-> **Companion**: [`C4_container.md`](C4_container.md), [`sequence_asset_materialization.md`](sequence_asset_materialization.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.4 (canonical spec), [`../../AGENTS.md`](../../AGENTS.md) §11.7 (enforcement discipline).
+> **Companion**: [`C4_container.md`](C4_container.md), [`sequence_asset_materialization.md`](sequence_asset_materialization.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.4 (canonical spec), [`../../AGENTS.md`](../../AGENTS.md) §11.7 (enforcement discipline).
 
 This is the **most important sequence in the whole platform**. If a Dagster error ever leaks past `ctx`, our entire abstraction has failed — we're "Dagster with extra steps". This document defines the contract.
 

@@ -5,7 +5,7 @@
 > **Decider(s)**: Solo founder (close-out batch builder, v0.2.0).
 > **Tags**: layering, governance, ci, layer-4-experience, v0.2-close-out
 > **Supersedes**: (none — first ADR scoping intra-Experience-layer imports)
-> **Related**: `nucleus_architecture_v4.1.md` §8.1 (Layer 4 Experience surface matrix) · §6 (layered model); ADR-016 (Workbench MVP — Fork B); ADR-018 (`nucleus dagit` escape hatch); ADR-039 (install-size split — `[workbench]` extras carve-out); `docs/conventions/engineering.md` §3.1 (layers depend down, never up); `scripts/check_layering.py` (CI enforcement); `AGENTS.md` §11.5 (Wrap-vs-build ADR template) · `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND.
+> **Related**: `docs/specs/nucleus_architecture_v4.1.md` §8.1 (Layer 4 Experience surface matrix) · §6 (layered model); ADR-016 (Workbench MVP — Fork B); ADR-018 (`nucleus dagit` escape hatch); ADR-039 (install-size split — `[workbench]` extras carve-out); `docs/conventions/engineering.md` §3.1 (layers depend down, never up); `scripts/check_layering.py` (CI enforcement); `AGENTS.md` §11.5 (Wrap-vs-build ADR template) · `.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND.
 
 ---
 
@@ -27,14 +27,14 @@ src/nucleus/cli/main.py:1334
 
 This violation was a pre-existing FAIL in the v0.2.0 mega-batch builder report. The import itself is intentional and correct: `nucleus.cli.main` registers the Workbench Typer sub-app via `app.add_typer(_workbench_app, name="workbench", ...)` per ADR-016. Removing it would break `nucleus workbench up`, the primary v0.2 GUI entrypoint.
 
-Per `nucleus_architecture_v4.1.md` §8.1 ("Layer 4: Experience — Surfaces by Release"), the architecture explicitly classifies **all of `ctx`, `cli`, and `workbench` as Layer 4 (Experience) surfaces** — not stacked sub-layers. They are siblings, like `dbt` CLI and `dbt` IDE, or `git` CLI and `gitk` GUI. Composing one Experience surface from another (CLI registering the GUI sub-command) is normal and architecturally healthy.
+Per `docs/specs/nucleus_architecture_v4.1.md` §8.1 ("Layer 4: Experience — Surfaces by Release"), the architecture explicitly classifies **all of `ctx`, `cli`, and `workbench` as Layer 4 (Experience) surfaces** — not stacked sub-layers. They are siblings, like `dbt` CLI and `dbt` IDE, or `git` CLI and `gitk` GUI. Composing one Experience surface from another (CLI registering the GUI sub-command) is normal and architecturally healthy.
 
 ### Forces
 
 - **Force A — Strict directional rule.** The original `LAYERS.index(...)` comparison gave one canonical order, easy to read and easy to enforce. Adding peer-layer semantics complicates the model.
 - **Force B — Architecture intent.** v4.1 §8.1 explicitly lists multiple L4 surfaces. Imports between same-depth surfaces are not "upward" in the architectural sense; they are composition of peers.
 - **Force C — Anti-over-engineering.** The minimal correct fix is preferred (`.cursor/rules/nucleus.mdc` Anti-Over-Engineering BIND). A heavier "plugin entrypoint" pattern (Path C in the close-out brief) was considered but rejected as speculative.
-- **Force D — Reproduction of `dbt`/`Cursor`/`Vercel` UX.** Per `nucleus_architecture_v4.1.md` §8.3, we deliberately copy UX patterns where one tool exposes both CLI and GUI surfaces under one binary. The CLI must be allowed to register the GUI sub-command directly.
+- **Force D — Reproduction of `dbt`/`Cursor`/`Vercel` UX.** Per `docs/specs/nucleus_architecture_v4.1.md` §8.3, we deliberately copy UX patterns where one tool exposes both CLI and GUI surfaces under one binary. The CLI must be allowed to register the GUI sub-command directly.
 
 ---
 
@@ -50,7 +50,7 @@ This ADR is a governance / CI rule change, not a wrap-vs-build call, but for com
 
 ## Decision
 
-> **Layer membership is now keyed by `LAYER_DEPTH: dict[str, int]` rather than `LAYERS.index(...)`. Layers at the same depth are peers and may import freely from each other. `ctx`, `cli`, and `workbench` all have depth `4` — Layer 4 (Experience) per `nucleus_architecture_v4.1.md` §8.1. Any import between two Layer-4 surfaces is therefore allowed.**
+> **Layer membership is now keyed by `LAYER_DEPTH: dict[str, int]` rather than `LAYERS.index(...)`. Layers at the same depth are peers and may import freely from each other. `ctx`, `cli`, and `workbench` all have depth `4` — Layer 4 (Experience) per `docs/specs/nucleus_architecture_v4.1.md` §8.1. Any import between two Layer-4 surfaces is therefore allowed.**
 
 Concretely, in `scripts/check_layering.py`:
 
@@ -127,7 +127,7 @@ In practice we expect `cli → workbench` and `workbench → ctx` to be the acti
 
 ## References
 
-- `nucleus_architecture_v4.1.md` §8.1 (Layer 4 Experience — Surfaces by Release table) · §8.2 (Design Principles — "progressive disclosure") · §8.3 (UX patterns borrowed from dbt / Dagster / Cursor / Vercel / Supabase / Linear / Marimo).
+- `docs/specs/nucleus_architecture_v4.1.md` §8.1 (Layer 4 Experience — Surfaces by Release table) · §8.2 (Design Principles — "progressive disclosure") · §8.3 (UX patterns borrowed from dbt / Dagster / Cursor / Vercel / Supabase / Linear / Marimo).
 - `docs/conventions/engineering.md` §3.1 (Layers depend down, never up) · §3.2 (No cross-engine imports) · §2.4 (Package boundaries).
 - `scripts/check_layering.py` (the CI enforcement; this ADR's primary code change).
 - ADR-016 (Workbench MVP — Fork B; defines `src/nucleus/cli/commands/workbench.py` and the `app.add_typer(...)` registration site).

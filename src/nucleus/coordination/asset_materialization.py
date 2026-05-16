@@ -1,6 +1,6 @@
 """Asset Materialization Adapter (AMA) — data-path owner (L2).
 
-Per ``nucleus_architecture_v4.1.md`` §6.2 (Asset Materialization Adapter,
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.2 (Asset Materialization Adapter,
 the runtime this module owns) + §6.3 (Coordination layer rules) + §6.4
 (Error Translation discipline). Implements the contract that
 ``docs/decisions/ADR-013-ctx-materialize-api.md`` §1 promises end-users

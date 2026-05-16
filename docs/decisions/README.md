@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADRs)
 
-Per AGENTS.md §11.5, every "build" decision and every architectural amendment to `nucleus_architecture_v4.1.md` lands here as an ADR. Statuses: PROPOSED, ACCEPTED, SUPERSEDED, REJECTED. Cite ADRs by number (e.g., "per ADR-003") in code comments and PR descriptions.
+Per AGENTS.md §11.5, every "build" decision and every architectural amendment to `docs/specs/nucleus_architecture_v4.1.md` lands here as an ADR. Statuses: PROPOSED, ACCEPTED, SUPERSEDED, REJECTED. Cite ADRs by number (e.g., "per ADR-003") in code comments and PR descriptions.
 
 ---
 
@@ -76,11 +76,11 @@ Per AGENTS.md §11.5, every "build" decision and every architectural amendment t
 - **Numbers are immortal** — never re-used; superseded ADRs keep their number with status `SUPERSEDED` and a `Supersedes:` / `Superseded by:` cross-link.
 - **One decision per ADR.** Multi-decision PRs split into multiple ADRs.
 - **PROPOSED → ACCEPTED gate**: founder review only. AI agents may draft, never accept.
-- **Architectural changes** to `nucleus_architecture_v4.1.md` MUST cite the amending ADR in the changelog.
+- **Architectural changes** to `docs/specs/nucleus_architecture_v4.1.md` MUST cite the amending ADR in the changelog.
 - **Build vs. wrap** (AGENTS.md §11.5): every "build" ADR needs the OSS-options-considered grid filled in honestly.
 
 ---
 
-[← `nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) · [AGENTS.md §11.5](../../AGENTS.md) · [ADR template](./_template.md)
+[← `docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) · [AGENTS.md §11.5](../../AGENTS.md) · [ADR template](./_template.md)
 
 *Last updated 2026-05-13 (alignment sweep #3 — ADR-003 through ADR-013 ratified via founder blanket approval per FOUNDER_ACTION_QUEUE.md §0). Add new ADRs by appending to the master index and the matching topic group; do not renumber.*

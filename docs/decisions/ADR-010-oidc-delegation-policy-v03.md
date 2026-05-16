@@ -3,7 +3,7 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: oidc, auth, security, v0.3, delegation, constraint-6
-> **Related**: ADR-002 §6 (yield-to-giants), ADR-004 (catalog OIDC integration), ADR-006 (`NE5xxx` band reserved for `NucleusAuthProviderUnavailable`), ADR-007 (Authentik MIT GREEN, Keycloak Apache-2.0 GREEN, Okta + Entra ID = commercial SaaS), AGENTS.md §3 Hard Constraint #6, `nucleus_architecture_v4.1.md` §15.1, `docs/internal/research/oidc_providers.md` (Worker W, ~32 KB), `docs/security/threat_model_v0.md` §6 + §11.
+> **Related**: ADR-002 §6 (yield-to-giants), ADR-004 (catalog OIDC integration), ADR-006 (`NE5xxx` band reserved for `NucleusAuthProviderUnavailable`), ADR-007 (Authentik MIT GREEN, Keycloak Apache-2.0 GREEN, Okta + Entra ID = commercial SaaS), AGENTS.md §3 Hard Constraint #6, `docs/specs/nucleus_architecture_v4.1.md` §15.1, `docs/internal/research/oidc_providers.md` (Worker W, ~32 KB), `docs/security/threat_model_v0.md` §6 + §11.
 
 ## Context
 
@@ -69,7 +69,7 @@ Provider lock-in is not a meaningful risk here: OIDC is a *standard*; the unifor
 
 ## v0.1 stance
 
-**v0.1 has NO auth.** Single-user laptop. Authorization boundary = OS user account that owns `warehouse/`, `catalog.db`, `.dagster_home/`, `.env` (`threat_model_v0.md` §6). Deliberate per the 30-min beachhead metric (`nucleus_architecture_v4.1.md` §1.5) — adding +1 container + JWT plumbing breaks it. When v0.3 multi-user mode lights up via ADR-004, this ADR activates and the threat model graduates per `threat_model_v0.md` §11.
+**v0.1 has NO auth.** Single-user laptop. Authorization boundary = OS user account that owns `warehouse/`, `catalog.db`, `.dagster_home/`, `.env` (`threat_model_v0.md` §6). Deliberate per the 30-min beachhead metric (`docs/specs/nucleus_architecture_v4.1.md` §1.5) — adding +1 container + JWT plumbing breaks it. When v0.3 multi-user mode lights up via ADR-004, this ADR activates and the threat model graduates per `threat_model_v0.md` §11.
 
 ## Rollback
 

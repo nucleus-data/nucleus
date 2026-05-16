@@ -46,7 +46,7 @@ pytest tests\coordination\test_asset_materialization.py -v --no-cov  # MUST fail
 
 Each test cites the architecture section + the failure mode it guards (`# Guards v4.1 §6.4 — NucleusCommitConflictError translation`).
 
-**Step 3 — AI scaffolds the implementation** (~10 min, AI). Use the **Composer Prompt Template** from `.cursor/rules/nucleus.mdc`. Required `@`-references: `@AGENTS.md`, `@nucleus_architecture_v4.1.md`, the `@<spec_file>.md`, an `@<existing_pattern>.py`, the `@<test_file>.py`. Constraints: ≤ 500 LOC; **single file** unless an exception in `.cursor/rules/nucleus.mdc` "Single-File Discipline" applies.
+**Step 3 — AI scaffolds the implementation** (~10 min, AI). Use the **Composer Prompt Template** from `.cursor/rules/nucleus.mdc`. Required `@`-references: `@AGENTS.md`, `@docs/specs/nucleus_architecture_v4.1.md`, the `@<spec_file>.md`, an `@<existing_pattern>.py`, the `@<test_file>.py`. Constraints: ≤ 500 LOC; **single file** unless an exception in `.cursor/rules/nucleus.mdc` "Single-File Discipline" applies.
 
 **Step 4 — AI expands tests** (~15 min, AI). Edge cases + regressions; each test cites the failure mode it guards in a comment.
 
@@ -64,7 +64,7 @@ Each test cites the architecture section + the failure mode it guards (`# Guards
 
 ## §6. ADR workflow
 
-Triggers: wrap-vs-build "build" choice; swap-target choice (Constraint #9); public API change (`ctx.*` / `nucleus.cli.*`); abstraction boundary shift; major dep version upgrade (`X.y.z → X+1.y.z`, per `AGENTS.md §11.13`). Copy [`docs/decisions/_template.md`](docs/decisions/_template.md) → `docs/decisions/ADR-NNN-<title>.md` (sequential — model after [`ADR-001-no-iceberg-commit-service.md`](docs/decisions/ADR-001-no-iceberg-commit-service.md)). Status starts `Proposed`, transitions to `Accepted` or `Rejected` in the same PR. Cite the architecture section it touches; if the ADR refines architecture, link from `nucleus_architecture_v4.1.md` back to the ADR.
+Triggers: wrap-vs-build "build" choice; swap-target choice (Constraint #9); public API change (`ctx.*` / `nucleus.cli.*`); abstraction boundary shift; major dep version upgrade (`X.y.z → X+1.y.z`, per `AGENTS.md §11.13`). Copy [`docs/decisions/_template.md`](docs/decisions/_template.md) → `docs/decisions/ADR-NNN-<title>.md` (sequential — model after [`ADR-001-no-iceberg-commit-service.md`](docs/decisions/ADR-001-no-iceberg-commit-service.md)). Status starts `Proposed`, transitions to `Accepted` or `Rejected` in the same PR. Cite the architecture section it touches; if the ADR refines architecture, link from `docs/specs/nucleus_architecture_v4.1.md` back to the ADR.
 
 ## §7. Working with AI (rules for the human)
 
@@ -111,7 +111,7 @@ Rejected on sight:
 
 | Stuck on… | Where to look |
 |---|---|
-| Architecture | `nucleus_architecture_v4.1.md §1.5` (beachhead) + `AGENTS.md §12`. Apply the 8-question gate (`AGENTS.md §5`). |
+| Architecture | `docs/specs/nucleus_architecture_v4.1.md §1.5` (beachhead) + `AGENTS.md §12`. Apply the 8-question gate (`AGENTS.md §5`). |
 | Vocabulary | `engineering.md §15`, `AGENTS.md §7`. `python scripts\check_vocabulary.py` lists banned terms. |
 | Tooling / install | [`SETUP.md`](SETUP.md) §7 — common fixes for first-run issues. |
 | Pinning mismatch | `python scripts\check_pinning.py` + `SETUP.md §7`. Single-component upgrade workflow in `AGENTS.md §11.13`. |
@@ -120,7 +120,7 @@ Rejected on sight:
 
 ## §12. Useful links
 
-[`AGENTS.md`](AGENTS.md) · [`docs/conventions/engineering.md`](docs/conventions/engineering.md) · [`docs/onboarding/learning_path.md`](docs/onboarding/learning_path.md) · [`.cursor/rules/nucleus.mdc`](.cursor/rules/nucleus.mdc) · [`docs/compatibility.md`](docs/compatibility.md) · [`docs/decisions/`](docs/decisions/) · [`docs/security/threat_model_v0.md`](docs/security/threat_model_v0.md) · [`nucleus_architecture_v4.1.md`](nucleus_architecture_v4.1.md) · [`SETUP.md`](SETUP.md) · [`Makefile`](Makefile) (`make help`)
+[`AGENTS.md`](AGENTS.md) · [`docs/conventions/engineering.md`](docs/conventions/engineering.md) · [`docs/onboarding/learning_path.md`](docs/onboarding/learning_path.md) · [`.cursor/rules/nucleus.mdc`](.cursor/rules/nucleus.mdc) · [`docs/compatibility.md`](docs/compatibility.md) · [`docs/decisions/`](docs/decisions/) · [`docs/security/threat_model_v0.md`](docs/security/threat_model_v0.md) · [`docs/specs/nucleus_architecture_v4.1.md`](docs/specs/nucleus_architecture_v4.1.md) · [`SETUP.md`](SETUP.md) · [`Makefile`](Makefile) (`make help`)
 
 ---
 

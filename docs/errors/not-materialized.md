@@ -26,5 +26,5 @@ Layer note: the catalog-miss is raised at L0 Physics, but the user-facing concer
 
 - Source: `src/nucleus/errors.py` (`NucleusAssetNotMaterialized`)
 - Default fix hint: "Run the upstream asset first: `nucleus run <asset>`. If you expect it to exist, check the catalog config."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

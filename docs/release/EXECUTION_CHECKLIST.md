@@ -156,7 +156,7 @@ Commit: `"cleanup: remove stale/superseded files pre-v0.2"`
 Per CLEANUP_INVENTORY §4:
 
 ```powershell
-# 3.3.1 — Add SUPERSEDED header to nucleus_project_anatomy.md
+# 3.3.1 — Add SUPERSEDED header to docs/specs/nucleus_project_anatomy.md
 # Edit: add the SUPERSEDED header block at top of file
 
 # 3.3.2 — Fix docs/swap/lakekeeper.md (mark test paths as TBD)
@@ -165,7 +165,7 @@ Per CLEANUP_INVENTORY §4:
 # 3.3.3 — Fix docs/swap/dlt.md similarly
 ```
 
-- [ ] `nucleus_project_anatomy.md` has SUPERSEDED header
+- [ ] `docs/specs/nucleus_project_anatomy.md` has SUPERSEDED header
 - [ ] `docs/swap/lakekeeper.md` TBD notes added
 - [ ] `docs/swap/dlt.md` TBD notes added
 

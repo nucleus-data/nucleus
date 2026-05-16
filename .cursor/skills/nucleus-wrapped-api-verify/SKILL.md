@@ -4,7 +4,7 @@ description: >-
   Verify wrapped-library API surface before suggesting code. Use when about to
   suggest, write, or modify code calling pyiceberg, dagster, duckdb, polars,
   dlt, sqlglot, pyarrow, openlineage, soda-core, lance, lancedb, daft, or any
-  wrapped Tier 0/1/2 dependency listed in `nucleus_architecture_v4.1.md` §4-§5.
+  wrapped Tier 0/1/2 dependency listed in `docs/specs/nucleus_architecture_v4.1.md` §4-§5.
 ---
 
 # Wrapped-Library API Verification
@@ -55,7 +55,7 @@ and fix are in `@docs/internal/research/ai_hallucinations.md`.
 - `openlineage-dagster` (and `dagster-openlineage`) — DEAD package; caps at
   `dagster<=1.6.9`, removed from OpenLineage main repo Oct 2025. Emit
   OpenLineage events directly from the AMA per
-  `@nucleus_architecture_v4.1.md §6.2` step 4.
+  `@docs/specs/nucleus_architecture_v4.1.md §6.2` step 4.
 - `quay.io/minio/minio:RELEASE.2025-10-15T17-29-55Z` — fabricated tag. Actual
   terminal release is `RELEASE.2025-09-07T16-13-09Z`.
 - `dataframe.to_iceberg()` — fabricated. Not on Polars or PyArrow. Route

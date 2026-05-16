@@ -64,4 +64,4 @@ Recommended: **Option A**. Implementation steps:
 ## Architecture Sections Touched
 
 - `AGENTS.md §11.13` (upgrade safety discipline — major version requires ADR)
-- `nucleus_architecture_v4.1.md` §6.4 (lineage layer at v0.5+)
+- `docs/specs/nucleus_architecture_v4.1.md` §6.4 (lineage layer at v0.5+)

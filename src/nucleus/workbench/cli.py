@@ -1,7 +1,7 @@
 """Typer entry for ``nucleus workbench`` commands.
 
 Per ``docs/decisions/ADR-016-workbench-mvp.md`` §3 (Fork B).
-``nucleus_architecture_v4.1.md`` §8.1 — Layer 4 Experience.
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 — Layer 4 Experience.
 
 Sub-commands:
     nucleus workbench up   — launch uvicorn + open browser (default)

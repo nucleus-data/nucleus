@@ -36,12 +36,12 @@ When asking Cursor for help on v0.1 code, include these `@-references`:
 ```
 # Required for any v0.1 code task:
 @AGENTS.md
-@nucleus_architecture_v4.1.md
-@<spec file> (e.g., @nucleus_ctx_sdk_spec.md)
+@docs/specs/nucleus_architecture_v4.1.md
+@<spec file> (e.g., @docs/specs/nucleus_ctx_sdk_spec.md)
 @<test file> (the test file that defines what passes)
 
 # For PoC/promotion work:
-@nucleus_poc_plan.md
+@docs/specs/nucleus_poc_plan.md
 
 # For connector work:
 @src/nucleus/ctx/copy_from_postgres.py  (gold standard template)
@@ -74,7 +74,7 @@ Per `.cursor/rules/nucleus.mdc` (Single-File Discipline):
 
 ```
 Read these files for context:
-@nucleus_architecture_v4.1.md §<section>
+@docs/specs/nucleus_architecture_v4.1.md §<section>
 @<spec_file>.md
 @<existing_file>.py (the pattern to follow)
 @<test_file>.py (the spec to satisfy)
@@ -116,10 +116,10 @@ After every AI code generation, verify before accepting:
      → python scripts/check_vocabulary.py
 
 [ ] Cites architecture section in docstring
-     → Per nucleus_architecture_v4.1.md §X.Y
+     → Per docs/specs/nucleus_architecture_v4.1.md §X.Y
 
 [ ] No drift from spec file API surface
-     → Compare against nucleus_ctx_sdk_spec.md or nucleus_cli_spec.md
+     → Compare against docs/specs/nucleus_ctx_sdk_spec.md or docs/specs/nucleus_cli_spec.md
 ```
 
 ---
@@ -166,7 +166,7 @@ Every 4 weeks, run a drift detection pass using this Cursor Chat prompt:
 Drift Detection Pass.
 
 Context:
-@nucleus_architecture_v4.1.md
+@docs/specs/nucleus_architecture_v4.1.md
 @AGENTS.md
 @CHANGELOG.md (last 4 weeks of commits)
 @src/nucleus (current state of code)

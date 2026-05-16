@@ -25,7 +25,7 @@ Everything else is **wrapped** from open source. The hard ceiling is **30K LOC**
 
 **The 11 hard constraints** ([`AGENTS.md`](../AGENTS.md) §3) are non-negotiable. They include: no JVM in the core path, no custom scheduler, no custom compute engine, no custom auth system, no ML platform, exact dependency pins, single-component-per-PR upgrades. If anyone — a contributor, a Dependabot PR, a future-you, an AI suggestion — asks you to violate one of them, the answer is a polite "no, that needs an architecture amendment." Amending the architecture is its own deliberate process (an ADR, not a casual decision).
 
-**The beachhead persona** (`nucleus_architecture_v4.1.md` §1.5) is what every decision serves: **a 5-engineer startup data team, 100GB-5TB total data, greenfield project, building a BI-ready Iceberg table in <30 minutes from `git clone`.** When considering any feature, ask "does this help or hurt that 30-minute path?" Unchanged or worse → defer.
+**The beachhead persona** (`docs/specs/nucleus_architecture_v4.1.md` §1.5) is what every decision serves: **a 5-engineer startup data team, 100GB-5TB total data, greenfield project, building a BI-ready Iceberg table in <30 minutes from `git clone`.** When considering any feature, ask "does this help or hurt that 30-minute path?" Unchanged or worse → defer.
 
 **Mode of operation.** You are solo. AI is your pair. Speed comes from **cutting ceremony, not cutting quality gates**. The quality gates that must stay (per `.cursor/rules/nucleus.mdc` §Velocity Discipline):
 
@@ -37,7 +37,7 @@ Everything else is **wrapped** from open source. The hard ceiling is **30K LOC**
 
 If a velocity shortcut breaks any gate, the gate wins. **No exceptions.**
 
-Re-read [`AGENTS.md`](../AGENTS.md) and [`nucleus_architecture_v4.1.md`](../nucleus_architecture_v4.1.md) **once a quarter minimum**. Re-read this file before each quarterly review. When in doubt, re-read.
+Re-read [`AGENTS.md`](../AGENTS.md) and [`docs/specs/nucleus_architecture_v4.1.md`](specs/nucleus_architecture_v4.1.md) **once a quarter minimum**. Re-read this file before each quarterly review. When in doubt, re-read.
 
 ---
 
@@ -126,7 +126,7 @@ Flag any creeping LOC delta (>200 LOC week-over-week from a single PR → invest
 
 ### 4.1 Drift detection pass (1 hour)
 
-Per [`AGENTS.md`](../AGENTS.md) §11.11, run the full drift detection prompt against the last 4 weeks of commits. Paste this into Cursor Chat with `@AGENTS.md`, `@nucleus_architecture_v4.1.md`, `@CHANGELOG.md`:
+Per [`AGENTS.md`](../AGENTS.md) §11.11, run the full drift detection prompt against the last 4 weeks of commits. Paste this into Cursor Chat with `@AGENTS.md`, `@docs/specs/nucleus_architecture_v4.1.md`, `@CHANGELOG.md`:
 
 ```
 Drift Detection Pass.
@@ -227,7 +227,7 @@ Read [`docs/budget_history.md`](budget_history.md) tail. Any month where LOC del
 ### 5.5 Re-read the deeps (1 hour)
 
 - [`AGENTS.md`](../AGENTS.md) — full file.
-- [`nucleus_architecture_v4.1.md`](../nucleus_architecture_v4.1.md) — at least §1 (identity), §3 (layers), §6 (error translation), §9 (composability), §18 (roadmap), §20 (non-goals).
+- [`docs/specs/nucleus_architecture_v4.1.md`](specs/nucleus_architecture_v4.1.md) — at least §1 (identity), §3 (layers), §6 (error translation), §9 (composability), §18 (roadmap), §20 (non-goals).
 - [`docs/decisions/`](decisions/) — any ADR that landed this quarter.
 
 ---
@@ -424,7 +424,7 @@ Per [`AGENTS.md`](../AGENTS.md) §11.3 (the AI Boundary Map). Memorize this tabl
 ### 8.2 Cursor surface guide
 
 - **Cursor Tab Completion** — safe for type annotations, imports, common patterns, test boilerplate. **Not safe** for error-handling blocks, wrapped-OSS calls, concurrency primitives, SQL string construction.
-- **Cursor Chat (Ctrl+L)** — use for architectural questions where you need citations. Required context: `@AGENTS.md`, `@nucleus_architecture_v4.1.md`, the relevant spec file. If the AI gives an answer that doesn't cite architecture sections, the answer is unreliable. Push back.
+- **Cursor Chat (Ctrl+L)** — use for architectural questions where you need citations. Required context: `@AGENTS.md`, `@docs/specs/nucleus_architecture_v4.1.md`, the relevant spec file. If the AI gives an answer that doesn't cite architecture sections, the answer is unreliable. Push back.
 - **Cursor Composer** — multi-file edits. **Discouraged in v0.1; cautious in v0.2+.** Use only for pure renames, vocabulary swaps, or scaffolding a single new decorator across `__init__.py` + new file. Never for cross-layer feature work.
 - **Subagents** (per [`AGENTS.md`](../AGENTS.md) §11.14) — for v0.2+ multi-step work, route by role: Architect (Opus 4.7), Builder (GPT-5.5), Swarm (Sonnet 4.6), Research (Gemini 3.1 Pro). Don't use the strongest model for everything; it wastes compute and over-engineers.
 
@@ -528,7 +528,7 @@ Send no more than 3-5 of these per quarter. Mass outreach is spam.
 
 ### 9.4 Cloud tier monetization timing
 
-Per [`nucleus_architecture_v4.1.md`](../nucleus_architecture_v4.1.md) §13: Cloud tier (managed single-tenant) is v0.7+ scope. Do **not** launch Cloud before:
+Per [`docs/specs/nucleus_architecture_v4.1.md`](specs/nucleus_architecture_v4.1.md) §13: Cloud tier (managed single-tenant) is v0.7+ scope. Do **not** launch Cloud before:
 
 - At least 100 active OSS users (verified via PyPI download stats + GitHub stars)
 - At least 3 prospective customers asking for managed (unsolicited)
@@ -623,4 +623,4 @@ When you feel like succeeding, re-read [`docs/decisions/ADR-002-positioning-deci
 
 *Last reviewed: 2026-05-15 (v0.2.0 ship). Re-review next quarter (2026-08).*
 
-*Cross-references: [`AGENTS.md`](../AGENTS.md) (universal AI handover), [`nucleus_architecture_v4.1.md`](../nucleus_architecture_v4.1.md) (architecture source of truth), [`docs/START_HERE.md`](START_HERE.md) (entry point for new arrivals), [`docs/roadmap/HANDOVER.md`](roadmap/HANDOVER.md) (Day-0 onboarding for next developer), [`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md) (launch-day runbook).*
+*Cross-references: [`AGENTS.md`](../AGENTS.md) (universal AI handover), [`docs/specs/nucleus_architecture_v4.1.md`](specs/nucleus_architecture_v4.1.md) (architecture source of truth), [`docs/START_HERE.md`](START_HERE.md) (entry point for new arrivals), [`docs/roadmap/HANDOVER.md`](roadmap/HANDOVER.md) (Day-0 onboarding for next developer), [`docs/release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md`](release/FOUNDER_ULTIMATE_SPRINT_RUNBOOK.md) (launch-day runbook).*

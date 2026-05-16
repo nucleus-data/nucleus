@@ -54,7 +54,7 @@ Nucleus is **three things, forever**:
 2. **The `ctx` SDK** — the developer contract (the only public API you import)
 3. **The unified developer-first experience** — CLI + Workbench + SDK as one product
 
-Everything else — engines, catalogs, schedulers, ingestion frameworks — is rented from open source and wrapped behind `ctx`. Per `nucleus_architecture_v4.1.md` §3, we organize this into **five layers**:
+Everything else — engines, catalogs, schedulers, ingestion frameworks — is rented from open source and wrapped behind `ctx`. Per `docs/specs/nucleus_architecture_v4.1.md` §3, we organize this into **five layers**:
 
 | Layer | Components | Mutability |
 |---|---|---|
@@ -104,7 +104,7 @@ Surface stable from v0.1: `ctx.read`, `ctx.sql`, `ctx.copy_from`, `ctx.params`. 
 
 ### Eight-command CLI
 
-Per `nucleus_cli_spec.md` and `src/nucleus/cli/main.py`:
+Per `docs/specs/nucleus_cli_spec.md` and `src/nucleus/cli/main.py`:
 
 | Command | Purpose |
 |---|---|
@@ -192,7 +192,7 @@ Lazy-import boundary at `pyproject.toml` lines 134-139 enforced by `scripts/chec
 
 ## How to graduate (yield-to-giants)
 
-The day Nucleus is the wrong tool, here is how you leave — without re-migrating a single byte. Per `nucleus_architecture_v4.1.md` §10:
+The day Nucleus is the wrong tool, here is how you leave — without re-migrating a single byte. Per `docs/specs/nucleus_architecture_v4.1.md` §10:
 
 **Mode 1 — Graduation (zero effort, available today).** Your Iceberg snapshots in S3 are vendor-neutral by definition. Point Databricks, Snowflake, or any Iceberg REST catalog (Polaris, Lakekeeper, Unity, R2) at the same bucket + catalog and you are done. Mode 1 ships with v0.2 because it is just Iceberg + S3 + the open standards on which Nucleus runs.
 
@@ -235,7 +235,7 @@ pip install nucleus
 
 - **Repo & quickstart**: <https://github.com/nucleus-data/nucleus>
 - **Docs**: <https://nucleus-data.github.io/nucleus/> once GitHub Pages is enabled; until then use `docs/site/` locally with `mkdocs serve`
-- **Architecture deep-dive**: `nucleus_architecture_v4.1.md` (~50 min read)
+- **Architecture deep-dive**: `docs/specs/nucleus_architecture_v4.1.md` (~50 min read)
 - **License**: Apache 2.0
 - **First example**: `examples/01-ecommerce-elt/`
 

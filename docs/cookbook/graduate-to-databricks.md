@@ -5,7 +5,7 @@ description: Step-by-step recipe for moving a Nucleus-managed Iceberg lakehouse 
 
 # Graduate to Databricks
 
-> Architectural intent: `nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) and `AGENTS.md` section 4 (Do-Not-Build list). Graduation is by design, not a retreat. Iceberg is a portable open standard, so the data you wrote with Nucleus is the same data Databricks will read.
+> Architectural intent: `docs/specs/nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) and `AGENTS.md` section 4 (Do-Not-Build list). Graduation is by design, not a retreat. Iceberg is a portable open standard, so the data you wrote with Nucleus is the same data Databricks will read.
 
 This cookbook is the practical answer to the question:
 
@@ -17,17 +17,17 @@ It is a path, not a battle-tested runbook. Section 9 (Honest caveats) lists exac
 
 ## 1. When you should graduate
 
-Nucleus is designed for the beachhead persona in `nucleus_architecture_v4.1.md` section 1.5: a startup data team of 5-20 engineers, 100 GB to 5 TB of total data, a greenfield project, MacBook or Linux laptops as the daily drivers. If you outgrow any of the following thresholds, graduating to Databricks (or another cloud-scale Iceberg-aware engine) is the right move:
+Nucleus is designed for the beachhead persona in `docs/specs/nucleus_architecture_v4.1.md` section 1.5: a startup data team of 5-20 engineers, 100 GB to 5 TB of total data, a greenfield project, MacBook or Linux laptops as the daily drivers. If you outgrow any of the following thresholds, graduating to Databricks (or another cloud-scale Iceberg-aware engine) is the right move:
 
 | Trigger | Why it fires graduation |
 |---|---|
 | A single Iceberg asset crosses 10 TB | Single-node DuckDB and Polars become I/O-bound; a distributed engine wins. |
-| The data team grows past 50 engineers | Nucleus has no native multi-tenant control plane (out-of-scope per `nucleus_architecture_v4.1.md` section 20.3). |
-| Regulated workload requires SOC 2 / HIPAA / column masking GA today | Nucleus row and column policies arrive in v1.5+ (see `nucleus_vs_databricks.md` section 7). |
-| GPU-backed ML training pipelines need to live next to the warehouse | Nucleus is deliberately not an ML platform (`nucleus_architecture_v4.1.md` section 20.1). |
+| The data team grows past 50 engineers | Nucleus has no native multi-tenant control plane (out-of-scope per `docs/specs/nucleus_architecture_v4.1.md` section 20.3). |
+| Regulated workload requires SOC 2 / HIPAA / column masking GA today | Nucleus row and column policies arrive in v1.5+ (see `docs/specs/nucleus_vs_databricks.md` section 7). |
+| GPU-backed ML training pipelines need to live next to the warehouse | Nucleus is deliberately not an ML platform (`docs/specs/nucleus_architecture_v4.1.md` section 20.1). |
 | 24x7 streaming ingest at multi-million events per second | Nucleus streaming arrives in v1.5+ via Benthos / Redpanda; Databricks Structured Streaming is GA today. |
 
-If none of those apply, stay on Nucleus. The 30-minute-from-clone beachhead promise (`nucleus_architecture_v4.1.md` section 1.5) only holds while the workload fits the beachhead.
+If none of those apply, stay on Nucleus. The 30-minute-from-clone beachhead promise (`docs/specs/nucleus_architecture_v4.1.md` section 1.5) only holds while the workload fits the beachhead.
 
 ---
 
@@ -41,7 +41,7 @@ Graduation moves the data and the contract; it does not move the Nucleus build-t
 | Iceberg snapshot lineage, schema evolution, partition spec | The Asset Materialization Adapter (`src/nucleus/coordination/`) - replaced by Lakeflow Spark Declarative Pipelines |
 | `@nucleus.contract` schema definitions (translatable to Delta Live Tables Expectations) | The Workbench web IDE - use Databricks Notebooks |
 | The 24 stable error codes (NE1xxx-NE5xxx, ADR-006) - keep for any code you keep on Nucleus side | The Nucleus error translation layer - Databricks errors surface natively |
-| Asset-level OpenLineage events you have already emitted (Tier 0 immortal per `nucleus_architecture_v4.1.md` section 4.1) | The Nucleus filesystem catalog - you switch to Unity Catalog or a Unity-federated Iceberg REST endpoint |
+| Asset-level OpenLineage events you have already emitted (Tier 0 immortal per `docs/specs/nucleus_architecture_v4.1.md` section 4.1) | The Nucleus filesystem catalog - you switch to Unity Catalog or a Unity-federated Iceberg REST endpoint |
 
 The contract surface that survives is the open-format substrate: Iceberg + Parquet + S3 + OpenLineage. Everything Nucleus-proprietary is by design under 30K LOC and is replaceable on the Databricks side.
 
@@ -130,7 +130,7 @@ The two row counts should match exactly. If they do not, do not proceed - your L
 
 ## 5. Step 3 - Move scheduling
 
-Nucleus uses an embedded Dagster scheduler (hidden behind `@nucleus.asset(schedule=...)` per `nucleus_architecture_v4.1.md` section 6). On Databricks the equivalent surface is **Lakeflow Jobs** (the GA name for Databricks Workflows; reference: <https://docs.databricks.com/aws/en/workflows/index.html>).
+Nucleus uses an embedded Dagster scheduler (hidden behind `@nucleus.asset(schedule=...)` per `docs/specs/nucleus_architecture_v4.1.md` section 6). On Databricks the equivalent surface is **Lakeflow Jobs** (the GA name for Databricks Workflows; reference: <https://docs.databricks.com/aws/en/workflows/index.html>).
 
 The mapping is one-to-one:
 
@@ -153,7 +153,7 @@ If your team uses Airflow already, point Cloud Composer or self-hosted Airflow a
 
 ## 6. Step 4 - Move compute
 
-Nucleus runs Polars in-process (`nucleus_architecture_v4.1.md` section 5.2) and DuckDB in-process (section 5.1). Databricks runs PySpark on a JVM. The compute primitives differ.
+Nucleus runs Polars in-process (`docs/specs/nucleus_architecture_v4.1.md` section 5.2) and DuckDB in-process (section 5.1). Databricks runs PySpark on a JVM. The compute primitives differ.
 
 Three porting strategies, in order of effort:
 
@@ -208,7 +208,7 @@ Do NOT delete S3 buckets, do NOT touch Iceberg `metadata/` directories, do NOT r
 
 ## 8. Hybrid mode (Mode 2 territory)
 
-Many teams do not graduate fully; they keep Nucleus as the development environment and use Databricks only for the heavy production workloads. This is **Mode 2 of the yield-to-giants strategy** (`nucleus_architecture_v4.1.md` section 10.2). The user-visible API is intended to be:
+Many teams do not graduate fully; they keep Nucleus as the development environment and use Databricks only for the heavy production workloads. This is **Mode 2 of the yield-to-giants strategy** (`docs/specs/nucleus_architecture_v4.1.md` section 10.2). The user-visible API is intended to be:
 
 ```python
 # Implementation arrives v0.3+ per ADR-041 (currently PROPOSED).
@@ -237,7 +237,7 @@ Per `docs/internal/research/parity_vs_databricks_snowflake.md` section 1, Iceber
 3. **Foreign catalog SQL syntax drift.** The `CREATE CONNECTION` / `CREATE FOREIGN CATALOG` snippets above are illustrative and marked NEEDS VERIFICATION. Re-check against <https://docs.databricks.com/aws/en/query-federation/index.html> before pasting into a production console.
 4. **Permission propagation.** Nucleus has no RBAC layer in v0.2 (per `AGENTS.md` section 4 do-not-build list). Once Unity Catalog owns the tables, all access is governed by Databricks. Do NOT assume any Nucleus-side ACL semantics carry over.
 5. **OpenLineage events.** Nucleus emits OpenLineage events to a NDJSON FileTransport by default. Wiring those to Databricks' Unity Catalog lineage requires a separate ingestion step (an OpenLineage HTTP transport pointed at a collector). Not yet documented end-to-end.
-6. **Cost estimation.** Once compute moves to Databricks, the per-asset cost meter (`nucleus_architecture_v4.1.md` section 7.5, v0.7+) does not see remote runs. Use Databricks System Tables for cost attribution.
+6. **Cost estimation.** Once compute moves to Databricks, the per-asset cost meter (`docs/specs/nucleus_architecture_v4.1.md` section 7.5, v0.7+) does not see remote runs. Use Databricks System Tables for cost attribution.
 
 If you hit any of the above, file an issue on <https://github.com/nucleus-data/nucleus/issues> with the prefix `[graduation]` so PoC #5 telemetry can pick it up.
 
@@ -249,8 +249,8 @@ If you hit any of the above, file an issue on <https://github.com/nucleus-data/n
 - `docs/cookbook/graduate-to-bigquery.md` - sibling recipe for BigQuery.
 - `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md` - the design spec for the `compute=` decorator that automates Mode 2.
 - `docs/internal/research/parity_vs_databricks_snowflake.md` - the honest capability matrix that motivated this cookbook.
-- `nucleus_architecture_v4.1.md` section 10 - the canonical Yield-to-Giants Strategy.
-- `nucleus_vs_databricks.md` - the full Nucleus-vs-Databricks feature mapping.
+- `docs/specs/nucleus_architecture_v4.1.md` section 10 - the canonical Yield-to-Giants Strategy.
+- `docs/specs/nucleus_vs_databricks.md` - the full Nucleus-vs-Databricks feature mapping.
 
 ## External references (verified URL form, content NEEDS VERIFICATION at integration time)
 

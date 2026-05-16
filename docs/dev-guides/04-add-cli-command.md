@@ -9,7 +9,7 @@
 
 ## Before You Start
 
-1. Is the command in `nucleus_cli_spec.md`? If not, it needs an ADR or at least a GitHub Discussion before implementation.
+1. Is the command in `docs/specs/nucleus_cli_spec.md`? If not, it needs an ADR or at least a GitHub Discussion before implementation.
 2. Does the command serve the beachhead metric? If not, defer (per 8-question gate).
 3. Is there already a similar command you can extend (e.g., add a `--flag` to `nucleus run`) instead of adding a new top-level command?
 
@@ -33,7 +33,7 @@ For non-trivial commands, create `src/nucleus/cli/commands/<command>.py`:
 """
 nucleus <command> — <one-line description>.
 
-Per nucleus_architecture_v4.1.md §8 (Experience layer) and nucleus_cli_spec.md §<section>.
+Per docs/specs/nucleus_architecture_v4.1.md §8 (Experience layer) and docs/specs/nucleus_cli_spec.md §<section>.
 """
 # Stability: Beta  (per ADR-005)
 
@@ -236,7 +236,7 @@ def test_<command>_json_output():
 
 ---
 
-## Step 9: Update `nucleus_cli_spec.md`
+## Step 9: Update `docs/specs/nucleus_cli_spec.md`
 
 Add the new command to the CLI spec:
 
@@ -267,7 +267,7 @@ nucleus <command> my-arg
 
 ```
 ### Added
-- `nucleus <command>` — <one-line description> (per nucleus_cli_spec.md §X.Y).
+- `nucleus <command>` — <one-line description> (per docs/specs/nucleus_cli_spec.md §X.Y).
 ```
 
 ---
@@ -279,7 +279,7 @@ nucleus <command> my-arg
 [ ] nucleus <command> <valid-arg> exits 0
 [ ] nucleus <command> <bad-arg> exits 1 with NE-code in output
 [ ] All tests pass
-[ ] nucleus_cli_spec.md updated
+[ ] docs/specs/nucleus_cli_spec.md updated
 [ ] CHANGELOG updated
 [ ] dagster_leak_check.py EXIT 0 (no classnames in --help output)
 ```
@@ -300,7 +300,7 @@ nucleus <command> my-arg
 
 If the new command causes issues:
 1. `git revert <commit>` — remove the command.
-2. Update `nucleus_cli_spec.md` to move the command back to "planned".
+2. Update `docs/specs/nucleus_cli_spec.md` to move the command back to "planned".
 3. Update CHANGELOG to remove the entry from `[Unreleased]`.
 
 ---
@@ -310,5 +310,5 @@ If the new command causes issues:
 - Existing commands: `src/nucleus/cli/main.py`, `src/nucleus/cli/commands/`
 - Rendering helpers: `src/nucleus/cli/rendering.py`
 - Error handling: `docs/dev-guides/06-error-translation-guide.md`
-- CLI spec: `nucleus_cli_spec.md`
+- CLI spec: `docs/specs/nucleus_cli_spec.md`
 - typer docs: https://typer.tiangolo.com/ (pinned version in `pyproject.toml`)

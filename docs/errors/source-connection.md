@@ -25,5 +25,5 @@ A builtin `TimeoutError` raised during source IO routes here as well — the sou
 
 - Source: `src/nucleus/errors.py` (`NucleusSourceConnectionError`)
 - Default fix hint: "Check host, port, and credentials in your source config." (timeout variant adds: "raise the source timeout if the source is genuinely slow.")
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

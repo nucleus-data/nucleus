@@ -77,7 +77,7 @@ Follow the Postgres pattern exactly:
 """
 ctx.copy_from_<source> — <Source Name> → Iceberg ingestion.
 
-Per nucleus_architecture_v4.1.md §5.6.1 (copy_from helpers) and §6.4 (error translation).
+Per docs/specs/nucleus_architecture_v4.1.md §5.6.1 (copy_from helpers) and §6.4 (error translation).
 Wrap target: <OSS library name>
 Docs: <official docs URL>
 Pinned: <package>==<version> (pyproject.toml extras.<source>)

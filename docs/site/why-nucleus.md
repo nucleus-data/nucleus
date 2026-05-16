@@ -80,7 +80,7 @@ This comparison deserves honesty: **Databricks is an enterprise-grade, distribut
 
 **The graduation story:** When your team outgrows Nucleus, your Iceberg data travels with you to Databricks, Snowflake, or any Iceberg REST catalog. No ETL migration, no vendor conversion. That's the point of Iceberg portability.
 
-See the full mapping: [`nucleus_vs_databricks.md`](https://github.com/nucleus-data/nucleus/blob/main/nucleus_vs_databricks.md) in the repo.
+See the full mapping: [`docs/specs/nucleus_vs_databricks.md`](https://github.com/nucleus-data/nucleus/blob/main/nucleus_vs_databricks.md) in the repo.
 
 ## What Nucleus is not
 

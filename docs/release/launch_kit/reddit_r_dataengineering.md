@@ -36,7 +36,7 @@ Nucleus v0.2.0 — local-first Iceberg pipelines from a laptop (Apache 2.0, Pyth
 >     L3 INTELLIGENCE:   Copilot v0.2 (chat) → v0.3 (schema-aware) → v0.5 (lineage-aware + ctx.agent)
 >     L4 EXPERIENCE:     ctx SDK · nucleus CLI · Workbench · Marimo (v0.3+)
 >
-> Source of truth for every claim: `nucleus_architecture_v4.1.md` (~50 min read; ~25K words). It's in the repo at the root.
+> Source of truth for every claim: `docs/specs/nucleus_architecture_v4.1.md` (~50 min read; ~25K words). It's in the repo at the root.
 >
 > **What's actually shipping in v0.2.**
 >
@@ -53,7 +53,7 @@ Nucleus v0.2.0 — local-first Iceberg pipelines from a laptop (Apache 2.0, Pyth
 >
 > **Stack details.** Pinned wrapped dependencies (per `pyproject.toml` v0.2.0): `duckdb==1.1.3`, `polars==1.18.0`, `pyiceberg==0.11.1`, `pyarrow==18.1.0`, `dagster==1.9.5`, `dlt==1.26.0`, `fastapi==0.136.1`, `litellm==1.83.14`, `sqlalchemy==2.0.36`. Total proprietary code: 12,840 LOC under `src/nucleus/` (43% of the 30K LOC v1.0 ceiling per `docs/internal/research/scale_out_audit.md` §1.1).
 >
-> **Composability discipline.** Every Tier 1/2 dep has a swap interface and 5–10 smoke tests in CI. Per `nucleus_architecture_v4.1.md` §9, full alternate adapters are built **on demand** when a trigger event fires (vendor death, license pivot, perf regression >2x, community demand >10 enterprise customers) — NOT preemptively. That avoids "Composability Tax" (maintaining two implementations of every alternative for free). Documented swap targets:
+> **Composability discipline.** Every Tier 1/2 dep has a swap interface and 5–10 smoke tests in CI. Per `docs/specs/nucleus_architecture_v4.1.md` §9, full alternate adapters are built **on demand** when a trigger event fires (vendor death, license pivot, perf regression >2x, community demand >10 enterprise customers) — NOT preemptively. That avoids "Composability Tax" (maintaining two implementations of every alternative for free). Documented swap targets:
 >
 > - DuckDB → DataFusion (interface from v0.1)
 > - Polars → DataFusion DF (interface from v0.1)
@@ -78,7 +78,7 @@ Nucleus v0.2.0 — local-first Iceberg pipelines from a laptop (Apache 2.0, Pyth
 >     nucleus ingest sqlite:///./data/orders.db --table orders --as raw.orders
 >     nucleus query "SELECT count(*) FROM {{ ref('raw.orders') }}"
 >
-> Repo: <https://github.com/nucleus-data/nucleus>. Docs site: <https://nucleus-data.github.io/nucleus/> once GitHub Pages is enabled (repo must be public or GitHub Pro until then). Architecture: `nucleus_architecture_v4.1.md`. Apache 2.0.
+> Repo: <https://github.com/nucleus-data/nucleus>. Docs site: <https://nucleus-data.github.io/nucleus/> once GitHub Pages is enabled (repo must be public or GitHub Pro until then). Architecture: `docs/specs/nucleus_architecture_v4.1.md`. Apache 2.0.
 >
 > Telling me "this is just dbt + Dagster + DuckDB + pyiceberg with a CLI on top" is technically correct. The thesis is that the integration *is* the product for the 5–20 engineer team segment. Tell me where I'm wrong.
 

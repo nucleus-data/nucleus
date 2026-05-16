@@ -1,7 +1,7 @@
 """SQLite → filesystem-Iceberg ingest helper — ``ctx.copy_from`` v0 path.
 
 Promoted 2026-05-13 from ``poc/p3_ingest/ingest.py`` per
-``nucleus_architecture_v4.1.md`` §6 + ctx SDK spec §「copy_from」.
+``docs/specs/nucleus_architecture_v4.1.md`` §6 + ctx SDK spec §「copy_from」.
 
 Scope (deliberately minimal — v0 SQLite branch):
     - ONE source: SQLite via stdlib ``sqlite3``. No Postgres/MySQL/CSV/
@@ -14,7 +14,7 @@ Pins/docs:
     - ``pyiceberg[sql-sqlite,s3fs,duckdb]==0.11.1`` — https://py.iceberg.apache.org/api/
     - ``pyarrow==18.1.0`` — https://arrow.apache.org/docs/python/api.html
     - ``sqlite3`` (stdlib) — https://docs.python.org/3/library/sqlite3.html
-    - ``nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
+    - ``docs/specs/nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
     - ``docs/internal/research/pyiceberg.md`` §4-§6 — catalog + exception map
     - ``docs/patterns/type_mapping.md`` §3 — SQLite ↔ Arrow ↔ Iceberg
 """

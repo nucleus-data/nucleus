@@ -5,7 +5,7 @@ asset, expressed as a percentage of the asset's materialize wall-clock.
 
 Note on naming: the original task spec talks about "@nucleus.contract"
 overhead. The v0.2 SDK ships ``@nucleus.check`` (per
-``nucleus_ctx_sdk_spec.md`` §2.4 + ``nucleus_asset_model_spec.md`` §10);
+``docs/specs/nucleus_ctx_sdk_spec.md`` §2.4 + ``docs/specs/nucleus_asset_model_spec.md`` §10);
 declarative ``contract=`` on ``@nucleus.asset`` accepts the value but
 contract enforcement is deferred to v0.3+ per
 ``src/nucleus/sdk/decorators.py:asset()`` docstring + ADR-013 §NV. The
@@ -44,7 +44,7 @@ Anti-fakery
 Docs:
     @nucleus.check — src/nucleus/sdk/decorators.py
     Polars filter + count — https://docs.pola.rs/api/python/stable/reference/dataframe/api/polars.DataFrame.filter.html
-    Asset model spec §10 (check return type) — nucleus_asset_model_spec.md
+    Asset model spec §10 (check return type) — docs/specs/nucleus_asset_model_spec.md
 """
 
 from __future__ import annotations

@@ -11,7 +11,7 @@ project:
   generated_at: "2026-05-15"
 
 # Filesystem-backed Iceberg catalog (SqlCatalog SQLite under the warehouse
-# root).  Per nucleus_cli_spec.md §10 NV #5: surfaced as `filesystem` to
+# root).  Per docs/specs/nucleus_cli_spec.md §10 NV #5: surfaced as `filesystem` to
 # users.  Read-only at runtime via image chmod 0444/0555.
 catalog:
   type: filesystem

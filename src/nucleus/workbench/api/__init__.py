@@ -3,7 +3,7 @@
 Per ``docs/decisions/ADR-016-workbench-mvp.md`` §3 (Fork B, custom React SPA
 + FastAPI).  Each sub-module owns one slice of the ``/api/*`` surface.
 
-``nucleus_architecture_v4.1.md`` §8.1 — Layer 4 Experience.
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 — Layer 4 Experience.
 Workbench may import from sdk / ctx / intelligence / coordination / errors;
 the reverse import direction is forbidden (scripts/check_layering.py enforces).
 

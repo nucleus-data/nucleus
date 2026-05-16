@@ -5,7 +5,7 @@ description: Step-by-step recipe for moving a Nucleus-managed Iceberg lakehouse 
 
 # Graduate to BigQuery
 
-> Architectural intent: `nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) and `AGENTS.md` section 4 (Do-Not-Build list). Iceberg is a portable open standard, so the snapshots Nucleus committed are the same snapshots BigQuery will read - via **BigLake**, Google's open-format-on-cloud-storage feature.
+> Architectural intent: `docs/specs/nucleus_architecture_v4.1.md` section 10 (Yield-to-Giants Strategy) and `AGENTS.md` section 4 (Do-Not-Build list). Iceberg is a portable open standard, so the snapshots Nucleus committed are the same snapshots BigQuery will read - via **BigLake**, Google's open-format-on-cloud-storage feature.
 
 This cookbook is the practical answer to:
 
@@ -26,7 +26,7 @@ Graduate to BigQuery when one or more of:
 | Single asset crosses 10 TB and queries take > 30 s on a beefy laptop | BigQuery's serverless slot architecture scales without cluster sizing; DuckDB on one node does not. |
 | Data team grows past 50 engineers | BigQuery + IAM provides project-level governance Nucleus does not have in v0.2. |
 | Compliance program requires SOC 2 / HIPAA / FedRAMP today | BigQuery ships these certifications; Nucleus targets them only at v1.5+. |
-| You want BigQuery ML (BQML) for in-warehouse ML, or Gemini in BigQuery | Nucleus is not an ML or AI platform (`nucleus_architecture_v4.1.md` section 20.1). |
+| You want BigQuery ML (BQML) for in-warehouse ML, or Gemini in BigQuery | Nucleus is not an ML or AI platform (`docs/specs/nucleus_architecture_v4.1.md` section 20.1). |
 | The org is GCP-native and the rest of the stack is Cloud Composer / Dataform / Looker | Tight integration outweighs the Iceberg-portability advantage of staying on Nucleus. |
 | Data must live in GCS for residency or transfer-cost reasons | BigQuery reads GCS natively; an S3-only Nucleus deployment would have to move the bytes. |
 
@@ -41,7 +41,7 @@ If none of these apply, stay on Nucleus.
 | Apache Iceberg snapshots and Parquet files (in S3 or GCS - more on cross-cloud below) | The Nucleus CLI - replaced by `bq` CLI and the BigQuery console |
 | Iceberg snapshot lineage, schema evolution, partition spec | The Asset Materialization Adapter - replaced by Dataform or Cloud Composer |
 | `@nucleus.contract` schema definitions (translatable to Dataform assertions) | Nucleus Workbench (`localhost:8765`) - use the BigQuery console or Colab Enterprise |
-| OpenLineage events (Tier 0 immortal per `nucleus_architecture_v4.1.md` section 4.1) - emit to Google Dataplex if you want them reflected there | Nucleus filesystem catalog - swap for BigLake Metastore or BigQuery's native Iceberg catalog | <!-- banned-term: metastore -->
+| OpenLineage events (Tier 0 immortal per `docs/specs/nucleus_architecture_v4.1.md` section 4.1) - emit to Google Dataplex if you want them reflected there | Nucleus filesystem catalog - swap for BigLake Metastore or BigQuery's native Iceberg catalog | <!-- banned-term: metastore -->
 | Stable error codes (NE1xxx-NE5xxx, ADR-006) - keep for whatever Nucleus you keep | The Nucleus error translation layer - BigQuery surfaces native errors |
 
 The contract surface that survives is the open-format substrate: Iceberg + Parquet + object storage + OpenLineage. Everything Nucleus-proprietary is replaceable on the BigQuery side.
@@ -213,7 +213,7 @@ If you hit any of the above, file an issue on <https://github.com/nucleus-data/n
 - `docs/cookbook/graduate-to-snowflake.md` - sibling recipe for Snowflake.
 - `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md` - design spec for the `compute=` decorator that automates Mode 2.
 - `docs/internal/research/parity_vs_databricks_snowflake.md` - the honest capability matrix that motivated this cookbook (BigQuery section is the most NEEDS VERIFICATION-heavy of the three).
-- `nucleus_architecture_v4.1.md` section 10 - canonical Yield-to-Giants Strategy.
+- `docs/specs/nucleus_architecture_v4.1.md` section 10 - canonical Yield-to-Giants Strategy.
 
 ## External references (verified URL form, content NEEDS VERIFICATION at integration time)
 

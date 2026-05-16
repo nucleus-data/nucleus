@@ -64,5 +64,5 @@ Recommended: **Option A**. Single PR. Changes required:
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §3 Pillar 1 (performance on minimal resources)
+- `docs/specs/nucleus_architecture_v4.1.md` §3 Pillar 1 (performance on minimal resources)
 - `AGENTS.md §11.13` (single-component upgrade per PR)

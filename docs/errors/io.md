@@ -23,5 +23,5 @@ A read or write against the local filesystem or object storage failed. The path 
 
 - Source: `src/nucleus/errors.py` (`NucleusIOError`)
 - Default fix hint: "Check the path exists and is reachable. For source files, verify any glob patterns and credentials."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

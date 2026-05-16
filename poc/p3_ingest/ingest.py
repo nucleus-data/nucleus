@@ -2,7 +2,7 @@
 remains as canonical PoC reference.
 
 Minimal SQLite → filesystem-Iceberg ingestor — PoC #3 (steps 2-3 of
-``nucleus_poc_plan.md`` §3).
+``docs/specs/nucleus_poc_plan.md`` §3).
 
 Scope (deliberately minimal):
     - ONE source: SQLite via stdlib ``sqlite3``. No Postgres/MySQL/CSV/
@@ -17,7 +17,7 @@ Pins/docs:
     - ``pyiceberg[sql-sqlite,s3fs,duckdb]==0.8.1`` — https://py.iceberg.apache.org/api/
     - ``pyarrow==18.1.0`` — https://arrow.apache.org/docs/python/api.html
     - ``sqlite3`` (stdlib) — https://docs.python.org/3/library/sqlite3.html
-    - ``nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
+    - ``docs/specs/nucleus_architecture_v4.1.md`` §6.4 — Error Translation Discipline
     - ``docs/internal/research/pyiceberg.md`` §4-§6 — catalog + exception map
     - ``docs/patterns/type_mapping.md`` §3 — SQLite ↔ Arrow ↔ Iceberg
 """

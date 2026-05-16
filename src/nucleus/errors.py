@@ -52,7 +52,7 @@ Adding a new error type
 Public surface
 --------------
 Everything in :data:`__all__` is part of the **stable** public surface
-(``nucleus_architecture_v4.1.md`` §13.1). Renaming / removing requires an ADR.
+(``docs/specs/nucleus_architecture_v4.1.md`` §13.1). Renaming / removing requires an ADR.
 Stability tiers per ADR-005 are encoded in each class docstring.
 """
 
@@ -419,8 +419,8 @@ class NucleusCheckExecutionError(NucleusError):
     in v0.1 is plain Python — there is no wrapped-library exception
     being translated.
 
-    Per ``nucleus_architecture_v4.1.md`` §15 +
-    ``nucleus_asset_model_spec.md`` §10, check failures attach to the
+    Per ``docs/specs/nucleus_architecture_v4.1.md`` §15 +
+    ``docs/specs/nucleus_asset_model_spec.md`` §10, check failures attach to the
     materialization result rather than abort it — the contracts runtime
     wraps the raise as a failing :class:`nucleus.CheckResult` so the
     user sees the full set of check outcomes for one materialization.
@@ -627,7 +627,7 @@ class NucleusEnvironmentError(NucleusError):
 
     Layer (ADR-006 §1): L4 Experience — the CLI and Workbench own
     bringing the local runtime online. First L4 NE5xxx allocation per
-    ``nucleus_cli_spec.md`` §10 NV #4 (NE5001-3 ratified earlier alongside
+    ``docs/specs/nucleus_cli_spec.md`` §10 NV #4 (NE5001-3 ratified earlier alongside
     ``NucleusConfigError`` / ``NucleusAuthError`` / ``NucleusRunCancelled``;
     this is the next monotonic value per ADR-006 §Decision).
 

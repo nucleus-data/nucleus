@@ -29,15 +29,15 @@ This file is a navigation index. Onboarding files are *project-specific* — gen
 
 The learning path is the **prerequisite**; the architecture docs below are the **substance**:
 
-1. [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) — single source of truth
-2. [`../../nucleus_vs_databricks.md`](../../nucleus_vs_databricks.md) — what we are and aren't
-3. [`../../nucleus_ctx_sdk_spec.md`](../../nucleus_ctx_sdk_spec.md) — the developer contract (the product)
-4. [`../../nucleus_asset_model_spec.md`](../../nucleus_asset_model_spec.md) — fundamental data primitive
-5. [`../../nucleus_project_anatomy.md`](../../nucleus_project_anatomy.md) — user project layout
-6. [`../../nucleus_cli_spec.md`](../../nucleus_cli_spec.md) — CLI surface
-7. [`../../nucleus_poc_plan.md`](../../nucleus_poc_plan.md) — PoCs gating v0.1
-8. [`../../nucleus_implementation_readiness.md`](../../nucleus_implementation_readiness.md) — go/no-go checklist
-9. [`../../nucleus_red_team_review.md`](../../nucleus_red_team_review.md) — adversarial review
+1. [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) — single source of truth
+2. [`../specs/nucleus_vs_databricks.md`](../specs/nucleus_vs_databricks.md) — what we are and aren't
+3. [`../specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) — the developer contract (the product)
+4. [`../specs/nucleus_asset_model_spec.md`](../specs/nucleus_asset_model_spec.md) — fundamental data primitive
+5. [`../specs/nucleus_project_anatomy.md`](../specs/nucleus_project_anatomy.md) — user project layout
+6. [`../specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) — CLI surface
+7. [`../specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) — PoCs gating v0.1
+8. [`../specs/nucleus_implementation_readiness.md`](../specs/nucleus_implementation_readiness.md) — go/no-go checklist
+9. [`../specs/nucleus_red_team_review.md`](../specs/nucleus_red_team_review.md) — adversarial review
 
 Total reading time: ~3 hours.
 

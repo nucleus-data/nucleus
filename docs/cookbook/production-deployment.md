@@ -1,6 +1,6 @@
 # Production Deployment — Single-Node Self-Hosted Nucleus
 
-> **Scope**: v0.2 single-node deployment for teams of 5–20 engineers, roughly 100 GB–5 TB total data, per `nucleus_architecture_v4.1.md` beachhead persona and yield-to-giants strategy.
+> **Scope**: v0.2 single-node deployment for teams of 5–20 engineers, roughly 100 GB–5 TB total data, per `docs/specs/nucleus_architecture_v4.1.md` beachhead persona and yield-to-giants strategy.
 > **Not in scope**: multi-node HA, fleet orchestration, or managed control planes — defer to Mode 2 (`compute=` dispatch) and cloud catalogs (see v0.3+ roadmap and architecture section 10).
 
 Nucleus v0.2 is intentionally **single-node**: you run one well-provisioned Linux host (VM or bare metal), attach fast local or block storage for the warehouse, optionally front the Workbench with a reverse proxy and TLS, and back object storage with **SeaweedFS** (documentation default per [ADR-008](../decisions/ADR-008-storage-substrate-v01.md)) or any S3-compatible endpoint. This is suitable for a shared “team laptop in the closet” topology — not for exabyte-scale or multi-region SLAs.
@@ -253,7 +253,7 @@ Release automation expectations: [ADR-022](../decisions/ADR-022-cicd-release-aut
 
 Primary levers (single-node):
 
-- **DuckDB** — `memory_limit` + `threads` set during materialization ([DuckDB tuning](https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html)); AMA sets a safe default — override via `nucleus_project.yaml` per [`nucleus_project_anatomy.md`](../../nucleus_project_anatomy.md) examples.
+- **DuckDB** — `memory_limit` + `threads` set during materialization ([DuckDB tuning](https://duckdb.org/docs/guides/performance/how_to_tune_workloads.html)); AMA sets a safe default — override via `nucleus_project.yaml` per [`docs/specs/nucleus_project_anatomy.md`](../specs/nucleus_project_anatomy.md) examples.
 - **Polars** — limit thread pool on shared hosts (`POLARS_MAX_THREADS` env) to cap CPU contention.
 - **Dagster** — reduce concurrent heavy runs on one box (future tunable; see parity research rows for `max_concurrent_runs` in `docs/internal/research/parity_vs_bosch_ely_adb_batch.md`).
 
@@ -291,6 +291,6 @@ Treat public cloud list price + **support comp** as your comparison baseline; th
 - [`docs/patterns/secret_management.md`](../patterns/secret_management.md)
 - [`docs/cookbook/cloud-credentials.md`](cloud-credentials.md) — *link target for Wave cookbook; create when file lands*
 - [`docs/cookbook/ai-copilot-setup.md`](ai-copilot-setup.md) — *forthcoming — until published, configure LLM keys per `secret_management` + [ADR-015](../decisions/ADR-015-ai-chat-mvp.md)*
-- [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) section 10 — yield to giants
+- [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) section 10 — yield to giants
 - [`docs/internal/research/performance_reliability_targets.md`](../research/performance_reliability_targets.md) — perf + reliability budgets
 - Local dev MinIO alternate (archived upstream note): [`docker-compose.demo.yml`](../../docker-compose.demo.yml) — **do not edit** per policy; contrast with SeaweedFS default in [`docker-compose.yml`](../../docker-compose.yml)

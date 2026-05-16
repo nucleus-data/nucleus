@@ -500,7 +500,7 @@ python scripts/loc_budget.py --report
 pytest -v
 # Expected: ~20 tests PASSED in <1s.
 
-# CLI entry point per `nucleus_cli_spec.md` §3.7:
+# CLI entry point per `docs/specs/nucleus_cli_spec.md` §3.7:
 nucleus version
 # Expected: prints `nucleus 0.0.0` plus pinned wrapped-OSS versions
 # (duckdb, polars, pyarrow, pyiceberg, dagster). If `command not found`: venv
@@ -513,27 +513,27 @@ Continue with Windows §6 (pre-commit hooks) and §8 (daily workflow) — both P
 
 ### §M6. First Nucleus invocation (post-Tier-0)
 
-> ⚠️ **Pre-Heartbeat status** ([`README.md`](README.md) §Status): `nucleus init` / `up` / `down` / `run` / `ingest` / `query` are **specified** in [`nucleus_cli_spec.md`](nucleus_cli_spec.md) §3 but not yet implemented. The block below is the **target** PoC #5 user flow; on a Tier-0 build (Mo 1-2) it works end-to-end.
+> ⚠️ **Pre-Heartbeat status** ([`README.md`](README.md) §Status): `nucleus init` / `up` / `down` / `run` / `ingest` / `query` are **specified** in [`docs/specs/nucleus_cli_spec.md`](docs/specs/nucleus_cli_spec.md) §3 but not yet implemented. The block below is the **target** PoC #5 user flow; on a Tier-0 build (Mo 1-2) it works end-to-end.
 
 After install, the [`poc/p5_beachhead/SCENARIO.md`](poc/p5_beachhead/SCENARIO.md) 30-min beachhead flow on macOS is:
 
 ```bash
-nucleus init my-data-stack    # Scaffolds project per `nucleus_cli_spec.md` §3.1
+nucleus init my-data-stack    # Scaffolds project per `docs/specs/nucleus_cli_spec.md` §3.1
 cd my-data-stack
 nucleus up                    # Boots local stack — target <10s (PoC #4 budget).
                               # Wraps `docker compose up -d <storage>` + filesystem-backed
                               # pyiceberg.SqlCatalog + in-process Dagster Definitions
-                              # per `nucleus_cli_spec.md` §3.2.
+                              # per `docs/specs/nucleus_cli_spec.md` §3.2.
 ```
 
 Verify boot in <10s:
 
 | Surface | URL / path | Default credentials | Source |
 |---|---|---|---|
-| **MinIO Console** (when MinIO compose) | http://localhost:9001 | `minioadmin` / `minioadmin` | [`docs/internal/research/minio.md`](docs/internal/research/minio.md) §2.1 + §4.3 (NEEDS VERIFICATION on default-cred preservation per Worker BB §2.1 + `nucleus_cli_spec.md` §10 NV #7) |
+| **MinIO Console** (when MinIO compose) | http://localhost:9001 | `minioadmin` / `minioadmin` | [`docs/internal/research/minio.md`](docs/internal/research/minio.md) §2.1 + §4.3 (NEEDS VERIFICATION on default-cred preservation per Worker BB §2.1 + `docs/specs/nucleus_cli_spec.md` §10 NV #7) |
 | **MinIO S3 endpoint** | http://localhost:9000 | (sigv4 with above) | Same |
 | **SeaweedFS S3 endpoint** (when SeaweedFS compose, default per [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md)) | http://localhost:9000 | configurable | NEEDS VERIFICATION (ADR-008 PROPOSED; final pin + UI URL pending acceptance) |
-| **Iceberg catalog file** | `./.nucleus/catalog.db` | (SQLite) | `nucleus_cli_spec.md` §7 + §10 NV #5 |
+| **Iceberg catalog file** | `./.nucleus/catalog.db` | (SQLite) | `docs/specs/nucleus_cli_spec.md` §7 + §10 NV #5 |
 
 Continue per [`poc/p5_beachhead/SCENARIO.md`](poc/p5_beachhead/SCENARIO.md): `nucleus ingest postgres://... --table public.orders --as raw.orders` → SQL transform via `ctx.sql` → `nucleus query "SELECT ..."` → BI-ready Iceberg snapshot committed.
 
@@ -565,7 +565,7 @@ External testers on macOS run the same `git clone` → `nucleus up` → `nucleus
 
 2. **Apple Silicon image-arch parity is per-image (cross-ref §M3).** The only third-party container is the storage substrate. The **archived** MinIO `RELEASE.2025-09-07T16-13-09Z` receives no future arm64 builds; if its existing arm64 manifest is incomplete on an M-series tester's machine, Docker Desktop falls back to Rosetta 2 emulation and `nucleus up` slows. SeaweedFS (per [ADR-008](docs/decisions/ADR-008-storage-substrate-v01.md)) historically publishes arm64 — pin TBD. Flag a Rosetta fallback as a PoC #5 stuck-point. **NEEDS VERIFICATION** pre-PoC #5 dry-run on both substrates.
 
-3. **`nucleus doctor` is the intended session "step 0" — but ships v0.3+.** Per [`nucleus_cli_spec.md`](nucleus_cli_spec.md) §4.5, `nucleus doctor` will check Python `>=3.11,<3.13`, Docker reachable, ports `9000/9001` free, MinIO health, catalog valid, OL transport reachable, and disk free `>5 GB`. Per [`poc/p5_beachhead/RECRUITMENT.md`](poc/p5_beachhead/RECRUITMENT.md), PoC #5 testers run it as step 0. **It is a v0.3+ command** (NEEDS VERIFICATION on availability for the PoC #5 dry-run window — if the v0.1 ship date moves before v0.3, the §M5 manual checklist substitutes for `nucleus doctor`).
+3. **`nucleus doctor` is the intended session "step 0" — but ships v0.3+.** Per [`docs/specs/nucleus_cli_spec.md`](docs/specs/nucleus_cli_spec.md) §4.5, `nucleus doctor` will check Python `>=3.11,<3.13`, Docker reachable, ports `9000/9001` free, MinIO health, catalog valid, OL transport reachable, and disk free `>5 GB`. Per [`poc/p5_beachhead/RECRUITMENT.md`](poc/p5_beachhead/RECRUITMENT.md), PoC #5 testers run it as step 0. **It is a v0.3+ command** (NEEDS VERIFICATION on availability for the PoC #5 dry-run window — if the v0.1 ship date moves before v0.3, the §M5 manual checklist substitutes for `nucleus doctor`).
 
 Per [`poc/p5_beachhead/DESIGN.md`](poc/p5_beachhead/DESIGN.md) §"Status gate", *"`SETUP.md` instructions verified on the host OS the tester uses (macOS primary; Windows + Linux as stretch)"* is a precondition. **§M1-§M8 closes the macOS half of that gate**; the Windows half is §1-§10 above; the Linux half is the natural POSIX subset of §M1-§M8 (skip §M3 Docker Desktop in favour of the native `docker` package; everything else carries — NEEDS VERIFICATION via a Linux dry-run before recruitment opens).
 

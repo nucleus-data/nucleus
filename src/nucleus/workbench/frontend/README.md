@@ -113,7 +113,7 @@ Run `nucleus workbench up` and open http://localhost:8765 to see the demo.
 
 ## Architecture
 
-Workbench is Layer 4 (Experience) per `nucleus_architecture_v4.1.md §8.1`.
+Workbench is Layer 4 (Experience) per `docs/specs/nucleus_architecture_v4.1.md §8.1`.
 The frontend communicates exclusively with the backend via `/api/*` endpoints.
 It never imports Python code directly.
 

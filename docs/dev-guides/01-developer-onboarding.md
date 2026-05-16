@@ -168,7 +168,7 @@ Cursor users: the project includes `.cursor/rules/nucleus.mdc` (auto-applied to 
 In order:
 1. `AGENTS.md` (30 min) — the universal law of this repo
 2. `docs/roadmap/overview.md` (10 min) — version timeline
-3. `nucleus_architecture_v4.1.md` (50 min) — architectural bible
+3. `docs/specs/nucleus_architecture_v4.1.md` (50 min) — architectural bible
 
 Do not write any code until you've read at least `AGENTS.md`.
 

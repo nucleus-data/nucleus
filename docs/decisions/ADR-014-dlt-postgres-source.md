@@ -10,12 +10,12 @@
 > 4. **`--mode append|replace`** CLI flag (terse, Nucleus-shaped per AGENTS.md §7); rejects `--write-disposition` (dlt vocabulary leak).
 > 5. **+1-week effort buffer** accepted; if SQLAlchemy backend needs a JSONB / NUMERIC adapter shim, +1 week absorbs it. Stage 2 ConnectorX pre-commit deferred to evidence.
 > **Tags**: connectors, ingestion, dlt, postgres, stage-1, wrap-not-build, error-translation
-> **Supersedes (in part)**: portions of `nucleus_architecture_v4.1.md` §5.5.1 (Amendment 13 sized a native Postgres branch on `ctx.copy_from`; this ADR proposes dlt wrap) + `docs/internal/research/dlt.md` §10 (placed dlt at v0.3+; Stage 1 narrows the trigger to one production-grade SQL source).
-> **Related**: ADR-001 (no commit service), ADR-002 §6 (dlt deferred to v0.3+ — this ADR re-prioritizes), ADR-003 (PyIceberg `0.8.1 → 0.11.x` — **hard prerequisite**), ADR-006 (NE-codes), ADR-007 (license tier — dlt is Apache-2.0, GREEN), ADR-013 (`ctx.materialize` shape mirrored here for `ctx.copy_from_postgres`), `docs/internal/research/dlt.md` §13, `docs/swap/dlt.md`, `nucleus_architecture_v4.1.md` §5.5 + §6.3 + §6.4, `AGENTS.md` §3 #10/#11 + §11.12 + §11.13, `src/nucleus/ctx/copy_from.py` (the SQLite parallel).
+> **Supersedes (in part)**: portions of `docs/specs/nucleus_architecture_v4.1.md` §5.5.1 (Amendment 13 sized a native Postgres branch on `ctx.copy_from`; this ADR proposes dlt wrap) + `docs/internal/research/dlt.md` §10 (placed dlt at v0.3+; Stage 1 narrows the trigger to one production-grade SQL source).
+> **Related**: ADR-001 (no commit service), ADR-002 §6 (dlt deferred to v0.3+ — this ADR re-prioritizes), ADR-003 (PyIceberg `0.8.1 → 0.11.x` — **hard prerequisite**), ADR-006 (NE-codes), ADR-007 (license tier — dlt is Apache-2.0, GREEN), ADR-013 (`ctx.materialize` shape mirrored here for `ctx.copy_from_postgres`), `docs/internal/research/dlt.md` §13, `docs/swap/dlt.md`, `docs/specs/nucleus_architecture_v4.1.md` §5.5 + §6.3 + §6.4, `AGENTS.md` §3 #10/#11 + §11.12 + §11.13, `src/nucleus/ctx/copy_from.py` (the SQLite parallel).
 
 ## Context
 
-The founder greenlit a parallel 4-6 month ladder to v1.0 (target: enterprise-ready, impressive). Stage 1 must answer the first complaint a beachhead field-tester (5-20-engineer team) raises after `nucleus init`: *"my data is in Postgres, not SQLite."* `src/nucleus/ctx/copy_from.py` ships SQLite-only today (per its docstring at line 6); Postgres was sized for v0.1 in `nucleus_architecture_v4.1.md` §5.5.1 but never landed. Stage 1's most v1.0-impactful single deliverable is closing this gap.
+The founder greenlit a parallel 4-6 month ladder to v1.0 (target: enterprise-ready, impressive). Stage 1 must answer the first complaint a beachhead field-tester (5-20-engineer team) raises after `nucleus init`: *"my data is in Postgres, not SQLite."* `src/nucleus/ctx/copy_from.py` ships SQLite-only today (per its docstring at line 6); Postgres was sized for v0.1 in `docs/specs/nucleus_architecture_v4.1.md` §5.5.1 but never landed. Stage 1's most v1.0-impactful single deliverable is closing this gap.
 
 Two architectural paths exist:
 
@@ -203,7 +203,7 @@ pip uninstall dlt
 git revert <stage-1-pr>
 ```
 
-User-side data: Iceberg tables remain readable (Tier 0 immortal substrate per `nucleus_architecture_v4.1.md` §4.1); user can re-ingest via path A (native Postgres branch) once that fallback exists. No data migration required — the table format is the contract, dlt is the loader.
+User-side data: Iceberg tables remain readable (Tier 0 immortal substrate per `docs/specs/nucleus_architecture_v4.1.md` §4.1); user can re-ingest via path A (native Postgres branch) once that fallback exists. No data migration required — the table format is the contract, dlt is the loader.
 
 If structural rollback (dlt unviable): ADR-014a documents the swap to path A (~150 LOC native Postgres branch on `ctx.copy_from` — pre-sized in `docs/internal/research/dlt.md` §13 Q1).
 
@@ -332,7 +332,7 @@ No new dependency to uninstall — `pymysql==1.1.1` remains in `pyproject.toml` 
 
 ## Architecture sections touched
 
-`nucleus_architecture_v4.1.md` **§5.5** (Ingestion — amends Amendment 13's "v0.1 native Postgres" framing to "Stage 1 wrapped Postgres"; SQLite branch unchanged) · **§5.5.2** (lifts dlt's first wrap from v0.3+ to Stage 1) · **§6.3** (Coordination — adds the dlt translator to the boundary list) · **§6.4** (Error Translation — confirms no new NE-code allocations needed). Full edit log lands on acceptance via the same pattern as ADR-013 §"Sections to update on acceptance".
+`docs/specs/nucleus_architecture_v4.1.md` **§5.5** (Ingestion — amends Amendment 13's "v0.1 native Postgres" framing to "Stage 1 wrapped Postgres"; SQLite branch unchanged) · **§5.5.2** (lifts dlt's first wrap from v0.3+ to Stage 1) · **§6.3** (Coordination — adds the dlt translator to the boundary list) · **§6.4** (Error Translation — confirms no new NE-code allocations needed). Full edit log lands on acceptance via the same pattern as ADR-013 §"Sections to update on acceptance".
 
 ## Trigger
 

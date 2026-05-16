@@ -12,8 +12,8 @@ Covers ``read()`` in ``src/nucleus/ctx/read.py``:
     8. Accepts AssetRef (nucleus.AssetRef) in addition to bare string.
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.4 (Iceberg read path)
-    nucleus_ctx_sdk_spec.md §4.1 (ctx.read signature + as_ formats)
+    docs/specs/nucleus_architecture_v4.1.md §5.4 (Iceberg read path)
+    docs/specs/nucleus_ctx_sdk_spec.md §4.1 (ctx.read signature + as_ formats)
     docs/decisions/ADR-005-api-stability-tiering.md §2 (Beta tier)
 """
 

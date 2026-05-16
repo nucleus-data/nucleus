@@ -1,10 +1,10 @@
 # Sequence — Composability Swap Drill (Process)
 
 > **Diagram type**: UML Sequence (process spec, **not** a runtime hot path).
-> **Scope**: Validating that a Tier 1/2 dependency can still be swapped per `nucleus_architecture_v4.1.md` §9.3.
+> **Scope**: Validating that a Tier 1/2 dependency can still be swapped per `docs/specs/nucleus_architecture_v4.1.md` §9.3.
 > **Cadence**: Quarterly (≥ every 90 days) per v4.1 §9.3, OR triggered by a §2 stop-condition. Distinct from the **monthly Drift Detection Pass** in `AGENTS.md` §11.11 — see §9 row 1.
 > **Status**: PROCESS spec. v0.1 drills are manual; v0.5+ adds CI scaffolding (placeholder, §9 row 2).
-> **Companion**: [`../swap/dagster.md`](../swap/dagster.md), [`../swap/duckdb.md`](../swap/duckdb.md), [`../swap/pyiceberg.md`](../swap/pyiceberg.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §9, [`../../AGENTS.md`](../../AGENTS.md) §3 #9 + §11.11.
+> **Companion**: [`../swap/dagster.md`](../swap/dagster.md), [`../swap/duckdb.md`](../swap/duckdb.md), [`../swap/pyiceberg.md`](../swap/pyiceberg.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §9, [`../../AGENTS.md`](../../AGENTS.md) §3 #9 + §11.11.
 > **Last touched**: 2026-05-13
 
 ---
@@ -205,7 +205,7 @@ Per `AGENTS.md` §11.12 (no fabricated APIs; cite official docs):
 
 ## §10. Cross-references
 
-- [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §9 (constitution; Amendment 3 / D12), §9.2-§9.5 (tier classification, Phase 1 / Phase 2 cadence, license & health monitor, forking), §6.5 (Dagster replaceability — highest-stakes drill).
+- [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §9 (constitution; Amendment 3 / D12), §9.2-§9.5 (tier classification, Phase 1 / Phase 2 cadence, license & health monitor, forking), §6.5 (Dagster replaceability — highest-stakes drill).
 - [`../../AGENTS.md`](../../AGENTS.md) §3 #9 (operating rule), §11.11 (monthly Drift Detection Pass — distinct, see §9 row 1), §11.13 (upgrade safety).
 - [`../swap/dagster.md`](../swap/dagster.md), [`../swap/duckdb.md`](../swap/duckdb.md), [`../swap/pyiceberg.md`](../swap/pyiceberg.md); format templates [`sequence_error_translation.md`](sequence_error_translation.md), [`sequence_ingestion.md`](sequence_ingestion.md), [`sequence_asset_materialization.md`](sequence_asset_materialization.md).
 

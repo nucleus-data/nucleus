@@ -4,7 +4,7 @@ Centralises the warehouse path, the Postgres connection string, and the
 SQL-template loader so the individual asset modules read top-to-bottom
 without ``Path()`` plumbing.
 
-Per ``nucleus_ctx_sdk_spec.md`` §0 (``ctx`` is the only thing users
+Per ``docs/specs/nucleus_ctx_sdk_spec.md`` §0 (``ctx`` is the only thing users
 import) — these helpers wrap nothing extra; they just resolve filesystem
 paths so ``ctx.copy_from`` and ``ctx.sql`` calls stay one-liners.
 """

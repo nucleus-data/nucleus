@@ -3,7 +3,7 @@
 Compares the latest benchmark run against a recorded baseline. CI fails
 the dep-upgrade PR if any tracked metric drifts more than ±10%
 (configurable via ``--tolerance``). Addresses
-``nucleus_architecture_v4.1.md`` §19 risk-register rows #2 (DuckDB Labs
+``docs/specs/nucleus_architecture_v4.1.md`` §19 risk-register rows #2 (DuckDB Labs
 pivot — perf regression is the signal to consider DataFusion swap), #8
 (Error Translation feasibility) and #11 (composability drift).
 
@@ -173,7 +173,7 @@ def _print_skeleton(baseline: Path, current: Path, *, as_json: bool) -> int:
         "\nNo benchmark fixtures exist yet; first real run lands post-PoC #1 promotion.\n"
         "Per AGENTS.md §11.13: record a baseline with `--record` once a real benchmark\n"
         "harness populates tests/upgrade_smoke/current.json. Risk register: \n"
-        "nucleus_architecture_v4.1.md §19 (rows #2, #8, #11)."
+        "docs/specs/nucleus_architecture_v4.1.md §19 (rows #2, #8, #11)."
     )
     return 0
 

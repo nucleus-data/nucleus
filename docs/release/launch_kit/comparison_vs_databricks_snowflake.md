@@ -10,7 +10,7 @@
 
 ## Capability comparison table
 
-> Sources: `nucleus_architecture_v4.1.md`, `docs/internal/research/scale_out_audit.md`, public Databricks docs (<https://docs.databricks.com/>), Snowflake docs (<https://docs.snowflake.com/>). Last verified 2026-05-15.
+> Sources: `docs/specs/nucleus_architecture_v4.1.md`, `docs/internal/research/scale_out_audit.md`, public Databricks docs (<https://docs.databricks.com/>), Snowflake docs (<https://docs.snowflake.com/>). Last verified 2026-05-15.
 
 | Capability | Nucleus v0.2 | Databricks | Snowflake |
 |---|---|---|---|
@@ -47,7 +47,7 @@
 
 ## When to use which (500 words)
 
-**Use Nucleus when** you are a **5–20 engineer team building greenfield analytics on 100 GB–5 TB of data**, you want **local-identical-to-prod** workflows so a junior engineer's MacBook can reproduce a production pipeline byte-for-byte, you don't want to staff a platform engineer to wire 6+ tools together, you care about **vendor neutrality** (Apache 2.0 + Iceberg portability mean your bytes are yours), and you want a **30-minute on-ramp** from `git clone` to a BI-ready Iceberg table. Nucleus is the right call when the alternative — a year-one cluster contract starting at five figures plus a six-week ramp before any value flows — does not match your runway or your team size. Per `nucleus_architecture_v4.1.md` §1.5 this is the **explicit beachhead persona**; everything else (solo consultants, enterprise domain teams, hyperscale) is incidentally served at best until v1.5+.
+**Use Nucleus when** you are a **5–20 engineer team building greenfield analytics on 100 GB–5 TB of data**, you want **local-identical-to-prod** workflows so a junior engineer's MacBook can reproduce a production pipeline byte-for-byte, you don't want to staff a platform engineer to wire 6+ tools together, you care about **vendor neutrality** (Apache 2.0 + Iceberg portability mean your bytes are yours), and you want a **30-minute on-ramp** from `git clone` to a BI-ready Iceberg table. Nucleus is the right call when the alternative — a year-one cluster contract starting at five figures plus a six-week ramp before any value flows — does not match your runway or your team size. Per `docs/specs/nucleus_architecture_v4.1.md` §1.5 this is the **explicit beachhead persona**; everything else (solo consultants, enterprise domain teams, hyperscale) is incidentally served at best until v1.5+.
 
 **Use Databricks when** you have a **multi-team enterprise scale workload** (10+ teams, 10 TB+ warehouse, multi-thousand-engineer org), you want a **mature ML platform** (MLflow, Vector Search, Mosaic AI, Model Serving) integrated with your data layer, you need **column-level lineage + governance UI** at production polish (Unity Catalog), you have **regulated-industry compliance** requirements (SOC 2 Type II, HIPAA, FedRAMP) and need vendor accountability for the certs, you want **distributed Spark** for large-scale ETL or model training, or you have **existing investment in the Databricks ecosystem** (notebooks, jobs, partner integrations). Databricks is excellent at exactly the workloads Nucleus is explicitly not designed for — and the Databricks Free Edition is a great way to evaluate without committing to spend.
 
@@ -59,7 +59,7 @@
 
 ## "Yield to giants" — what we mean (and what we explicitly don't)
 
-Per `nucleus_architecture_v4.1.md` §10:
+Per `docs/specs/nucleus_architecture_v4.1.md` §10:
 
 - **Mode 1 — Graduation (today, zero effort).** Your Nucleus-managed Iceberg snapshots are vendor-neutral by definition. Point Databricks (Iceberg-compat via UniForm or native Iceberg tables), Snowflake (Iceberg tables GA 2024), or any Iceberg REST catalog (Polaris, Lakekeeper, Unity, R2) at the same S3 bucket and you are reading the same data. **No re-migration. No format translation.** This is the felt moat against vendor lock-in.
 - **Mode 2 — Hybrid compute (v1.5+).** Annotate an asset with `compute="databricks"` or `compute="snowflake"` and Nucleus orchestrates the asset graph while the giant executes the heavy SQL. The result is committed back to Iceberg. The 30-min onboarding ergonomics stay; the 100 TB heavy lifting yields.
@@ -154,7 +154,7 @@ Honestly: depends on whether the founder commits to (a) raise, (b) hand off, or 
 
 ## See also
 
-- `nucleus_architecture_v4.1.md` §10 — Yield-to-Giants Strategy (full Mode 1/2/3 detail)
+- `docs/specs/nucleus_architecture_v4.1.md` §10 — Yield-to-Giants Strategy (full Mode 1/2/3 detail)
 - `docs/internal/research/scale_out_audit.md` — Honest assessment of where Nucleus breaks at large-team scale (TL;DR: not a fit by design; graduation is the answer)
 - `docs/cookbook/production-deployment.md` — Single-node self-hosted Nucleus production setup
 - `docs/release/launch_kit/faq_launch.md` — 25 launch-day FAQs including pricing / scale-out / contributing

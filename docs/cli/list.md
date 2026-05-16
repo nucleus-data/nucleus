@@ -1,6 +1,6 @@
 # `nucleus list`
 
-> **Stability**: Beta (v0.2) · **Spec**: `nucleus_cli_spec.md` §3
+> **Stability**: Beta (v0.2) · **Spec**: `docs/specs/nucleus_cli_spec.md` §3
 > **Closes**: PoC #5 Checkpoint 7 — asset discoverability blocker
 > (`docs/poc/p5_beachhead/FEEDBACK_FORM.md` Friction #5 + "What would make
 > me a paying user" #3).
@@ -60,7 +60,7 @@ Field reference:
 
 | Field                        | Type             | Notes |
 |------------------------------|------------------|-------|
-| `key`                        | string           | Asset key, e.g. `raw.orders` (v0.1 keys are 2-level per `nucleus_cli_spec.md` §10 NV #6). |
+| `key`                        | string           | Asset key, e.g. `raw.orders` (v0.1 keys are 2-level per `docs/specs/nucleus_cli_spec.md` §10 NV #6). |
 | `type`                       | `asset` / `check`| Registry source — `@nucleus.asset` or `@nucleus.check`. |
 | `namespace`                  | string           | First segment of `key` (matches the `--namespace` filter). |
 | `materialized`               | bool             | `true` iff the Iceberg table has at least one committed snapshot. |
@@ -108,7 +108,7 @@ Check the spelling or drop --namespace to see every asset.
 
 ## Errors
 
-Per `nucleus_cli_spec.md` §5.4, every error path raises a
+Per `docs/specs/nucleus_cli_spec.md` §5.4, every error path raises a
 `NucleusError` subclass and exits non-zero with the three-block render
 on stderr (`Error [NEXXXX]:` + `Fix:` + `Docs:`). No `pyiceberg`,
 `duckdb`, `dagster`, or `polars` class names ever appear in user
@@ -137,4 +137,4 @@ output — enforced by `scripts/dagster_leak_check.py` per AGENTS.md §11.7.
 
 ---
 
-*Spec source: `nucleus_cli_spec.md` §3.* *Implementation: `src/nucleus/cli/commands/list.py`.* *Tests: `tests/cli/commands/test_list.py` (12 cases).*
+*Spec source: `docs/specs/nucleus_cli_spec.md` §3.* *Implementation: `src/nucleus/cli/commands/list.py`.* *Tests: `tests/cli/commands/test_list.py` (12 cases).*

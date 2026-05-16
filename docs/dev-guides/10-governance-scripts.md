@@ -117,7 +117,7 @@ Status: GREEN (52.5% of ceiling)
 
 ## `dagster_leak_check.py`
 
-**Enforces**: No external library classnames in user-facing strings. Per `AGENTS.md §11.7` and `nucleus_architecture_v4.1.md` §6.4.
+**Enforces**: No external library classnames in user-facing strings. Per `AGENTS.md §11.7` and `docs/specs/nucleus_architecture_v4.1.md` §6.4.
 
 **What it scans**: `src/nucleus/`, `tests/` for:
 - Dagster classnames: `DagsterUserCodeExecutionError`, `OpExecutionContext`, etc.

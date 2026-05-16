@@ -7,7 +7,7 @@ Source: `docs/internal/research/performance_reliability_targets.md` §2
 
 ## Context
 
-Nucleus v0.1.0 ships with qualitative performance targets from `nucleus_architecture_v4.1.md` §16 (boot < 10 s, 100M-row aggregate < 2 s). These targets are validated empirically at PoC milestones (PoC #4: `nucleus up` = 5.82 s / 117.3 MB; WSL Beachhead E2E: 7 s boot) but there is no automated regression gate that catches new code slowing a critical path before it merges.
+Nucleus v0.1.0 ships with qualitative performance targets from `docs/specs/nucleus_architecture_v4.1.md` §16 (boot < 10 s, 100M-row aggregate < 2 s). These targets are validated empirically at PoC milestones (PoC #4: `nucleus up` = 5.82 s / 117.3 MB; WSL Beachhead E2E: 7 s boot) but there is no automated regression gate that catches new code slowing a critical path before it merges.
 
 Wave-1H research (`docs/internal/research/performance_reliability_targets.md`) formalised nine per-operation budget sections from v4.1 §5/§16 and beachhead empirical data. Those budgets now need to be a first-class CI signal, not just a narrative in a research doc.
 
@@ -48,9 +48,9 @@ Ratified 2026-05-15: code shipped in commit a41a82c (v0.2.0 handover bundle).
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §16 (performance targets)
-- `nucleus_architecture_v4.1.md` §5.1 (DuckDB query engine)
-- `nucleus_architecture_v4.1.md` §5.2 (Polars DataFrame engine)
+- `docs/specs/nucleus_architecture_v4.1.md` §16 (performance targets)
+- `docs/specs/nucleus_architecture_v4.1.md` §5.1 (DuckDB query engine)
+- `docs/specs/nucleus_architecture_v4.1.md` §5.2 (Polars DataFrame engine)
 - `AGENTS.md` §11.4 (per-feature workflow — step 6 integration run)
 - `AGENTS.md` §11.13 (upgrade workflow — benchmark regression gate)
 

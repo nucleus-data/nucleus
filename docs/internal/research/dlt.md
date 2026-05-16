@@ -80,7 +80,7 @@ Symbols the v0.3 adapter (`coordination/dlt_source_adapter.py`, target ≤500 LO
 
 ### §5.1 dlt sources as Nucleus source assets (v0.3 design)
 
-Per `nucleus_architecture_v4.1.md` §5.5.2 + §6.3:
+Per `docs/specs/nucleus_architecture_v4.1.md` §5.5.2 + §6.3:
 
 1. User writes `@nucleus.source(engine="dlt")` returning a dlt-style source fn (yielding resources).
 2. Adapter constructs `dlt.pipeline(...)` keyed by `(project_id, source_asset_name)`; `pipelines_dir = .nucleus/state/dlt/` (project-local, not `~/.dlt`).
@@ -232,7 +232,7 @@ If dlt becomes unviable (license pivot, dltHub fold, perf regression >2x, deprec
 
 **Why dlt enters at v0.3, not earlier, not later:**
 
-- **v0.1**: `ctx.copy_from` (~200 LOC, Postgres/MySQL/SQLite/CSV/Parquet/JSON) covers the 30-min beachhead (`nucleus_architecture_v4.1.md` §1.5, §5.5.1). Adding dlt early = +30 MB deps + 200-400 ms boot for zero beachhead-metric improvement. **Defer.**
+- **v0.1**: `ctx.copy_from` (~200 LOC, Postgres/MySQL/SQLite/CSV/Parquet/JSON) covers the 30-min beachhead (`docs/specs/nucleus_architecture_v4.1.md` §1.5, §5.5.1). Adding dlt early = +30 MB deps + 200-400 ms boot for zero beachhead-metric improvement. **Defer.**
 - **v0.3**: bottleneck shifts from "first table in 30 min" to "connect to the 50 SaaS tools we already pay for." dlt's 8000+ source catalogue + REST API auto-paginator is the lowest-LOC path. **Now.**
 - **v0.5+**: AI-assisted source authoring becomes feasible — dlt's source model is small, declarative, explicitly LLM-native (`llm-native-workflow` doc). **Capitalize.**
 - **Never**: build our own 100-connector framework. Constraint #4 / Pillar #2 violation.
@@ -332,7 +332,7 @@ round-trip cleanly into Iceberg types.
 
 ### §13.4 Wrap point in Nucleus
 
-Per `nucleus_architecture_v4.1.md` §5.5 + §6.3 + Anti-Over-Engineering: ONE
+Per `docs/specs/nucleus_architecture_v4.1.md` §5.5 + §6.3 + Anti-Over-Engineering: ONE
 new module, mirroring the existing SQLite branch. ADR-014 proposes
 `src/nucleus/ctx/copy_from_postgres.py` paralleling `src/nucleus/ctx/copy_from.py`.
 

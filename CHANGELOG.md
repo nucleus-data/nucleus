@@ -36,7 +36,7 @@ the full deprecation cycle that core data APIs receive.
 
 #### Fixed
 - **Cross-directory test_expire_wraps_pyiceberg_exception flake resolved** — M5 mock snapshots now use a 0.1-day timestamp spread (matching M4) so multiple `_make_snapshot` calls on fast hardware never land in the same millisecond. The strict `s.timestamp_ms < expire_before_ms` candidate filter in `coordination/snapshot_maintenance.expire_old_snapshots` now always finds candidates → `commit()` always runs → `DID NOT RAISE NucleusMaintenanceError` stops firing in the full pytest sweep. Verified PASS on Windows 2026-05-16 across the 891-test full sweep.
-- **CLI ↔ Workbench peer-import layering FAIL cleared** — `scripts/check_layering.py` refactored from `LAYERS.index(...)` order comparison to a `LAYER_DEPTH: dict[str, int]` keyed by architectural depth. `ctx`, `cli`, and `workbench` all share depth `4` as Layer 4 (Experience) surfaces per `nucleus_architecture_v4.1.md` §8.1; peer-imports between same-depth surfaces are explicitly allowed. Downward enforcement and cross-engine rule unchanged. ADR-040 (ACCEPTED 2026-05-15) documents the decision; verification §re-verified 2026-05-16. `cli/main.py:1334` (`from nucleus.workbench.cli import app`) now PASSes governance.
+- **CLI ↔ Workbench peer-import layering FAIL cleared** — `scripts/check_layering.py` refactored from `LAYERS.index(...)` order comparison to a `LAYER_DEPTH: dict[str, int]` keyed by architectural depth. `ctx`, `cli`, and `workbench` all share depth `4` as Layer 4 (Experience) surfaces per `docs/specs/nucleus_architecture_v4.1.md` §8.1; peer-imports between same-depth surfaces are explicitly allowed. Downward enforcement and cross-engine rule unchanged. ADR-040 (ACCEPTED 2026-05-15) documents the decision; verification §re-verified 2026-05-16. `cli/main.py:1334` (`from nucleus.workbench.cli import app`) now PASSes governance.
 - **`nucleus list` registered as Typer subapp** — main.py's inline `@app.command(name="list") def list_assets` scaffold (text/json only) replaced by `app.add_typer(_list_app, name="list", help="...")` mounting the richer `cli/commands/list.py` subapp. `nucleus list` now surfaces `--namespace` filter, `--format jsonl` alias, and Iceberg-catalog-backed materialization status (PoC #5 Checkpoint 7 closer). `tests/cli/commands/test_list.py` 12/12 PASS through both the standalone subapp and the main-app integration.
 - **Vocabulary banned-term hits cleared** — Two intentional negations of "AI-first" (the `AGENTS.md` §8 forbidden framing being explicitly rejected) in `docs/HANDOVER.md` line 14 and `docs/release/launch_kit/WOW_MOMENTS.md` line 120 now carry inline `<!-- banned-term: AI-first -->` self-suppressions, matching the existing pattern at WOW_MOMENTS.md line 148 and HANDOVER.md lines 16/466/616. `scripts/check_vocabulary.py` SKIP_PATTERNS gains `.scratch/` so transient agent-worker commit-message drafts (already git-ignored) no longer pollute the gate.
 - **Stale orphaned site docs deleted** — `docs/site/cli-reference/list.md` (107 lines, never wired into `mkdocs.yml`) removed. The live, more detailed reference lives at `docs/cli/list.md` (141 lines).
@@ -181,12 +181,12 @@ the full deprecation cycle that core data APIs receive.
 ### Changed — v0.1 launch wave
 - Promoted `nucleus up` and `nucleus down` from stub to real implementations. Wraps `docker compose` (v2 with v1 fallback) over a `docker-compose.yaml` shipped by `nucleus init`. MinIO health-check via `httpx`; clean error translation for missing docker, port conflicts, image-pull failures, and 30 s health-check timeout. Closes the last v4.1 beachhead-critical CLI gap. (See `tests/cli/test_up.py` + `tests/cli/test_down.py`.)
 - Runtime dependency surface tightened per Option α-split (drift-detection verifier MEDIUM #3): `opentelemetry-sdk==1.29.0` and `sqlglot==26.0.0` moved to `[project.optional-dependencies]` (`observability` + `lineage-advanced`); `msgspec==0.18.6` removed entirely. Default `pip install nucleus` install size shrinks ~2 MB (OpenTelemetry SDK + `opentelemetry-semantic-conventions` ≈ 1.5 MB; msgspec ≈ 0.5 MB; sqlglot still arrives transitively via `dlt` per `pip show dlt` 2026-05-14). ADR-011 + ADR-012 amended in place; pin count revised 25 → 23 core + 2 optional. No source code changes (zero v0.1 callers under `src/`, `tests/`, `poc/`, `scripts/`). `scripts/check_pinning.py` extended (~50 LOC) to enforce exact-pin discipline on the new runtime-extras tier and to surface mandatory-vs-optional pin counts in its summary line. New regression-lock suite at `tests/upgrade_smoke/test_optional_extras.py` (9 tests) guards the install matrix. See `docs/internal/research/otel_day1_decision.md` §D1-D3 for the full rationale.
-- `click==8.1.7` → `click==8.1.8` (Constraint #11 single-component bump) so the declared pin matches `litellm==1.83.14`’s `click==8.1.8` requirement. Changelog: https://github.com/pallets/click/blob/main/CHANGES.rst (`Version 8.1.8`). Companion updates: ADR-012, `docs/compatibility.md`, `.pre-commit-config.yaml`, `nucleus_cli_spec.md`. Rollback: `pip install click==8.1.7`.
+- `click==8.1.7` → `click==8.1.8` (Constraint #11 single-component bump) so the declared pin matches `litellm==1.83.14`’s `click==8.1.8` requirement. Changelog: https://github.com/pallets/click/blob/main/CHANGES.rst (`Version 8.1.8`). Companion updates: ADR-012, `docs/compatibility.md`, `.pre-commit-config.yaml`, `docs/specs/nucleus_cli_spec.md`. Rollback: `pip install click==8.1.7`.
 - `scripts/upgrade_smoke.py` — ADR-012 cross-check now unions mandatory `[project.dependencies]` pins with optional-runtime extras (`observability`, `lineage-advanced`) so the matrix matches `pyproject.toml` after Option α-split (2026-05-14).
 
 ### Fixed — v0.1 launch wave
 - `pyproject.toml`: `jinja2` 3.1.5 → 3.1.6 to align with `litellm==1.83.14` transitive exact pin (`litellm` hard-locks `jinja2==3.1.6` in wheel metadata; cold install was failing with `ERROR: Cannot install jinja2==3.1.5` on clean envs). 3.1.6 is also a security release (GHSA-cpwx-vrp4-4pq7). ADR-012 + `docs/compatibility.md` updated. Caught by WSL beachhead E2E 2026-05-14.
-- ADR-005 §2 schedule amended 2026-05-14: `ctx.write`, `ctx.log`, and `ctx.params` are **DEFERRED (v0.2+)** — not exported in v0.1 per `src/nucleus/ctx/__init__.py` / `nucleus_architecture_v4.1.md` §13.1; substitutes remain asset returns, stdlib `logging`, and CLI/config.
+- ADR-005 §2 schedule amended 2026-05-14: `ctx.write`, `ctx.log`, and `ctx.params` are **DEFERRED (v0.2+)** — not exported in v0.1 per `src/nucleus/ctx/__init__.py` / `docs/specs/nucleus_architecture_v4.1.md` §13.1; substitutes remain asset returns, stdlib `logging`, and CLI/config.
 - `nucleus ingest mysql://...` CLI scheme allow-list now matches the dispatcher (post-Worker-B cleanup) — previously rejected at the CLI pre-flight even though `ctx.copy_from` accepted MySQL.
 - `_V01_COMMANDS` smoke matrix in `tests/cli/test_main.py` extended from 7 → 8 commands so `chat` is exercised by every per-command `--help` test (ADR-015 surface parity).
 - `_copy_traversable` in `nucleus init` now silently skips `__pycache__/` and `*.pyc`/`*.pyo` artefacts — prevents a `UnicodeDecodeError` when the installed `templates/v01/` tree has been touched by `compileall` (caught in the 2026-05-14 polish wave).
@@ -194,7 +194,7 @@ the full deprecation cycle that core data APIs receive.
 
 ### Added — Architecture and core
 
-- `nucleus_architecture_v4.1.md` — five-layer architecture (Physics / Engines / Coordination / Intelligence / Experience) and roadmap (§18) governing v0.1 scope.
+- `docs/specs/nucleus_architecture_v4.1.md` — five-layer architecture (Physics / Engines / Coordination / Intelligence / Experience) and roadmap (§18) governing v0.1 scope.
 - `src/nucleus/errors.py` — `NucleusError` base plus 32 concrete subclasses with `error_code` ClassVars (ADR-006).
 - `docs/decisions/README.md` — ADR-001 through ADR-016 recorded ACCEPTED (strategy, pins, SDK freeze, errors, connectors, Workbench); see per-ADR files under `docs/decisions/`.
 
@@ -268,7 +268,7 @@ the full deprecation cycle that core data APIs receive.
 - `docs/decisions/README.md` — ADR index (001–016 ACCEPTED at snapshot time).
 - `docs/compatibility.md` — pin matrix companion to ADR-012.
 - `docs/errors/` — error slug stubs referenced by `docs_url` conventions.
-- `nucleus_poc_plan.md` — PoC #1–#5 status and criteria.
+- `docs/specs/nucleus_poc_plan.md` — PoC #1–#5 status and criteria.
 
 ### Errors / error translation
 
@@ -308,11 +308,11 @@ This is not a real release. The project is in the **planning + scaffolding** pha
 No code is installable. This entry exists so the changelog has a starting point.
 
 ### Added (pre-code scaffolding)
-- Full architecture document (`nucleus_architecture_v4.1.md`, 1678 lines)
+- Full architecture document (`docs/specs/nucleus_architecture_v4.1.md`, 1678 lines)
   incorporating 13 senior-review amendments and 4 follow-up patches.
 - Universal AI-agent rules (`AGENTS.md`) with **11 Hard Constraints**.
 - Cursor-specific rules (`.cursor/rules/nucleus.mdc`).
-- Proof-of-Concept plan (`nucleus_poc_plan.md`) — 5 PoCs gating v0.1.
+- Proof-of-Concept plan (`docs/specs/nucleus_poc_plan.md`) — 5 PoCs gating v0.1.
 - Project scaffolding: `pyproject.toml`, `LICENSE` (Apache 2.0), `.gitignore`, `README.md`.
 - Engineering conventions (`docs/conventions/engineering.md`) — 18 sections.
 - C4 architecture diagrams (`docs/architecture/C4_context.md`, `C4_container.md`).

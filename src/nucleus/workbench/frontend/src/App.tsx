@@ -11,7 +11,7 @@
  *   /schedules         — Schedule list + next-run preview
  *   /catalog           — Asset catalog browser (table view)
  *
- * Per ADR-016 §3 (Fork B) + nucleus_architecture_v4.1.md §8.1.
+ * Per ADR-016 §3 (Fork B) + docs/specs/nucleus_architecture_v4.1.md §8.1.
  *
  * # Stability: Internal @ v0.2
  */

@@ -9,7 +9,7 @@ This shim stays in the ``cli`` layer and uses ``importlib.import_module``
 (a runtime call, not an ``ast.Import`` node) to load the workbench Typer
 sub-app at first use.  The layering AST scan never sees an upward import.
 
-Per ``nucleus_architecture_v4.1.md`` §8.1 (Layer 4: Experience — CLI and
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4: Experience — CLI and
 Workbench are separate sub-components; the CLI shim bridges them at runtime).
 
 # Stability: Internal @ v0.2

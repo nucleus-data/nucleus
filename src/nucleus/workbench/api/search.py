@@ -4,7 +4,7 @@ Searches assets (by key), recent runs (by asset key + run ID prefix),
 and scheduled assets (by key) in a single call.  Used by the ⌘K
 Command Palette in the Workbench frontend.
 
-``nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
 ADR-016 §3 — Fork B API surface.
 
 Returns up to 15 results to keep the palette snappy.  No pagination

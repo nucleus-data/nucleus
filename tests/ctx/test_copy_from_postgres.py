@@ -22,7 +22,7 @@ Verifies ``ingest_postgres_to_iceberg()``:
 Architecture refs:
     ADR-014 §Verification plan (adapted to mocked unit tests)
     docs/internal/research/dlt.md §13.8 (error translation matrix)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
 """
 
 from __future__ import annotations

@@ -5,7 +5,7 @@
 > **Priority**: **HIGHEST** — release blocker for all subsequent v0.1 work.
 > **Trigger**: Begin after dev environment setup (`SETUP.md`) + `M2.1 Dagster` from `docs/onboarding/learning_path.md` are complete.
 > **Time budget**: 2-3 weeks of solo + AI pair work.
-> **Companion**: [`../../docs/architecture/sequence_error_translation.md`](../../docs/architecture/sequence_error_translation.md), [`../../nucleus_poc_plan.md`](../../nucleus_poc_plan.md) PoC #1
+> **Companion**: [`../../docs/architecture/sequence_error_translation.md`](../../docs/architecture/sequence_error_translation.md), [`../specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) PoC #1
 
 This is **the first real implementation task** for Nucleus. Everything else depends on the error translation contract working. Hence the priority.
 
@@ -179,7 +179,7 @@ PoC #1 is "done" when:
 
 - [`../../docs/architecture/sequence_error_translation.md`](../../docs/architecture/sequence_error_translation.md) — the spec
 - [`../../docs/decisions/ADR-001-no-iceberg-commit-service.md`](../../docs/decisions/ADR-001-no-iceberg-commit-service.md) — ADR format example
-- [`../../nucleus_poc_plan.md`](../../nucleus_poc_plan.md) — broader PoC plan
+- [`../specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) — broader PoC plan
 - [Dagster exception types](https://docs.dagster.io/_apidocs/errors) — official source for what we translate
 - Python exception chaining: https://docs.python.org/3/tutorial/errors.html#exception-chaining
 

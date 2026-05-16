@@ -1,6 +1,6 @@
 # Observability Backends (VictoriaMetrics + VictoriaLogs + Marquez) — Research Notes
 
-> **Component status in Nucleus**: **v0.5+ optional observability stack.** Off by default; opt-in via `nucleus enable obs` (reserved in [`nucleus_cli_spec.md`](../../nucleus_cli_spec.md) §`enable`). v0.1-v0.3 has **no** backend — OL writes JSONL to `.nucleus/lineage/` ([`openlineage.md`](./openlineage.md) §5.3), OTEL exports to console ([`opentelemetry.md`](./opentelemetry.md) §4.5). Per `nucleus_architecture_v4.1.md` §11 (Local-First Guarantee — §11.2 boot budget, §11.4 telemetry buffer-and-flush) + §4.1 (OTEL = Tier 0 protocol) + AGENTS.md §4 ("Custom observability backend → use OpenTelemetry + VictoriaMetrics + VictoriaLogs"). Tier 2 (wrappable, swappable) per v4.1 §9.
+> **Component status in Nucleus**: **v0.5+ optional observability stack.** Off by default; opt-in via `nucleus enable obs` (reserved in [`docs/specs/nucleus_cli_spec.md`](../specs/nucleus_cli_spec.md) §`enable`). v0.1-v0.3 has **no** backend — OL writes JSONL to `.nucleus/lineage/` ([`openlineage.md`](./openlineage.md) §5.3), OTEL exports to console ([`opentelemetry.md`](./opentelemetry.md) §4.5). Per `docs/specs/nucleus_architecture_v4.1.md` §11 (Local-First Guarantee — §11.2 boot budget, §11.4 telemetry buffer-and-flush) + §4.1 (OTEL = Tier 0 protocol) + AGENTS.md §4 ("Custom observability backend → use OpenTelemetry + VictoriaMetrics + VictoriaLogs"). Tier 2 (wrappable, swappable) per v4.1 §9.
 > **Pin candidates (2026-05-13)**: see §2.1. None pinned in `pyproject.toml` — all three are external service binaries / images, not Python deps.
 > **License**: **Apache-2.0** for all three (verified against raw `LICENSE` files §2.1).
 > **JVM-free?** Mixed: VM + VL are Go single-binaries (Constraint #1 ✓). **Marquez = Java 17 + Postgres** — explicit exception parallel to [`polaris.md`](./polaris.md) §1: external sidecar, not in core path. See §2.3 + §9.
@@ -92,7 +92,7 @@ Preserves the 30-min beachhead (v4.1 §1.5): zero infra; lineage in JSONL; metri
 
 ### §4.1 Local dev — `nucleus enable obs`
 
-Reserved per `nucleus_cli_spec.md` line 394. v0.5 ADR emits `docker-compose.observability.yml` extending the user's `docker-compose.yml` with **four** services:
+Reserved per `docs/specs/nucleus_cli_spec.md` line 394. v0.5 ADR emits `docker-compose.observability.yml` extending the user's `docker-compose.yml` with **four** services:
 
 | Service | Image | Idle RAM (rough) | Port |
 |---|---|---|---|

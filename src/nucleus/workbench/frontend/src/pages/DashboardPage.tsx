@@ -15,7 +15,7 @@
  *
  * Per founder visual reference (Editorial Hero v0.2).
  * ADR-016 §3 — Fork B layout spec.
- * nucleus_architecture_v4.1.md §8.1 — Layer 4 Experience.
+ * docs/specs/nucleus_architecture_v4.1.md §8.1 — Layer 4 Experience.
  *
  * # Stability: Internal @ v0.2
  */

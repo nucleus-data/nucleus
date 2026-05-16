@@ -5,7 +5,7 @@ from `pyproject.toml` `[tool.nucleus.perf_budgets]` and exits 0.  Actual
 benchmark measurements are NOT automated in v0.2 (deferred to v0.3 when a
 stable benchmark harness + nightly runner are available).
 
-Architecture ref: nucleus_architecture_v4.1.md §16 (performance targets).
+Architecture ref: docs/specs/nucleus_architecture_v4.1.md §16 (performance targets).
 """
 
 from __future__ import annotations

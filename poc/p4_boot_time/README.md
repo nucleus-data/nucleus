@@ -2,12 +2,12 @@
 
 > **Status**: Scaffolded — measurement harness drafted, not yet run end-to-end
 > (requires Python env + Docker for MinIO). **Priority**: MEDIUM (per
-> `nucleus_poc_plan.md` §11). **Time budget**: 1 week.
-> **Companion**: [`DESIGN.md`](DESIGN.md), [`../../nucleus_poc_plan.md`](../../nucleus_poc_plan.md) §4.
+> `docs/specs/nucleus_poc_plan.md` §11). **Time budget**: 1 week.
+> **Companion**: [`DESIGN.md`](DESIGN.md), [`../specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §4.
 
 ## What this PoC validates
 
-Per `nucleus_architecture_v4.1.md` §5.7 + §6.3 + `nucleus_poc_plan.md` §4:
+Per `docs/specs/nucleus_architecture_v4.1.md` §5.7 + §6.3 + `docs/specs/nucleus_poc_plan.md` §4:
 `nucleus up` cold boot <10s on developer hardware (M1 16GB baseline), warm
 boot <3s, idle RAM <500MB, all components reachable (MinIO health, pyiceberg
 catalog, Dagster `Definitions`).

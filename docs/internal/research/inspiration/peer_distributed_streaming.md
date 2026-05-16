@@ -4,7 +4,7 @@
 > **Last verified**: 2026-05-15 against official documentation + PyPI
 > **Research tier**: AGENTS.md §11.14 — Research tier (fallback: Claude Sonnet 4.6)
 > **Audience**: Nucleus founder + future architects evaluating distributed/streaming decisions at v0.5–v0.7+
-> **Related docs**: `docs/internal/research/daft.md` (deep-dive), `docs/internal/research/polars.md`, `nucleus_architecture_v4.1.md` §5.3, §10.2, §18.4
+> **Related docs**: `docs/internal/research/daft.md` (deep-dive), `docs/internal/research/polars.md`, `docs/specs/nucleus_architecture_v4.1.md` §5.3, §10.2, §18.4
 
 ---
 

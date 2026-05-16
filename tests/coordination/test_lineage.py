@@ -2,7 +2,7 @@
 """Tests for :mod:`nucleus.coordination.lineage` (the OL emitter).
 
 Validates the v0.1 asset-level OpenLineage emitter per
-``nucleus_architecture_v4.1.md`` §6.2 step 4 + ``docs/internal/research/openlineage.md``
+``docs/specs/nucleus_architecture_v4.1.md`` §6.2 step 4 + ``docs/internal/research/openlineage.md``
 §5.1. Coverage:
 
     * Output-path resolution (``NUCLEUS_LINEAGE_DIR`` env var)

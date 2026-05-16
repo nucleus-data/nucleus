@@ -4,7 +4,7 @@ Narrative: you run an early-stage e-commerce company. Orders and customers live 
 
 This sample follows the **v0.1 CLI + SDK** only: `ctx.copy_from`, `ctx.sql`, `@nucleus.asset`, `@nucleus.check`, `nucleus run`, and `nucleus query`. No Workbench, no `ctx.write`, no scheduling UI.
 
-Audience: **startup data teams** (on the order of five engineers, roughly **100GB–5TB** greenfield) — the beachhead persona described in `nucleus_architecture_v4.1.md` **section 1.5**.
+Audience: **startup data teams** (on the order of five engineers, roughly **100GB–5TB** greenfield) — the beachhead persona described in `docs/specs/nucleus_architecture_v4.1.md` **section 1.5**.
 
 ## What you need
 

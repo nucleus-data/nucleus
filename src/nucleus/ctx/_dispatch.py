@@ -1,7 +1,7 @@
 """Unified ``ctx.copy_from()`` — scheme-dispatching ingestion helper (L4).
 
-Per ``nucleus_architecture_v4.1.md`` §5.5.1 (ctx.copy_from ingestion helper)
-and ``nucleus_ctx_sdk_spec.md`` §0 (Principles) + §9 (Connectors).
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §5.5.1 (ctx.copy_from ingestion helper)
+and ``docs/specs/nucleus_ctx_sdk_spec.md`` §0 (Principles) + §9 (Connectors).
 
 This module provides a single ``copy_from()`` entry point that is the
 user-facing surface for the ``nucleus ingest`` flow. The per-source helpers
@@ -11,9 +11,9 @@ Stability (per ADR-005 §2):
     Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.5.1 (Ingestion helper)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
-    nucleus_ctx_sdk_spec.md §0 Principle 1 (ctx is the only thing users import)
+    docs/specs/nucleus_architecture_v4.1.md §5.5.1 (Ingestion helper)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_ctx_sdk_spec.md §0 Principle 1 (ctx is the only thing users import)
     docs/decisions/ADR-005-api-stability-tiering.md §2 (Beta tier)
     docs/decisions/ADR-014-dlt-postgres-source.md §"MySQL parity (2026-05-14)"
     docs/decisions/ADR-019-snowflake-connector-via-dlt.md (Snowflake branch)
@@ -78,9 +78,9 @@ def copy_from(  # noqa: PLR0911 — scheme-dispatcher: 1 return per supported sc
 
     # Stability: Beta
 
-    Unified entry point per ``nucleus_ctx_sdk_spec.md`` §0 (Principle 1 —
+    Unified entry point per ``docs/specs/nucleus_ctx_sdk_spec.md`` §0 (Principle 1 —
     ctx is the only thing users import) and
-    ``nucleus_architecture_v4.1.md`` §5.5.1 (ingestion helper scope).
+    ``docs/specs/nucleus_architecture_v4.1.md`` §5.5.1 (ingestion helper scope).
     Dispatches to the correct per-source internal function by URL scheme;
     per-source functions stay internal and are not part of the public surface.
 

@@ -1,13 +1,13 @@
 """``nucleus list`` — registered-asset discoverability (PoC #5 Checkpoint 7).
 
-Per ``nucleus_cli_spec.md`` §3 (CLI surface) and the PoC #5 feedback form
+Per ``docs/specs/nucleus_cli_spec.md`` §3 (CLI surface) and the PoC #5 feedback form
 (``docs/poc/p5_beachhead/FEEDBACK_FORM.md`` Friction #5 + "What would make
 me a paying user" #3): external testers had no way to discover registered
 assets without reading source files. This command closes that gap by
 listing every ``@nucleus.asset`` and ``@nucleus.check`` entry, with
 materialization status pulled from the Iceberg catalog.
 
-Architecture refs: ``nucleus_architecture_v4.1.md`` §8 L4 (CLI delegates
+Architecture refs: ``docs/specs/nucleus_architecture_v4.1.md`` §8 L4 (CLI delegates
 business logic to coordination/SDK layers), §6.4 (Error Translation — user
 output must never contain Dagster / DuckDB / pyiceberg class names).
 
@@ -40,7 +40,7 @@ app = typer.Typer(
 
 
 def _exit_list_error(err: NucleusError, code: int = 1) -> None:
-    """Render a NucleusError to stderr per ``nucleus_cli_spec.md`` §5.4.
+    """Render a NucleusError to stderr per ``docs/specs/nucleus_cli_spec.md`` §5.4.
 
     Mirrors ``cli/main.py:_exit_nucleus_error`` so error rendering is
     visually identical across every command.  UX audit Rec #3 (2026-05-15):
@@ -226,7 +226,7 @@ def list_assets(
     check which assets have a committed snapshot, and renders one row per
     registry entry.
 
-    Per [bold]nucleus_cli_spec.md §3[/bold]. Closes
+    Per [bold]docs/specs/nucleus_cli_spec.md §3[/bold]. Closes
     PoC #5 Checkpoint 7 (docs/poc/p5_beachhead/FEEDBACK_FORM.md Friction #5).
 
     [bold]Examples[/bold]

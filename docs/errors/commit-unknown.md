@@ -24,5 +24,5 @@ This is the one case where a blind retry is unsafe — retrying a commit that di
 
 - Source: `src/nucleus/errors.py` (`NucleusCommitUnknownError`)
 - Default fix hint: "Do NOT blindly retry. Inspect the asset's snapshot history (`nucleus catalog inspect`) first."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

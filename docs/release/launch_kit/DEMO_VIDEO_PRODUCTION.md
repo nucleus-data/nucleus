@@ -298,7 +298,7 @@ Asset paths (final):
 - Asciinema cast source (terminal-only, no voice): `docs/release/launch_kit/demo.cast`
 - README hero patch (where the embed will live): `docs/release/launch_kit/README_HERO_PATCH.md`
 - Vocabulary discipline (banned framings in the voiceover): `AGENTS.md` section 7 + section 8
-- Beachhead claim (the source of "30-minute" in the title card): `nucleus_architecture_v4.1.md` section 1.5
+- Beachhead claim (the source of "30-minute" in the title card): `docs/specs/nucleus_architecture_v4.1.md` section 1.5
 - WSL E2E proof (the empirical 30-min validation): `docs/release/e2e_results_20260514T190132.md`
 
 *Last updated 2026-05-15. Refresh trigger: any post-launch retake or any change to the CLI surface that breaks one of the shown commands.*

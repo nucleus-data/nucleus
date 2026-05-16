@@ -1,6 +1,6 @@
 # Pattern: Iceberg Time Travel
 
-> **Tier 1+** per [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.2. User surface (`ctx.read(..., snapshot_id=...)`, `ctx.snapshot(...)`) lands in v0.3+ ([`nucleus_ctx_sdk_spec.md`](../../nucleus_ctx_sdk_spec.md) §10). Full Replay & Time-Travel Debugger in v0.8+ (`nucleus_architecture_v4.1.md` §7.6). See also [`pyiceberg.md`](../research/pyiceberg.md) §4, §5; [`snapshot_retention.md`](./snapshot_retention.md) §3, §4; [`schema_evolution.md`](./schema_evolution.md) §5. Last reviewed 2026-05-12 against `pyiceberg==0.8.1`.
+> **Tier 1+** per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2. User surface (`ctx.read(..., snapshot_id=...)`, `ctx.snapshot(...)`) lands in v0.3+ ([`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §10). Full Replay & Time-Travel Debugger in v0.8+ (`docs/specs/nucleus_architecture_v4.1.md` §7.6). See also [`pyiceberg.md`](../research/pyiceberg.md) §4, §5; [`snapshot_retention.md`](./snapshot_retention.md) §3, §4; [`schema_evolution.md`](./schema_evolution.md) §5. Last reviewed 2026-05-12 against `pyiceberg==0.8.1`.
 
 ---
 
@@ -14,13 +14,13 @@ Every commit creates a new **snapshot** — an immutable point-in-time view of t
 
 - **Debugging anomalies / audit trails / backfill verification**: reproduce a downstream metric or "what was the customer balance on Jan 1?" against the exact input state; diff `snapshot_id_before` vs `_after`.
 - **Reproducible analytics**: pin a notebook / report so re-runs are bit-identical (v0.5+ Marimo + `ctx.snapshot(...)`).
-- **Replay debugging** (v0.8+, per `nucleus_architecture_v4.1.md` §7.6) and **DR rollback** (v0.5+ `nucleus snapshot revert`, per §14.5).
+- **Replay debugging** (v0.8+, per `docs/specs/nucleus_architecture_v4.1.md` §7.6) and **DR rollback** (v0.5+ `nucleus snapshot revert`, per §14.5).
 
 ---
 
 ## §3. How (Nucleus wrap)
 
-User code never imports `pyiceberg`. The SDK (per [`nucleus_ctx_sdk_spec.md`](../../nucleus_ctx_sdk_spec.md) §10) exposes a `snapshot_id=` / `snapshot_at=` keyword on `ctx.read` plus a `ctx.snapshot(asset)` inspection helper (`.history()`, `.at_time(...)`, `.at_snapshot(...)`, `.diff(...)`).
+User code never imports `pyiceberg`. The SDK (per [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §10) exposes a `snapshot_id=` / `snapshot_at=` keyword on `ctx.read` plus a `ctx.snapshot(asset)` inspection helper (`.history()`, `.at_time(...)`, `.at_snapshot(...)`, `.diff(...)`).
 
 ```python
 import nucleus
@@ -37,7 +37,7 @@ def daily_audit(ctx):
 | v0.1 | **Not user-exposed.** AMA pins a snapshot ID per run for OpenLineage only. PoC scripts may call §4 directly with `# NEEDS VERIFICATION`. |
 | v0.3 | `ctx.read(asset, snapshot_id=...)`, `snapshot_at=...`; `ctx.snapshot(asset)` helper. |
 | v0.5+ | `.diff(...)`; `nucleus snapshot revert` CLI; Marimo + Workbench integration. |
-| v0.8+ | Full Replay & Time-Travel Debugger; cost-aware planner gates expensive replays (per `nucleus_architecture_v4.1.md` §7.5). |
+| v0.8+ | Full Replay & Time-Travel Debugger; cost-aware planner gates expensive replays (per `docs/specs/nucleus_architecture_v4.1.md` §7.5). |
 
 Vocabulary (per [AGENTS.md](../../AGENTS.md) §7): **snapshot**, never "version". SDK spec's legacy `at_version(...)` is open drift; resolves to `at_snapshot(...)` before v0.3.
 
@@ -82,8 +82,8 @@ for snap in table.history():
 
 ## §7. Cross-refs
 
-- [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.2 (AMA emits OpenLineage with snapshot IDs), §7.6 (Replay Debugger), §14.5 (DR rollback).
-- [`pyiceberg.md`](../research/pyiceberg.md) §4, §5, §6 (`NoSuchSnapshotException` → `NucleusSnapshotExpiredError`); SDK: [`nucleus_ctx_sdk_spec.md`](../../nucleus_ctx_sdk_spec.md) §4, §10.
+- [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2 (AMA emits OpenLineage with snapshot IDs), §7.6 (Replay Debugger), §14.5 (DR rollback).
+- [`pyiceberg.md`](../research/pyiceberg.md) §4, §5, §6 (`NoSuchSnapshotException` → `NucleusSnapshotExpiredError`); SDK: [`docs/specs/nucleus_ctx_sdk_spec.md`](../specs/nucleus_ctx_sdk_spec.md) §4, §10.
 - Related: [`snapshot_retention.md`](./snapshot_retention.md) §3, §4; [`schema_evolution.md`](./schema_evolution.md) §5; [`compaction.md`](./compaction.md) §6. Spec: [iceberg.apache.org/spec/#snapshots](https://iceberg.apache.org/spec/#snapshots).
 
 ---

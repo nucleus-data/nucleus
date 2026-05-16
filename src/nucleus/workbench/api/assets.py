@@ -4,7 +4,7 @@ Reads the in-process ``@nucleus.asset`` registry via
 ``nucleus.sdk.decorators.get_asset`` / ``_registered_keys`` and surfaces
 the metadata as JSON for the Workbench Asset Explorer page.
 
-``nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience).
 ADR-016 §3 — Fork B API surface.
 
 Vocabulary: uses "asset" / "materialization" / "snapshot" / "check" per

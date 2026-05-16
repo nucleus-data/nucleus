@@ -23,5 +23,5 @@ A filesystem or object-store operation was denied for permission reasons. The us
 
 - Source: `src/nucleus/errors.py` (`NucleusPermissionError`)
 - Default fix hint: "Check that the catalog / warehouse path is writable by the current user."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

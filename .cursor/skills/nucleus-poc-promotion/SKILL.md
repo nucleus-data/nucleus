@@ -40,7 +40,7 @@ the same shape.
    gate against their own checklists.
 7. **Founder sign-off in the PR description**: explicit. Never auto-merge.
 8. **Update the PoC plan**: flip the status field for that PoC in
-   `@nucleus_poc_plan.md` from PROPOSED → PROMOTED with commit ref + date.
+   `@docs/specs/nucleus_poc_plan.md` from PROPOSED → PROMOTED with commit ref + date.
    Flip the matching `[ ] PoC #N` checkbox in `@AGENTS.md §1` to `[✓]`.
 9. **Surface the downstream chain**: if promotion triggers a queued ADR
    (e.g., PoC #1 promotion fires ADR-003 PyIceberg upgrade), name the chain
@@ -63,7 +63,7 @@ edits. Follow that exactly. Common pattern:
 - Move tests: `poc/<name>/test_<module>.py` →
   `tests/<layer>/test_<module>.py`.
 - Update architecture references (drop "PoC validates feasibility"
-  caveats; promote draft → shipping in `@nucleus_architecture_v4.1.md`).
+  caveats; promote draft → shipping in `@docs/specs/nucleus_architecture_v4.1.md`).
 - Open downstream ADR PRs separately, not bundled.
 
 ## Rollback plan (always state in PR description)

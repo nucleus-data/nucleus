@@ -11,7 +11,7 @@
 
 ## TL;DR
 
-For the audit-target persona — **100+ engineers, multi-team concurrent usage, > 5 TB warehouse, > 100 scheduled assets** — Nucleus v0.2.0 is **NOT a fit today**, **and that is by design** per `nucleus_architecture_v4.1.md` §1.5 (beachhead 5–20 engineers, 100 GB–5 TB) and §10 (yield-to-giants for scale beyond beachhead). That persona sits at or above the **upper edge** of the documented scale envelope (v4.1 §16.4: 50+ Workbench users, 100+ concurrent runs single-node, 10,000+ assets) and well above the documented data envelope. The architecturally-correct path for that persona is **graduation via Iceberg portability (Mode 1)** + **selective Mode 2 dispatch** to Databricks/Snowflake — not a Rust rewrite of Nucleus internals.
+For the audit-target persona — **100+ engineers, multi-team concurrent usage, > 5 TB warehouse, > 100 scheduled assets** — Nucleus v0.2.0 is **NOT a fit today**, **and that is by design** per `docs/specs/nucleus_architecture_v4.1.md` §1.5 (beachhead 5–20 engineers, 100 GB–5 TB) and §10 (yield-to-giants for scale beyond beachhead). That persona sits at or above the **upper edge** of the documented scale envelope (v4.1 §16.4: 50+ Workbench users, 100+ concurrent runs single-node, 10,000+ assets) and well above the documented data envelope. The architecturally-correct path for that persona is **graduation via Iceberg portability (Mode 1)** + **selective Mode 2 dispatch** to Databricks/Snowflake — not a Rust rewrite of Nucleus internals.
 
 Three real (closeable) gaps surface at the upper edge of the documented envelope:
 

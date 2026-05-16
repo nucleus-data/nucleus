@@ -386,4 +386,4 @@ brief explicitly endorsed this fallback.
 ---
 
 *Last updated: 2026-05-15 by the Workbench UX Final Polish workstream.*
-*Architecture refs: `nucleus_architecture_v4.1.md` sec.6.5, ADR-016 sec.3.*
+*Architecture refs: `docs/specs/nucleus_architecture_v4.1.md` sec.6.5, ADR-016 sec.3.*

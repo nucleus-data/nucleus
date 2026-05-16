@@ -1,7 +1,7 @@
 """Tests for nucleus.coordination.bi_handshake — nucleus.db generation (ADR-026).
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §3 (Experience layer)
+    docs/specs/nucleus_architecture_v4.1.md §3 (Experience layer)
     ADR-026 (nucleus.db BI handshake)
 """
 

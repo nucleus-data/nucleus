@@ -1,6 +1,6 @@
 """Docker Compose helpers for ``nucleus up`` / ``nucleus down``.
 
-Per nucleus_architecture_v4.1.md §8 L4 (CLI wraps local runtime bring-up).
+Per docs/specs/nucleus_architecture_v4.1.md §8 L4 (CLI wraps local runtime bring-up).
 v0.1 ships ``docker-compose.yaml`` from ``nucleus init`` with a ``minio``
 service only — REST catalog backends are out of scope (filesystem catalog).
 

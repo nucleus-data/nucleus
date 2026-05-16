@@ -489,6 +489,6 @@ The handoff to a managed feature store is *additive*, not a *replacement*. The I
 - [`docs/cookbook/production-deployment.md`](../production-deployment.md) — VM sizing for daily feature compute
 - [`docs/cookbook/ai-copilot-setup.md`](../ai-copilot-setup.md) — Copilot for ad-hoc feature exploration
 - [`docs/cookbook/recipes/ecommerce_elt_pipeline.md`](ecommerce_elt_pipeline.md) — bronze sources this recipe consumes
-- [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §10 (Yield to giants), §20 (Non-goals — ML platform)
+- [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §10 (Yield to giants), §20 (Non-goals — ML platform)
 - [ADR-024 — Reliability guards (snapshot retention)](../../decisions/ADR-024-reliability-guards.md)
 - [ADR-028 — Snapshot branch + tag CLI](../../decisions/ADR-028-snapshot-branch-tag-cli.md)

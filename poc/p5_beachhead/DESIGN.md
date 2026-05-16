@@ -1,15 +1,15 @@
 # PoC #5 — End-to-End 30-Minute Beachhead Validation
 
 > Validates: 5 external engineers can `git clone` → BI-ready Iceberg asset
-> in ≤ 30 minutes on fresh laptops (per `nucleus_poc_plan.md` §5 and
-> `nucleus_architecture_v4.1.md` §1.5).
+> in ≤ 30 minutes on fresh laptops (per `docs/specs/nucleus_poc_plan.md` §5 and
+> `docs/specs/nucleus_architecture_v4.1.md` §1.5).
 
 ## North Star
 
 The single most important metric in the product. Per `AGENTS.md` §11.8:
 *"Every commit, every PR, every architectural decision must serve"* this
 metric. PoC #5 is its empirical validation, and the v0.1 ship gate per
-`nucleus_poc_plan.md` §13.
+`docs/specs/nucleus_poc_plan.md` §13.
 
 ## What "BI-ready Iceberg asset" means
 
@@ -30,7 +30,7 @@ Wording in user-facing surfaces (CLI output, README, scenario script)
 follows `AGENTS.md` §7 vocabulary — *asset / materialization / snapshot /
 contract*, never *job / task / version*.
 
-## Acceptance criteria (mirror `nucleus_poc_plan.md` §5)
+## Acceptance criteria (mirror `docs/specs/nucleus_poc_plan.md` §5)
 
 | # | Criterion | Target | Stop-the-line? |
 |---|---|---|---|
@@ -87,11 +87,11 @@ open-text fields.
 
 ## Time budget + schedule
 
-Per `nucleus_poc_plan.md` §5: **2 weeks** (planning + recruitment +
+Per `docs/specs/nucleus_poc_plan.md` §5: **2 weeks** (planning + recruitment +
 execution + analysis). Sessions block in a 5-day window
 (`RECRUITMENT.md` §scheduling) to minimize cross-session contamination.
 Runs in Mo 6-7 of the v0.1 timeline (after v0.1 Tier 1 ships per
-`nucleus_architecture_v4.1.md` §17.2 / `README.md` Status table). Founder
+`docs/specs/nucleus_architecture_v4.1.md` §17.2 / `README.md` Status table). Founder
 schedules via Calendly + Zoom; founder is **not** present in the call.
 
 ## Status gate — preconditions
@@ -102,17 +102,17 @@ PoC #5 cannot run until ALL of these hold:
       per `poc/p1_error_translation/PROMOTION_CHECKLIST.md`
 - [ ] PoC #3 promoted (`src/nucleus/ctx/copy_from.py`) per
       `poc/p3_ingest/STATUS.md` §4
-- [ ] `nucleus init` command works            <!-- pre-v0.1; CLI surface TBD per nucleus_cli_spec.md -->
-- [ ] `nucleus ingest` command works (PoC #3) <!-- pre-v0.1; CLI surface TBD per nucleus_cli_spec.md -->
+- [ ] `nucleus init` command works            <!-- pre-v0.1; CLI surface TBD per docs/specs/nucleus_cli_spec.md -->
+- [ ] `nucleus ingest` command works (PoC #3) <!-- pre-v0.1; CLI surface TBD per docs/specs/nucleus_cli_spec.md -->
 - [ ] `nucleus up` boots < 10s (PoC #4 validated)
-- [ ] `nucleus query "..."` returns BI-ready row count <!-- pre-v0.1; CLI surface TBD per nucleus_cli_spec.md -->
+- [ ] `nucleus query "..."` returns BI-ready row count <!-- pre-v0.1; CLI surface TBD per docs/specs/nucleus_cli_spec.md -->
 - [ ] `SETUP.md` instructions verified on the host OS the tester uses
       (macOS primary; Windows + Linux as stretch — see
       `RECRUITMENT.md` §scheduling)
 
 ## Fallback plan
 
-Per `nucleus_poc_plan.md` §5 + §13:
+Per `docs/specs/nucleus_poc_plan.md` §5 + §13:
 
 | Outcome | Action |
 |---|---|
@@ -120,7 +120,7 @@ Per `nucleus_poc_plan.md` §5 + §13:
 | 3+ stuck points OR architectural issue | Return to v4.1 amendment cycle. Delay v0.1 ship; open an ADR. |
 | Tagline field test < 3/5 | Open ADR-002 amendment PR; rewrite headline; re-run §8.4 gate (not the hands-on portion). |
 
-The beachhead metric is non-negotiable per `nucleus_poc_plan.md` §13 —
+The beachhead metric is non-negotiable per `docs/specs/nucleus_poc_plan.md` §13 —
 v0.1 ship date moves before the metric does.
 
 ## Promotion target
@@ -129,7 +129,7 @@ v0.1 ship date moves before the metric does.
 
 - `docs/audits/poc5_beachhead_<YYYY-MM-DD>.md` — per-tester transcripts,
   timings, stuck-points, tagline recall, ratings.
-- `nucleus_poc_plan.md` §5 acceptance checkboxes flipped to ✓ on PASS.
+- `docs/specs/nucleus_poc_plan.md` §5 acceptance checkboxes flipped to ✓ on PASS.
 - `AGENTS.md` §1 phase checklist line "PoCs #2-5 validated" flipped.
 - ADR-002 §8.4 gate marked CLEARED (or AMENDED on rewrite).
 

@@ -55,7 +55,7 @@ STOP and return to parent if any of these fire:
 - Iteration ceiling reached
 - A test that was passing starts failing (regression introduced — DO NOT push through, surface for analysis)
 - An external dependency behaves contrary to its docs (per AGENTS.md §11.12 — verify, log as hallucination if confirmed, surface)
-- Architectural decision needed (anything that touches `nucleus_architecture_v4.1.md` or requires a new ADR)
+- Architectural decision needed (anything that touches `docs/specs/nucleus_architecture_v4.1.md` or requires a new ADR)
 - Vocabulary or error-translation violation discovered (per §11.7)
 
 ### When NOT to retry
@@ -101,7 +101,7 @@ python scripts/benchmark_regression.py # if perf-sensitive
 - No `git` operations
 - No `pip install` without parent approval (and even with approval, only via PR description, not directly)
 - No deletions of `poc/` reference code
-- No touching tracking docs (`nucleus_poc_plan.md`, `docs/budget_history.md`) — parent aggregates
+- No touching tracking docs (`docs/specs/nucleus_poc_plan.md`, `docs/budget_history.md`) — parent aggregates
 - No bypassing the 8-question gate (per `.cursor/rules/nucleus.mdc`) for "just this once" features
 
 ## Output format

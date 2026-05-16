@@ -7,7 +7,7 @@ Sources:
 - `docs/internal/research/parity_vs_databricks_snowflake.md` §4 (Wave 1F)
 - `docs/internal/research/parity_vs_dbt_dagster_airflow.md` §5–6 (Wave 1G)
 - ADR-023, ADR-024 (this release)
-- `nucleus_architecture_v4.1.md` §17 (yield-to-giants), §20 (non-goals)
+- `docs/specs/nucleus_architecture_v4.1.md` §17 (yield-to-giants), §20 (non-goals)
 
 Ratified 2026-05-15: roadmap adopted in commit a41a82c (v0.2.0 handover bundle).
 
@@ -85,12 +85,12 @@ Adopt the following ordered closure plan as the canonical v0.2 → v1.0 roadmap.
 
 - ADR-003 (pyiceberg upgrade 0.8.1 → 0.11.x) is a prerequisite for P1-3 (SCD2). That upgrade requires its own ADR + smoke tests per AGENTS.md §11.13.
 - Dagster daemon boot latency NEEDS VERIFICATION that the daemon can start within PoC #4's 5.82 s boot budget. If daemon startup pushes `nucleus up` past 10 s, the strategy is lazy-start (daemon starts on first `schedule on` command, not at `nucleus up`).
-- `nucleus schedule on/off/trigger` command surface needs CLI spec update in `nucleus_cli_spec.md` before Wave 2 implementation begins.
+- `nucleus schedule on/off/trigger` command surface needs CLI spec update in `docs/specs/nucleus_cli_spec.md` before Wave 2 implementation begins.
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §17 (yield-to-giants — confirm every P0/P1 item respects the yield boundary)
-- `nucleus_architecture_v4.1.md` §18 (roadmap — v0.2 milestone)
-- `nucleus_architecture_v4.1.md` §20 (non-goals — intentional non-closes above)
+- `docs/specs/nucleus_architecture_v4.1.md` §17 (yield-to-giants — confirm every P0/P1 item respects the yield boundary)
+- `docs/specs/nucleus_architecture_v4.1.md` §18 (roadmap — v0.2 milestone)
+- `docs/specs/nucleus_architecture_v4.1.md` §20 (non-goals — intentional non-closes above)
 - `AGENTS.md` §4 ("Do NOT Build" list — verify no P0/P1 item is on the list)
 - ADR-003 (pyiceberg), ADR-013 (partition execution NV #6), ADR-017 (schedule exposure), ADR-024 (reliability)

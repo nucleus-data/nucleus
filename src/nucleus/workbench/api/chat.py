@@ -4,7 +4,7 @@ Wraps ``nucleus.intelligence.copilot.chat`` (the single-turn AI function
 per ADR-015) and streams the reply as server-sent events so the Workbench
 Copilot side panel can display responses progressively.
 
-``nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience) + §7.2 (Copilot).
+``docs/specs/nucleus_architecture_v4.1.md`` §8.1 (Layer 4 Experience) + §7.2 (Copilot).
 ADR-016 §3 — Fork B API surface.
 ADR-015 — Copilot single-turn chat.
 

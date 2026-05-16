@@ -469,7 +469,7 @@ The sweet spot is the small-VM-with-occasional-burst model: catalog-per-tenant g
 - [`docs/cookbook/production-deployment.md`](../production-deployment.md) — per-region single-node baseline
 - [`docs/cookbook/recipes/gdpr_right_to_delete.md`](gdpr_right_to_delete.md) — per-tenant deletion runbook
 - [`AGENTS.md`](../../../AGENTS.md) Hard Constraint #6 (no custom identity store), #7 (no ML platform — but the pattern shape transfers to multi-tenant ML)
-- [`nucleus_architecture_v4.1.md`](../../../nucleus_architecture_v4.1.md) §10 (Yield to giants — Modes 1/2/3), §20 (Non-goals)
+- [`docs/specs/nucleus_architecture_v4.1.md`](../../specs/nucleus_architecture_v4.1.md) §10 (Yield to giants — Modes 1/2/3), §20 (Non-goals)
 - [ADR-001 — no custom commit service](../../decisions/ADR-001-no-custom-commit-service.md)
 - [ADR-010 — OIDC delegation policy v0.5+](../../decisions/ADR-010-oidc-delegation-policy-v03.md)
 - [ADR-024 — Reliability guards (per-asset advisory lock)](../../decisions/ADR-024-reliability-guards.md)

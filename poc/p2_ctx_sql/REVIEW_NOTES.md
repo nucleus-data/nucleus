@@ -4,7 +4,7 @@
 
 **Scope**: 16 cases in `resolver.py:51–169` + `test_resolver.py:43–222`. Worker B's hardening pass expanded 7 → 16 (T1-T5, T7-T10; T6 skipped per the test-module docstring) for parity with PoC #1's leak discipline + arity + cycle + difflib hint.
 
-**Uniform cross-checks across all 16**: vocab per `AGENTS.md` §7 ("asset name" / "asset graph" / "asset chain", never "table" as primitive); no `jinja2.` / `duckdb.` / `polars.` / `pyiceberg.` substring in user-facing prose (verified by C7 §6.4-mirror leak check); `cause` set on the two boundary branches that wrap a non-`NucleusError` (`:140`, `:167`), intentionally NOT set on validation paths (`:94`, `:103`, `:108`, `:118`) — those are raised by us, not translated; no CLI commands in any `fix_hint` (PoC #2 stays purely descriptive until `nucleus_cli_spec.md` finalizes).
+**Uniform cross-checks across all 16**: vocab per `AGENTS.md` §7 ("asset name" / "asset graph" / "asset chain", never "table" as primitive); no `jinja2.` / `duckdb.` / `polars.` / `pyiceberg.` substring in user-facing prose (verified by C7 §6.4-mirror leak check); `cause` set on the two boundary branches that wrap a non-`NucleusError` (`:140`, `:167`), intentionally NOT set on validation paths (`:94`, `:103`, `:108`, `:118`) — those are raised by us, not translated; no CLI commands in any `fix_hint` (PoC #2 stays purely descriptive until `docs/specs/nucleus_cli_spec.md` finalizes).
 
 ---
 
@@ -50,7 +50,7 @@ Catches `jinja2.UndefinedError` + `jinja2.TemplateSyntaxError`; same branch C7 l
 - msg: `"Asset {name!r} is not defined."`
 - hint: no `available` → *"Check the asset name spelling, or register the asset first."*; ≤5 → list all, prefixed *"Available assets include: …"*; >5 → `difflib.get_close_matches(name, available, n=5, cutoff=0.0)` then same prefix.
 - Critique 1 (`cutoff=0.0`): most-liberal cutoff — will suggest `staging.orders` for typo `marts.zzz` (no shared prefix). Tradeoff vs Python default `cutoff=0.6` (similarity-gated, 0–5 hints). v0.1 registries ≤100 assets so noise is bounded, but worth a documented call. Also: *"Available assets include:"* reads naturally for ≤5 but is misleading for the difflib output — *"Closest matches:"* is more honest there.
-- Critique 2 (CLI clause): *"register the asset first"* is right for v0.1 (no `nucleus list` CLI yet — parallels PoC #1 H4's NEEDS VERIFICATION). Swap to *"… run 'nucleus list' …"* once `nucleus_cli_spec.md` finalizes. v0.5 polish, not a v0.1 blocker.
+- Critique 2 (CLI clause): *"register the asset first"* is right for v0.1 (no `nucleus list` CLI yet — parallels PoC #1 H4's NEEDS VERIFICATION). Swap to *"… run 'nucleus list' …"* once `docs/specs/nucleus_cli_spec.md` finalizes. v0.5 polish, not a v0.1 blocker.
 - Decision: (a) `cutoff=0.0` vs `cutoff=0.6`; (b) unified vs split hint wording; (c) cleared to defer CLI swap.
 
 ### T9 — circular ref (resolver.py:40–41, :116–121) ⚠️ HIGHEST PRIORITY — open architectural decision

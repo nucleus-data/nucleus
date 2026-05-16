@@ -376,7 +376,7 @@ If user-controlled data values reach the system prompt, the AI system can be man
 
 **Cost/latency:** [kickllm.com/research/ai-api-latency-comparison](https://kickllm.com/research/ai-api-latency-comparison.html) · [engineersofai.com/docs/mlops/llmops-pipelines/Token-Cost-Monitoring](https://engineersofai.com/docs/mlops/llmops-pipelines/Token-Cost-Monitoring)
 
-**Nucleus internal:** `nucleus_architecture_v4.1.md` §7–§8.3 · `docs/internal/research/ai_copilot.md` · `docs/internal/research/strategic/ai_agent_data_infra_2026.md` · `AGENTS.md` §3, §7, §11.12
+**Nucleus internal:** `docs/specs/nucleus_architecture_v4.1.md` §7–§8.3 · `docs/internal/research/ai_copilot.md` · `docs/internal/research/strategic/ai_agent_data_infra_2026.md` · `AGENTS.md` §3, §7, §11.12
 
 ---
 

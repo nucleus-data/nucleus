@@ -4,13 +4,13 @@
 > **Scope**: How `nucleus ingest <source-url> --table <name>` lands a first Iceberg asset on the laptop
 > **Audience**: Anyone touching `ctx/copy_from.py` (v0.1)
 > **Status**: v0.1 path via `ctx.copy_from` (~200 LOC). Prototyped by **PoC #3** (`poc/p3_ingest/ingest.py`); graduates to `src/nucleus/ctx/` only after PoC #1 ships `nucleus.errors`.
-> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md) (TEMPLATE), [`sequence_query.md`](sequence_query.md), [`../../nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §5.5 + §5.5.1, [`../research/dlt.md`](../research/dlt.md) (v0.3+ futures)
+> **Companion**: [`sequence_error_translation.md`](sequence_error_translation.md) (TEMPLATE), [`sequence_query.md`](sequence_query.md), [`../specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §5.5 + §5.5.1, [`../research/dlt.md`](../research/dlt.md) (v0.3+ futures)
 
 ---
 
 ## §1. Why this matters
 
-Per `nucleus_architecture_v4.1.md` §5.5.1 (Amendment 13) and `nucleus_poc_plan.md` §3, the 30-minute beachhead promise breaks if the first asset requires Python boilerplate or external connector tools. `ctx.copy_from` does five things in order:
+Per `docs/specs/nucleus_architecture_v4.1.md` §5.5.1 (Amendment 13) and `docs/specs/nucleus_poc_plan.md` §3, the 30-minute beachhead promise breaks if the first asset requires Python boilerplate or external connector tools. `ctx.copy_from` does five things in order:
 
 1. Connect to the source via SQLAlchemy (`postgresql://`, `mysql://`, `sqlite://`) or a stdlib reader (`file://*.csv|*.parquet|*.json`).
 2. Introspect the source schema; map types into Arrow + Iceberg (per `../patterns/type_mapping.md` §3).
@@ -66,7 +66,7 @@ sequenceDiagram
     CLI-->>User: ✓ raw.orders ingested<br/>  N rows · S MB · D s · snapshot snap-abc123
 ```
 
-In v0.1 the catalog is the filesystem-backed `SqlCatalog` (SQLite metadata, `file://` warehouse). v0.3+ swaps it to Lakekeeper or Apache Polaris (`nucleus_architecture_v4.1.md` §5.7); the sequence above is unchanged — only the participant changes.
+In v0.1 the catalog is the filesystem-backed `SqlCatalog` (SQLite metadata, `file://` warehouse). v0.3+ swaps it to Lakekeeper or Apache Polaris (`docs/specs/nucleus_architecture_v4.1.md` §5.7); the sequence above is unchanged — only the participant changes.
 
 ---
 
@@ -116,7 +116,7 @@ sequenceDiagram
 
 ## §4. v0.1 scope envelope
 
-Per `nucleus_architecture_v4.1.md` §5.5.1 and `nucleus_poc_plan.md` §3:
+Per `docs/specs/nucleus_architecture_v4.1.md` §5.5.1 and `docs/specs/nucleus_poc_plan.md` §3:
 
 | Aspect | v0.1 in-scope | Deferred |
 |---|---|---|
@@ -127,22 +127,22 @@ Per `nucleus_architecture_v4.1.md` §5.5.1 and `nucleus_poc_plan.md` §3:
 | Atomicity | Single-asset atomic commit via catalog (ADR-001) | Multi-asset transactions → v1.0+ |
 | Lineage | Asset-level (OpenLineage) | Column-level → v0.5 (SQL) / v1.0 (Python) |
 | Catalog | Filesystem (`SqlCatalog` + `file://` warehouse) | Lakekeeper / Apache Polaris co-default → v0.3 (§5.7) |
-| LOC budget | ≤ 500 (`nucleus_poc_plan.md` §3 criterion 7) | — |
+| LOC budget | ≤ 500 (`docs/specs/nucleus_poc_plan.md` §3 criterion 7) | — |
 
-Past these limits the answer is **defer to v0.3 (dlt path)** — see `nucleus_architecture_v4.1.md` §5.5.2.
+Past these limits the answer is **defer to v0.3 (dlt path)** — see `docs/specs/nucleus_architecture_v4.1.md` §5.5.2.
 
 ---
 
 ## §5. Acceptance criteria (PoC #3 → v0.1 `ctx.copy_from`)
 
-From `nucleus_poc_plan.md` §3:
+From `docs/specs/nucleus_poc_plan.md` §3:
 
 1. `nucleus ingest postgres://u:p@h/db --table public.orders --as raw.orders` runs end-to-end.
 2. Schema auto-inferred per `docs/patterns/type_mapping.md` §3.
 3. Iceberg destination asset auto-created (namespace + asset) on first run; reused after.
 4. Atomic commit — no partial snapshots visible (Iceberg optimistic concurrency, `docs/internal/research/pyiceberg.md` §6).
 5. Preview shows 10 rows — rendered by a follow-up `ctx.sql("SELECT * FROM raw.orders LIMIT 10")` (see [`sequence_query.md`](sequence_query.md) §2).
-6. All 6 v0.1 sources pass the round-trip + type-mapping suite (fallback: drop to 3 if any family fails, per `nucleus_poc_plan.md` §3).
+6. All 6 v0.1 sources pass the round-trip + type-mapping suite (fallback: drop to 3 if any family fails, per `docs/specs/nucleus_poc_plan.md` §3).
 7. LOC under `src/nucleus/ctx/copy_from.py` ≤ 500.
 8. No connector classname leaks — `scripts/dagster_leak_check.py` extends to grep `psycopg.`, `pymysql.`, `sqlalchemy.`, `pyiceberg.` in CLI output. Must return 0.
 
@@ -153,7 +153,7 @@ From `nucleus_poc_plan.md` §3:
 - **No retry orchestration.** Retries belong to the Asset Materialization Adapter, not `ctx.copy_from` ([`sequence_error_translation.md`](sequence_error_translation.md) §8).
 - **No staging / dedup.** `mode="full_refresh"` appends a fresh snapshot; row-level merge is a v0.3 dlt-shaped problem (`docs/internal/research/dlt.md` §4.1).
 - **No schema evolution.** A mid-stream source-schema change raises `pyiceberg.exceptions.ValidationError` → `NucleusSchemaEvolutionError`.
-- **No background daemon.** Every `nucleus ingest` is one synchronous Python process. Scheduling is the user's responsibility in v0.1; `@nucleus.schedule` lands v0.2 (`nucleus_architecture_v4.1.md` §6.1).
+- **No background daemon.** Every `nucleus ingest` is one synchronous Python process. Scheduling is the user's responsibility in v0.1; `@nucleus.schedule` lands v0.2 (`docs/specs/nucleus_architecture_v4.1.md` §6.1).
 
 ---
 
@@ -173,7 +173,7 @@ Per AGENTS.md §11.12, before graduating PoC #3 → `src/nucleus/ctx/copy_from.p
 
 - New source family within SQLAlchemy: PR + smoke test + `docs/patterns/type_mapping.md` extension. No ADR.
 - Switch to dlt for a source (v0.3+): ADR required. Per `docs/internal/research/dlt.md` §5.1, dlt sources surface as `@nucleus.source(engine="dlt")`; `ctx.copy_from` stays the simple default for the six v0.1 sources.
-- Change to `IngestResult` shape: PR + spec note (public surface per `nucleus_architecture_v4.1.md` §13.1).
+- Change to `IngestResult` shape: PR + spec note (public surface per `docs/specs/nucleus_architecture_v4.1.md` §13.1).
 - Remove a source family: ADR required (breaking).
 
 ---

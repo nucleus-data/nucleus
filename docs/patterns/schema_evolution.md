@@ -1,6 +1,6 @@
 # Pattern: Iceberg Schema Evolution
 
-> **Tier 1+** per [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.2, §14.3. Add-column auto-applied in v0.1 `ctx.write`; drop / rename / widen lands with `nucleus migrate` in v0.3+. See also [`pyiceberg.md`](../research/pyiceberg.md) §5, §7; [`partitioning.md`](./partitioning.md) §5; [`type_mapping.md`](./type_mapping.md) §4; [`time_travel.md`](./time_travel.md) §5. Last reviewed 2026-05-12 against `pyiceberg==0.8.1`.
+> **Tier 1+** per [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2, §14.3. Add-column auto-applied in v0.1 `ctx.write`; drop / rename / widen lands with `nucleus migrate` in v0.3+. See also [`pyiceberg.md`](../research/pyiceberg.md) §5, §7; [`partitioning.md`](./partitioning.md) §5; [`type_mapping.md`](./type_mapping.md) §4; [`time_travel.md`](./time_travel.md) §5. Last reviewed 2026-05-12 against `pyiceberg==0.8.1`.
 
 ---
 
@@ -19,7 +19,7 @@ Iceberg can `add`, `drop`, `rename`, `reorder`, and `widen` columns **without re
 
 ## §3. How (Nucleus wrap)
 
-User code never imports `pyiceberg`. The AMA (~500 LOC, per `nucleus_architecture_v4.1.md` §6.2) diffs incoming Arrow schemas against the asset's Iceberg schema on `ctx.write` and bundles deltas into the same transaction.
+User code never imports `pyiceberg`. The AMA (~500 LOC, per `docs/specs/nucleus_architecture_v4.1.md` §6.2) diffs incoming Arrow schemas against the asset's Iceberg schema on `ctx.write` and bundles deltas into the same transaction.
 
 ```python
 import nucleus
@@ -35,7 +35,7 @@ def orders(ctx):
 |---|---|
 | v0.1 | **Add-column auto-applied** (nullable, end of schema). Drops / renames / type changes rejected → `NucleusSchemaEvolutionError`. |
 | v0.3 | `nucleus migrate <asset>` — diffs `@nucleus.contract` vs Iceberg, prompts, runs one `update_schema()` transaction. |
-| v0.5+ | Schema-contracts engine pre-validates at planning time; column-level lineage emits field-ID stability events (per `nucleus_architecture_v4.1.md` §6.3). |
+| v0.5+ | Schema-contracts engine pre-validates at planning time; column-level lineage emits field-ID stability events (per `docs/specs/nucleus_architecture_v4.1.md` §6.3). |
 
 Vocabulary (per [AGENTS.md](../../AGENTS.md) §7): **asset** (logical), Iceberg **table** (physical). Only the AMA crosses.
 
@@ -83,13 +83,13 @@ Inside `Transaction`, the schema commit bundles with appends as **one snapshot**
 - **Cheap commits, eventual data debt.** Adding columns is free at commit time but inflates per-row footprint forever. Audit nullable columns quarterly.
 - **No type narrowing, ever.** Overly-wide initial types are forever — unless you copy-and-cycle.
 - **Names aren't stable identifiers.** Rename preserves field ID but breaks every downstream SQL query referring to the name; v0.3 has no compile-time guard.
-- **Atomic only per asset.** Cross-asset migrations are sequenced; multi-table atomicity deferred to v1.0+ (per `nucleus_architecture_v4.1.md` §6.2).
+- **Atomic only per asset.** Cross-asset migrations are sequenced; multi-table atomicity deferred to v1.0+ (per `docs/specs/nucleus_architecture_v4.1.md` §6.2).
 
 ---
 
 ## §7. Cross-refs
 
-- [`nucleus_architecture_v4.1.md`](../../nucleus_architecture_v4.1.md) §6.2 (AMA), §14.3 (allowed-change policy).
+- [`docs/specs/nucleus_architecture_v4.1.md`](../specs/nucleus_architecture_v4.1.md) §6.2 (AMA), §14.3 (allowed-change policy).
 - [`pyiceberg.md`](../research/pyiceberg.md) §5, §6, §7, §9.
 - Related: [`partitioning.md`](./partitioning.md) §5; [`type_mapping.md`](./type_mapping.md) §4; [`snapshot_retention.md`](./snapshot_retention.md) §6; [`time_travel.md`](./time_travel.md) §5.
 - Spec: [iceberg.apache.org/spec/#schema-evolution](https://iceberg.apache.org/spec/#schema-evolution).

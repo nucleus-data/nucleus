@@ -1,6 +1,6 @@
 """Public value types for the Nucleus SDK surface (L4).
 
-Per ``nucleus_architecture_v4.1.md`` §13.2 (Surface Summary table) and
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §13.2 (Surface Summary table) and
 ``docs/decisions/ADR-013-ctx-materialize-api.md`` §2 (Return type), this
 module owns the three frozen-shape value types end-users construct or
 inspect by name:
@@ -13,13 +13,13 @@ inspect by name:
                                        *outcome record* with the ``Result``
                                        suffix per ADR-013 NV #4).
     - :class:`AssetRef`                a lightweight handle to a registered
-                                       asset (``nucleus_ctx_sdk_spec.md``
+                                       asset (``docs/specs/nucleus_ctx_sdk_spec.md``
                                        §3.1 + §12 frozen surface; ADR-013
                                        §1 accepts ``str | AssetRef``).
     - :class:`CheckResult`             the structured return type of every
                                        ``@nucleus.check`` body
-                                       (``nucleus_asset_model_spec.md``
-                                       §10; ``nucleus_ctx_sdk_spec.md``
+                                       (``docs/specs/nucleus_asset_model_spec.md``
+                                       §10; ``docs/specs/nucleus_ctx_sdk_spec.md``
                                        §2.4 + §12).
 
 All three are ``@dataclass(frozen=True)`` per ADR-013 §2 — fields are
@@ -69,11 +69,11 @@ class AssetRef:
 
     # Stability: Beta
 
-    Returned by ``ctx.asset`` (``nucleus_ctx_sdk_spec.md`` §3.1) and
+    Returned by ``ctx.asset`` (``docs/specs/nucleus_ctx_sdk_spec.md`` §3.1) and
     accepted as the first positional argument of :func:`nucleus.materialize`
     alongside the bare-string form (ADR-013 §1). Holds the canonical
     asset key — the v0.1 2-level (``schema.name``) form per
-    ``nucleus_cli_spec.md`` §10 NV #6. The 3-level form (``catalog.schema.table``)
+    ``docs/specs/nucleus_cli_spec.md`` §10 NV #6. The 3-level form (``catalog.schema.table``)
     lights up at v0.3+ alongside multi-catalog routing.
 
     Construction is normally done by the runtime, not user code; v0.1
@@ -146,7 +146,7 @@ class CheckResult:
 
     # Stability: Beta
 
-    Per ``nucleus_ctx_sdk_spec.md`` §2.4 and ``nucleus_asset_model_spec.md``
+    Per ``docs/specs/nucleus_ctx_sdk_spec.md`` §2.4 and ``docs/specs/nucleus_asset_model_spec.md``
     §10. Each ``@nucleus.check`` returns a :class:`CheckResult`; the
     coordination layer aggregates them into the run's quality verdict
     (v4.1 §6.3 +  asset model spec §10).
@@ -156,7 +156,7 @@ class CheckResult:
             to a quarantine path — the severity attached at decoration
             time decides whether the materialization is rejected,
             allowed-with-warning, or blocks downstream consumers
-            (``nucleus_asset_model_spec.md`` §9.2 enforcement levels).
+            (``docs/specs/nucleus_asset_model_spec.md`` §9.2 enforcement levels).
         metric: A single numeric measurement that summarizes the check
             (e.g. row-count of bad rows, sum-diff, freshness lag in
             seconds). Float by convention so divergence from integer

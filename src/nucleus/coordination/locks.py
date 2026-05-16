@@ -1,6 +1,6 @@
 """Cross-platform advisory filesystem lock for concurrent-run protection.
 
-Per ``nucleus_architecture_v4.1.md`` §6.2 (AMA) + §6.4 (Error Translation)
+Per ``docs/specs/nucleus_architecture_v4.1.md`` §6.2 (AMA) + §6.4 (Error Translation)
 and ``docs/decisions/ADR-024-reliability-hardening-plan.md`` P0-2.
 
 Prevents two ``nucleus run`` invocations from racing on the same asset's

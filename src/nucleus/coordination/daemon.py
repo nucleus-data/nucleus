@@ -1,6 +1,6 @@
 """Mini-scheduler daemon — lightweight cron-driven materialization loop.
 
-Per ``nucleus_architecture_v4.1.md`` (Dagster wrapped OR mini-scheduler
+Per ``docs/specs/nucleus_architecture_v4.1.md`` (Dagster wrapped OR mini-scheduler
 fallback by v1.0) and ``AGENTS.md`` §4, we ship the mini-scheduler in
 v0.2.1 rather than wrap Dagster's heavy ``SchedulerDaemon`` (which requires
 ``DagsterInstance`` + workspace config + ``DAGSTER_HOME`` env var — too
@@ -214,7 +214,7 @@ def _daemon_main(
     path writes the pidfile from the parent; the daemon's ``finally`` block
     always unlinks it on exit regardless of how it was started.
 
-    Per ``nucleus_architecture_v4.1.md`` §4 (mini-scheduler fallback) and
+    Per ``docs/specs/nucleus_architecture_v4.1.md`` §4 (mini-scheduler fallback) and
     ADR-017 §v0.2.1.
     """
     _shutdown_event.clear()  # Reset so tests can call _daemon_main multiple times.
@@ -464,7 +464,7 @@ def run_asset(
 
     This function is the explicit, named alternative entry point for the
     Dagster → mini-scheduler swap target documented in
-    ``nucleus_architecture_v4.1.md`` §6.7 (mini-scheduler) + §9.3
+    ``docs/specs/nucleus_architecture_v4.1.md`` §6.7 (mini-scheduler) + §9.3
     (composability constitution: interface + smoke tests).  It is the path
     the integration test ``tests/integration/test_dagster_to_mini_scheduler_swap.py``
     exercises to verify the swap boundary works end-to-end without

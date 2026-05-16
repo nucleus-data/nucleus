@@ -3,11 +3,11 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder (queued by ADR-002 §4.2 P2 "Polaris co-default" amendment)
 > **Tags**: catalog, iceberg, v0.3-roadmap, jvm-exemption, beachhead, oidc, composability
-> **Related**: ADR-001 (no commit service), ADR-002 §4.2 + §6 + §8.1, ADR-003 (pyiceberg 0.8.1 → 0.11.x — hard prerequisite), ADR-007 (license tier), AGENTS.md §3 Constraints #1 + #6 + #9 + #11 + §7, `nucleus_architecture_v4.1.md` §5.7 + §1.5 + §9 + §10.1, `docs/internal/research/lakekeeper.md` (Worker F), `docs/internal/research/polaris.md` (Worker H), `docs/internal/research/oidc_providers.md` (Worker W), `docs/internal/research/pyiceberg.md` §5-§6, `docs/architecture/sequence_swap_drill.md`, `nucleus_cli_spec.md` §4.2.
+> **Related**: ADR-001 (no commit service), ADR-002 §4.2 + §6 + §8.1, ADR-003 (pyiceberg 0.8.1 → 0.11.x — hard prerequisite), ADR-007 (license tier), AGENTS.md §3 Constraints #1 + #6 + #9 + #11 + §7, `docs/specs/nucleus_architecture_v4.1.md` §5.7 + §1.5 + §9 + §10.1, `docs/internal/research/lakekeeper.md` (Worker F), `docs/internal/research/polaris.md` (Worker H), `docs/internal/research/oidc_providers.md` (Worker W), `docs/internal/research/pyiceberg.md` §5-§6, `docs/architecture/sequence_swap_drill.md`, `docs/specs/nucleus_cli_spec.md` §4.2.
 
 ## Context
 
-v0.1 ships `pyiceberg.SqlCatalog` on a SQLite file — single-process, no external service, no auth — sufficient for the v4.1 §1.5 beachhead (5-engineer startup, `git clone` → BI-ready Iceberg table in **<30 min**). Past v0.3 (Mo 14-20 per `nucleus_cli_spec.md` §4.2), the bottleneck shifts to **shared multi-engine access**: atomic single-table commits across concurrent writers, OIDC-delegated identity per Constraint #6, and a REST surface for Spark / Trino / Snowflake / Databricks consumers (v4.1 §10.1 Mode 1 graduation).
+v0.1 ships `pyiceberg.SqlCatalog` on a SQLite file — single-process, no external service, no auth — sufficient for the v4.1 §1.5 beachhead (5-engineer startup, `git clone` → BI-ready Iceberg table in **<30 min**). Past v0.3 (Mo 14-20 per `docs/specs/nucleus_cli_spec.md` §4.2), the bottleneck shifts to **shared multi-engine access**: atomic single-table commits across concurrent writers, OIDC-delegated identity per Constraint #6, and a REST surface for Spark / Trino / Snowflake / Databricks consumers (v4.1 §10.1 Mode 1 graduation).
 
 ADR-002 §4.2 P2 elevated **Apache Polaris** to co-default with **Lakekeeper** at v0.3+ when Polaris graduated to ASF Top-Level Project on 2026-02-18, but **deferred which is the documented default**: v4.1 §5.7 reads "pick at `nucleus init` time" but ships no opinion. Workers F (Lakekeeper, ~28 KB) and H (Polaris, ~37 KB) returned converged research on 2026-05-13. Both are Apache-2.0 (ADR-007 Tier 1 GREEN — license not the differentiator); both implement the [Iceberg REST OpenAPI spec](https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml); both are consumed via the same `pyiceberg.RestCatalog` (`docs/internal/research/pyiceberg.md` §5 + §8: *"catalog swap is config-only … nothing in `src/`"*). **The choice is operational + governance, not API.**
 
@@ -39,7 +39,7 @@ ADR-002 §4.2 P2 elevated **Apache Polaris** to co-default with **Lakekeeper** a
 1. `pyiceberg.SqlCatalog` (v0.1) unchanged — supported indefinitely per v4.1 §5.7 / D14.
 2. `pyiceberg.RestCatalog` → Lakekeeper default; compose adds `lakekeeper/lakekeeper:0.12.2` + `postgres:15-alpine` (Worker F §5.1).
 3. `pyiceberg.RestCatalog` → Polaris alternate via `nucleus enable polaris`; compose adds `apache/polaris:apache-polaris-1.4.1` + admin-tool init container + `postgres:15-alpine` (Worker H §4.2 + §5.1).
-4. `nucleus catalog migrate --from filesystem --to {lakekeeper|polaris}` per `nucleus_cli_spec.md` §4.2. **Metadata-only**: Iceberg data files in MinIO / SeaweedFS / S3 stay put; only `(namespace, table) → metadata_location` moves. Canonical v4.1 §10.1 Mode 1 primitive applied internally.
+4. `nucleus catalog migrate --from filesystem --to {lakekeeper|polaris}` per `docs/specs/nucleus_cli_spec.md` §4.2. **Metadata-only**: Iceberg data files in MinIO / SeaweedFS / S3 stay put; only `(namespace, table) → metadata_location` moves. Canonical v4.1 §10.1 Mode 1 primitive applied internally.
 5. OIDC per Constraint #6 — both `external`-only; Polaris's internal `TokenBroker` explicitly disabled + `polaris.realm-context.require-header=true` (Worker H §5.2); Lakekeeper's `LAKEKEEPER__OPENID_AUDIENCE` set (Worker F §5.2).
 6. Swap-drill: `docs/architecture/sequence_swap_drill.md` §4 happy-path extended to Lakekeeper↔Polaris; `docs/swap/lakekeeper.md` already in place; `docs/swap/polaris.md` companion authored in the v0.3 PR.
 
@@ -77,7 +77,7 @@ If Lakekeeper proves unstable at v0.3 launch (breaking minor, single-vendor risk
 
 ## Trigger
 
-Status flips **PROPOSED → ACCEPTED** when (1) founder signs off on Lakekeeper-default + Polaris-opt-in; (2) `nucleus_cli_spec.md` §4.2 `nucleus catalog migrate` surface confirmed (already drafted); (3) `docs/swap/polaris.md` companion authored.
+Status flips **PROPOSED → ACCEPTED** when (1) founder signs off on Lakekeeper-default + Polaris-opt-in; (2) `docs/specs/nucleus_cli_spec.md` §4.2 `nucleus catalog migrate` surface confirmed (already drafted); (3) `docs/swap/polaris.md` companion authored.
 
 **Not gated on PoC #1** — this governs v0.3 (Mo 14-20), well-deferred; ADR can ACCEPT immediately. **Is** sequentially gated on ADR-003 reaching ACCEPTED (both catalogs target REST OpenAPI spec coverage 0.11.x exposes). If founder review prefers Polaris-default (Mo 24 customer-pilot scenario), this ADR is amended in place per ADR-004a; the architecture is unchanged.
 
@@ -85,7 +85,7 @@ Status flips **PROPOSED → ACCEPTED** when (1) founder signs off on Lakekeeper-
 
 | Consumer | When | How affected |
 |---|---|---|
-| `nucleus catalog migrate` CLI (`nucleus_cli_spec.md` §4.2) | v0.3 (Mo 14-20) | ADR-004 is its governing spec |
+| `nucleus catalog migrate` CLI (`docs/specs/nucleus_cli_spec.md` §4.2) | v0.3 (Mo 14-20) | ADR-004 is its governing spec |
 | PoC #4 boot harness (`poc/p4_boot_time/`) | Mo 8-12 | Adds `--catalog lakekeeper` / `--catalog polaris` modes per §Verification |
 | PoC #3 ingest (`poc/p3_ingest/`) | Mo 4-8 | Runs against both REST catalogs alongside filesystem `SqlCatalog` |
 | ADR-003 (pyiceberg 0.8.1 → 0.11.x) | Mo 2-3 | **Hard prerequisite** — both catalogs validated against 0.11.x |

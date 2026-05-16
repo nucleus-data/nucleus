@@ -395,7 +395,7 @@ In-repo:
 - `docs/decisions/ADR-007-dependency-license-tier-policy.md`
 - `docs/decisions/ADR-011-telemetry-and-observability-opt-in-policy.md`
 - `docs/decisions/ADR-012-runtime-dependency-pin-matrix-v01.md`
-- `nucleus_architecture_v4.1.md` §3.1, §4.1, §6.6, §9.2, §11.4, §18
+- `docs/specs/nucleus_architecture_v4.1.md` §3.1, §4.1, §6.6, §9.2, §11.4, §18
 - `docs/internal/research/opentelemetry.md` (verified 2026-05-13)
 - `docs/internal/research/sqlglot.md` (verified 2026-05-13)
 - `docs/internal/research/ai_hallucinations.md`

@@ -4,7 +4,7 @@ Walks the v0.1 chain (version → init → seed sqlite → ingest → query →
 run) in a temp dir; classifies each step PASS / SKIPPED (v0.1 stub:
 ``NucleusInternalError`` "not yet implemented") / FAIL (exit 1 now).
 Pure stdlib. Run from repo root: ``python scripts/beachhead_e2e.py``.
-Refs: AGENTS.md §11.8; v4.1 §1.5; nucleus_cli_spec.md §3.1-§3.7.
+Refs: AGENTS.md §11.8; v4.1 §1.5; docs/specs/nucleus_cli_spec.md §3.1-§3.7.
 """
 
 from __future__ import annotations

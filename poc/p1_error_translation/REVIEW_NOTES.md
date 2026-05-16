@@ -40,7 +40,7 @@ Verbatim wording matches `errors.py` + `docs/internal/research/<lib>.md`. All pr
 
 `duckdb.CatalogException` → `NucleusAssetNotFound`.
 - msg: `"SQL referenced an unknown object: {msg}"` · hint: ``"Verify the asset / table / view name is registered. List available assets with `nucleus list`."``
-- Critique: *"unknown object"* vague. *"asset / table / view name"* mixes our primitive with implementation terms. ``nucleus list`` — verify against `nucleus_cli_spec.md`; may be `nucleus assets list`.
+- Critique: *"unknown object"* vague. *"asset / table / view name"* mixes our primitive with implementation terms. ``nucleus list`` — verify against `docs/specs/nucleus_cli_spec.md`; may be `nucleus assets list`.
 - Rewrite A: msg → `"SQL referenced an unknown asset: {msg}"`; hint → ``"Verify the asset name is registered. List available assets with `nucleus list`."``
 
 ### H7 — `_pyiceberg_commit_failed_handler` (`:169`)
@@ -90,4 +90,4 @@ builtin `TimeoutError` → `NucleusSourceConnectionError`.
 - [ ] `_iter_causes` contract acceptable; 4 missing-test edge cases added pre-promotion or filed.
 - [ ] `# NEEDS VERIFICATION` markers (`translator.py:251–253, 289–292`) resolved on first PoC run **or** tracked by issue.
 - [ ] Architecture cite (`v4.1 §6.4`) preserved in the promoted file's module docstring.
-- [ ] CLI commands in fix_hints (`nucleus list`, `nucleus run <asset>`, `nucleus catalog inspect`) verified against `nucleus_cli_spec.md`.
+- [ ] CLI commands in fix_hints (`nucleus list`, `nucleus run <asset>`, `nucleus catalog inspect`) verified against `docs/specs/nucleus_cli_spec.md`.

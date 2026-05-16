@@ -8,8 +8,8 @@ vars (``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``, ``AWS_DEFAULT_REGION``).
 Stability: Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0  (per ADR-005 §2)
 
 Architecture refs:
-    nucleus_architecture_v4.1.md §5.5 (Ingestion — object storage branch)
-    nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
+    docs/specs/nucleus_architecture_v4.1.md §5.5 (Ingestion — object storage branch)
+    docs/specs/nucleus_architecture_v4.1.md §6.4 (Error Translation Discipline)
     docs/decisions/ADR-020-object-storage-connectors-via-duckdb.md (scope)
     docs/internal/research/s3_duckdb.md (DuckDB httpfs + S3 credential resolution)
 

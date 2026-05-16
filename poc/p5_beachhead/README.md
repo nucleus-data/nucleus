@@ -1,16 +1,16 @@
 # PoC #5 — End-to-End 30-Minute Beachhead Validation
 
 **Status**: Designed — runs after v0.1 ship (Mo 6-7).
-**Priority**: 🔴 SHIP GATE (per `nucleus_poc_plan.md` §13).
+**Priority**: 🔴 SHIP GATE (per `docs/specs/nucleus_poc_plan.md` §13).
 **Time budget**: 2 weeks (planning + recruitment + execution + analysis).
-**Companion**: [`DESIGN.md`](DESIGN.md), [`../../nucleus_poc_plan.md`](../../nucleus_poc_plan.md) §5.
+**Companion**: [`DESIGN.md`](DESIGN.md), [`../specs/nucleus_poc_plan.md`](../specs/nucleus_poc_plan.md) §5.
 
 ## What this PoC validates
 
 The single most important hypothesis: 5 external engineers can
 `git clone` → BI-ready Iceberg asset in ≤ 30 min on fresh laptops. See
 `AGENTS.md` §11.8 (Beachhead Metric as North Star) and
-`nucleus_architecture_v4.1.md` §1.5 (5-engineer startup team success
+`docs/specs/nucleus_architecture_v4.1.md` §1.5 (5-engineer startup team success
 metric).
 
 ## Files
@@ -52,4 +52,4 @@ containing the timeline + post-session ratings. stdlib only — no
 
 **None** — PoC #5 is methodology. Results land in
 `docs/audits/poc5_beachhead_<YYYY-MM-DD>.md` and feed the v0.1
-ship / no-ship decision at `nucleus_poc_plan.md` §13.
+ship / no-ship decision at `docs/specs/nucleus_poc_plan.md` §13.

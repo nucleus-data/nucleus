@@ -65,7 +65,7 @@ __version__: str = "0.2.0"
 # reads. This comment is documentation-only.
 from nucleus.errors import NucleusError
 
-# Re-export the v0.1 SDK surface per nucleus_ctx_sdk_spec.md §12 frozen
+# Re-export the v0.1 SDK surface per docs/specs/nucleus_ctx_sdk_spec.md §12 frozen
 # surface and ADR-013 §1+§2. Each underlying definition carries its own
 # ``# Stability: Beta`` marker (per ADR-005 §2) which
 # ``scripts/check_api_stability.py`` reads when validating the public

@@ -62,5 +62,5 @@ Implementation:
 
 ## Architecture Sections Touched
 
-- `nucleus_architecture_v4.1.md` §6.5 (lineage layer)
+- `docs/specs/nucleus_architecture_v4.1.md` §6.5 (lineage layer)
 - `AGENTS.md §3` Hard Constraint #1 (no JVM — ilum Rust path satisfies)

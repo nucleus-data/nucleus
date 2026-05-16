@@ -3,15 +3,15 @@
 > **Status**: ACCEPTED — 2026-05-13 (founder blanket approval per FOUNDER_ACTION_QUEUE.md §0)
 > **Date**: 2026-05-13 · **Decider**: Solo founder
 > **Tags**: api, ctx-sdk, sdk-freeze, governance, hard-constraint-9
-> **Related**: ADR-001 (wrap-not-build precedent), ADR-002 §8.2 (data-product definition naming AI agents as consumption surface), ADR-003 (trigger/rollback/downstream pattern), `AGENTS.md` §0 + §3 Constraint #9, `nucleus_architecture_v4.1.md` §3 + §6 + §12 + §13.2 + §13.3 (Amendment 8 REVISED — AI APIs flex faster), `nucleus_ctx_sdk_spec.md` §12 + §16, `docs/architecture/C4_component.md` §2.1-§2.7
+> **Related**: ADR-001 (wrap-not-build precedent), ADR-002 §8.2 (data-product definition naming AI agents as consumption surface), ADR-003 (trigger/rollback/downstream pattern), `AGENTS.md` §0 + §3 Constraint #9, `docs/specs/nucleus_architecture_v4.1.md` §3 + §6 + §12 + §13.2 + §13.3 (Amendment 8 REVISED — AI APIs flex faster), `docs/specs/nucleus_ctx_sdk_spec.md` §12 + §16, `docs/architecture/C4_component.md` §2.1-§2.7
 
 ---
 
 ## Context
 
-Per `AGENTS.md` §0, the `ctx` SDK is the only one of three things Nucleus owns forever that carries a *public Python signature surface*. Every downstream commitment binds to it: user `@nucleus.asset` code (`nucleus_ctx_sdk_spec.md` §15), PoC promotion targets, every wrap-not-build justification (ADR-001, ADR-003), v0.5+ surfaces (`nucleus-mcp-server` per ADR-002 §4.2), the Replaceability Mandate (v4.1 §12 — *library under `ctx` may swap; `ctx` itself must not*).
+Per `AGENTS.md` §0, the `ctx` SDK is the only one of three things Nucleus owns forever that carries a *public Python signature surface*. Every downstream commitment binds to it: user `@nucleus.asset` code (`docs/specs/nucleus_ctx_sdk_spec.md` §15), PoC promotion targets, every wrap-not-build justification (ADR-001, ADR-003), v0.5+ surfaces (`nucleus-mcp-server` per ADR-002 §4.2), the Replaceability Mandate (v4.1 §12 — *library under `ctx` may swap; `ctx` itself must not*).
 
-`nucleus_ctx_sdk_spec.md` §12 currently uses a binary **Frozen / Evolvable** — too coarse for v0.1 APIs that must iterate before locking (`ctx.sql` macros, `ctx.copy_from` modes, flagged open in `C4_component.md` §4); AI APIs v4.1 §13.3 carves out (*"Breaking change allowed in minor — 6-month deprecation window"*); leaked internal helpers (`ctx.dagster_context`, v4.1 §6.6); PoC code under `poc/` that must not be promised as stable.
+`docs/specs/nucleus_ctx_sdk_spec.md` §12 currently uses a binary **Frozen / Evolvable** — too coarse for v0.1 APIs that must iterate before locking (`ctx.sql` macros, `ctx.copy_from` modes, flagged open in `C4_component.md` §4); AI APIs v4.1 §13.3 carves out (*"Breaking change allowed in minor — 6-month deprecation window"*); leaked internal helpers (`ctx.dagster_context`, v4.1 §6.6); PoC code under `poc/` that must not be promised as stable.
 
 This ADR replaces the binary with a four-tier ladder + per-family freeze schedule + breaking-change protocol. Forces in tension: **commitment** (dlt v0.3, `nucleus-mcp-server` v0.5, post-v1.0 enterprise adopters need stability promises) vs. **humility** (PoC #1 has not passed); **AI churn** (MCP <12 months old; v4.1 §13.3 + ADR-002 §8.2 authorise faster AI churn) vs. **solo enforcement** (must be CI-enforceable; manual shepherding fails under Mo 24 velocity pressure, ADR-002 §8.3). **Governance, not implementation** — can land before PoC #1.
 
@@ -19,7 +19,7 @@ This ADR replaces the binary with a four-tier ladder + per-family freeze schedul
 
 ## Decision
 
-> **Four stability tiers. Per-API-family freeze events at v0.5 / v1.0 / v1.5. Breaking changes to Stable + Frozen tiers require deprecation cycle + ADR. AI APIs (`ctx.agent.*`, MCP server) stay Beta through v1.0 and freeze at v1.5 — explicitly authorised by `nucleus_architecture_v4.1.md` §13.3 + ADR-002 §8.2.**
+> **Four stability tiers. Per-API-family freeze events at v0.5 / v1.0 / v1.5. Breaking changes to Stable + Frozen tiers require deprecation cycle + ADR. AI APIs (`ctx.agent.*`, MCP server) stay Beta through v1.0 and freeze at v1.5 — explicitly authorised by `docs/specs/nucleus_architecture_v4.1.md` §13.3 + ADR-002 §8.2.**
 
 ### 1. Stability tiers
 
@@ -48,11 +48,11 @@ Every public name in `src/nucleus/__init__.py` `__all__` and every `ctx.*` metho
 | `@nucleus.check` validators | §2.5-adjacent | Beta | Stable | Stable | **Frozen** | Frozen |
 | **`ctx.agent.*`** [^1] | §2.7 | n/a | Beta | Beta | **Frozen** | Frozen |
 | **MCP server surface** [^1] | nucleus-mcp-server (ADR-002 §4.2) | n/a | Beta | Beta | **Frozen** | Frozen |
-| CLI (`nucleus init/up/down/run/ingest`) | — | governed by `nucleus_cli_spec.md` (NEEDS VERIFICATION — may not yet exist) |
+| CLI (`nucleus init/up/down/run/ingest`) | — | governed by `docs/specs/nucleus_cli_spec.md` (NEEDS VERIFICATION — may not yet exist) |
 
 [^1]: **AI-API carve-out.** Primary authority: v4.1 §13.3 (*"Breaking change allowed in minor — 6-month deprecation window"* for AI APIs). Reinforced by ADR-002 §8.2 (data product defined as "consumable by ... AI agents via the `ctx` SDK or the MCP server"). AI surfaces lag peers by one release; freeze when upstream AI ecosystem stabilises.
 
-The `nucleus_ctx_sdk_spec.md` §12 binary "Frozen Surface (v1.0)" framing is **superseded** by the table above; the §12 list of names stays.
+The `docs/specs/nucleus_ctx_sdk_spec.md` §12 binary "Frozen Surface (v1.0)" framing is **superseded** by the table above; the §12 list of names stays.
 
 ### 3. Breaking-change protocol (Stable + Frozen only)
 
@@ -84,7 +84,7 @@ The `nucleus_ctx_sdk_spec.md` §12 binary "Frozen Surface (v1.0)" framing is **s
 
 1. **`scripts/check_api_stability.py`** (~100 LOC) — scans `__all__` + every `ctx.*` method; missing/mismatched `# Stability:` tags = red CI. Hooked into `.github/workflows/ci.yml` alongside `check_vocabulary.py`.
 2. **`tests/api_stability/test_signatures.py`** — `inspect.signature()` snapshots per tier; Frozen change = red without co-landing breaking-change ADR.
-3. **`nucleus_ctx_sdk_spec.md` annotation pass** — every name in §12 + §13 gets a tier tag; binary header replaced by §2 table. Landed by v0.5 spec lock.
+3. **`docs/specs/nucleus_ctx_sdk_spec.md` annotation pass** — every name in §12 + §13 gets a tier tag; binary header replaced by §2 table. Landed by v0.5 spec lock.
 
 `CHANGELOG.md` discipline: every release notes which tier moved (e.g., `ctx.sql.macros: Beta → Stable, see ADR-NNN`) and which ADR triggered it.
 
@@ -101,16 +101,16 @@ The `nucleus_ctx_sdk_spec.md` §12 binary "Frozen Surface (v1.0)" framing is **s
 ## Docs URL
 
 - `AGENTS.md` §0 (founding principle: we own `ctx` forever) + §3 Constraint #9 (swap interface + smoke tests)
-- `nucleus_architecture_v4.1.md` §12 (Replaceability Mandate) + §13.3 (primary authority for the AI carve-out)
+- `docs/specs/nucleus_architecture_v4.1.md` §12 (Replaceability Mandate) + §13.3 (primary authority for the AI carve-out)
 - ADR-002 §8.2 (data-product definition recognises AI agents + MCP server as a consumption surface)
-- `nucleus_ctx_sdk_spec.md` §12 + §16 (the API catalog this ADR governs)
+- `docs/specs/nucleus_ctx_sdk_spec.md` §12 + §16 (the API catalog this ADR governs)
 - `docs/architecture/C4_component.md` §2 (component-to-API-family mapping; source of §2 schedule)
 
 ---
 
 ## Trigger
 
-Status flips **PROPOSED → ACCEPTED** when all three hold: (1) founder reviews + signs off (or amends, ADR-002 §6 pattern); (2) `scripts/check_api_stability.py` lands (~100 LOC; can ship before PoC #1); (3) `nucleus_ctx_sdk_spec.md` annotated with stability tiers (~30 min editing; may defer to v0.5 spec lock).
+Status flips **PROPOSED → ACCEPTED** when all three hold: (1) founder reviews + signs off (or amends, ADR-002 §6 pattern); (2) `scripts/check_api_stability.py` lands (~100 LOC; can ship before PoC #1); (3) `docs/specs/nucleus_ctx_sdk_spec.md` annotated with stability tiers (~30 min editing; may defer to v0.5 spec lock).
 
 **Not gated on PoC #1.** If accepted pre-PoC-#1, the **Internal** tier protects `poc/*` code from being interpreted as a public API promise.
 
@@ -131,8 +131,8 @@ Status flips **PROPOSED → ACCEPTED** when all three hold: (1) founder reviews 
 
 ## NEEDS VERIFICATION
 
-1. **`ctx.snapshot` tier mismatch** — `nucleus_ctx_sdk_spec.md` §10+§12 list it Frozen-at-v1.0; `C4_component.md` §2 omits it (v0.3+ per v4.1 §13.2). Provisionally tiered Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0; reconcile at v0.5 spec lock.
-2. **`nucleus_cli_spec.md`** — referenced as the source of CLI governance but **not found in repo** (Glob returned no match). CLI carve-out is currently rhetorical; doc should land alongside this ADR's acceptance.
+1. **`ctx.snapshot` tier mismatch** — `docs/specs/nucleus_ctx_sdk_spec.md` §10+§12 list it Frozen-at-v1.0; `C4_component.md` §2 omits it (v0.3+ per v4.1 §13.2). Provisionally tiered Beta @ v0.1 → Stable @ v0.5 → Frozen @ v1.0; reconcile at v0.5 spec lock.
+2. **`docs/specs/nucleus_cli_spec.md`** — referenced as the source of CLI governance but **not found in repo** (Glob returned no match). CLI carve-out is currently rhetorical; doc should land alongside this ADR's acceptance.
 3. **`ctx.agent.*` signatures** — per `C4_component.md` §2.7 + §4 q#1, signatures themselves are NEEDS VERIFICATION; this ADR tiers the family without locking signatures (lock at v0.5 design).
 4. **`ctx.copy_from` mode taxonomy** — per `C4_component.md` §4 q#4, `mode="append"` v0.1-vs-v0.3 is open; Beta tier covers either outcome.
 5. **`ctx.dagster_context` escape hatch** — provisionally Internal forever; may warrant an explicit "Tier 2 escape hatch" designation if user demand emerges post-v1.0.
@@ -145,4 +145,4 @@ Status flips **PROPOSED → ACCEPTED** when all three hold: (1) founder reviews 
 
 **Ratified**: 2026-05-13 — founder blanket approval of recommendations per FOUNDER_ACTION_QUEUE.md §0.
 
-**Amended**: 2026-05-14 — `ctx.write`, `ctx.log`, and `ctx.params` are **not** part of the v0.1 exported SDK surface (`src/nucleus/ctx/__init__.py` / `__all__`). Per `nucleus_architecture_v4.1.md` §13.1 (contracted `ctx` exports), their prior §2 schedule placement next to `ctx.read` implied upcoming Beta work; **status is now DEFERRED to v0.2+** with practical substitutes already documented in the ctx module docstring: materialization return values (instead of `ctx.write`), stdlib `logging` (instead of `ctx.log`), CLI / project config (instead of `ctx.params`). The §2 table rows above are updated; freeze-track columns after v0.2 remain the target once each symbol ships.
+**Amended**: 2026-05-14 — `ctx.write`, `ctx.log`, and `ctx.params` are **not** part of the v0.1 exported SDK surface (`src/nucleus/ctx/__init__.py` / `__all__`). Per `docs/specs/nucleus_architecture_v4.1.md` §13.1 (contracted `ctx` exports), their prior §2 schedule placement next to `ctx.read` implied upcoming Beta work; **status is now DEFERRED to v0.2+** with practical substitutes already documented in the ctx module docstring: materialization return values (instead of `ctx.write`), stdlib `logging` (instead of `ctx.log`), CLI / project config (instead of `ctx.params`). The §2 table rows above are updated; freeze-track columns after v0.2 remain the target once each symbol ships.

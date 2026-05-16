@@ -26,5 +26,5 @@ Layer note: the underlying catalog miss is raised at L1 Engines, but the user-fa
 
 - Source: `src/nucleus/errors.py` (`NucleusAssetNotFound`)
 - Default fix hint: "Verify the asset name is registered. List available assets with `nucleus list`."
-- Architecture: [v4.1 §6.4 Error Translation Layer](../../nucleus_architecture_v4.1.md)
+- Architecture: [v4.1 §6.4 Error Translation Layer](../specs/nucleus_architecture_v4.1.md)
 - ADR: [ADR-006](../decisions/ADR-006-nucleus-error-code-numbering.md)

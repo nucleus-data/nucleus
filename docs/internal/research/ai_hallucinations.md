@@ -23,7 +23,7 @@ AI suggested: install + use `openlineage-dagster` (or `dagster-openlineage`) as 
 Reality: **package is DEAD at our pin.** PyPI `openlineage-dagster` caps at `dagster<=1.6.9`; we run `dagster==1.9.5`. The integration was **removed from the OpenLineage main repository in October 2025**. Any AI suggestion to `pip install openlineage-dagster` will either fail to install or downgrade Dagster.
 Where caught: `docs/internal/research/openlineage.md` §9 (Worker J research doc, 2026-05-13).
 Detection: PyPI version constraints checked against `pyproject.toml` pin; OpenLineage main-repo GitHub history reviewed.
-Fix: Nucleus emits OpenLineage events **directly from the Asset Materialization Adapter** (already specified in `nucleus_architecture_v4.1.md` §6.2 step 4). No bridge package. Use `openlineage-python==1.47.1` + `event_v2` module + `FileTransport` (v0.1) / `HttpTransport` to Marquez (v0.3+). When you see AI propose `openlineage-dagster`, REJECT — cite this entry.
+Fix: Nucleus emits OpenLineage events **directly from the Asset Materialization Adapter** (already specified in `docs/specs/nucleus_architecture_v4.1.md` §6.2 step 4). No bridge package. Use `openlineage-python==1.47.1` + `event_v2` module + `FileTransport` (v0.1) / `HttpTransport` to Marquez (v0.3+). When you see AI propose `openlineage-dagster`, REJECT — cite this entry.
 
 ---
 

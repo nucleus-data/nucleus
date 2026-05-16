@@ -2,7 +2,7 @@
 
 Validates the public signature per
 ``docs/decisions/ADR-013-ctx-materialize-api.md`` §1 +
-``nucleus_architecture_v4.1.md`` §13.2 — every input is checked at the
+``docs/specs/nucleus_architecture_v4.1.md`` §13.2 — every input is checked at the
 SDK boundary, and the call forwards to the Asset Materialization Adapter
 (``coordination/asset_materialization.py``,
 ``v01_skeleton_plan.md`` §3.1 r3) which drives the wrapped Dagster runtime.

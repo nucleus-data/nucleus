@@ -84,7 +84,7 @@ In v0.5+ these become automatic Cost-Meter-driven triggers. For v0.1/v0.3 they'r
 - **File count per partition exceeds ~10** — the manifest cost starts to dominate per-partition reads.
 - **Average file size in a partition < 50 MB** — too small to amortize parquet footer + S3 round trip.
 - **`table.scan(row_filter=...).plan_files()` returns >1,000 files for a normal query** — planning is the bottleneck.
-- **Manifest list size > 1 MB** — surfaced by the v0.5+ telemetry (per `nucleus_architecture_v4.1.md` §6.3 Asset Materialization Adapter responsibilities).
+- **Manifest list size > 1 MB** — surfaced by the v0.5+ telemetry (per `docs/specs/nucleus_architecture_v4.1.md` §6.3 Asset Materialization Adapter responsibilities).
 - **Daily ingestion job repeats the same partition** (e.g., late-arriving data appends to yesterday) — that partition accumulates files even when total volume is stable.
 
 ---
@@ -104,9 +104,9 @@ In v0.5+ these become automatic Cost-Meter-driven triggers. For v0.1/v0.3 they'r
 |---|---|
 | v0.1 (Heartbeat) | **NOT exposed.** Documented for human awareness only. Manual rewrite is for emergencies via direct PyIceberg calls (with a `# NEEDS VERIFICATION` comment per [AGENTS.md](../../AGENTS.md) §11.12). |
 | v0.3 | `nucleus optimize <asset>` CLI command. Dispatches a Dagster maintenance job using the §4 recipe. |
-| v0.5+ | Automatic compaction driven by Cost Meter telemetry (`nucleus_architecture_v4.1.md` §6.3). Triggers from §5 above. |
+| v0.5+ | Automatic compaction driven by Cost Meter telemetry (`docs/specs/nucleus_architecture_v4.1.md` §6.3). Triggers from §5 above. |
 
-- Compaction operations log an OpenLineage event with `op=compact` plus before/after file counts and bytes (per `nucleus_architecture_v4.1.md` §6.2 Asset Materialization Adapter responsibility 5).
+- Compaction operations log an OpenLineage event with `op=compact` plus before/after file counts and bytes (per `docs/specs/nucleus_architecture_v4.1.md` §6.2 Asset Materialization Adapter responsibility 5).
 - Compaction is **always per-partition**. Cross-partition compaction is not a real operation — it would shuffle data across partitions, defeating the partition spec.
 - Errors during compaction translate to `NucleusError` subclasses per [`pyiceberg.md`](../research/pyiceberg.md) §6 (e.g., `CommitFailedException` → `NucleusCommitConflictError` with retry).
 

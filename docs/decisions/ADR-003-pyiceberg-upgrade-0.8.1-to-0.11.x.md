@@ -64,7 +64,7 @@ Every 0.11.x feature claim above is sourced from `docs/internal/research/pyicebe
 
 ## Trigger
 
-Status flips **PROPOSED → ACCEPTED** when **PoC #1 (Dagster Error Translation Layer) passes 17/17 green pytest** on the validation set in `nucleus_architecture_v4.1.md` §6.4 / Appendix C and `nucleus_poc_plan.md` §1. **Not a calendar date.** If PoC #1 fails, paused and re-evaluated alongside the mini-scheduler escalation per v4.1 §6.7.
+Status flips **PROPOSED → ACCEPTED** when **PoC #1 (Dagster Error Translation Layer) passes 17/17 green pytest** on the validation set in `docs/specs/nucleus_architecture_v4.1.md` §6.4 / Appendix C and `docs/specs/nucleus_poc_plan.md` §1. **Not a calendar date.** If PoC #1 fails, paused and re-evaluated alongside the mini-scheduler escalation per v4.1 §6.7.
 
 ## Downstream consumers (sequencing matters)
 

@@ -515,7 +515,7 @@ Malloy remains Alpha status. Community traction (2,433 stars) is modest compared
 
 ## 10. Workbench Analytics-Embed Sketch (v0.2)
 
-Based on the above research, here is a proposed Workbench v0.2 analytics preview architecture. This is a design pattern sketch, not a specification — it should be validated against `nucleus_architecture_v4.1.md` before implementation.
+Based on the above research, here is a proposed Workbench v0.2 analytics preview architecture. This is a design pattern sketch, not a specification — it should be validated against `docs/specs/nucleus_architecture_v4.1.md` before implementation.
 
 ### Query Page Flow
 

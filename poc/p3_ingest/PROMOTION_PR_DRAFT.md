@@ -2,7 +2,7 @@
 
 ## Summary
 
-Promotes the SQLite → filesystem-Iceberg ingestor from `poc/p3_ingest/ingest.py` to `src/nucleus/coordination/ingestion/sqlite_ingest.py` (**destination NEEDS VERIFICATION** — see §Architectural changes #2), satisfying `nucleus_architecture_v4.1.md` §5.5.1's one-liner ingestion promise (Amendment 13). Reads SQLite via stdlib `sqlite3`, auto-infers an Iceberg schema from `PRAGMA table_info` (`ingest.py:63-97`), creates the destination namespace + Iceberg table in a filesystem-backed `pyiceberg.SqlCatalog` (v4.1 §5.7 v0.1 default), and appends as a single `pyarrow.Table` (`ingest.py:176-241`). Ships **7/7 green** on Windows + Linux/macOS (`test_ingest.py:61-141`); the §6.4 leak gate (`test_ingest.py:122-132`) asserts no `"pyiceberg"` / `"iceberg.exceptions"` substring escapes `.rendered()`. Includes the **Windows `file://` URI workaround** in `_open_catalog` (`ingest.py:100-133`) with 5 citations — `iceberg-python#1005`/`#996`/`#2477` + RFC 8089 §E.2 + pyiceberg FileIO docs (`ingest.py:119-125`). Lifts PoC #3 in `nucleus_poc_plan.md` §3 + §5 and unblocks `nucleus ingest --source sqlite://...` per `nucleus_cli_spec.md` §3.5 + `v01_skeleton_plan.md` §3 line 79.
+Promotes the SQLite → filesystem-Iceberg ingestor from `poc/p3_ingest/ingest.py` to `src/nucleus/coordination/ingestion/sqlite_ingest.py` (**destination NEEDS VERIFICATION** — see §Architectural changes #2), satisfying `docs/specs/nucleus_architecture_v4.1.md` §5.5.1's one-liner ingestion promise (Amendment 13). Reads SQLite via stdlib `sqlite3`, auto-infers an Iceberg schema from `PRAGMA table_info` (`ingest.py:63-97`), creates the destination namespace + Iceberg table in a filesystem-backed `pyiceberg.SqlCatalog` (v4.1 §5.7 v0.1 default), and appends as a single `pyarrow.Table` (`ingest.py:176-241`). Ships **7/7 green** on Windows + Linux/macOS (`test_ingest.py:61-141`); the §6.4 leak gate (`test_ingest.py:122-132`) asserts no `"pyiceberg"` / `"iceberg.exceptions"` substring escapes `.rendered()`. Includes the **Windows `file://` URI workaround** in `_open_catalog` (`ingest.py:100-133`) with 5 citations — `iceberg-python#1005`/`#996`/`#2477` + RFC 8089 §E.2 + pyiceberg FileIO docs (`ingest.py:119-125`). Lifts PoC #3 in `docs/specs/nucleus_poc_plan.md` §3 + §5 and unblocks `nucleus ingest --source sqlite://...` per `docs/specs/nucleus_cli_spec.md` §3.5 + `v01_skeleton_plan.md` §3 line 79.
 
 ---
 
@@ -51,9 +51,9 @@ None blocking. Two soft items carry forward for founder triage.
 
 ## Files to be updated
 
-- `nucleus_poc_plan.md` §3 + §5 — PoC #3 status `PROPOSED` → `PROMOTED 2026-05-NN with commit <hash>` per §12 template.
+- `docs/specs/nucleus_poc_plan.md` §3 + §5 — PoC #3 status `PROPOSED` → `PROMOTED 2026-05-NN with commit <hash>` per §12 template.
 - `AGENTS.md` §1 — `[ ] PoC #2-5` stays unchecked until PoC #5 lands; add per-PoC `(promoted YYYY-MM-DD)` annotation per Worker C precedent.
-- `nucleus_architecture_v4.1.md` §5.5.1 — drop "PoC #3 validates feasibility" caveat; flip `ctx.copy_from` row in §13.2 Internal → Beta **only if** Option A.
+- `docs/specs/nucleus_architecture_v4.1.md` §5.5.1 — drop "PoC #3 validates feasibility" caveat; flip `ctx.copy_from` row in §13.2 Internal → Beta **only if** Option A.
 - `v01_skeleton_plan.md` §3 + `sequence_ingestion.md` §5 — **IF Option B**, retarget skeleton plan line 40 + sequence_ingestion §5 line 146.
 - `docs/budget_history.md` — append post-promotion `src/nucleus/` LOC snapshot per `AGENTS.md` §11.6.
 
@@ -63,8 +63,8 @@ None blocking. Two soft items carry forward for founder triage.
 
 ## Downstream chain unlocked by this merge
 
-1. **`nucleus ingest --source sqlite://... --target raw.foo` CLI** unblocks per `nucleus_cli_spec.md` §3.5 + `v01_skeleton_plan.md` §3 line 79 (NE1001, NE2001, NE1002 — the 30-min beachhead promise per v4.1 §1.5).
-2. **Additional source connectors** (Postgres → `docs/recipes/postgres_to_iceberg.md`, CSV → `csv_to_iceberg.md`, MySQL, Parquet, JSON per `nucleus_poc_plan.md` §3) follow the module-or-branch pattern picked at Option A/B; each is its own ≤ 500-LOC PR.
+1. **`nucleus ingest --source sqlite://... --target raw.foo` CLI** unblocks per `docs/specs/nucleus_cli_spec.md` §3.5 + `v01_skeleton_plan.md` §3 line 79 (NE1001, NE2001, NE1002 — the 30-min beachhead promise per v4.1 §1.5).
+2. **Additional source connectors** (Postgres → `docs/recipes/postgres_to_iceberg.md`, CSV → `csv_to_iceberg.md`, MySQL, Parquet, JSON per `docs/specs/nucleus_poc_plan.md` §3) follow the module-or-branch pattern picked at Option A/B; each is its own ≤ 500-LOC PR.
 3. **Recipe `docs/recipes/sqlite_to_iceberg.md`** becomes runnable end-to-end.
 4. **ADR-003 PyIceberg `0.8.1 → 0.11.x`** remains independent — the Windows fix persists on 0.11.x per `ingest.py:122-124`; ADR-003 fires off PoC #1 (§Trigger) and re-validates PoC #3 unchanged per §Verification line 25.
 
@@ -103,7 +103,7 @@ merges a parse_location patch.
 
 Tests: 7/7 green on Windows + Linux/macOS.
 
-Refs: AGENTS.md §11.1, §11.7; nucleus_architecture_v4.1.md §5.5.1,
+Refs: AGENTS.md §11.1, §11.7; docs/specs/nucleus_architecture_v4.1.md §5.5.1,
 §6.4; ADR-003 (PyIceberg upgrade - independent of this PR's
 Windows fix).
 ```
