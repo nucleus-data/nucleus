@@ -35,6 +35,9 @@ permissions:
   contents: write   # for creating GitHub Releases and uploading assets
   id-token: write   # for OIDC trusted publishing to PyPI
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
 
   # ---------------------------------------------------------------------------

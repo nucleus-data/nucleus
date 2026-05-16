@@ -13,33 +13,13 @@ the full deprecation cycle that core data APIs receive.
 
 ## [Unreleased]
 
-> Post-v0.2.0 GA work in flight. Move new bullets here as PRs land.
+> Post-v0.2.0 work in development.
 
 ### Fixed
-- **CI workflows now run on `nucleus-data/nucleus`** — three-fix bundle: (1)
-  `setup-uv@v3` `cache-dependency-glob` points at `pyproject.toml` (we don't
-  ship `uv.lock`; the default `**/uv.lock` glob was zero-matching and failing
-  all 5 jobs), (2) `pip-audit` bumped 2.7.3 → 2.10.0 so cyclonedx-bom 5.1.1's
-  `cyclonedx-python-lib>=8` requirement resolves (2.7.3 capped at `<8`), and
-  (3) `.gitignore` `site/` entries anchored to `/site/` so `docs/site/` source
-  (90 mkdocs pages from Wave 1C docs-site builder) is tracked instead of
-  silently excluded. Unblocks 13 of 14 failing checks; CodeQL still requires
-  founder repo-settings change (enable Code scanning).
-- **Brutal audit caveat closure (F1 + F2 + F10)** — docs-only reconciliation
-  surfaced by `docs/internal/research/ultimate_upgrade/04_brutal_internal_audit.md`
-  sections 7–8. F1: concurrent `nucleus run` invocations on Windows can both
-  commit; `README.md` "Known limitations" + `docs/site/troubleshooting/common-errors.md`
-  add a Beta Tier 2 warning citing `docs/internal/benchmarks/2026-05-15_baseline.md`
-  lines 148–152; architectural fix (msvcrt.locking redesign or pyiceberg
-  `commit_atomic` adoption) deferred to v0.2.1. F2: README boot-time numbers
-  reconciled to `docs/internal/benchmarks/2026-05-15_baseline.md` lines 107–117
-  with Windows contention caveat (5–7 s `nucleus up`, 1.67 s CLI cold,
-  5.98 s `python -m` form). F10: hybrid compute dispatch ETA harmonised across
-  README to "PROPOSED in `docs/decisions/ADR-041-mode-2-hybrid-compute-dispatch.md`;
-  design v0.3, implementation v1.5" (previously dual-ETA at L74 vs L188).
-  F11 (3 red chaos tests) + F12 (idle RAM re-measurement) explicitly deferred
-  to v0.2.1 per audit section 7. Commit `0a207ab`. Governance 4/4 PASS,
-  diff +28 / −5 across 4 docs files.
+
+### Added
+
+### Changed
 
 ---
 

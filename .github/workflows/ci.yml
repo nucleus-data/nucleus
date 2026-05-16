@@ -1,9 +1,11 @@
-# .github/workflows/ci.yml — Nucleus full CI matrix
+# .github/workflows/ci.yml — Nucleus fast-path CI (ubuntu-only)
 #
-# Per ADR-022: expanded from single-OS / single-Python to the full beachhead
-# support matrix (Python 3.11 + 3.12 × Ubuntu + macOS + Windows) with five
-# distinct jobs.  Jobs are concurrency-cancelled on the same PR to save runner
-# minutes.
+# Per ADR-022 + billing-opt 2026-05-16: on push/PR this workflow runs ubuntu
+# only (both Python 3.11 + 3.12).  macOS and Windows compat validation runs
+# in ci-compat.yml on a weekly schedule to avoid private-repo minute burn
+# (macOS = 10× multiplier, Windows = 2× on private repos).
+#
+# Per-push billed cost: ~110 min (was ~890 min with full cross-platform matrix).
 #
 # Anti-Over-Engineering note (founder directive 2026-05-13):
 #   - No artifact uploads inside the test job (release.yml handles that)
@@ -29,6 +31,7 @@ permissions:
 env:
   PYTHONDONTWRITEBYTECODE: "1"
   PYTHONUNBUFFERED: "1"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 # ---------------------------------------------------------------------------
 # Job 1 — Lint (Ruff + mypy strict)
@@ -46,7 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
@@ -80,7 +83,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
@@ -120,6 +123,7 @@ jobs:
 
   # ---------------------------------------------------------------------------
   # Job 3 — Test (pytest with coverage)
+  # ubuntu-latest only on push/PR — full matrix in ci-compat.yml (weekly)
   # ---------------------------------------------------------------------------
   test:
     name: Test (${{ matrix.python-version }}, ${{ matrix.os }})
@@ -127,14 +131,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
         python-version: ["3.11", "3.12"]
     timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
@@ -174,7 +178,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           # We pin via pyproject.toml (no uv.lock in repo per ADR-012).
@@ -192,7 +196,7 @@ jobs:
         run: python scripts/upgrade_smoke.py
 
   # ---------------------------------------------------------------------------
-  # Job 5 — Beachhead E2E (Linux + macOS only; requires docker)
+  # Job 5 — Beachhead E2E (Linux only on push/PR; full in ci-compat.yml weekly)
   # ---------------------------------------------------------------------------
   beachhead-e2e:
     name: Beachhead E2E (${{ matrix.os }})
@@ -200,13 +204,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
     timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           # We pin via pyproject.toml (no uv.lock in repo per ADR-012).

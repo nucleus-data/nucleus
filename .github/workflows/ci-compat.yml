@@ -1,0 +1,94 @@
+# .github/workflows/ci-compat.yml — Nucleus cross-platform compat matrix
+#
+# Runs the full OS × Python matrix once a week (Monday 03:00 UTC) and on
+# manual dispatch.  Keeps per-push/PR cost low in ci.yml (ubuntu-only ~110
+# billed min) while preserving macOS + Windows validation before each release.
+#
+# Billing note (private repo multipliers):
+#   ubuntu-latest = 1×   macOS-latest = 10×   windows-latest = 2×
+# This workflow runs only on schedule/dispatch — NOT on push/PR.
+#
+# Per ADR-022 + billing-opt 2026-05-16.
+
+name: CI Compat (weekly)
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"   # 03:00 UTC every Monday
+  workflow_dispatch:
+
+concurrency:
+  group: ci-compat
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUNBUFFERED: "1"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+# ---------------------------------------------------------------------------
+# Job 1 — Test full matrix (3 OS × 2 Python)
+# ---------------------------------------------------------------------------
+jobs:
+  test-compat:
+    name: Test (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          # Docs: https://github.com/astral-sh/setup-uv#enable-caching
+          cache-dependency-glob: "pyproject.toml"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package + dev extras
+        run: uv pip install -e ".[dev]" --system
+
+      - name: Run pytest (unit + smoke, no integration)
+        run: pytest tests/ poc/ -m "not integration and not slow" --no-cov -v
+
+  # ---------------------------------------------------------------------------
+  # Job 2 — Beachhead E2E (Linux + macOS; Windows skipped — docker unreliable)
+  # ---------------------------------------------------------------------------
+  beachhead-e2e-compat:
+    name: Beachhead E2E (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          # Docs: https://github.com/astral-sh/setup-uv#enable-caching
+          cache-dependency-glob: "pyproject.toml"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package + dev extras
+        run: uv pip install -e ".[dev]" --system
+
+      - name: Run beachhead E2E
+        run: python scripts/beachhead_e2e.py

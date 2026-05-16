@@ -42,6 +42,7 @@ import typer
 import yaml  # type: ignore[import-untyped]  # PyYAML ships no py.typed marker as of 6.0.
 
 from nucleus import __version__
+from nucleus.cli._banner import print_startup_banner
 from nucleus.cli._compose import (
     compose_service_names,
     detect_compose_runner,
@@ -765,7 +766,7 @@ def up(
             render_runtime_endpoint_table(rows)
 
         typer.echo("")
-        typer.echo("Nucleus up.")
+        print_startup_banner()
     except NucleusError as err:
         _exit_nucleus_error(err)
 

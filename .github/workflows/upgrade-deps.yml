@@ -32,6 +32,9 @@ permissions:
   contents: read
   issues: write  # so we can open/update the weekly audit issue
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
 
   audit:

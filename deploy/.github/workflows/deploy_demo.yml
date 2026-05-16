@@ -47,6 +47,9 @@ on:
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 concurrency:
   # Cancel an in-flight deploy if a newer tag arrives.  The most recent tag
   # is always the canonical demo state.

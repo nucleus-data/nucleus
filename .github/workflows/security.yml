@@ -28,6 +28,9 @@ permissions:
   contents: read
   security-events: write  # for uploading SARIF results if added later
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   security:
     name: Security scan
