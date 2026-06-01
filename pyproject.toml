@@ -79,7 +79,7 @@ dependencies = [
 
   # Core infrastructure.
   # msgspec removed entirely 2026-05-14 per docs/internal/research/otel_day1_decision.md §D3.
-  "click==8.1.8",                   # CLI framework. Docs: https://click.palletsprojects.com/
+  "click==8.4.1",                   # CLI framework. Docs: https://click.palletsprojects.com/
   "structlog==24.4.0",              # Structured logging. Docs: https://www.structlog.org/
   "typer==0.15.1",                  # CLI ergonomics on top of Click. Docs: https://typer.tiangolo.com/
   "rich==13.9.4",                   # Terminal UI. Docs: https://rich.readthedocs.io/
